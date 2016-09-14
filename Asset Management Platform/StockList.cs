@@ -8,6 +8,10 @@ namespace Asset_Management_Platform.ViewModel
 {
     class StockList
     {
-        
+        public StockList()
+        {
+
+        }
+
     }
 }
