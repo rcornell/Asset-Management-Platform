@@ -19,6 +19,12 @@ namespace Asset_Management_Platform.ViewModel
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
+        /// 
+
+        
+
+
+
         public MainViewModel()
         {
             ////if (IsInDesignMode)
@@ -30,5 +36,10 @@ namespace Asset_Management_Platform.ViewModel
             ////    // Code runs "for real"
             ////}
         }
+
+
+        
+
+        
     }
 }

@@ -75,7 +75,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Stock.cs" />
+    <Compile Include="Utility\TradeExecution.cs" />
+    <Compile Include="Utility\PortfolioService.cs" />
+    <Compile Include="Utility\StockDataService.cs" />
+    <Compile Include="Utility\StockValueService.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="StockList.cs" />
+    <Compile Include="Portfolio.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
