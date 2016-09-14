@@ -75,6 +75,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Position.cs" />
     <Compile Include="Stock.cs" />
     <Compile Include="Utility\TradeExecutionService.cs" />
     <Compile Include="Utility\PortfolioService.cs" />

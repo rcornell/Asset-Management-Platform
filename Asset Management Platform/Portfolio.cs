@@ -8,5 +8,6 @@ namespace Asset_Management_Platform.ViewModel
 {
     class Portfolio
     {
+
     }
 }
