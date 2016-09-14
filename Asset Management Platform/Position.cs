@@ -14,8 +14,8 @@ namespace Asset_Management_Platform
         private long sharesOwned;
         public long SharesOwned { get { return sharesOwned; } }
 
-        //public float Value {
-         //   get { return float.Parse((stockInfo.LastPrice * sharesOwned).ToString); } }
+        public float Value {
+            get { return float.Parse((stockInfo.LastPrice * sharesOwned).ToString()); } }
 
         public Position(Stock stock, long shares)
         {
