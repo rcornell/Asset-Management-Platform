@@ -17,7 +17,7 @@ namespace Asset_Management_Platform
         public int BidSize;
         public int AskSize;
 
-        public Stock(string cusip, string ticker, string description, double lastPrice, double yield)
+        public Stock(string cusip, string ticker, string description, float lastPrice, double yield)
             : base (cusip, ticker, description, lastPrice, yield)
         {
             SecurityType = "Stock";
@@ -27,7 +27,7 @@ namespace Asset_Management_Platform
             string cusip,
             string ticker, 
             string description,  
-            double lastPrice,
+            float lastPrice,
             double yield,
             double bid,
             double ask,

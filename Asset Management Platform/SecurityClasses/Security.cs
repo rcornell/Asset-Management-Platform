@@ -31,8 +31,8 @@ namespace Asset_Management_Platform
             set { _description = value; }
         }
 
-        private double _lastPrice;
-        public double LastPrice
+        private float _lastPrice;
+        public float LastPrice
         {
             get { return _lastPrice; }
             set { _lastPrice = value; }
@@ -45,7 +45,7 @@ namespace Asset_Management_Platform
             set { _yield = value; }
         }
 
-        public Security(string cusip, string ticker, string description, double lastPrice, double yield)
+        public Security(string cusip, string ticker, string description, float lastPrice, double yield)
         {
             _cusip = cusip;
             _ticker = ticker;

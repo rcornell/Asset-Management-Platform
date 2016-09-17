@@ -8,13 +8,13 @@ namespace Asset_Management_Platform.SecurityClasses
 {
     class Treasury : FixedIncome
     {
-        public Treasury(string cusip, string ticker, string description, double lastPrice, double yield) 
+        public Treasury(string cusip, string ticker, string description, float lastPrice, double yield) 
             : base(cusip, ticker, description, lastPrice, yield)
         {
             SecurityType = "Treasury";
         }
 
-        public Treasury(string cusip, string ticker, string description, double lastPrice, double yield, double coupon, string issuer, string rating)
+        public Treasury(string cusip, string ticker, string description, float lastPrice, double yield, double coupon, string issuer, string rating)
             : base(cusip, ticker, description, lastPrice, yield, coupon, issuer, rating)
         {
             SecurityType = "Treasury";
