@@ -27,27 +27,16 @@ namespace Asset_Management_Platform.ViewModel
             return list;
         }
 
-        public void AddStockToList(string ticker,
-            string description,
-            double lastPrice,
-            double yield,
-            double bid,
-            double ask,
-            double beta,
-            double peRatio,
-            int volume,
-            int bidSize,
-            int askSize)
+        public void RemoveSecurityFromList(Security securityToRemove)
         {
-            _allSecurities.Add(new Stock(ticker, description, lastPrice, yield, bid, ask, beta, peRatio, volume, bidSize, askSize));
+            if (securityToRemove != null)
+                _allSecurities.Remove(securityToRemove);
         }
 
-        public void RemoveStockFromList(Stock stockToRemove)
+        public void AddSecurityToList(Security securityToAdd)
         {
-            _allSecurities.Remove(stockToRemove);
+            if (securityToAdd != null)
+                _allSecurities.Add(securityToAdd);
         }
-
-
-
     }
 }
