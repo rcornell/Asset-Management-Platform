@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 
 namespace Asset_Management_Platform.ViewModel
 {
-    class StockList
+    class HoldingsList
     {
 
-        private List<Stock> stocks;
+        private List<Security> _holdings;
 
-        public StockList()
+        public HoldingsList()
         {
-            stocks = GenerateStockList();
+            _holdings = GenerateHoldingsList();
         }
 
-        public List<Stock> GenerateStockList()
+        public List<Security> GenerateHoldingsList()
         {
-            var list = new List<Stock>();
+            var list = new List<Security>();
 
             //DoStuff
             //With StockDataService Probably
@@ -38,12 +38,12 @@ namespace Asset_Management_Platform.ViewModel
             int bidSize,
             int askSize)
         {
-            stocks.Add(new Stock(ticker, description, lastPrice, yield, bid, ask, beta, peRatio, volume, bidSize, askSize));
+            _holdings.Add(new Stock(ticker, description, lastPrice, yield, bid, ask, beta, peRatio, volume, bidSize, askSize));
         }
 
         public void RemoveStockFromList(Stock stockToRemove)
         {
-            stocks.Remove(stockToRemove);
+            _holdings.Remove(stockToRemove);
         }
 
 
