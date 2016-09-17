@@ -9,13 +9,6 @@ namespace Asset_Management_Platform
     class MutualFund : Security
     {
 
-        private double _yield;
-        public double Yield
-        {
-            get { return _yield; }
-            set { _yield = value; }
-        }
-
         private double _load;
         public double Load
         {
@@ -24,16 +17,15 @@ namespace Asset_Management_Platform
         }
 
 
-        public MutualFund(string ticker, string description, double lastPrice)
-            : base ( ticker, description, lastPrice)
+        public MutualFund(string ticker, string description, double lastPrice, double yield)
+            : base ( ticker, description, lastPrice, yield)
         {
             SecurityType = "Mutual Fund";
         }
 
-        public MutualFund(string ticker, string description, double lastPrice, double yield, double load)
-            : base(ticker, description, lastPrice)
+        public MutualFund(string ticker, string description, double yield, double lastPrice, double load)
+            : base(ticker, description, lastPrice, yield)
         {
-            _yield = yield;
             _load = load;
             SecurityType = "Mutual Fund";
         }

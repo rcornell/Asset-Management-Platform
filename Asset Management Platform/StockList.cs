@@ -26,9 +26,10 @@ namespace Asset_Management_Platform.ViewModel
             return list;
         }
 
-        public void AddStockToList(string name,
-            string ticker,
+        public void AddStockToList(string ticker,
+            string description,
             double lastPrice,
+            double yield,
             double bid,
             double ask,
             double beta,
@@ -37,7 +38,7 @@ namespace Asset_Management_Platform.ViewModel
             int bidSize,
             int askSize)
         {
-            stocks.Add(new Stock(name, ticker, lastPrice, bid, ask, beta, peRatio, volume, bidSize, askSize));
+            stocks.Add(new Stock(ticker, description, lastPrice, yield, bid, ask, beta, peRatio, volume, bidSize, askSize));
         }
 
         public void RemoveStockFromList(Stock stockToRemove)

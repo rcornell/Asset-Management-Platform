@@ -31,11 +31,19 @@ namespace Asset_Management_Platform
             set { _lastPrice = value; }
         }
 
-        public Security(string ticker, string description, double lastPrice)
+        private double _yield;
+        public double Yield
+        {
+            get { return _yield; }
+            set { _yield = value; }
+        }
+
+        public Security(string ticker, string description, double lastPrice, double yield)
         {
             _ticker = ticker;
             _description = description;
             _lastPrice = lastPrice;
+            _yield = yield;
         }
 
     }

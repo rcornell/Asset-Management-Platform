@@ -17,12 +17,9 @@ namespace Asset_Management_Platform
         public int BidSize;
         public int AskSize;
 
-        public Stock(string ticker, string description, double lastPrice)
-            : base ( ticker, description, lastPrice)
+        public Stock(string ticker, string description, double lastPrice, double yield)
+            : base ( ticker, description, lastPrice, yield)
         {
-            Ticker = ticker;
-            Description = description;
-            LastPrice = lastPrice;
             SecurityType = "Stock";
         }
 
@@ -30,6 +27,7 @@ namespace Asset_Management_Platform
             string ticker, 
             string description,  
             double lastPrice,
+            double yield,
             double bid,
             double ask,
             double beta,
@@ -37,7 +35,7 @@ namespace Asset_Management_Platform
             int volume,
             int bidSize,
             int askSize)
-            : base(ticker, description, lastPrice)
+            : base(ticker, description, lastPrice, yield)
         {
             Ticker = ticker;
             Description = description;

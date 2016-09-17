@@ -75,6 +75,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ExchangeTradedFund.cs" />
     <Compile Include="MutualFund.cs" />
     <Compile Include="Position.cs" />
     <Compile Include="Security.cs" />
