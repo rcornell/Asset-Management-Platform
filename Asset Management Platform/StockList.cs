@@ -29,13 +29,13 @@ namespace Asset_Management_Platform.ViewModel
         public void AddStockToList(string name,
             string ticker,
             double lastPrice,
-            decimal bid,
-            decimal ask,
-            decimal beta,
-            decimal peRatio,
-            long volume,
-            long bidSize,
-            long askSize)
+            double bid,
+            double ask,
+            double beta,
+            double peRatio,
+            int volume,
+            int bidSize,
+            int askSize)
         {
             stocks.Add(new Stock(name, ticker, lastPrice, bid, ask, beta, peRatio, volume, bidSize, askSize));
         }

@@ -8,33 +8,33 @@ namespace Asset_Management_Platform
 {
     class Stock : Security
     {
-        public decimal Bid;
-        public decimal Ask;
-        public decimal Beta;
-        public decimal PeRatio;
-        public long Volume;
-        public long BidSize;
-        public long AskSize;
+        public double Bid;
+        public double Ask;
+        public double Beta;
+        public double PeRatio;
+        public int Volume;
+        public int BidSize;
+        public int AskSize;
 
         public Stock(string ticker, string description, double lastPrice)
             : base ( ticker, description, lastPrice)
         {
-            base.Ticker = ticker;
-            base.Description = description;
-            base.LastPrice = lastPrice;
+            Ticker = ticker;
+            Description = description;
+            LastPrice = lastPrice;
         }
 
         public Stock(
             string ticker, 
             string description,  
-            double lastPrice, 
-            decimal bid, 
-            decimal ask, 
-            decimal beta, 
-            decimal peRatio, 
-            long volume, 
-            long bidSize, 
-            long askSize)
+            double lastPrice,
+            double bid,
+            double ask,
+            double beta,
+            double peRatio,
+            int volume,
+            int bidSize,
+            int askSize)
             : base(ticker, description, lastPrice)
         {
             Ticker = ticker;
