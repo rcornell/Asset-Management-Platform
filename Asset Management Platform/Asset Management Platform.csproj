@@ -75,12 +75,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="SecurityClasses\CorporateBond.cs" />
     <Compile Include="SecurityClasses\ExchangeTradedFund.cs" />
     <Compile Include="SecurityClasses\FixedIncome.cs" />
+    <Compile Include="SecurityClasses\MunicipalBond.cs" />
     <Compile Include="SecurityClasses\MutualFund.cs" />
     <Compile Include="Position.cs" />
     <Compile Include="SecurityClasses\Security.cs" />
     <Compile Include="SecurityClasses\Stock.cs" />
+    <Compile Include="SecurityClasses\Treasury.cs" />
     <Compile Include="Utility\TradeExecutionService.cs" />
     <Compile Include="Utility\PortfolioService.cs" />
     <Compile Include="Utility\StockDataService.cs" />
