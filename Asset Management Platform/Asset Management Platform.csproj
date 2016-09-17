@@ -77,7 +77,6 @@
     </ApplicationDefinition>
     <Compile Include="SecurityClasses\ExchangeTradedFund.cs" />
     <Compile Include="SecurityClasses\FixedIncome.cs" />
-    <Compile Include="FixedIncomeRatings.cs" />
     <Compile Include="SecurityClasses\MutualFund.cs" />
     <Compile Include="Position.cs" />
     <Compile Include="SecurityClasses\Security.cs" />
