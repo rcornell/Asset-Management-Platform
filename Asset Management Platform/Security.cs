@@ -8,6 +8,8 @@ namespace Asset_Management_Platform
 {
     public class Security
     {
+        public static string SecurityType;
+
         private string _ticker;
         public string Ticker
         {

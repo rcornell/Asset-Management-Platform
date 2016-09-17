@@ -8,6 +8,7 @@ namespace Asset_Management_Platform
 {
     class Stock : Security
     {
+
         public double Bid;
         public double Ask;
         public double Beta;
@@ -22,6 +23,7 @@ namespace Asset_Management_Platform
             Ticker = ticker;
             Description = description;
             LastPrice = lastPrice;
+            SecurityType = "Stock";
         }
 
         public Stock(
@@ -47,6 +49,7 @@ namespace Asset_Management_Platform
             Volume = volume;
             BidSize = bidSize;
             AskSize = askSize;
+            SecurityType = "Stock";
         }
 
     }
