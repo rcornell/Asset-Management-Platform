@@ -10,6 +10,13 @@ namespace Asset_Management_Platform
     {
         public static string SecurityType;
 
+        private string _cusip;
+        public string Cusip
+        {
+            get { return _cusip; }
+            set { _cusip = value; }
+        }
+
         private string _ticker;
         public string Ticker
         {
@@ -38,8 +45,9 @@ namespace Asset_Management_Platform
             set { _yield = value; }
         }
 
-        public Security(string ticker, string description, double lastPrice, double yield)
+        public Security(string cusip, string ticker, string description, double lastPrice, double yield)
         {
+            _cusip = cusip;
             _ticker = ticker;
             _description = description;
             _lastPrice = lastPrice;

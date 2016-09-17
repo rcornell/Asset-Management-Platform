@@ -17,14 +17,14 @@ namespace Asset_Management_Platform
         }
 
 
-        public MutualFund(string ticker, string description, double lastPrice, double yield)
-            : base ( ticker, description, lastPrice, yield)
+        public MutualFund(string cusip, string ticker, string description, double lastPrice, double yield)
+            : base (cusip, ticker, description, lastPrice, yield)
         {
             SecurityType = "Mutual Fund";
         }
 
-        public MutualFund(string ticker, string description, double yield, double lastPrice, double load)
-            : base(ticker, description, lastPrice, yield)
+        public MutualFund(string cusip, string ticker, string description, double yield, double lastPrice, double load)
+            : base(cusip, ticker, description, lastPrice, yield)
         {
             _load = load;
             SecurityType = "Mutual Fund";

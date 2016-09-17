@@ -76,6 +76,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ExchangeTradedFund.cs" />
+    <Compile Include="FixedIncome.cs" />
+    <Compile Include="FixedIncomeRatings.cs" />
     <Compile Include="MutualFund.cs" />
     <Compile Include="Position.cs" />
     <Compile Include="Security.cs" />

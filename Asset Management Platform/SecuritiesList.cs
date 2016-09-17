@@ -27,6 +27,12 @@ namespace Asset_Management_Platform.ViewModel
             return list;
         }
 
+        public bool SaveHoldingsList()
+        {
+            //Store _allSecurities in database
+            return true;
+        }
+
         public void RemoveSecurityFromList(Security securityToRemove)
         {
             if (securityToRemove != null)
