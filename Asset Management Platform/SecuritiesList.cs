@@ -6,14 +6,15 @@ using System.Threading.Tasks;
 
 namespace Asset_Management_Platform.ViewModel
 {
-    class HoldingsList
+    class SecuritiesList
     {
+        //Maintains the list of all known securities in the database.
 
-        private List<Security> _holdings;
+        private List<Security> _allSecurities;
 
-        public HoldingsList()
+        public SecuritiesList()
         {
-            _holdings = GenerateHoldingsList();
+            _allSecurities = GenerateHoldingsList();
         }
 
         public List<Security> GenerateHoldingsList()
@@ -38,12 +39,12 @@ namespace Asset_Management_Platform.ViewModel
             int bidSize,
             int askSize)
         {
-            _holdings.Add(new Stock(ticker, description, lastPrice, yield, bid, ask, beta, peRatio, volume, bidSize, askSize));
+            _allSecurities.Add(new Stock(ticker, description, lastPrice, yield, bid, ask, beta, peRatio, volume, bidSize, askSize));
         }
 
         public void RemoveStockFromList(Stock stockToRemove)
         {
-            _holdings.Remove(stockToRemove);
+            _allSecurities.Remove(stockToRemove);
         }
 
 
