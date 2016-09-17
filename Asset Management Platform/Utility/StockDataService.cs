@@ -16,7 +16,47 @@ namespace Asset_Management_Platform.Utility
         public StockDataService()
         {
 
+            if (CheckForNullDatabase())
+                SeedDatabase();
+            else
+                LoadDatabase();
+
         }
+
+        private void LoadDatabase()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// If Database is empty, return true and seed the database. If not, generate List<Security>
+        /// </summary>
+        /// <returns></returns>
+        private bool CheckForNullDatabase()
+        {
+            //IfDatabaseIsEmpty
+            return true;
+        }
+
+        private void SeedDatabase()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DoStuff()
+        {
+    //        using (var connection = new C.SqlConnection(
+    //              "Server = tcp:robcornell.database.windows.net,1433; Initial Catalog = AssetManagementStocks; Persist Security Info = False; User ID = robcornell; Password = Pacman0373; MultipleActiveResultSets = False; Encrypt = True; TrustServerCertificate = False; Connection Timeout = 30;"
+    //              ))
+    //        {
+    //            connection.Open();
+    //            Console.WriteLine("Connected successfully.");
+
+    //            Console.WriteLine("Press any key to finish...");
+    //            Console.ReadKey(true);
+    //        }
+        }
+
 
         public void Dispose()
         {
