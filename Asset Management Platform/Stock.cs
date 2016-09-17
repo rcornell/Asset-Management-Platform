@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace Asset_Management_Platform
 {
-    class Stock
+    class Stock : Security
     {
-        public string Name;
-        public string Ticker;
-        public decimal LastPrice;
         public decimal Bid;
         public decimal Ask;
         public decimal Beta;
@@ -19,12 +16,18 @@ namespace Asset_Management_Platform
         public long BidSize;
         public long AskSize;
 
-        public Stock() { }
+        public Stock(string ticker, string description, double lastPrice)
+            : base ( ticker, description, lastPrice)
+        {
+            base.Ticker = ticker;
+            base.Description = description;
+            base.LastPrice = lastPrice;
+        }
 
         public Stock(
-            string name, 
             string ticker, 
-            decimal lastPrice, 
+            string description,  
+            double lastPrice, 
             decimal bid, 
             decimal ask, 
             decimal beta, 
@@ -32,9 +35,10 @@ namespace Asset_Management_Platform
             long volume, 
             long bidSize, 
             long askSize)
+            : base(ticker, description, lastPrice)
         {
-            Name = name;
             Ticker = ticker;
+            Description = description;
             LastPrice = lastPrice;
             Bid = bid;
             Ask = ask;

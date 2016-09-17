@@ -8,18 +8,19 @@ namespace Asset_Management_Platform
 {
     class Position
     {
-        private Stock stockInfo;
-        public Stock StockInfo { get { return stockInfo; } }
+        private Security securityInfo;
+        public Security SecurityInfo { get { return securityInfo; } }
 
         private long sharesOwned;
         public long SharesOwned { get { return sharesOwned; } }
 
         public float Value {
-            get { return float.Parse((stockInfo.LastPrice * sharesOwned).ToString()); } }
+            get { return float.Parse((securityInfo.LastPrice * sharesOwned).ToString()); } }
 
-        public Position(Stock stock, long shares)
+        public Position(Security security, long shares)
         {
-
+            securityInfo = security;
+            sharesOwned = shares;
         }
     }
 }

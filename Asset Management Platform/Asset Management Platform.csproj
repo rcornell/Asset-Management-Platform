@@ -76,6 +76,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Position.cs" />
+    <Compile Include="Security.cs" />
     <Compile Include="Stock.cs" />
     <Compile Include="Utility\TradeExecutionService.cs" />
     <Compile Include="Utility\PortfolioService.cs" />

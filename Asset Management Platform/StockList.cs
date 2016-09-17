@@ -28,7 +28,7 @@ namespace Asset_Management_Platform.ViewModel
 
         public void AddStockToList(string name,
             string ticker,
-            decimal lastPrice,
+            double lastPrice,
             decimal bid,
             decimal ask,
             decimal beta,
