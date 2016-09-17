@@ -31,7 +31,9 @@ namespace Asset_Management_Platform
         public FixedIncome(string cusip, string ticker, string description, double lastPrice, double yield, double coupon, string issuer, string rating)
             : base(cusip, ticker, description, lastPrice, yield)
         {
-
+            _coupon = coupon;
+            _issuer = issuer;
+            _rating = rating;
         }
 
         public string GetRatingDescription()
