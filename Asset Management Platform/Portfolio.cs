@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,9 +26,11 @@ namespace Asset_Management_Platform.ViewModel
             try { }
             catch { }
             //Pull portfolio from Database?
+
+            
         }
 
-
+        
         private void SavePortfolio()
         {
             try { }
