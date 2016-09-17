@@ -8,7 +8,7 @@ namespace Asset_Management_Platform
 {
     public class Security
     {
-        public static string SecurityType;
+        public string SecurityType;
 
         private string _cusip;
         public string Cusip
