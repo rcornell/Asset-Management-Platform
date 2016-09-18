@@ -11,7 +11,7 @@ namespace Asset_Management_Platform
 
         public double Bid;
         public double Ask;
-        public double Beta;
+        public double MarketCap;
         public double PeRatio;
         public int Volume;
         public int BidSize;
@@ -31,7 +31,7 @@ namespace Asset_Management_Platform
             double yield,
             double bid,
             double ask,
-            double beta,
+            double marketCap,
             double peRatio,
             int volume,
             int bidSize,
@@ -43,7 +43,7 @@ namespace Asset_Management_Platform
             LastPrice = lastPrice;
             Bid = bid;
             Ask = ask;
-            Beta = beta;
+            MarketCap = marketCap;
             PeRatio = peRatio;
             Volume = volume;
             BidSize = bidSize;

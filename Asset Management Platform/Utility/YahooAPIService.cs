@@ -10,6 +10,15 @@ namespace Asset_Management_Platform.Utility
 {
     class YahooAPIService : IDisposable
     {
+        public double Bid;
+        public double Ask;
+        public double Beta;
+        public double PeRatio;
+        public int Volume;
+        public int BidSize;
+        public int AskSize;
+
+        //s n l1 y j1 b a rv a5 b6
 
         /// <summary>
         /// Yahoo API tags for url string. These

@@ -11,7 +11,6 @@ namespace Asset_Management_Platform
 
         public double Bid;
         public double Ask;
-        public double Beta;
         public int Volume;
         public int BidSize;
         public int AskSize;
@@ -22,14 +21,13 @@ namespace Asset_Management_Platform
             SecurityType = "Exchange Traded Fund";
         }
 
-        public ExchangeTradedFund(string cusip, string ticker, string description, float lastPrice, double yield, double bid, double ask, double beta, int volume, int bidSize, int askSize)
+        public ExchangeTradedFund(string cusip, string ticker, string description, float lastPrice, double yield, double bid, double ask, int volume, int bidSize, int askSize)
             : base(cusip, ticker, description, lastPrice, yield)
         {
             SecurityType = "Exchange Traded Fund";
 
             Bid = bid;
             Ask = ask;
-            Beta = beta;
             Volume = volume;
             BidSize = bidSize;
             AskSize = askSize;
