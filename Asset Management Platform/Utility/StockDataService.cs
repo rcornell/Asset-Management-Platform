@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.Sql;
 using System.Data.SqlClient;
+using Microsoft.Azure; // Namespace for CloudConfigurationManager 
+using Microsoft.WindowsAzure.Storage; // Namespace for CloudStorageAccount
+using Microsoft.WindowsAzure.Storage.Table; // Namespace for Table storage types
 
 namespace Asset_Management_Platform.Utility
 {
@@ -34,6 +37,9 @@ namespace Asset_Management_Platform.Utility
         /// <returns></returns>
         private bool CheckForNullDatabase()
         {
+            //var mger = new CloudConfigurationManager();
+            //select count(**Column_Name**) from table
+
             //IfDatabaseIsEmpty
             return true;
         }
