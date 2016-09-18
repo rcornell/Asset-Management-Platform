@@ -10,15 +10,6 @@ namespace Asset_Management_Platform.Utility
 {
     class YahooAPIService : IDisposable
     {
-        public double Bid;
-        public double Ask;
-        public double Beta;
-        public double PeRatio;
-        public int Volume;
-        public int BidSize;
-        public int AskSize;
-
-        //s n l1 y j1 b a rv a5 b6
 
         /// <summary>
         /// Yahoo API tags for url string. These
@@ -149,7 +140,7 @@ namespace Asset_Management_Platform.Utility
                 return result;
             }
         }
-        private void GetData()
+        private List<Security> GetData()
         {
 
             // Build the URL.
@@ -168,8 +159,10 @@ namespace Asset_Management_Platform.Utility
                 url = url.Substring(0, url.Length - 1);
 
                 // Prepend the base URL.
+                //s (symbol) n (name) l1 (last price) y (yield) j1 (market cap) 
+                //b (bid) a (ask) r (peRatio) a5 (ask size) b6 (bid size)
                 const string base_url =
-                    "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=sl1d1t1c1";
+                    "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=snl1yj1bara5b6";
                 url = base_url.Replace("@", url); //Add my tickers to the middle of the url
 
                 // Get the response.
@@ -189,35 +182,51 @@ namespace Asset_Management_Platform.Utility
                     //
                     //Should find a way to determine at runtime whether each item is a stock, mutual fund, or ETF.
                     //Compare tickers to list of tickers that determine which ticker is which type of security
+                    //Use LINQ?
 
+
+                    int j = 0;
                     foreach (string line in lines)
                     {
-
-
-
                         string cusip = "";
                         string ticker = "";
                         string description = "";
-                        float lastPrice = 0;
-                        double yield = 0;
+                        float lastPrice;
+                        double yield;
+                        double bid;
+                        double ask;
+                        double marketCap;
+                        double peRatio;
+                        int volume;
+                        int bidSize;
+                        int askSize;
 
-                        cusip  = decimal.Parse(lines[0].Split(',')[1]).ToString("C3"); //these were for controls, repurposing for strings to pass to lists maybe
-                        ticker = decimal.Parse(lines[1].Split(',')[1]).ToString("C3");
-                        description  = decimal.Parse(lines[2].Split(',')[1]).ToString("C3");
-                        //lastPrice = float.Parse(lines[3].Split(',')[1]).ToString("C3"));
-                        //yield = double.Parse(lines[3].Split(',')[1]).ToString("C3");
+                        //cusip = "" no CUSIP ability in this API
+                        ticker = lines[j].Split(',')[1];
+                        description = lines[j].Split(',')[2];
+                        lastPrice = float.Parse(lines[j].Split(',')[3]);
+                        yield = double.Parse(lines[j].Split(',')[4]);
+                        bid = double.Parse(lines[j].Split(',')[5]);
+                        ask = double.Parse(lines[j].Split(',')[6]);
+                        marketCap = double.Parse(lines[j].Split(',')[7]);
+                        peRatio = double.Parse(lines[j].Split(',')[8]);
+                        volume = int.Parse(lines[j].Split(',')[9]);
+                        bidSize = int.Parse(lines[j].Split(',')[10]);
+                        askSize = int.Parse(lines[j].Split(',')[11]);
 
-                        _securities.Add(new Security(cusip, ticker, description, lastPrice, yield));
+                        _securities.Add(new Stock(cusip, ticker, description, lastPrice, yield, bid, ask, marketCap, peRatio, volume, bidSize, askSize));
                     }
-
-
+                    return _securities;
                 }
-                catch (Exception ex)
+                catch (Exception ex) //Error in parsing Yahoo API results.
                 {
                     Console.WriteLine(ex.Message);
                     Console.ReadKey(true);
+                    return _securities; //probably null
                 }
             }
+
+            return _securities; //probably null
         }
 
         public void Dispose()
