@@ -14,6 +14,9 @@ namespace Asset_Management_Platform.Utility
     class StockDataService : IDisposable
     {
 
+
+
+
         //public SqlCommand commander;
         //Going to add a branch
         public StockDataService()

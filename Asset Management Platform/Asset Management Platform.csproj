@@ -122,6 +122,7 @@
     <Compile Include="Utility\PortfolioService.cs" />
     <Compile Include="Utility\StockDataService.cs" />
     <Compile Include="Utility\StockValueService.cs" />
+    <Compile Include="Utility\YahooAPIService.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="SecuritiesList.cs" />
     <Compile Include="Portfolio.cs" />
