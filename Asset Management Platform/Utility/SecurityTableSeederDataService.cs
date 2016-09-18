@@ -12,17 +12,17 @@ namespace Asset_Management_Platform.Utility
     class SecurityTableSeederDataService
     {
 
-        protected const string _truncateLiveTableCommandText = @"TRUNCATE TABLE TICKERTEST"; //My table name 
-        protected const int _batchSize = 500;
+        protected const string _truncateLiveTableCommandText = @"TRUNCATE TABLE Stocks"; //My table name 
+        protected const int _batchSize = 2000; //max number times this look to add. Adjust for need vs. speed.
 
-        public SecurityTableSeederDataService(string connection)
+        public SecurityTableSeederDataService()
         {
-            LoadCsvDataIntoSqlServer(connection);
+            
         }
 
         public void LoadCsvDataIntoSqlServer(string connection)
         {   //NOT READY TO BE USED
-            // This should be the full path
+            // This should be the full path within the project, which will include the CSV file
             var fileName = @"C:\Users\Rob\Documents\StockListCSV.csv";
 
             var createdCount = 0;
@@ -33,10 +33,7 @@ namespace Asset_Management_Platform.Utility
                 textFieldParser.Delimiters = new[] { "," };
                 textFieldParser.HasFieldsEnclosedInQuotes = true;
 
-                //NOT USING HIS PROP
-                //var connectionString = ConfigurationManager.ConnectionStrings["CMSConnectionString"].ConnectionString;
-
-                var dataTable = new DataTable("TICKERTEST");
+                var dataTable = new DataTable("Stocks");
 
                 // Add the columns in the temp table
                 dataTable.Columns.Add("Ticker");
@@ -54,11 +51,15 @@ namespace Asset_Management_Platform.Utility
                     // Create the bulk copy object
                     var sqlBulkCopy = new SqlBulkCopy(sqlConnection)
                     {
-                        DestinationTableName = "TICKERTEST"
+                        DestinationTableName = "Stocks"
                     };
 
                     // Setup the column mappings, anything ommitted is skipped
+                    sqlBulkCopy.ColumnMappings.Add("CUSIP", "CUSIP");
                     sqlBulkCopy.ColumnMappings.Add("Ticker", "Ticker");
+                    sqlBulkCopy.ColumnMappings.Add("Description", "Description");
+                    sqlBulkCopy.ColumnMappings.Add("LastPrice", "LastPrice");
+                    sqlBulkCopy.ColumnMappings.Add("Yield", "Yield");
 
                     // Loop through the CSV and load each set of 500 records into a DataTable
                     // Then send it to the LiveTable
