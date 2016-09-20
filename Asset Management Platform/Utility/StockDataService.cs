@@ -18,17 +18,26 @@ namespace Asset_Management_Platform.Utility
     /// </summary>
     class StockDataService : IDisposable
     {
+        List<Security> securityList;
+        SecurityTableSeederDataService seeder;
 
         //public SqlCommand commander;
         //Going to add a branch
         public StockDataService()
         {
 
+        }
+
+        /// <summary>
+        /// Checks the SQL database. If it is null, seeds it.
+        /// If not null, loads into memory.
+        /// </summary>
+        public void Initialize()
+        {
             if (CheckForNullDatabase())
                 SeedDatabase();
             else
                 LoadDatabase();
-
         }
 
         private void LoadDatabase()
@@ -41,14 +50,10 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         private bool CheckForNullDatabase()
         {
-            //var mger = new CloudConfigurationManager();
-            //select count(**Column_Name**) from table
-
             int result = 0;
 
             using (var connection = new SqlConnection("SQLStorageConnection"))
-            {
-                
+            {               
                 connection.Open();
                 var command = new SqlCommand();
                 command.CommandText = @"SELECT COUNT(*) FROM STOCKS";
@@ -62,22 +67,20 @@ namespace Asset_Management_Platform.Utility
         }
 
         /// <summary>
-        /// Seeds the SQL table if it has no contents using local CSV file.
+        /// Seeds the SQL table if it has no contents using 
+        /// local SeedTicker.json file.
         /// </summary>
         private void SeedDatabase()
         {
-            var seeder = new SecurityTableSeederDataService();
+            seeder = new SecurityTableSeederDataService();
             seeder.LoadCsvDataIntoSqlServer("StorageConnectionString");
-        }
-
-        private void DoStuff()
-        {
         }
 
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            securityList = null;
+            seeder = null;
         }
     }
 }
