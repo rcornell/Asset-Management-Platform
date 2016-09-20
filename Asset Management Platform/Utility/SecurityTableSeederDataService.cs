@@ -6,18 +6,26 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
 using Microsoft.VisualBasic.FileIO;
+using Newtonsoft.Json;
+
 
 namespace Asset_Management_Platform.Utility
 {
     class SecurityTableSeederDataService : IDisposable
     {
-
+        private List<string> tickerList;
         protected const string _truncateLiveTableCommandText = @"TRUNCATE TABLE Stocks"; //My table name 
         protected const int _batchSize = 2000; //max number times this look to add. Adjust for need vs. speed.
 
         public SecurityTableSeederDataService()
         {
             
+        }
+
+        public List<string> GetSeedTickersFromJson()
+        {
+            tickerList = JsonConvert.DeserializeObject<List<string>>("SeedTickers");
+            return tickerList;
         }
 
         public void LoadCsvDataIntoSqlServer(string connection)
@@ -94,7 +102,7 @@ namespace Asset_Management_Platform.Utility
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            tickerList = null;
         }
     }
 }
