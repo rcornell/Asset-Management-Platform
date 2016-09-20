@@ -9,7 +9,7 @@ using Microsoft.VisualBasic.FileIO;
 
 namespace Asset_Management_Platform.Utility
 {
-    class SecurityTableSeederDataService
+    class SecurityTableSeederDataService : IDisposable
     {
 
         protected const string _truncateLiveTableCommandText = @"TRUNCATE TABLE Stocks"; //My table name 
@@ -90,6 +90,11 @@ namespace Asset_Management_Platform.Utility
             sqlBulkCopy.WriteToServer(dataTable);
 
             dataTable.Rows.Clear();
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
         }
     }
 }
