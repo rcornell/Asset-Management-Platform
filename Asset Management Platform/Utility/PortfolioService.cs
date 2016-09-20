@@ -8,5 +8,12 @@ namespace Asset_Management_Platform.Utility
 {
     class PortfolioService
     {
+        private StockValueService stockValue;
+
+        public PortfolioService()
+        {
+
+        }
+
     }
 }

@@ -1,4 +1,6 @@
+using Asset_Management_Platform.Utility;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Ioc;
 
 namespace Asset_Management_Platform.ViewModel
 {
@@ -21,12 +23,13 @@ namespace Asset_Management_Platform.ViewModel
         /// </summary>
         /// 
 
-        
-
-
+        SimpleIoc container = new SimpleIoc();
 
         public MainViewModel()
         {
+            container.Register<StockDataService>();
+            container.Register<PortfolioService>();
+            container.Register<Portfolio>();
             ////if (IsInDesignMode)
             ////{
             ////    // Code runs in Blend --> create design time data.
