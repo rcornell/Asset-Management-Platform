@@ -8,6 +8,8 @@ using System.Data.SqlClient;
 using Microsoft.Azure; // Namespace for CloudConfigurationManager 
 using Microsoft.WindowsAzure.Storage; // Namespace for CloudStorageAccount
 using Microsoft.WindowsAzure.Storage.Table; // Namespace for Table storage types
+using GalaSoft.MvvmLight.Messaging;
+using Asset_Management_Platform.Messages;
 
 
 namespace Asset_Management_Platform.Utility
@@ -26,22 +28,24 @@ namespace Asset_Management_Platform.Utility
         //Going to add a branch
         public StockDataService()
         {
-
+            Initialize();
         }
 
         /// <summary>
         /// Checks the SQL database. If it is null, seeds it.
-        /// If not null, loads into memory.
         /// </summary>
         public void Initialize()
         {
-            if (CheckForNullDatabase())
+            if (CheckForNullDatabase()) { 
                 SeedDatabase();
-            else
-                LoadDatabase();
+                Messenger.Default.Send(new DatabaseMessage("Empty database restored."));
+            }
         }
 
-        private void LoadDatabase()
+        /// <summary>
+        /// Reads the SQL database and returns a List<Security>
+        /// </summary>
+        public List<Security> LoadDatabase()
         {
             securityList = new List<Security>();
             using (var connection = new SqlConnection("SQLStorageConnection"))
@@ -61,8 +65,9 @@ namespace Asset_Management_Platform.Utility
                         securityList.Add(new Security(cusip, ticker, description, lastPrice, yield));
                     }
                 }
-                //builder.GetInsertCommand(); This is interesting for updating the Database.
             }
+
+            return securityList;
         }
 
         /// <summary>
@@ -92,10 +97,24 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         /// <param name="securitiesToInsert"></param>
         /// <returns></returns>
-        private bool UpdateDatabase(List<Security> securitiesToInsert)
+        public bool UpdateDatabase(List<Security> securitiesToInsert)
         {
-
             return true;
+        }
+
+        /// <summary>
+        /// Uploads table to database upon closing.
+        /// </summary>
+        /// <returns></returns>
+        public bool UploadDatabase()
+        {
+            if (securityList != null)
+            {
+                //Upload to SQL Database
+                return true;
+            }
+            else
+                return false;
         }
 
 
@@ -112,6 +131,7 @@ namespace Asset_Management_Platform.Utility
 
         public void Dispose()
         {
+            UploadDatabase();
             securityList = null;
             seeder = null;
         }
