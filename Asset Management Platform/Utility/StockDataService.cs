@@ -43,7 +43,13 @@ namespace Asset_Management_Platform.Utility
 
         private void LoadDatabase()
         {
-            throw new NotImplementedException();
+            using (var connection = new SqlConnection("SQLStorageConnection"))
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                var builder = new SqlCommandBuilder();
+                //builder.GetInsertCommand(); This is interesting for updating the Database.
+            }
         }
 
         /// <summary>
@@ -66,6 +72,19 @@ namespace Asset_Management_Platform.Utility
             else
                 return true; //Database IS empty
         }
+
+
+        /// <summary>
+        /// Insert position(s) into the database and returns true if successful
+        /// </summary>
+        /// <param name="securitiesToInsert"></param>
+        /// <returns></returns>
+        private bool UpdateDatabase(List<Security> securitiesToInsert)
+        {
+
+            return true;
+        }
+
 
         /// <summary>
         /// Seeds the SQL table if it has no contents using 

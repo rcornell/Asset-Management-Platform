@@ -12,6 +12,7 @@
   See http://www.galasoft.ch/mvvm
 */
 
+using Asset_Management_Platform.Utility;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
@@ -43,6 +44,10 @@ namespace Asset_Management_Platform.ViewModel
             ////}
 
             SimpleIoc.Default.Register<MainViewModel>();
+
+            SimpleIoc.Default.Register<StockDataService>();
+            SimpleIoc.Default.Register<PortfolioService>();
+            SimpleIoc.Default.Register<Portfolio>();
         }
 
         public MainViewModel Main

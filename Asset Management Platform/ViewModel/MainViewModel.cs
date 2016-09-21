@@ -23,13 +23,13 @@ namespace Asset_Management_Platform.ViewModel
         /// </summary>
         /// 
 
-        SimpleIoc container = new SimpleIoc();
+        Portfolio portfolio;
+        PortfolioService portfolioService;
+
 
         public MainViewModel()
         {
-            container.Register<StockDataService>();
-            container.Register<PortfolioService>();
-            container.Register<Portfolio>();
+            
             ////if (IsInDesignMode)
             ////{
             ////    // Code runs in Blend --> create design time data.
