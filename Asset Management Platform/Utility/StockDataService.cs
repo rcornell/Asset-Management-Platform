@@ -43,11 +43,24 @@ namespace Asset_Management_Platform.Utility
 
         private void LoadDatabase()
         {
+            securityList = new List<Security>();
             using (var connection = new SqlConnection("SQLStorageConnection"))
             {
                 connection.Open();
-                var command = connection.CreateCommand();
-                var builder = new SqlCommandBuilder();
+                using (var command = new SqlCommand())
+                {
+                    command.CommandText = @"SELECT * FROM STOCKS";
+                    var reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        var cusip = reader.GetString(0);
+                        var ticker = reader.GetString(1);
+                        var description = reader.GetString(2);
+                        var lastPrice = reader.GetFloat(3);
+                        var yield = reader.GetDouble(4);
+                        securityList.Add(new Security(cusip, ticker, description, lastPrice, yield));
+                    }
+                }
                 //builder.GetInsertCommand(); This is interesting for updating the Database.
             }
         }
