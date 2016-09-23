@@ -9,10 +9,12 @@ namespace Asset_Management_Platform.Messages
     class DatabaseMessage
     {
         public string Message;
+        public bool Success;
 
-        public DatabaseMessage(string message)
+        public DatabaseMessage(string message, bool success)
         {
             Message = message;
+            Success = success;
         }
     }
 }

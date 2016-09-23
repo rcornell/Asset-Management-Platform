@@ -9,11 +9,11 @@ namespace Asset_Management_Platform.Utility
 {
     class PortfolioService
     {
-        private StockValueService stockValue;
+        private StockDataService stockValue;
 
         public PortfolioService()
         {
-            SimpleIoc.Default.Register<StockDataService>();
+            stockValue = SimpleIoc.Default.GetInstance<StockDataService>();
         }
 
     }

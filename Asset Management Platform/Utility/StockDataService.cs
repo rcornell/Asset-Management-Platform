@@ -1,13 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data.Sql;
 using System.Data.SqlClient;
-using Microsoft.Azure; // Namespace for CloudConfigurationManager 
-using Microsoft.WindowsAzure.Storage; // Namespace for CloudStorageAccount
-using Microsoft.WindowsAzure.Storage.Table; // Namespace for Table storage types
 using GalaSoft.MvvmLight.Messaging;
 using Asset_Management_Platform.Messages;
 
@@ -38,7 +31,7 @@ namespace Asset_Management_Platform.Utility
         {
             if (CheckForNullDatabase()) { 
                 SeedDatabase();
-                Messenger.Default.Send(new DatabaseMessage("Empty database restored."));
+                Messenger.Default.Send(new DatabaseMessage("Empty database restored.", false));
             }
         }
 
