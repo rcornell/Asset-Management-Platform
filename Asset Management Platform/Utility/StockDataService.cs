@@ -12,7 +12,7 @@ namespace Asset_Management_Platform.Utility
     /// containing basic data for all the positions covered by
     /// this application.
     /// </summary>
-    class StockDataService : IDisposable
+    public class StockDataService : IDisposable
     {
         List<Security> securityList;
         SecurityTableSeederDataService seeder;

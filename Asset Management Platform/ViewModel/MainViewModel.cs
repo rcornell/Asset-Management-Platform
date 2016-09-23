@@ -1,6 +1,7 @@
 using Asset_Management_Platform.Utility;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace Asset_Management_Platform.ViewModel
 {
@@ -23,12 +24,19 @@ namespace Asset_Management_Platform.ViewModel
         /// </summary>
         /// 
 
-        Portfolio portfolio;
-        PortfolioService portfolioService;
+        public Portfolio Portfolio;
+        public PortfolioService PortfolioService;
+        public StockDataService StockDataService;
 
 
         public MainViewModel()
         {
+            StockDataService = SimpleIoc.Default.GetInstance<StockDataService>("SQLStorageConnection");
+            StockDataService.Initialize();
+            var securityList = StockDataService.LoadDatabase();
+            PortfolioService = SimpleIoc.Default.GetInstance<PortfolioService>();
+            //^^^^ This needs a param passed to it. Incorrect use of SimpleIOC?*****
+
             
             ////if (IsInDesignMode)
             ////{

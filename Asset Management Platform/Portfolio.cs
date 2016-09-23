@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Asset_Management_Platform.ViewModel
 {
-    class Portfolio
+    public class Portfolio
     {
         private List<Security> _myPortfolio;
         public List<Security> MyPortfolio

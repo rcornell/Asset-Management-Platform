@@ -8,7 +8,7 @@ using System.Windows.Threading;
 
 namespace Asset_Management_Platform.Utility
 {
-    class PortfolioService
+    public class PortfolioService
     {
         private StockDataService _stockValue;
         private DispatcherTimer _timer;
