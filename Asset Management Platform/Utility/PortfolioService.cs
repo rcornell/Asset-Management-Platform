@@ -19,8 +19,18 @@ namespace Asset_Management_Platform.Utility
             _stockValue = SimpleIoc.Default.GetInstance<StockDataService>();
             _securityList = securityList;
             _timer = new DispatcherTimer();
-            _timer.Interval = new TimeSpan(0, 0, 10);           
+            _timer.Tick += _timer_Tick;
+            _timer.Interval = new TimeSpan(0, 0, 10);
+                       
             CalculatePositionValues();
+        }
+
+        private void _timer_Tick(object sender, EventArgs e)
+        {
+            if (_stockValue.UpdateDatabase())
+            {
+                //Do stuff
+            }
         }
 
         private void CalculatePositionValues()
@@ -43,5 +53,7 @@ namespace Asset_Management_Platform.Utility
         {
             _timer.Stop();
         }
+
+
     }
 }

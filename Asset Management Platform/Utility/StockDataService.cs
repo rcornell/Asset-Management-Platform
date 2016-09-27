@@ -16,6 +16,7 @@ namespace Asset_Management_Platform.Utility
     {
         List<Security> securityList;
         SecurityTableSeederDataService seeder;
+        YahooAPIService yahooAPI;
 
         //public SqlCommand commander;
         //Going to add a branch
@@ -29,6 +30,7 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         public void Initialize()
         {
+            yahooAPI = new YahooAPIService();
             if (CheckForNullDatabase()) { 
                 SeedDatabase();
                 Messenger.Default.Send(new DatabaseMessage("Empty database restored.", false));
@@ -84,13 +86,19 @@ namespace Asset_Management_Platform.Utility
                 return true; //Database IS empty
         }
 
+        public bool UpdateDatabase()
+        {
+
+            return true;
+        }
+
 
         /// <summary>
         /// Insert position(s) into the database and returns true if successful
         /// </summary>
         /// <param name="securitiesToInsert"></param>
         /// <returns></returns>
-        public bool UpdateDatabase(List<Security> securitiesToInsert)
+        public bool InsertIntoDatabase(List<Security> securitiesToInsert)
         {
             return true;
         }

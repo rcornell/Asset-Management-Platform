@@ -106,16 +106,14 @@ namespace Asset_Management_Platform.Utility
 
         private List<Security> _securities;
 
-        private List<string> _tickers;
         //public List<string> Tickers
         //{
         //    get { return _tickers; }
         //    set { _tickers = value; }
         //}
 
-        public YahooAPIService(List<string> tickers)
+        public YahooAPIService()
         {
-            _tickers = tickers;
         }
 
 
@@ -140,14 +138,14 @@ namespace Asset_Management_Platform.Utility
                 return result;
             }
         }
-        private List<Security> GetData()
+        private List<Security> GetData(List<string> tickers)
         {
 
             // Build the URL.
             string url = "";
             int i = 0;
 
-            foreach (string s in _tickers)
+            foreach (string s in tickers)
             {
                 url += s[i] + "+";
                 i++;

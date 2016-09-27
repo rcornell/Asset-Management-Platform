@@ -109,6 +109,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Messages\DatabaseMessage.cs" />
+    <Compile Include="Messages\PortfolioMessage.cs" />
     <Compile Include="SecurityClasses\CorporateBond.cs" />
     <Compile Include="SecurityClasses\ExchangeTradedFund.cs" />
     <Compile Include="SecurityClasses\FixedIncome.cs" />
