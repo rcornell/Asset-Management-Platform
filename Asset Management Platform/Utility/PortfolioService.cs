@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Ioc;
 using System.Windows.Threading;
+using GalaSoft.MvvmLight.Messaging;
+using Asset_Management_Platform.Messages;
 
 namespace Asset_Management_Platform.Utility
 {
@@ -25,11 +27,19 @@ namespace Asset_Management_Platform.Utility
             CalculatePositionValues();
         }
 
+        /// <summary>
+        /// When timer ticks, StockDataService uses YahooAPIService to update pricing 
+        /// information for all securities in the list, then updates the security list
+        /// in this class and sends out the PortfolioMessage
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void _timer_Tick(object sender, EventArgs e)
         {
             if (_stockValue.UpdateDatabase())
             {
-                
+                _securityList = _stockValue.SecurityList;
+                Messenger.Default.Send(new PortfolioMessage(_securityList));
             }
         }
 
