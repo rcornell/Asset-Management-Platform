@@ -14,9 +14,12 @@ namespace Asset_Management_Platform.Utility
     /// </summary>
     public class StockDataService : IDisposable
     {
-        List<Security> securityList;
-        SecurityTableSeederDataService seeder;
-        YahooAPIService yahooAPI;
+        private List<Security> _securityList;
+        public List<Security> SecurityList {
+            get { return _securityList; }
+            set { _securityList = value; }
+        }
+
 
         //public SqlCommand commander;
         //Going to add a branch
@@ -30,7 +33,6 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         public void Initialize()
         {
-            yahooAPI = new YahooAPIService();
             if (CheckForNullDatabase()) { 
                 SeedDatabase();
                 Messenger.Default.Send(new DatabaseMessage("Empty database restored.", false));
@@ -42,7 +44,7 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         public List<Security> LoadDatabase()
         {
-            securityList = new List<Security>();
+            _securityList = new List<Security>();
             using (var connection = new SqlConnection("SQLStorageConnection"))
             {
                 connection.Open();
@@ -57,12 +59,12 @@ namespace Asset_Management_Platform.Utility
                         var description = reader.GetString(2);
                         var lastPrice = reader.GetFloat(3);
                         var yield = reader.GetDouble(4);
-                        securityList.Add(new Security(cusip, ticker, description, lastPrice, yield));
+                        _securityList.Add(new Security(cusip, ticker, description, lastPrice, yield));
                     }
                 }
             }
 
-            return securityList;
+            return _securityList;
         }
 
         /// <summary>
@@ -88,6 +90,21 @@ namespace Asset_Management_Platform.Utility
 
         public bool UpdateDatabase()
         {
+            var tickers = new List<string>();
+            foreach (var security in _securityList)
+            {
+                tickers.Add(security.Ticker);
+            }
+
+            if (tickers.Count > 0)
+            {
+                using (var yahoo = new YahooAPIService())
+                {
+                    _securityList = yahoo.GetData(tickers);
+                }
+            }
+            else
+                return false;
 
             return true;
         }
@@ -107,15 +124,12 @@ namespace Asset_Management_Platform.Utility
         /// Uploads table to database upon closing.
         /// </summary>
         /// <returns></returns>
-        public bool UploadDatabase()
+        public void UploadDatabase()
         {
-            if (securityList != null)
+            if (_securityList != null)
             {
                 //Upload to SQL Database
-                return true;
             }
-            else
-                return false;
         }
 
 
@@ -125,16 +139,17 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         private void SeedDatabase()
         {
-            seeder = new SecurityTableSeederDataService();
-            seeder.LoadCsvDataIntoSqlServer("StorageConnectionString");
+            using (var seeder = new SecurityTableSeederDataService())
+            {
+                seeder.LoadCsvDataIntoSqlServer("StorageConnectionString");
+            }
         }
 
 
         public void Dispose()
         {
             UploadDatabase();
-            securityList = null;
-            seeder = null;
+            _securityList = null;
         }
     }
 }

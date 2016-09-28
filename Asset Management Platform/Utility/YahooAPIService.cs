@@ -138,7 +138,7 @@ namespace Asset_Management_Platform.Utility
                 return result;
             }
         }
-        private List<Security> GetData(List<string> tickers)
+        public List<Security> GetData(List<string> tickers)
         {
 
             // Build the URL.

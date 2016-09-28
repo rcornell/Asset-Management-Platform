@@ -29,7 +29,7 @@ namespace Asset_Management_Platform.Utility
         {
             if (_stockValue.UpdateDatabase())
             {
-                //Do stuff
+                
             }
         }
 
