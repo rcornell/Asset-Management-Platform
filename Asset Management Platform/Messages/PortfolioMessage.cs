@@ -10,6 +10,11 @@ namespace Asset_Management_Platform.Messages
     {
         public List<Security> Securities;
 
+        public PortfolioMessage()
+        {
+
+        }
+
         public PortfolioMessage(List<Security> securities)
         {
             Securities = securities;

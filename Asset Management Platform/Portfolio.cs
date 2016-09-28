@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Asset_Management_Platform.ViewModel
+namespace Asset_Management_Platform
 {
     public class Portfolio
     {
