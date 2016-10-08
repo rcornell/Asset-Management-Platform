@@ -9,8 +9,8 @@ namespace Asset_Management_Platform
 {
     public class Portfolio
     {
-        private List<Security> _myPortfolio;
-        public List<Security> MyPortfolio
+        private List<Position> _myPortfolio;
+        public List<Position> MyPortfolio
         {
             get { return _myPortfolio; }
             set { _myPortfolio = value; }
@@ -37,7 +37,12 @@ namespace Asset_Management_Platform
             catch { }
         }
 
-        private bool AddToPortfolio(Security securityToAdd)
+        private bool AddToPortfolio(Security securityToAdd, int shares)
+        {
+            return true;
+        }
+
+        private bool SellSharesFromPortfolio(Security securityToRemove, int shares)
         {
             return true;
         }

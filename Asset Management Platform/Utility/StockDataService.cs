@@ -98,9 +98,9 @@ namespace Asset_Management_Platform.Utility
 
             if (tickers.Count > 0)
             {
-                using (var yahoo = new YahooAPIService())
+                using (var yahooAPI = new YahooAPIService())
                 {
-                    _securityList = yahoo.GetData(tickers);
+                    _securityList = yahooAPI.GetData(tickers);
                 }
             }
             else

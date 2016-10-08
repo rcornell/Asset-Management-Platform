@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Asset_Management_Platform
 {
-    class Position
+    public class Position
     {
         private Security securityInfo;
         public Security SecurityInfo { get { return securityInfo; } }
