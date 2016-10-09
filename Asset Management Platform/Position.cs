@@ -8,35 +8,23 @@ namespace Asset_Management_Platform
 {
     public class Position
     {
-        private Security securityInfo;
-        public Security SecurityInfo { get { return securityInfo; } }
-
-        private int sharesOwned;
-        public int SharesOwned { get { return sharesOwned; } }
-
-        public float Value {
-            get { return GetValue(); } }
-
-        public Position(Security security, int shares)
-        {
-            securityInfo = security;
-            sharesOwned = shares;
+        private string _ticker;
+        public string Ticker {
+            get { return _ticker;  }
+            set { _ticker = value;  }
         }
 
-        private float GetValue()
+        private int _sharesOwned;
+        public int SharesOwned
         {
-            float value = 0;
+            get { return _sharesOwned; }
+            set { _sharesOwned = value; }
+        }
 
-            var type = GetType();
-            if (type == typeof(FixedIncome))
-            {
-                //If the below return doesn't exit the method, refactor this. Otherwise it will recalculate value again when it exits the if.
-                value = (sharesOwned * 1000) * securityInfo.LastPrice;
-                return value;
-            }
-
-            value = sharesOwned * securityInfo.LastPrice;
-            return value;
+        public Position(string security, int shares)
+        {
+            _ticker = security;
+            _sharesOwned = shares;
         }
     }
 }
