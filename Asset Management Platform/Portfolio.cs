@@ -91,30 +91,69 @@ namespace Asset_Management_Platform
         
         private void SavePortfolioToDatabase()
         {
+            var positionsToInsert = new List<Position>();
+            var positionsToUpdate = new List<Position>();
+
+            foreach (var p in _myPortfolio) //Where?
+            {
+                //Is current position in _myPortfolio unchanged from original state?
+                if (_databaseOriginalState.Contains(p))
+                {
+                    continue;
+                }
+
+                //Is the current position's ticker in the original state but the quantity is different?
+                if (_databaseOriginalState.Any(pos => pos.Ticker == p.Ticker && pos.SharesOwned != p.SharesOwned))
+                {
+                    positionsToUpdate.Add(p);
+                }
+
+                //Is the ticker not present in the original database?
+                if (!_databaseOriginalState.Any(pos => pos.Ticker == p.Ticker))
+                {
+                    positionsToInsert.Add(p);
+                }
+            }
+
+            //If no updates, exit method.
+            if (!positionsToInsert.Any() && !positionsToUpdate.Any())
+                return;
+
             try {
                 using (var connection = new SqlConnection("StorageConnectionString"))
                 {
-                    var positionsToInsert = new List<Position>();
-                    var positionsToUpdate = new List<Position>();
-
-                    foreach (var p in _myPortfolio) //Where?
-                    {
-                        if (_myPortfolio.Contains(p))
-                        {
-                            continue;
-                        }
-                    }
-
                     connection.Open();
                     using (var command = new SqlCommand())
                     {
-                        foreach (var pos in _myPortfolio)
+                        //May be unstable if it pushes too many commands too quickly
+                        if (positionsToUpdate.Any()) { 
+                            foreach (var pos in positionsToUpdate)
+                            {
+                                command.CommandText = string.Format("UPDATE MyPortfolio SET Quantity = {0} WHERE Ticker = {1}", pos.SharesOwned, pos.Ticker);
+                                command.ExecuteNonQuery();
+                            }
+                        }
+
+                        if (positionsToInsert.Any())
                         {
-                            command.CommandText = string.Format("UPDATE MyPortfolio SET Quantity = {0} WHERE Ticker = {1}", pos.SharesOwned, pos.Ticker);
+                            string insertString = @"INSERT INTO MyPortfolio (Ticker, Quantity) VALUES";
+
+                            var final = positionsToInsert.Last();
+                            foreach (var pos in positionsToInsert)
+                            {
+                                //If the position being iterated is the last one, add the terminating SQL clause instead
+                                if (pos != final)
+                                {
+                                    insertString += string.Format("({0}, {1}), ", pos.Ticker, pos.SharesOwned);
+                                }
+                                else
+                                {
+                                    insertString += string.Format("({0}, {1});", pos.Ticker, pos.SharesOwned);
+                                }
+                            }
+                            command.CommandText = insertString;
                             command.ExecuteNonQuery();
                         }
-                        //Do we need to check if table exists?
-                        
                     }
                 }
 
