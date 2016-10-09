@@ -12,6 +12,8 @@ namespace Asset_Management_Platform
     {
         private SqlDataReader reader;
 
+        private List<Position> _databaseOriginalState;
+
         private List<Position> _myPortfolio;
         public List<Position> MyPortfolio
         {
@@ -48,6 +50,9 @@ namespace Asset_Management_Platform
                     }
                 }
             }
+
+            //Does this work as intended?
+            _databaseOriginalState = _myPortfolio;
         }
 
         /// <summary>
@@ -84,10 +89,44 @@ namespace Asset_Management_Platform
         }
 
         
-        private void SavePortfolio()
+        private void SavePortfolioToDatabase()
         {
-            try { }
-            catch { }
+            try {
+                using (var connection = new SqlConnection("StorageConnectionString"))
+                {
+                    var positionsToInsert = new List<Position>();
+                    var positionsToUpdate = new List<Position>();
+
+                    foreach (var p in _myPortfolio) //Where?
+                    {
+                        if (_myPortfolio.Contains(p))
+                        {
+                            continue;
+                        }
+                    }
+
+                    connection.Open();
+                    using (var command = new SqlCommand())
+                    {
+                        foreach (var pos in _myPortfolio)
+                        {
+                            command.CommandText = string.Format("UPDATE MyPortfolio SET Quantity = {0} WHERE Ticker = {1}", pos.SharesOwned, pos.Ticker);
+                            command.ExecuteNonQuery();
+                        }
+                        //Do we need to check if table exists?
+                        
+                    }
+                }
+
+            }
+            catch (SqlException ex)
+            {
+  
+            }
+            catch (InvalidOperationException ex)
+            {
+  
+            }
         }
 
         private bool AddToPortfolio(Security securityToAdd, int shares)
