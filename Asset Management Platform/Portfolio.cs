@@ -10,6 +10,8 @@ namespace Asset_Management_Platform
 {
     public class Portfolio
     {
+        List<Position> positionsToDelete;
+
         private SqlDataReader reader;
 
         private List<Position> _databaseOriginalState;
@@ -23,6 +25,7 @@ namespace Asset_Management_Platform
 
         public Portfolio()
         {
+             positionsToDelete = new List<Position>();
             _myPortfolio = new List<Position>();
         }
 
@@ -94,7 +97,7 @@ namespace Asset_Management_Platform
             var positionsToInsert = new List<Position>();
             var positionsToUpdate = new List<Position>();
 
-            foreach (var p in _myPortfolio) //Where?
+            foreach (var p in _myPortfolio)
             {
                 //Is current position in _myPortfolio unchanged from original state?
                 if (_databaseOriginalState.Contains(p))
@@ -113,10 +116,16 @@ namespace Asset_Management_Platform
                 {
                     positionsToInsert.Add(p);
                 }
+
+                //Is the quantity zero'd out from a sale?
+                if (_databaseOriginalState.Any(pos => pos.Ticker == p.Ticker && pos.SharesOwned == 0))
+                {
+
+                }
             }
 
-            //If no updates, exit method.
-            if (!positionsToInsert.Any() && !positionsToUpdate.Any())
+            //If no inserts, updates, or deletes, exit method.
+            if (!positionsToInsert.Any() && !positionsToUpdate.Any() && !positionsToDelete.Any())
                 return;
 
             try {
@@ -154,13 +163,18 @@ namespace Asset_Management_Platform
                             command.CommandText = insertString;
                             command.ExecuteNonQuery();
                         }
+
+                        if (positionsToDelete.Any())
+                        {
+                            string deleteString = @"";
+                        }
                     }
                 }
 
             }
             catch (SqlException ex)
             {
-  
+                
             }
             catch (InvalidOperationException ex)
             {
@@ -168,19 +182,29 @@ namespace Asset_Management_Platform
             }
         }
 
-        private bool AddToPortfolio(Security securityToAdd, int shares)
+        private void AddToPortfolio(Security securityToAdd, int shares)
         {
-            return true;
+            var position = new Position(securityToAdd.Ticker, shares);
+            _myPortfolio.Add(position);
+            //PROBABLY NEED TO SEND A MESSAGE TO UPDATE UI
         }
 
-        private bool SellSharesFromPortfolio(Security securityToRemove, int shares)
+        private void SellSharesFromPortfolio(Security security, int shares)
         {
-            return true;
-        }
-
-        private bool RemoveFromPortfolio(Security securityToRemove)
-        {
-            return true;
+            foreach (var p in _myPortfolio.Where(p => p.Ticker == security.Ticker))
+            {
+                if (p.SharesOwned == shares)
+                {
+                    var deleteThis = new Position(security.Ticker, shares);
+                    _myPortfolio.Remove(new Position(security.Ticker, shares));
+                    positionsToDelete.Add(deleteThis);
+                }
+                else
+                {
+                    p.SharesOwned -= shares;
+                }
+            }
+            //PROBABLY NEED TO SEND A MESSAGE TO UPDATE UI
         }
     }
 
