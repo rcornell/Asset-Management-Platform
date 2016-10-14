@@ -28,7 +28,7 @@ namespace Asset_Management_Platform.Utility
         public PortfolioService()
         {
             _stockDataService = SimpleIoc.Default.GetInstance<StockDataService>();
-            _securityList = _stockDataService.LoadDatabase();
+            _securityList = _stockDataService.LoadSecurityDatabase();
             _timer = new DispatcherTimer();
             _timer.Tick += _timer_Tick;
             _timer.Interval = new TimeSpan(0, 0, 10);
@@ -45,7 +45,7 @@ namespace Asset_Management_Platform.Utility
         /// <param name="e"></param>
         private void _timer_Tick(object sender, EventArgs e)
         {
-            if (_stockDataService.UpdateDatabase())
+            if (_stockDataService.UpdateSecurityDatabase())
             {
                 _securityList = _stockDataService.SecurityList;
                 Messenger.Default.Send(new PortfolioMessage(_securityList));

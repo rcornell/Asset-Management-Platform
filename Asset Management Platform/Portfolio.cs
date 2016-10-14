@@ -10,10 +10,8 @@ namespace Asset_Management_Platform
 {
     public class Portfolio
     {
-        List<Position> positionsToDelete;
-
+        private List<Position> positionsToDelete;
         private SqlDataReader reader;
-
         private List<Position> _databaseOriginalState;
 
         private List<Position> _myPortfolio;
@@ -29,6 +27,39 @@ namespace Asset_Management_Platform
             _myPortfolio = new List<Position>();
         }
 
+
+        /// <summary>
+        /// Will attempt to load the MyPortfolio
+        /// table from SQL Database. If no MyPortfolio
+        /// table is found, it will return false.
+        /// </summary>
+        public bool CheckForPortfolio()
+        {
+            try
+            {
+                using (var connection = new SqlConnection("StorageConnectionString"))
+                {
+                    connection.Open();
+                    using (var command = new SqlCommand())
+                    {
+                        command.CommandText = @"SELECT * FROM MYPORTFOLIO;";
+                        reader = command.ExecuteReader();
+                        if (reader.HasRows == true)
+                            return true;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                return false;
+            }
+            catch (InvalidOperationException ex)
+            {
+                return false;
+            }
+
+            return false;
+        }
 
         /// <summary>
         /// Creates a List<Position> 
@@ -58,39 +89,7 @@ namespace Asset_Management_Platform
             _databaseOriginalState = _myPortfolio;
         }
 
-        /// <summary>
-        /// Will attempt to load the MyPortfolio
-        /// table from SQL Database. If no MyPortfolio
-        /// table is found, it will return false.
-        /// </summary>
-        public bool CheckForPortfolio()
-        {
-            try {
-                using (var connection = new SqlConnection("StorageConnectionString"))
-                {
-                    connection.Open();
-                    using (var command = new SqlCommand())
-                    {
-                        command.CommandText = @"SELECT * FROM MYPORTFOLIO;";
-                        reader = command.ExecuteReader();
-                        if (reader.HasRows == true)
-                            return true;
-                    }
-                }
-            }
-            catch (SqlException ex)
-            {
-
-                return false;
-            }
-            catch (InvalidOperationException ex)
-            {
-                return false;
-            }
-
-            return false;
-        }
-
+     
         /// <summary>
         /// Compares _myPortfolio to the _databaseOriginalState from launch
         /// and creates lists of securities to update, insert, or delete.
@@ -222,6 +221,13 @@ namespace Asset_Management_Platform
             //PROBABLY NEED TO SEND A MESSAGE TO UPDATE UI
         }
 
+        /// <summary>
+        /// Takes a security and a share quantity. If the share quantity is equal to 
+        /// the total position, the ticker is added to the list to be deleted
+        /// when the database is updated.
+        /// </summary>
+        /// <param name="security"></param>
+        /// <param name="shares"></param>
         private void SellSharesFromPortfolio(Security security, int shares)
         {
             foreach (var p in _myPortfolio.Where(p => p.Ticker == security.Ticker))
@@ -229,7 +235,7 @@ namespace Asset_Management_Platform
                 if (p.SharesOwned == shares)
                 {
                     var deleteThis = new Position(security.Ticker, shares);
-                    _myPortfolio.Remove(new Position(security.Ticker, shares));
+                    _myPortfolio.Remove(deleteThis);
                     positionsToDelete.Add(deleteThis);
                 }
                 else

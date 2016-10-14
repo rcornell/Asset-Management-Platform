@@ -36,7 +36,7 @@ namespace Asset_Management_Platform.ViewModel
         {
             _stockDataService = SimpleIoc.Default.GetInstance<StockDataService>("SQLStorageConnection");
             _stockDataService.Initialize();
-            var securityList = _stockDataService.LoadDatabase();
+            var securityList = _stockDataService.LoadSecurityDatabase();
             _portfolioService = SimpleIoc.Default.GetInstance<PortfolioService>();
             //^^^^ This needs a param passed to it. Incorrect use of SimpleIOC?*****
 

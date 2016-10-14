@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using GalaSoft.MvvmLight.Messaging;
 using Asset_Management_Platform.Messages;
+using System.Linq;
 
 
 namespace Asset_Management_Platform.Utility
@@ -25,6 +26,7 @@ namespace Asset_Management_Platform.Utility
         //Going to add a branch
         public StockDataService()
         {
+            _securityList = new List<Security>();
             Initialize();
         }
 
@@ -42,9 +44,8 @@ namespace Asset_Management_Platform.Utility
         /// <summary>
         /// Reads the SQL database and returns a List<Security>
         /// </summary>
-        public List<Security> LoadDatabase()
+        public List<Security> LoadSecurityDatabase()
         {
-            _securityList = new List<Security>();
             using (var connection = new SqlConnection("SQLStorageConnection"))
             {
                 connection.Open();
@@ -88,7 +89,7 @@ namespace Asset_Management_Platform.Utility
                 return true; //Database IS empty
         }
 
-        public bool UpdateDatabase()
+        public bool UpdateSecurityDatabase()
         {
             var tickers = new List<string>();
             foreach (var security in _securityList)
@@ -128,7 +129,26 @@ namespace Asset_Management_Platform.Utility
         {
             if (_securityList != null)
             {
-                //Upload to SQL Database
+                var insertString = @"INSERT INTO Stocks (Cusip, Ticker, Description, LastPrice, Yield) VALUES ";
+                using (var connection = new SqlConnection("StorageConnectionString"))
+                {
+                    using (var command = new SqlCommand())
+                    {
+                        command.CommandText = @"DELETE * FROM STOCKS;";
+                        command.ExecuteNonQuery();
+
+                        var final = _securityList.Last();
+                        foreach (var sec in _securityList)
+                        {
+                            var newValue = string.Format("({0}, {1}, {2}, {3}, {4}) ", sec.Cusip, sec.Ticker, sec.Description, sec.LastPrice, sec.Yield);
+                            insertString += newValue;
+                            if (sec == final)
+                                insertString += @";";
+                        }
+
+                        command.ExecuteNonQuery();
+                    }
+                }
             }
         }
 
