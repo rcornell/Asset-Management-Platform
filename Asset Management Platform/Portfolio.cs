@@ -97,6 +97,8 @@ namespace Asset_Management_Platform
         /// </summary>
         private void SavePortfolioToDatabase()
         {
+            BackupDatabase();
+
             var positionsToInsert = new List<Position>();
             var positionsToUpdate = new List<Position>();
 
@@ -193,6 +195,23 @@ namespace Asset_Management_Platform
             catch (InvalidOperationException ex)
             {
   
+            }
+        }
+
+        /// <summary>
+        /// Creates a copy of MyPortfolio table in Database in case of update error.
+        /// </summary>
+        private void BackupDatabase()
+        {
+            //Perhaps a way to create multiple backups?
+            string backup = @"SELECT * FROM MyPortfolio INTO MyPortfolioBackup;";
+            using (SqlConnection connection = new SqlConnection("StorageConnectionString"))
+            {
+                using (var command = new SqlCommand())
+                {
+                    command.CommandText = backup;
+                    command.ExecuteNonQuery();
+                }
             }
         }
 
