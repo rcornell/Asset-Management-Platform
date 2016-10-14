@@ -91,7 +91,10 @@ namespace Asset_Management_Platform
             return false;
         }
 
-        
+        /// <summary>
+        /// Compares _myPortfolio to the _databaseOriginalState from launch
+        /// and creates lists of securities to update, insert, or delete.
+        /// </summary>
         private void SavePortfolioToDatabase()
         {
             var positionsToInsert = new List<Position>();
@@ -134,6 +137,7 @@ namespace Asset_Management_Platform
                     connection.Open();
                     using (var command = new SqlCommand())
                     {
+                        //UPDATE POSITIONS IF NECESSARY
                         //May be unstable if it pushes too many commands too quickly
                         if (positionsToUpdate.Any()) { 
                             foreach (var pos in positionsToUpdate)
@@ -143,6 +147,7 @@ namespace Asset_Management_Platform
                             }
                         }
 
+                        //INSERT POSITIONS IF NECESSARY
                         if (positionsToInsert.Any())
                         {
                             string insertString = @"INSERT INTO MyPortfolio (Ticker, Quantity) VALUES";
@@ -164,9 +169,18 @@ namespace Asset_Management_Platform
                             command.ExecuteNonQuery();
                         }
 
+                        //DELETE POSITIONS IF NECESSARY
                         if (positionsToDelete.Any())
                         {
-                            string deleteString = @"";
+                            string deleteString = @"DELETE FROM MyPortfolio WHERE Ticker =";
+
+                            foreach (var pos in positionsToDelete)
+                            {
+                                var deleteCommand = deleteString += pos.Ticker;
+                                command.CommandText = deleteCommand;
+                                command.BeginExecuteNonQuery();
+                            }
+
                         }
                     }
                 }
