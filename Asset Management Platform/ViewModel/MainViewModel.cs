@@ -55,7 +55,7 @@ namespace Asset_Management_Platform.ViewModel
 
         private void RefreshCollection(PortfolioMessage obj)
         {
-            _portfolio = _portfolioService.MyPortfolio;
+            _portfolio = _portfolioService.CurrentPortfolio;
         }
 
         private void Initialize()

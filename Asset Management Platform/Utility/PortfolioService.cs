@@ -12,12 +12,20 @@ namespace Asset_Management_Platform.Utility
 {
     public class PortfolioService
     {
+        private Dictionary<string, double> _positionValues;
+        public Dictionary<string, double> PositionValues
+        {
+            get { return _positionValues; }
+            set { _positionValues = value; }
+        }
+
+
         private StockDataService _stockDataService;
         private DispatcherTimer _timer;
         private List<Security> _securityList;
 
         private Portfolio _myPortfolio;
-        public Portfolio MyPortfolio {
+        public Portfolio CurrentPortfolio {
                 get {
                     CalculatePositionValues();
                     return _myPortfolio;
@@ -45,16 +53,25 @@ namespace Asset_Management_Platform.Utility
         /// <param name="e"></param>
         private void _timer_Tick(object sender, EventArgs e)
         {
-            if (_stockDataService.UpdateSecurityDatabase())
+            bool securityDatabaseUpdated = _stockDataService.UpdateSecurityDatabase();
+            if (securityDatabaseUpdated)
             {
                 _securityList = _stockDataService.SecurityList;
-                Messenger.Default.Send(new PortfolioMessage(_securityList));
             }
+            CalculatePositionValues();
         }
 
         private void CalculatePositionValues()
         {
-            throw new NotImplementedException();
+            foreach (var pos in CurrentPortfolio.MyPortfolio)
+            {
+                var ticker = pos.Ticker;
+                var security = _securityList.Find(s => s.Ticker == ticker);
+                var value = security.LastPrice * pos.SharesOwned;
+                _positionValues.Add(ticker, value);
+            }
+
+            //Add try catch when you know what kind of errors this can lead to.
         }
 
         /// <summary>
