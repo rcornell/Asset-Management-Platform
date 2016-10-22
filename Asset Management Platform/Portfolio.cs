@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Messaging;
 using System.Text;
 using System.Threading.Tasks;
+using Asset_Management_Platform.Messages;
 
 namespace Asset_Management_Platform
 {
@@ -51,10 +54,16 @@ namespace Asset_Management_Platform
             }
             catch (SqlException ex)
             {
+                var msg = new PortfolioMessage();
+                msg.Message = ex.Message;
+                Messenger.Default.Send(msg);
                 return false;
             }
             catch (InvalidOperationException ex)
             {
+                var msg = new PortfolioMessage();
+                msg.Message = ex.Message;
+                Messenger.Default.Send(msg);
                 return false;
             }
 
@@ -124,12 +133,12 @@ namespace Asset_Management_Platform
                 //Is the quantity zero'd out from a sale?
                 if (_databaseOriginalState.Any(pos => pos.Ticker == p.Ticker && pos.SharesOwned == 0))
                 {
-
+                    positionsToDelete.Add(p);
                 }
             }
 
             //If no inserts, updates, or deletes, exit method.
-            if (!positionsToInsert.Any() && !positionsToUpdate.Any() && !positionsToDelete.Any())
+            if (positionsToInsert.Count == 0 && positionsToUpdate.Count == 0 && positionsToDelete.Count == 0)
                 return;
 
             try {
@@ -189,11 +198,14 @@ namespace Asset_Management_Platform
             }
             catch (SqlException ex)
             {
-                
+                var msg = new DatabaseMessage(ex.Message, false);
+                Messenger.Default.Send(msg);
+
             }
             catch (InvalidOperationException ex)
             {
-  
+                var msg = new DatabaseMessage(ex.Message, false);
+                Messenger.Default.Send(msg);
             }
         }
 

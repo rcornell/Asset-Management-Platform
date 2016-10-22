@@ -11,6 +11,11 @@ namespace Asset_Management_Platform.Messages
         public string Message;
         public bool Success;
 
+        public DatabaseMessage()
+        {
+
+        }
+
         public DatabaseMessage(string message, bool success)
         {
             Message = message;
