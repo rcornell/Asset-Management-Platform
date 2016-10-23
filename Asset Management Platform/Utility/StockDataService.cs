@@ -46,7 +46,7 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         public List<Security> LoadSecurityDatabase()
         {
-            using (var connection = new SqlConnection("SQLStorageConnection"))
+            using (var connection = new SqlConnection("StorageConnectionString"))
             {
                 connection.Open();
                 using (var command = new SqlCommand())
@@ -75,7 +75,7 @@ namespace Asset_Management_Platform.Utility
         {
             int result = 0;
 
-            using (var connection = new SqlConnection("SQLStorageConnection"))
+            using (var connection = new SqlConnection("StorageConnectionString"))
             {               
                 connection.Open();
                 var command = new SqlCommand();

@@ -34,7 +34,7 @@ namespace Asset_Management_Platform.ViewModel
 
         public MainViewModel()
         {
-            _stockDataService = SimpleIoc.Default.GetInstance<StockDataService>("SQLStorageConnection");
+            _stockDataService = SimpleIoc.Default.GetInstance<StockDataService>("StorageConnectionString");
             _stockDataService.Initialize();
             var securityList = _stockDataService.LoadSecurityDatabase();
             _portfolioService = SimpleIoc.Default.GetInstance<PortfolioService>();

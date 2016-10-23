@@ -44,10 +44,11 @@ namespace Asset_Management_Platform.ViewModel
             ////}
 
             SimpleIoc.Default.Register<MainViewModel>();
-
             SimpleIoc.Default.Register<StockDataService>();
             SimpleIoc.Default.Register<PortfolioService>();
             SimpleIoc.Default.Register<Portfolio>();
+            SimpleIoc.Default.Register<YahooAPIService>();
+            SimpleIoc.Default.Register<SecurityTableSeederDataService>();
         }
 
         public MainViewModel Main
