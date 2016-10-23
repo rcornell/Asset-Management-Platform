@@ -108,6 +108,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="IPortfolio.cs" />
     <Compile Include="Messages\DatabaseMessage.cs" />
     <Compile Include="Messages\PortfolioMessage.cs" />
     <Compile Include="SecurityClasses\CorporateBond.cs" />

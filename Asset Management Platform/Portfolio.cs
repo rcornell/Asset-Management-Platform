@@ -11,7 +11,7 @@ using Asset_Management_Platform.Messages;
 
 namespace Asset_Management_Platform
 {
-    public class Portfolio
+    public class Portfolio: IPortfolio
     {
         private List<Position> positionsToDelete;
         private SqlDataReader reader;
@@ -103,7 +103,7 @@ namespace Asset_Management_Platform
         /// Compares _myPortfolio to the _databaseOriginalState from launch
         /// and creates lists of securities to update, insert, or delete.
         /// </summary>
-        private void SavePortfolioToDatabase()
+        public void SavePortfolioToDatabase()
         {
             BackupDatabase();
 
@@ -212,7 +212,7 @@ namespace Asset_Management_Platform
         /// <summary>
         /// Creates a copy of MyPortfolio table in Database in case of update error.
         /// </summary>
-        private void BackupDatabase()
+        public void BackupDatabase()
         {
             //Perhaps a way to create multiple backups?
             string backup = @"SELECT * FROM MyPortfolio INTO MyPortfolioBackup;";
@@ -226,7 +226,7 @@ namespace Asset_Management_Platform
             }
         }
 
-        private void AddToPortfolio(Security securityToAdd, int shares)
+        public void AddToPortfolio(Security securityToAdd, int shares)
         {
             var position = new Position(securityToAdd.Ticker, shares);
             _myPortfolio.Add(position);
@@ -240,7 +240,7 @@ namespace Asset_Management_Platform
         /// </summary>
         /// <param name="security"></param>
         /// <param name="shares"></param>
-        private void SellSharesFromPortfolio(Security security, int shares)
+        public void SellSharesFromPortfolio(Security security, int shares)
         {
             foreach (var p in _myPortfolio.Where(p => p.Ticker == security.Ticker))
             {

@@ -38,7 +38,6 @@ namespace Asset_Management_Platform.ViewModel
             _stockDataService.Initialize();
             var securityList = _stockDataService.LoadSecurityDatabase();
             _portfolioService = SimpleIoc.Default.GetInstance<PortfolioService>();
-            //^^^^ This needs a param passed to it. Incorrect use of SimpleIOC?*****
 
             Messenger.Default.Register<PortfolioMessage>(this, RefreshCollection);
 
