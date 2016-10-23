@@ -119,6 +119,7 @@
     <Compile Include="SecurityClasses\Security.cs" />
     <Compile Include="SecurityClasses\Stock.cs" />
     <Compile Include="SecurityClasses\Treasury.cs" />
+    <Compile Include="Utility\IStockDataService.cs" />
     <Compile Include="Utility\SecurityTableSeederDataService.cs" />
     <Compile Include="Utility\TradeExecutionService.cs" />
     <Compile Include="Utility\PortfolioService.cs" />

@@ -13,7 +13,7 @@ namespace Asset_Management_Platform.Utility
     /// containing basic data for all the positions covered by
     /// this application.
     /// </summary>
-    public class StockDataService : IDisposable
+    public class StockDataService : IStockDataService, IDisposable
     {
         private List<Security> _securityList;
         public List<Security> SecurityList {
@@ -71,7 +71,7 @@ namespace Asset_Management_Platform.Utility
         /// <summary>
         /// Check to see if SQL Database is empty. If it is, return true. 
         /// </summary>
-        private bool CheckForNullDatabase()
+        public bool CheckForNullDatabase()
         {
             int result = 0;
 
@@ -157,7 +157,7 @@ namespace Asset_Management_Platform.Utility
         /// Seeds the SQL table if it has no contents using 
         /// local SeedTicker.json file.
         /// </summary>
-        private void SeedDatabase()
+        public void SeedDatabase()
         {
             using (var seeder = new SecurityTableSeederDataService())
             {
