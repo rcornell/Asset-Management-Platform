@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using GalaSoft.MvvmLight.Messaging;
@@ -44,7 +45,8 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         public List<Security> LoadSecurityDatabase()
         {
-            using (var connection = new SqlConnection("StorageConnectionString"))
+            var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
+            using (var connection = new SqlConnection(storageString))
             {
                 connection.Open();
                 using (var command = new SqlCommand())
@@ -72,8 +74,9 @@ namespace Asset_Management_Platform.Utility
         public bool CheckForNullDatabase()
         {
             int result = 0;
+            var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
 
-            using (var connection = new SqlConnection("StorageConnectionString"))
+            using (var connection = new SqlConnection(storageString))
             {               
                 connection.Open();
                 var command = new SqlCommand();
@@ -128,7 +131,8 @@ namespace Asset_Management_Platform.Utility
             if (_securityList != null)
             {
                 var insertString = @"INSERT INTO Stocks (Cusip, Ticker, Description, LastPrice, Yield) VALUES ";
-                using (var connection = new SqlConnection("StorageConnectionString"))
+                var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
+                using (var connection = new SqlConnection(storageString))
                 {
                     using (var command = new SqlCommand())
                     {
@@ -157,9 +161,10 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         public void SeedDatabase()
         {
+            var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             using (var seeder = new SecurityTableSeederDataService())
             {
-                seeder.LoadCsvDataIntoSqlServer("StorageConnectionString");
+                seeder.LoadCsvDataIntoSqlServer(storageString);
             }
         }
 
