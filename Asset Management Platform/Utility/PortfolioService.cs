@@ -10,7 +10,7 @@ using Asset_Management_Platform.Messages;
 
 namespace Asset_Management_Platform.Utility
 {
-    public class PortfolioService
+    public class PortfolioService: IPortfolioService
     {
         private Dictionary<string, double> _positionValues;
         public Dictionary<string, double> PositionValues
@@ -51,7 +51,7 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void _timer_Tick(object sender, EventArgs e)
+        public void _timer_Tick(object sender, EventArgs e)
         {
             bool securityDatabaseUpdated = _stockDataService.UpdateSecurityDatabase();
             if (securityDatabaseUpdated)
@@ -61,7 +61,7 @@ namespace Asset_Management_Platform.Utility
             CalculatePositionValues();
         }
 
-        private void CalculatePositionValues()
+        public void CalculatePositionValues()
         {
             foreach (var pos in CurrentPortfolio.MyPortfolio)
             {
