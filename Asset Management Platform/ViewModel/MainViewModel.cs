@@ -6,7 +6,7 @@ using System.Collections.ObjectModel;
 using System;
 using Asset_Management_Platform.Messages;
 
-namespace Asset_Management_Platform.ViewModel
+namespace Asset_Management_Platform
 {
     /// <summary>
     /// This class contains properties that the main View can data bind to.
@@ -29,12 +29,13 @@ namespace Asset_Management_Platform.ViewModel
 
         private Portfolio _portfolio;
         private PortfolioService _portfolioService;
-        private StockDataService _stockDataService;
+        private IStockDataService _stockDataService;
         public ObservableCollection<Security> SecurityList;
 
-        public MainViewModel()
+        public MainViewModel(IStockDataService service)
         {
-            _stockDataService = SimpleIoc.Default.GetInstance<StockDataService>();
+            //_stockDataService = SimpleIoc.Default.GetInstance<StockDataService>();
+            _stockDataService = service;
             _stockDataService.Initialize();
             var securityList = _stockDataService.LoadSecurityDatabase();
             _portfolioService = SimpleIoc.Default.GetInstance<PortfolioService>();

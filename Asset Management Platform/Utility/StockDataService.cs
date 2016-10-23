@@ -22,12 +22,9 @@ namespace Asset_Management_Platform.Utility
         }
 
 
-        //public SqlCommand commander;
-        //Going to add a branch
         public StockDataService()
         {
             _securityList = new List<Security>();
-            Initialize();
         }
 
         /// <summary>
@@ -35,7 +32,8 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         public void Initialize()
         {
-            if (CheckForNullDatabase()) { 
+            if (CheckForNullDatabase())
+            {
                 SeedDatabase();
                 Messenger.Default.Send(new DatabaseMessage("Empty database restored.", false));
             }

@@ -32,23 +32,20 @@ namespace Asset_Management_Platform.ViewModel
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
-            ////if (ViewModelBase.IsInDesignModeStatic)
-            ////{
-            ////    // Create design time view services and models
-            ////    SimpleIoc.Default.Register<IDataService, DesignDataService>();
-            ////}
-            ////else
-            ////{
-            ////    // Create run time view services and models
-            ////    SimpleIoc.Default.Register<IDataService, DataService>();
-            ////}
-
-            SimpleIoc.Default.Register<MainViewModel>();
-            SimpleIoc.Default.Register<IStockDataService, StockDataService>();
-            SimpleIoc.Default.Register<IPortfolioService, PortfolioService>();
-            SimpleIoc.Default.Register<IPortfolio, Portfolio>();
-            SimpleIoc.Default.Register<YahooAPIService>();
-            SimpleIoc.Default.Register<SecurityTableSeederDataService>();
+            if (ViewModelBase.IsInDesignModeStatic)
+            {
+                // Create design time view services and models
+                //SimpleIoc.Default.Register<IDataService, DesignDataService>();
+            }
+            else
+            {
+                SimpleIoc.Default.Register<MainViewModel>();
+                SimpleIoc.Default.Register<IStockDataService, StockDataService>();
+                SimpleIoc.Default.Register<IPortfolioService, PortfolioService>();
+                SimpleIoc.Default.Register<IPortfolio, Portfolio>();
+                SimpleIoc.Default.Register<YahooAPIService>();
+                SimpleIoc.Default.Register<SecurityTableSeederDataService>();
+            }
         }
 
         public MainViewModel Main
