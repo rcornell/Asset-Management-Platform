@@ -80,8 +80,19 @@ namespace Asset_Management_Platform.Utility
             {               
                 connection.Open();
                 var command = new SqlCommand();
-                command.CommandText = @"SELECT COUNT(*) FROM STOCKS";
-                result = int.Parse(command.BeginExecuteReader().ToString());
+                command.CommandText = @"SELECT COUNT(*) FROM [Stocks];";
+                command.Connection = connection;
+                var sqlReader = command.ExecuteScalar();
+                int countResult;
+                int.TryParse(sqlReader.ToString(), out countResult);
+
+                //while (sqlReader.Read())
+                //{
+                //    sqlReader.
+                //}
+                //sqlReader.Read
+                //result = int.Parse(command.ExecuteReader().ToString());
+                //result = int.Parse(command.BeginExecuteReader().ToString());
             }
 
             if (result > 0)
