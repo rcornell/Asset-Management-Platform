@@ -8,12 +8,14 @@ using System.Data.SqlClient;
 using Microsoft.VisualBasic.FileIO;
 using Newtonsoft.Json;
 using System.Configuration;
+using System.IO;
+using System.Reflection;
 
 namespace Asset_Management_Platform.Utility
 {
     class SecurityTableSeederDataService : IDisposable
     {
-        private List<string> tickerList;
+        private List<SecurityClasses.StockTicker> tickerList;
         protected const string _truncateLiveTableCommandText = @"TRUNCATE TABLE [Stocks]"; //My table name 
         protected const int _batchSize = 2000; //max number times this look to add. Adjust for need vs. speed.
 
@@ -23,18 +25,27 @@ namespace Asset_Management_Platform.Utility
         }
 
         public void LoadJsonDataIntoSqlServer(string connection)
-        {  
-            var tickerJson = ConfigurationManager.AppSettings["SeedTicker"];
-            tickerList = JsonConvert.DeserializeObject<List<string>>(tickerJson);
+        {
+
+            //var jsonFi = new FileInfo(@"Assets\Games.json");
+            //return jsonFi.Exists
+            //    ?
+            //    JsonConvert.DeserializeObject<ObservableCollection<Game>>(File.ReadAllText(jsonFi.FullName))
+            //    : null;
+
+            var fileInfo = new FileInfo(@"SeedJson\SeedTickers.json");
+            var tickerJson = File.ReadAllText(fileInfo.FullName);
+            tickerList = JsonConvert.DeserializeObject<List<SecurityClasses.StockTicker>>(tickerJson);
+                            
 
             var dataTable = new DataTable("Stocks");
 
             // Add the columns in the temp table
-            dataTable.Columns.Add("CUSIP", typeof(string));
-            dataTable.Columns.Add("Ticker", typeof(string));
-            dataTable.Columns.Add("Description", typeof(string));
-            dataTable.Columns.Add("LastPrice", typeof(float));
-            dataTable.Columns.Add("Yield", typeof(double));
+            dataTable.Columns.Add("CUSIP");
+            dataTable.Columns.Add("Ticker");
+            dataTable.Columns.Add("Description");
+            dataTable.Columns.Add("LastPrice");
+            dataTable.Columns.Add("Yield");
 
             using (var sqlConnection = new SqlConnection(connection))
             {
@@ -64,6 +75,7 @@ namespace Asset_Management_Platform.Utility
                     dataTable.Rows.Add("", ticker, "", 0.00, 0.00);
                 }
 
+                //failing on nchar/string conversion
                 InsertDataTable(sqlBulkCopy, sqlConnection, dataTable);
 
                 sqlConnection.Close();

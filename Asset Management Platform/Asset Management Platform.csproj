@@ -120,6 +120,7 @@
     <Compile Include="Position.cs" />
     <Compile Include="SecurityClasses\Security.cs" />
     <Compile Include="SecurityClasses\Stock.cs" />
+    <Compile Include="SecurityClasses\StockTicker.cs" />
     <Compile Include="SecurityClasses\Treasury.cs" />
     <Compile Include="Utility\IPortfolioService.cs" />
     <Compile Include="Utility\IStockDataService.cs" />
@@ -169,7 +170,9 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <None Include="SeedCSV\SeedTickers.json" />
+    <Content Include="SeedJson\SeedTickers.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
