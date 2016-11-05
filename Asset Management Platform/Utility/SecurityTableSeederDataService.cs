@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 using System.Data.SqlClient;
 using Microsoft.VisualBasic.FileIO;
 using Newtonsoft.Json;
-
+using System.Configuration;
 
 namespace Asset_Management_Platform.Utility
 {
     class SecurityTableSeederDataService : IDisposable
     {
         private List<string> tickerList;
-        protected const string _truncateLiveTableCommandText = @"TRUNCATE TABLE Stocks"; //My table name 
+        protected const string _truncateLiveTableCommandText = @"TRUNCATE TABLE [Stocks]"; //My table name 
         protected const int _batchSize = 2000; //max number times this look to add. Adjust for need vs. speed.
 
         public SecurityTableSeederDataService()
@@ -22,75 +22,53 @@ namespace Asset_Management_Platform.Utility
             
         }
 
-        public List<string> GetSeedTickersFromJson()
-        {
-            tickerList = JsonConvert.DeserializeObject<List<string>>("SeedTickers");
-            return tickerList;
-        }
+        public void LoadJsonDataIntoSqlServer(string connection)
+        {  
+            var tickerJson = ConfigurationManager.AppSettings["SeedTicker"];
+            tickerList = JsonConvert.DeserializeObject<List<string>>(tickerJson);
 
-        public void LoadCsvDataIntoSqlServer(string connection)
-        {   //NOT READY TO BE USED
-            // This should be the full path within the project, which will include the CSV file
-            var fileName = @"C:\Users\Rob\Documents\StockListCSV.csv";
+            var dataTable = new DataTable("Stocks");
 
-            var createdCount = 0;
+            // Add the columns in the temp table
+            dataTable.Columns.Add("CUSIP", typeof(string));
+            dataTable.Columns.Add("Ticker", typeof(string));
+            dataTable.Columns.Add("Description", typeof(string));
+            dataTable.Columns.Add("LastPrice", typeof(float));
+            dataTable.Columns.Add("Yield", typeof(double));
 
-            using (var textFieldParser = new TextFieldParser(fileName))
+            using (var sqlConnection = new SqlConnection(connection))
             {
-                textFieldParser.TextFieldType = FieldType.Delimited;
-                textFieldParser.Delimiters = new[] { "," };
-                textFieldParser.HasFieldsEnclosedInQuotes = true;
+                sqlConnection.Open();
 
-                var dataTable = new DataTable("Stocks");
-
-                // Add the columns in the temp table
-                dataTable.Columns.Add("Ticker");
-
-                using (var sqlConnection = new SqlConnection(connection))
+                // Truncate the live table
+                using (var sqlCommand = new SqlCommand(_truncateLiveTableCommandText, sqlConnection))
                 {
-                    sqlConnection.Open();
-
-                    // Truncate the live table
-                    using (var sqlCommand = new SqlCommand(_truncateLiveTableCommandText, sqlConnection))
-                    {
-                        sqlCommand.ExecuteNonQuery();
-                    }
-
-                    // Create the bulk copy object
-                    var sqlBulkCopy = new SqlBulkCopy(sqlConnection)
-                    {
-                        DestinationTableName = "Stocks"
-                    };
-
-                    // Setup the column mappings, anything ommitted is skipped
-                    sqlBulkCopy.ColumnMappings.Add("CUSIP", "CUSIP");
-                    sqlBulkCopy.ColumnMappings.Add("Ticker", "Ticker");
-                    sqlBulkCopy.ColumnMappings.Add("Description", "Description");
-                    sqlBulkCopy.ColumnMappings.Add("LastPrice", "LastPrice");
-                    sqlBulkCopy.ColumnMappings.Add("Yield", "Yield");
-
-                    // Loop through the CSV and load each set of 500 records into a DataTable
-                    // Then send it to the LiveTable
-                    while (!textFieldParser.EndOfData)
-                    {
-                        dataTable.Rows.Add(textFieldParser.ReadFields());
-
-                        createdCount++;
-
-                        if (createdCount % _batchSize == 0)
-                        {
-                            InsertDataTable(sqlBulkCopy, sqlConnection, dataTable);
-
-                            break;
-                        }
-                    }
-
-                    // Don't forget to send the last batch under 100,000
-                    InsertDataTable(sqlBulkCopy, sqlConnection, dataTable);
-
-                    sqlConnection.Close();
+                    sqlCommand.ExecuteNonQuery();
                 }
+
+   
+               var sqlBulkCopy = new SqlBulkCopy(sqlConnection)
+               {
+                   DestinationTableName = "[Stocks]"
+               };
+
+                //Setup the column mappings, anything ommitted is skipped
+                sqlBulkCopy.ColumnMappings.Add("CUSIP", "CUSIP");
+                sqlBulkCopy.ColumnMappings.Add("Ticker", "Ticker");
+                sqlBulkCopy.ColumnMappings.Add("Description", "Description");
+                sqlBulkCopy.ColumnMappings.Add("LastPrice", "LastPrice");
+                sqlBulkCopy.ColumnMappings.Add("Yield", "Yield");
+
+                foreach (var ticker in tickerList)
+                {
+                    dataTable.Rows.Add("", ticker, "", 0.00, 0.00);
+                }
+
+                InsertDataTable(sqlBulkCopy, sqlConnection, dataTable);
+
+                sqlConnection.Close();
             }
+            
         }
 
         protected void InsertDataTable(SqlBulkCopy sqlBulkCopy, SqlConnection sqlConnection, DataTable dataTable)

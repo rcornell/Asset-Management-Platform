@@ -34,7 +34,11 @@ namespace Asset_Management_Platform
 
         public MainViewModel(IStockDataService service)
         {
-            //_stockDataService = SimpleIoc.Default.GetInstance<StockDataService>();
+            //Using or simpleioc?
+            //using (var sservice = new StockDataService())
+            //{
+            //    sservice.Initialize();
+            //}
             _stockDataService = service;
             _stockDataService.Initialize();
             var securityList = _stockDataService.LoadSecurityDatabase();

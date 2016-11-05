@@ -13,7 +13,7 @@ namespace Asset_Management_Platform.Utility
 
         List<Security> LoadSecurityDatabase();
 
-        bool CheckForNullDatabase();
+        bool IsDatabaseNull();
 
         bool UpdateSecurityDatabase();
 
