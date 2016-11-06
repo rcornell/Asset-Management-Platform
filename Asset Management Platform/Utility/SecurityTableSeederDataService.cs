@@ -33,6 +33,7 @@ namespace Asset_Management_Platform.Utility
             //    JsonConvert.DeserializeObject<ObservableCollection<Game>>(File.ReadAllText(jsonFi.FullName))
             //    : null;
 
+            //Can I find a better way that deserializing to the StockTicker class with one property?
             var fileInfo = new FileInfo(@"SeedJson\SeedTickers.json");
             var tickerJson = File.ReadAllText(fileInfo.FullName);
             tickerList = JsonConvert.DeserializeObject<List<SecurityClasses.StockTicker>>(tickerJson);
@@ -42,7 +43,7 @@ namespace Asset_Management_Platform.Utility
 
             // Add the columns in the temp table
             dataTable.Columns.Add("CUSIP");
-            dataTable.Columns.Add("Ticker");
+            dataTable.Columns.Add("Ticker", typeof(string));
             dataTable.Columns.Add("Description");
             dataTable.Columns.Add("LastPrice");
             dataTable.Columns.Add("Yield");
@@ -57,26 +58,20 @@ namespace Asset_Management_Platform.Utility
                     sqlCommand.ExecuteNonQuery();
                 }
 
-   
-               var sqlBulkCopy = new SqlBulkCopy(sqlConnection)
-               {
-                   DestinationTableName = "[Stocks]"
-               };
 
-                //Setup the column mappings, anything ommitted is skipped
-                sqlBulkCopy.ColumnMappings.Add("CUSIP", "CUSIP");
-                sqlBulkCopy.ColumnMappings.Add("Ticker", "Ticker");
-                sqlBulkCopy.ColumnMappings.Add("Description", "Description");
-                sqlBulkCopy.ColumnMappings.Add("LastPrice", "LastPrice");
-                sqlBulkCopy.ColumnMappings.Add("Yield", "Yield");
+                var sqlBulkCopy = new SqlBulkCopy(sqlConnection)
+                {
+                    DestinationTableName = "[Stocks]"
+
+                   
+                };
 
                 foreach (var ticker in tickerList)
                 {
-                    dataTable.Rows.Add("", ticker, "", 0.00, 0.00);
+                    dataTable.Rows.Add(null, ticker.Ticker, null, null, null);
                 }
 
-                //failing on nchar/string conversion
-                InsertDataTable(sqlBulkCopy, sqlConnection, dataTable);
+               InsertDataTable(sqlBulkCopy, sqlConnection, dataTable);
 
                 sqlConnection.Close();
             }
