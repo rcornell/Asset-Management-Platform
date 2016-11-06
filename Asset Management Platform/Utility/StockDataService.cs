@@ -46,18 +46,20 @@ namespace Asset_Management_Platform.Utility
         public List<Security> LoadSecurityDatabase()
         {
             var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
+            var cmdText = @"SELECT * FROM STOCKS";
             using (var connection = new SqlConnection(storageString))
             {
-                connection.Open();
-                using (var command = new SqlCommand())
+
+                using (var command = new SqlCommand(cmdText, connection))
                 {
-                    command.CommandText = @"SELECT * FROM STOCKS";
+                    connection.Open();
                     var reader = command.ExecuteReader();
                     while (reader.Read())
                     {
-                        var cusip = reader.GetString(0);
-                        var ticker = reader.GetString(1);
-                        var description = reader.GetString(2);
+                        //handle null values in table?
+                        var cusip = string.IsNullOrEmpty(reader.GetString(0)) ? "" : reader.GetString(0);
+                        var ticker = string.IsNullOrEmpty(reader.GetString(1)) ? "" : reader.GetString(1);
+                        var description = string.IsNullOrEmpty(reader.GetString(2)) ? "" : reader.GetString(2);
                         var lastPrice = reader.GetFloat(3);
                         var yield = reader.GetDouble(4);
                         _securityList.Add(new Security(cusip, ticker, description, lastPrice, yield));
@@ -73,18 +75,17 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         public bool IsDatabaseNull()
         {
-            int result = 0;
+            var result = 0;
+            var cmdText = @"SELECT COUNT(*) from Stocks";
             var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
 
             using (var connection = new SqlConnection(storageString))
-            {               
+            {
                 connection.Open();
-                var command = new SqlCommand();
-                command.CommandText = @"SELECT COUNT(*) FROM [Stocks];";
-                command.Connection = connection;
-                var sqlReader = command.ExecuteScalar();
-                int countResult;
-                int.TryParse(sqlReader.ToString(), out countResult);
+                using (var command = new SqlCommand(cmdText, connection))
+                {
+                    int.TryParse(command.ExecuteScalar().ToString(), out result);
+                }
             }
 
             if (result > 0)
