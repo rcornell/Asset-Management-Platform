@@ -52,16 +52,27 @@ namespace Asset_Management_Platform.Utility
 
                 using (var command = new SqlCommand(cmdText, connection))
                 {
+                    string cusip = "";
+                    string ticker = "";
+                    string description = "";
+                    float lastPrice = 0;
+                    double yield = 0;
                     connection.Open();
                     var reader = command.ExecuteReader();
                     while (reader.Read())
                     {
+                        
                         //handle null values in table?
-                        var cusip = string.IsNullOrEmpty(reader.GetString(0)) ? "" : reader.GetString(0);
-                        var ticker = string.IsNullOrEmpty(reader.GetString(1)) ? "" : reader.GetString(1);
-                        var description = string.IsNullOrEmpty(reader.GetString(2)) ? "" : reader.GetString(2);
-                        var lastPrice = reader.GetFloat(3);
-                        var yield = reader.GetDouble(4);
+                        if (!reader.IsDBNull(0))
+                            cusip = string.IsNullOrEmpty(reader.GetString(0)) ? "" : reader.GetString(0);
+                        if (!reader.IsDBNull(1))
+                            ticker = string.IsNullOrEmpty(reader.GetString(1)) ? "" : reader.GetString(1);
+                        if (!reader.IsDBNull(2))
+                            description = string.IsNullOrEmpty(reader.GetString(2)) ? "" : reader.GetString(2);
+                        if (!reader.IsDBNull(3))
+                            lastPrice = reader.GetFloat(3);
+                        if (!reader.IsDBNull(4))
+                            yield = reader.GetDouble(4);
                         _securityList.Add(new Security(cusip, ticker, description, lastPrice, yield));
                     }
                 }
