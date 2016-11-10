@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace Asset_Management_Platform.SecurityClasses
 {
-    public class StockTicker
+    public class StockFromJSON
     {
         public string Ticker;
+        public string Description;
+        public string Sector;
     }
 }

@@ -120,7 +120,7 @@
     <Compile Include="Position.cs" />
     <Compile Include="SecurityClasses\Security.cs" />
     <Compile Include="SecurityClasses\Stock.cs" />
-    <Compile Include="SecurityClasses\StockTicker.cs" />
+    <Compile Include="SecurityClasses\StockFromJSON.cs" />
     <Compile Include="SecurityClasses\Treasury.cs" />
     <Compile Include="Utility\IPortfolioService.cs" />
     <Compile Include="Utility\IStockDataService.cs" />

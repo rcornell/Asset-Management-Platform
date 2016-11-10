@@ -79,12 +79,12 @@ namespace Asset_Management_Platform.Utility
         //p1    Price Paid
         //p2    Change in Percent
         //p5    Price/Sales
-        //p6    Price/Book
+        //p6    Price/Book  snl1yj1bara5b6
         //q     Ex-Dividend Date
         //r     P/E Ratio
         //r1    Dividend Pay Date
-        //r2    P/E Ratio(Real-time)
-        //r5    PEG Ratio
+        //r2    P/E Ratio(Real-time) 
+        //r5    PEG Ratio 
         //r6    Price/EPS Estimate Current Year
         //r7    Price/EPS Estimate Next Year
         //s     Symbol
@@ -144,6 +144,7 @@ namespace Asset_Management_Platform.Utility
             // Build the URL.
             string url = "";
             int i = 0;
+            int j = 0; //index for looping through array of results from yahooAPI
 
             foreach (string s in tickers)
             {
@@ -160,7 +161,7 @@ namespace Asset_Management_Platform.Utility
                 //s (symbol) n (name) l1 (last price) y (yield) j1 (market cap) 
                 //b (bid) a (ask) r (peRatio) a5 (ask size) b6 (bid size)
                 const string base_url =
-                    "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=snl1yj1bara5b6";
+                    "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=snl1yj1barvb6a5";
                 url = base_url.Replace("@", url); //Add my tickers to the middle of the url
 
                 // Get the response.
@@ -171,6 +172,7 @@ namespace Asset_Management_Platform.Utility
                     // Get the web response.
                     string result = GetWebResponse(url);
                     Console.WriteLine(result.Replace("\\r\\n", "\r\n"));
+                    
 
                     // Pull out the current prices.
                     string[] lines = result.Split(
@@ -182,8 +184,6 @@ namespace Asset_Management_Platform.Utility
                     //Compare tickers to list of tickers that determine which ticker is which type of security
                     //Use LINQ?
 
-
-                    int j = 0;
                     foreach (string line in lines)
                     {
                         string cusip = "";
@@ -193,26 +193,59 @@ namespace Asset_Management_Platform.Utility
                         double yield;
                         double bid;
                         double ask;
-                        double marketCap;
+                        string marketCap;
                         double peRatio;
                         int volume;
                         int bidSize;
                         int askSize;
 
-                        //cusip = "" no CUSIP ability in this API
-                        ticker = lines[j].Split(',')[1];
-                        description = lines[j].Split(',')[2];
-                        lastPrice = float.Parse(lines[j].Split(',')[3]);
-                        yield = double.Parse(lines[j].Split(',')[4]);
-                        bid = double.Parse(lines[j].Split(',')[5]);
-                        ask = double.Parse(lines[j].Split(',')[6]);
-                        marketCap = double.Parse(lines[j].Split(',')[7]);
-                        peRatio = double.Parse(lines[j].Split(',')[8]);
-                        volume = int.Parse(lines[j].Split(',')[9]);
-                        bidSize = int.Parse(lines[j].Split(',')[10]);
-                        askSize = int.Parse(lines[j].Split(',')[11]);
+                        bool ratioIsNA;
+                        //cusip = "" no CUSIP ability in this API. Load via my own database
+                        //Some stock names contain a comma, which is the character that 
+                        //we are using to split up the results. The below code accounts for that possibility
 
-                        _securities.Add(new Stock(cusip, ticker, description, lastPrice, yield, bid, ask, marketCap, peRatio, volume, bidSize, askSize));
+                        System.Diagnostics.Debug.Write(string.Format("Creating Security #{0}", j));
+
+                        if (lines[j].Split(',')[1] == "N/A")
+                        {
+
+                        }
+
+                        ticker = lines[j].Split(',')[0];
+                        description = lines[j].Split(',')[1];
+                        bool noComma = float.TryParse(lines[j].Split(',')[2], out lastPrice);
+                        if (noComma)
+                        {
+                            yield = double.Parse(lines[j].Split(',')[3]);
+                            marketCap = lines[j].Split(',')[4];
+                            bid = double.Parse(lines[j].Split(',')[5]);
+                            ask = double.Parse(lines[j].Split(',')[6]);                           
+                            ratioIsNA = double.TryParse(lines[j].Split(',')[7], out peRatio);
+                            volume = int.Parse(lines[j].Split(',')[8]);
+                            bidSize = int.Parse(lines[j].Split(',')[9]);
+                            askSize = int.Parse(lines[j].Split(',')[10]);
+                        }
+                        else {
+                            description += lines[j].Split(',')[2];
+                            lastPrice = float.Parse(lines[j].Split(',')[3]);
+                            yield = double.Parse(lines[j].Split(',')[4]);
+                            marketCap = lines[j].Split(',')[5];
+                            bid = double.Parse(lines[j].Split(',')[6]);
+                            ask = double.Parse(lines[j].Split(',')[7]);                           
+                            ratioIsNA = double.TryParse(lines[j].Split(',')[8], out peRatio);
+                            volume = int.Parse(lines[j].Split(',')[9]);
+                            bidSize = int.Parse(lines[j].Split(',')[10]);
+                            askSize = int.Parse(lines[j].Split(',')[11]);
+                        }
+
+                        if (!ratioIsNA) peRatio = 0;
+                        marketCap = marketCap.Substring(0, marketCap.Length - 1);
+
+                        var floatMarketCap = float.Parse(marketCap);
+
+                        _securities.Add(new Stock(cusip, ticker, description, lastPrice, yield, bid, ask, floatMarketCap, peRatio, volume, bidSize, askSize));
+                        j++; //advance to next security
+                        
                     }
                     return _securities;
                 }
@@ -229,7 +262,7 @@ namespace Asset_Management_Platform.Utility
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            _securities = null;
         }
     }
 }

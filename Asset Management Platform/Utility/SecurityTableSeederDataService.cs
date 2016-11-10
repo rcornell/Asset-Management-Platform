@@ -15,7 +15,7 @@ namespace Asset_Management_Platform.Utility
 {
     class SecurityTableSeederDataService : IDisposable
     {
-        private List<SecurityClasses.StockTicker> tickerList;
+        private List<SecurityClasses.StockFromJSON> stockList;
         protected const string _truncateLiveTableCommandText = @"TRUNCATE TABLE [Stocks]"; //My table name 
         protected const int _batchSize = 2000; //max number times this look to add. Adjust for need vs. speed.
 
@@ -36,7 +36,7 @@ namespace Asset_Management_Platform.Utility
             //Can I find a better way that deserializing to the StockTicker class with one property?
             var fileInfo = new FileInfo(@"SeedJson\SeedTickers.json");
             var tickerJson = File.ReadAllText(fileInfo.FullName);
-            tickerList = JsonConvert.DeserializeObject<List<SecurityClasses.StockTicker>>(tickerJson);
+            stockList = JsonConvert.DeserializeObject<List<SecurityClasses.StockFromJSON>>(tickerJson);
                             
 
             var dataTable = new DataTable("Stocks");
@@ -66,9 +66,9 @@ namespace Asset_Management_Platform.Utility
                    
                 };
 
-                foreach (var ticker in tickerList)
+                foreach (var security in stockList)
                 {
-                    dataTable.Rows.Add(null, ticker.Ticker, null, null, null);
+                    dataTable.Rows.Add(null, security.Ticker, security.Description, null, null);
                 }
 
                InsertDataTable(sqlBulkCopy, sqlConnection, dataTable);
@@ -87,7 +87,7 @@ namespace Asset_Management_Platform.Utility
 
         public void Dispose()
         {
-            tickerList = null;
+            stockList = null;
         }
     }
 }
