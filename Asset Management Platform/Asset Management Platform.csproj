@@ -131,7 +131,7 @@
     <Compile Include="Utility\YahooAPIService.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="SecuritiesList.cs" />
-    <Compile Include="Portfolio.cs" />
+    <Compile Include="Utility\Portfolio.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

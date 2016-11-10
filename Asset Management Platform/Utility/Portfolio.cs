@@ -20,21 +20,21 @@ namespace Asset_Management_Platform
         private List<Position> _databaseOriginalState;
 
         private List<Position> _myPositions;
-        public List<Position> MyPositions
-        {
-            get { return _myPositions; }
-            set { _myPositions = value; }
-        }
 
         public Portfolio()
         {
              positionsToDelete = new List<Position>();
             _myPositions = new List<Position>();
+            if (CheckDBForPositions())
+                LoadPositionsFromDatabase();
+            else
+                _myPositions = new List<Position>();
+
         }
 
         public List<Position> GetPositions()
         {
-            return MyPositions;
+            return _myPositions;
         }
 
         /// <summary>
@@ -52,6 +52,7 @@ namespace Asset_Management_Platform
                     connection.Open();
                     using (var command = new SqlCommand())
                     {
+                        command.Connection = connection;
                         command.CommandText = @"SELECT * FROM MyPortfolio;";
                         reader = command.ExecuteReader();
                         if (reader.HasRows == true)
@@ -82,7 +83,7 @@ namespace Asset_Management_Platform
         /// using the SQL Database's
         /// MyPortfolio table.
         /// </summary>
-        public void LoadPortfolioFromDatabase()
+        public void LoadPositionsFromDatabase()
         {           
             using (var connection = new SqlConnection("StorageConnectionString"))
             {

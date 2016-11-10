@@ -27,14 +27,14 @@ namespace Asset_Management_Platform.Utility
 
         private IPortfolio _currentPortfolio;
 
-        public PortfolioService(IStockDataService service)
+        public PortfolioService(IStockDataService service, IPortfolio portfolio)
         {
             _stockDataService = service;
             _stockDataService.Initialize();
-            var updateSuccessful = _stockDataService.UpdateSecurityDatabase();
-            if (updateSuccessful)
+            _securityList = _stockDataService.LoadSecurityDatabase(); //Load stock info from SQL DB
+            var updateSuccessful = _stockDataService.UpdateSecurityDatabase();//Use yahooAPI to pull in updated info
+            if (updateSuccessful) 
             {
-                _securityList = _stockDataService.LoadSecurityDatabase();
                 _tickers = GetTickers();
             }
             else
@@ -47,10 +47,8 @@ namespace Asset_Management_Platform.Utility
             _timer.Tick += _timer_Tick;
             _timer.Interval = new TimeSpan(0, 0, 10);
 
-            if (_currentPortfolio.CheckDBForPositions())
-                GetPortfolio();
-            else
-                _currentPortfolio = new Portfolio();
+            _currentPortfolio = portfolio;
+
             CalculatePositionValues();
         }
 

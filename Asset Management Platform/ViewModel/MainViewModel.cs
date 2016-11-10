@@ -27,7 +27,6 @@ namespace Asset_Management_Platform
         /// </summary>
         /// 
 
-        private IPortfolio _portfolio;
         private IPortfolioService _portfolioService;
         public ObservableCollection<Security> SecurityList;
 
@@ -36,24 +35,14 @@ namespace Asset_Management_Platform
  
 
             _portfolioService = portfolioService;
-            _portfolio = _portfolioService.GetPortfolio();
             Messenger.Default.Register<PortfolioMessage>(this, RefreshCollection);
+            //_portfolioService.StartUpdates(); //TURNED OFF FOR TESTING
 
-            _portfolioService.StartUpdates();
-
-            ////if (IsInDesignMode)
-            ////{
-            ////    // Code runs in Blend --> create design time data.
-            ////}
-            ////else
-            ////{
-            ////    // Code runs "for real"
-            ////}
         }
 
         private void RefreshCollection(PortfolioMessage obj)
         {
-            _portfolio = _portfolioService.GetPortfolio();
+            //_portfolio = _portfolioService.GetPortfolio();
         }
 
         private void Initialize()

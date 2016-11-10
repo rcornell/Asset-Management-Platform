@@ -12,7 +12,7 @@ namespace Asset_Management_Platform.Utility
 
         List<Position> GetPositions();
 
-        void LoadPortfolioFromDatabase();
+        void LoadPositionsFromDatabase();
         void SavePortfolioToDatabase();
         
         void BackupDatabase();
