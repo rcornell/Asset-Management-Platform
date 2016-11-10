@@ -22,7 +22,6 @@ namespace Asset_Management_Platform.Utility
             set { _securityList = value; }
         }
 
-
         public StockDataService()
         {
             _securityList = new List<Security>();
@@ -105,8 +104,9 @@ namespace Asset_Management_Platform.Utility
                 return true; //Database IS empty
         }
 
-        public bool UpdateSecurityDatabase(List<string> tickers)
+        public bool UpdateSecurityDatabase()
         {
+            var tickers = new List<string>();
             foreach (var security in _securityList)
             {
                 tickers.Add(security.Ticker);

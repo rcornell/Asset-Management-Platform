@@ -147,7 +147,7 @@ namespace Asset_Management_Platform.Utility
 
             foreach (string s in tickers)
             {
-                url += s[i] + "+";
+                url += s + "+";
                 i++;
             }
 

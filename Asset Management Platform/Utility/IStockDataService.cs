@@ -15,7 +15,7 @@ namespace Asset_Management_Platform.Utility
 
         bool IsDatabaseNull();
 
-        bool UpdateSecurityDatabase(List<string> tickers);
+        bool UpdateSecurityDatabase();
 
         bool InsertIntoDatabase(List<Security> securitiesToInsert);
 

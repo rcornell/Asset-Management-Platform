@@ -38,8 +38,11 @@ namespace Asset_Management_Platform.Utility
         {
             _stockDataService = service;
             _stockDataService.Initialize();
+            _securityList = _stockDataService.LoadSecurityDatabase();
+            var updateSuccessful = _stockDataService.UpdateSecurityDatabase();
             _securityList = _stockDataService.GetSecurityList();
             _tickers = GetTickers();
+
 
             _timer = new DispatcherTimer();
             _timer.Tick += _timer_Tick;
@@ -48,9 +51,20 @@ namespace Asset_Management_Platform.Utility
             CalculatePositionValues();
         }
 
+
+        /// <summary>
+        /// Extracts the tickers from the list of securities
+        /// so that the simple list can be sent to the yahooAPI
+        /// without having to foreach throught the list and
+        /// make a list of tickers every time.
+        /// </summary>
+        /// <returns></returns>
         private List<string> GetTickers()
         {
             var tickers = new List<string>();
+            if (_securityList == null || _securityList.Count == 0)
+                return tickers;
+
             foreach (var security in _securityList)
             {
                 tickers.Add(security.Ticker);
@@ -72,8 +86,8 @@ namespace Asset_Management_Platform.Utility
         /// <param name="e"></param>
         public void _timer_Tick(object sender, EventArgs e)
         {
-            bool securityDatabaseUpdated = _stockDataService.UpdateSecurityDatabase(_tickers);
-            if (securityDatabaseUpdated)
+            bool updateSuccessful = _stockDataService.UpdateSecurityDatabase();
+            if (updateSuccessful)
             {
                 _securityList = _stockDataService.GetSecurityList();
             }
