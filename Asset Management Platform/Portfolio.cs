@@ -8,44 +8,51 @@ using GalaSoft.MvvmLight.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 using Asset_Management_Platform.Messages;
+using Asset_Management_Platform.Utility;
+using System.Configuration;
 
 namespace Asset_Management_Platform
 {
-    public class Portfolio: IPortfolio
+    public class Portfolio : IPortfolio
     {
         private List<Position> positionsToDelete;
         private SqlDataReader reader;
         private List<Position> _databaseOriginalState;
 
-        private List<Position> _myPortfolio;
-        public List<Position> MyPortfolio
+        private List<Position> _myPositions;
+        public List<Position> MyPositions
         {
-            get { return _myPortfolio; }
-            set { _myPortfolio = value; }
+            get { return _myPositions; }
+            set { _myPositions = value; }
         }
 
         public Portfolio()
         {
              positionsToDelete = new List<Position>();
-            _myPortfolio = new List<Position>();
+            _myPositions = new List<Position>();
         }
 
+        public List<Position> GetPositions()
+        {
+            return MyPositions;
+        }
 
         /// <summary>
         /// Will attempt to load the MyPortfolio
         /// table from SQL Database. If no MyPortfolio
         /// table is found, it will return false.
         /// </summary>
-        public bool CheckForPortfolio()
+        public bool CheckDBForPositions()
         {
             try
             {
-                using (var connection = new SqlConnection("StorageConnectionString"))
+                var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
+                using (var connection = new SqlConnection(storageString))
                 {
                     connection.Open();
                     using (var command = new SqlCommand())
                     {
-                        command.CommandText = @"SELECT * FROM MYPORTFOLIO;";
+                        command.CommandText = @"SELECT * FROM MyPortfolio;";
                         reader = command.ExecuteReader();
                         if (reader.HasRows == true)
                             return true;
@@ -89,13 +96,13 @@ namespace Asset_Management_Platform
                     {
                         var ticker = reader.GetString(0);
                         var quantity = reader.GetInt32(1);
-                        _myPortfolio.Add(new Position(ticker, quantity));
+                        _myPositions.Add(new Position(ticker, quantity));
                     }
                 }
             }
 
             //Does this work as intended?
-            _databaseOriginalState = _myPortfolio;
+            _databaseOriginalState = _myPositions;
         }
 
      
@@ -110,7 +117,7 @@ namespace Asset_Management_Platform
             var positionsToInsert = new List<Position>();
             var positionsToUpdate = new List<Position>();
 
-            foreach (var p in _myPortfolio)
+            foreach (var p in _myPositions)
             {
                 //Is current position in _myPortfolio unchanged from original state?
                 if (_databaseOriginalState.Contains(p))
@@ -229,7 +236,7 @@ namespace Asset_Management_Platform
         public void AddToPortfolio(Security securityToAdd, int shares)
         {
             var position = new Position(securityToAdd.Ticker, shares);
-            _myPortfolio.Add(position);
+            _myPositions.Add(position);
             //PROBABLY NEED TO SEND A MESSAGE TO UPDATE UI
         }
 
@@ -242,12 +249,12 @@ namespace Asset_Management_Platform
         /// <param name="shares"></param>
         public void SellSharesFromPortfolio(Security security, int shares)
         {
-            foreach (var p in _myPortfolio.Where(p => p.Ticker == security.Ticker))
+            foreach (var p in _myPositions.Where(p => p.Ticker == security.Ticker))
             {
                 if (p.SharesOwned == shares)
                 {
                     var deleteThis = new Position(security.Ticker, shares);
-                    _myPortfolio.Remove(deleteThis);
+                    _myPositions.Remove(deleteThis);
                     positionsToDelete.Add(deleteThis);
                 }
                 else

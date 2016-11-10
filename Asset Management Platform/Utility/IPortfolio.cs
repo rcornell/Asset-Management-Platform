@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Asset_Management_Platform
+namespace Asset_Management_Platform.Utility
 {
-    interface IPortfolio
+    public interface IPortfolio
     {
-        bool CheckForPortfolio();
+        bool CheckDBForPositions();
+
+        List<Position> GetPositions();
 
         void LoadPortfolioFromDatabase();
         void SavePortfolioToDatabase();

@@ -27,7 +27,7 @@ namespace Asset_Management_Platform
         /// </summary>
         /// 
 
-        private Portfolio _portfolio;
+        private IPortfolio _portfolio;
         private IPortfolioService _portfolioService;
         public ObservableCollection<Security> SecurityList;
 

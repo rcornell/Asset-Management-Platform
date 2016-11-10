@@ -8,7 +8,7 @@ namespace Asset_Management_Platform.Utility
 {
     public interface IPortfolioService
     {
-        Portfolio GetPortfolio();
+        IPortfolio GetPortfolio();
 
         void _timer_Tick(object sender, EventArgs e);
 

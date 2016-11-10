@@ -25,32 +25,54 @@ namespace Asset_Management_Platform.Utility
         private DispatcherTimer _timer;
         private List<Security> _securityList;
 
-        private Portfolio _currentPortfolio;
-        public Portfolio CurrentPortfolio {
-                get {
-                    CalculatePositionValues();
-                    return _currentPortfolio;
-                    }
-                set { _currentPortfolio = value; }
-            }
+        private IPortfolio _currentPortfolio;
 
         public PortfolioService(IStockDataService service)
         {
             _stockDataService = service;
             _stockDataService.Initialize();
-            _securityList = _stockDataService.LoadSecurityDatabase();
             var updateSuccessful = _stockDataService.UpdateSecurityDatabase();
-            _securityList = _stockDataService.GetSecurityList();
-            _tickers = GetTickers();
-
-
+            if (updateSuccessful)
+            {
+                _securityList = _stockDataService.LoadSecurityDatabase();
+                _tickers = GetTickers();
+            }
+            else
+            {
+                //Security list update failed.
+                throw new NotImplementedException();
+            }
+            
             _timer = new DispatcherTimer();
             _timer.Tick += _timer_Tick;
             _timer.Interval = new TimeSpan(0, 0, 10);
-                       
+
+            if (_currentPortfolio.CheckDBForPositions())
+                GetPortfolio();
+            else
+                _currentPortfolio = new Portfolio();
             CalculatePositionValues();
         }
 
+        private void BuildPortfolio()
+        {
+            
+        }
+
+        public void CalculatePositionValues()
+        {
+            var positions = _currentPortfolio.GetPositions();
+
+            foreach (var pos in positions)
+            {
+                var ticker = pos.Ticker;
+                var security = _securityList.Find(s => s.Ticker == ticker);
+                var value = security.LastPrice * pos.SharesOwned;
+                _positionValues.Add(ticker, value);
+            }
+
+            //Add try catch when you know what kind of errors this can lead to.
+        }
 
         /// <summary>
         /// Extracts the tickers from the list of securities
@@ -72,9 +94,9 @@ namespace Asset_Management_Platform.Utility
             return tickers;
         }
 
-        public Portfolio GetPortfolio()
+        public IPortfolio GetPortfolio()
         {
-            return CurrentPortfolio;
+            return _currentPortfolio;
         }
 
         /// <summary>
@@ -92,19 +114,6 @@ namespace Asset_Management_Platform.Utility
                 _securityList = _stockDataService.GetSecurityList();
             }
             CalculatePositionValues();
-        }
-
-        public void CalculatePositionValues()
-        {
-            foreach (var pos in CurrentPortfolio.MyPortfolio)
-            {
-                var ticker = pos.Ticker;
-                var security = _securityList.Find(s => s.Ticker == ticker);
-                var value = security.LastPrice * pos.SharesOwned;
-                _positionValues.Add(ticker, value);
-            }
-
-            //Add try catch when you know what kind of errors this can lead to.
         }
 
         /// <summary>
