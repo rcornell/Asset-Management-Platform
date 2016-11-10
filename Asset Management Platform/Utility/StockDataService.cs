@@ -70,7 +70,7 @@ namespace Asset_Management_Platform.Utility
                         if (!reader.IsDBNull(2))
                             description = string.IsNullOrEmpty(reader.GetString(2)) ? "" : reader.GetString(2);
                         if (!reader.IsDBNull(3))
-                            lastPrice = reader.GetFloat(3);
+                            lastPrice = reader.GetFloat(3); //if paused here, it's because you're not sure if Float will work.
                         if (!reader.IsDBNull(4))
                             yield = reader.GetDouble(4);
                         _securityList.Add(new Security(cusip, ticker, description, lastPrice, yield));
@@ -105,9 +105,8 @@ namespace Asset_Management_Platform.Utility
                 return true; //Database IS empty
         }
 
-        public bool UpdateSecurityDatabase()
+        public bool UpdateSecurityDatabase(List<string> tickers)
         {
-            var tickers = new List<string>();
             foreach (var security in _securityList)
             {
                 tickers.Add(security.Ticker);
@@ -183,11 +182,24 @@ namespace Asset_Management_Platform.Utility
             }
         }
 
-
+        public List<Security> GetSecurityList()
+        {
+            return SecurityList;
+        }
         public void Dispose()
         {
             UploadDatabase();
             _securityList = null;
+        }
+
+        public List<string> GetTickers()
+        {
+            var tickers = new List<string>();
+            foreach (var security in _securityList)
+            {
+                tickers.Add(security.Ticker);
+            }
+            return tickers;
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Asset_Management_Platform.Utility
 
         bool IsDatabaseNull();
 
-        bool UpdateSecurityDatabase();
+        bool UpdateSecurityDatabase(List<string> tickers);
 
         bool InsertIntoDatabase(List<Security> securitiesToInsert);
 
@@ -23,7 +23,9 @@ namespace Asset_Management_Platform.Utility
 
         void SeedDatabase();
 
-        void Dispose();
+        List<Security> GetSecurityList();
 
+        void Dispose();
+        List<string> GetTickers();
     }
 }

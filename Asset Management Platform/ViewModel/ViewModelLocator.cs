@@ -36,15 +36,22 @@ namespace Asset_Management_Platform.ViewModel
             {
                 // Create design time view services and models
                 //SimpleIoc.Default.Register<IDataService, DesignDataService>();
-            }
-            else
-            {
-                SimpleIoc.Default.Register<MainViewModel>();
                 SimpleIoc.Default.Register<IStockDataService, StockDataService>();
                 SimpleIoc.Default.Register<IPortfolioService, PortfolioService>();
                 SimpleIoc.Default.Register<IPortfolio, Portfolio>();
                 SimpleIoc.Default.Register<YahooAPIService>();
                 SimpleIoc.Default.Register<SecurityTableSeederDataService>();
+                SimpleIoc.Default.Register<MainViewModel>();
+            }
+            else
+            {
+                
+                SimpleIoc.Default.Register<IStockDataService, StockDataService>();
+                SimpleIoc.Default.Register<IPortfolioService, PortfolioService>();
+                SimpleIoc.Default.Register<IPortfolio, Portfolio>();
+                SimpleIoc.Default.Register<YahooAPIService>();
+                SimpleIoc.Default.Register<SecurityTableSeederDataService>();
+                SimpleIoc.Default.Register<MainViewModel>();
             }
         }
 

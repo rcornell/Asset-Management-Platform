@@ -28,25 +28,19 @@ namespace Asset_Management_Platform
         /// 
 
         private Portfolio _portfolio;
-        private PortfolioService _portfolioService;
-        private IStockDataService _stockDataService;
+        private IPortfolioService _portfolioService;
         public ObservableCollection<Security> SecurityList;
 
-        public MainViewModel(IStockDataService service)
+        public MainViewModel(IPortfolioService portfolioService)
         {
-            //Using or simpleioc?
-            //using (var sservice = new StockDataService())
-            //{
-            //    sservice.Initialize();
-            //}
-            _stockDataService = service;
-            _stockDataService.Initialize();
-            var securityList = _stockDataService.LoadSecurityDatabase();
-            _portfolioService = SimpleIoc.Default.GetInstance<PortfolioService>();
+ 
 
+            _portfolioService = portfolioService;
+            _portfolio = _portfolioService.GetPortfolio();
             Messenger.Default.Register<PortfolioMessage>(this, RefreshCollection);
 
-            
+            _portfolioService.StartUpdates();
+
             ////if (IsInDesignMode)
             ////{
             ////    // Code runs in Blend --> create design time data.
@@ -59,7 +53,7 @@ namespace Asset_Management_Platform
 
         private void RefreshCollection(PortfolioMessage obj)
         {
-            _portfolio = _portfolioService.CurrentPortfolio;
+            _portfolio = _portfolioService.GetPortfolio();
         }
 
         private void Initialize()

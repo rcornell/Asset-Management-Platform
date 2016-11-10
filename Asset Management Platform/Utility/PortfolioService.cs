@@ -10,7 +10,7 @@ using Asset_Management_Platform.Messages;
 
 namespace Asset_Management_Platform.Utility
 {
-    public class PortfolioService: IPortfolioService
+    public class PortfolioService : IPortfolioService
     {
         private Dictionary<string, double> _positionValues;
         public Dictionary<string, double> PositionValues
@@ -19,29 +19,38 @@ namespace Asset_Management_Platform.Utility
             set { _positionValues = value; }
         }
 
+        private List<string> _tickers;
 
-        private StockDataService _stockDataService;
+        private IStockDataService _stockDataService;
         private DispatcherTimer _timer;
         private List<Security> _securityList;
 
-        private Portfolio _myPortfolio;
+        private Portfolio _currentPortfolio;
         public Portfolio CurrentPortfolio {
                 get {
                     CalculatePositionValues();
-                    return _myPortfolio;
+                    return _currentPortfolio;
                     }
-                set { _myPortfolio = value; }
+                set { _currentPortfolio = value; }
             }
 
-        public PortfolioService()
+        public PortfolioService(IStockDataService service)
         {
-            _stockDataService = SimpleIoc.Default.GetInstance<StockDataService>();
-            _securityList = _stockDataService.LoadSecurityDatabase();
+            _stockDataService = service;
+            _stockDataService.Initialize();
+            _securityList = _stockDataService.GetSecurityList();
+            _tickers = _stockDataService.GetTickers();
+
             _timer = new DispatcherTimer();
             _timer.Tick += _timer_Tick;
             _timer.Interval = new TimeSpan(0, 0, 10);
                        
             CalculatePositionValues();
+        }
+
+        public Portfolio GetPortfolio()
+        {
+            return CurrentPortfolio;
         }
 
         /// <summary>
@@ -53,10 +62,10 @@ namespace Asset_Management_Platform.Utility
         /// <param name="e"></param>
         public void _timer_Tick(object sender, EventArgs e)
         {
-            bool securityDatabaseUpdated = _stockDataService.UpdateSecurityDatabase();
+            bool securityDatabaseUpdated = _stockDataService.UpdateSecurityDatabase(_tickers);
             if (securityDatabaseUpdated)
             {
-                _securityList = _stockDataService.SecurityList;
+                _securityList = _stockDataService.GetSecurityList();
             }
             CalculatePositionValues();
         }
@@ -89,7 +98,5 @@ namespace Asset_Management_Platform.Utility
         {
             _timer.Stop();
         }
-
-
     }
 }
