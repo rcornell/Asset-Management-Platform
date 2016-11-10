@@ -191,15 +191,5 @@ namespace Asset_Management_Platform.Utility
             UploadDatabase();
             _securityList = null;
         }
-
-        public List<string> GetTickers()
-        {
-            var tickers = new List<string>();
-            foreach (var security in _securityList)
-            {
-                tickers.Add(security.Ticker);
-            }
-            return tickers;
-        }
     }
 }

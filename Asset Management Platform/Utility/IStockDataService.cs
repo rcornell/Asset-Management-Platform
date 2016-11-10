@@ -26,6 +26,5 @@ namespace Asset_Management_Platform.Utility
         List<Security> GetSecurityList();
 
         void Dispose();
-        List<string> GetTickers();
     }
 }

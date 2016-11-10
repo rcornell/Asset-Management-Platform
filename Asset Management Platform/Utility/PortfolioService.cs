@@ -39,13 +39,23 @@ namespace Asset_Management_Platform.Utility
             _stockDataService = service;
             _stockDataService.Initialize();
             _securityList = _stockDataService.GetSecurityList();
-            _tickers = _stockDataService.GetTickers();
+            _tickers = GetTickers();
 
             _timer = new DispatcherTimer();
             _timer.Tick += _timer_Tick;
             _timer.Interval = new TimeSpan(0, 0, 10);
                        
             CalculatePositionValues();
+        }
+
+        private List<string> GetTickers()
+        {
+            var tickers = new List<string>();
+            foreach (var security in _securityList)
+            {
+                tickers.Add(security.Ticker);
+            }
+            return tickers;
         }
 
         public Portfolio GetPortfolio()
