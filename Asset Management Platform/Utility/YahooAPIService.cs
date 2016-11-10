@@ -79,7 +79,7 @@ namespace Asset_Management_Platform.Utility
         //p1    Price Paid
         //p2    Change in Percent
         //p5    Price/Sales
-        //p6    Price/Book  snl1yj1bara5b6
+        //p6    Price/Book                              l1yj1bara5b6
         //q     Ex-Dividend Date
         //r     P/E Ratio
         //r1    Dividend Pay Date
@@ -104,7 +104,7 @@ namespace Asset_Management_Platform.Utility
         //y     Dividend Yield
         /// </summary>
 
-        private List<Security> _securities;
+        private List<Security> _securitiesWithMarketData;
 
         //public List<string> Tickers
         //{
@@ -138,17 +138,18 @@ namespace Asset_Management_Platform.Utility
                 return result;
             }
         }
-        public List<Security> GetData(List<string> tickers)
+        public List<Security> GetData(List<Security> securities)
         {
 
             // Build the URL.
             string url = "";
             int i = 0;
             int j = 0; //index for looping through array of results from yahooAPI
+            string[] lines;
 
-            foreach (string s in tickers)
+            foreach (var s in securities)
             {
-                url += s + "+";
+                url += s.Ticker + "+";
                 i++;
             }
 
@@ -161,13 +162,13 @@ namespace Asset_Management_Platform.Utility
                 //s (symbol) n (name) l1 (last price) y (yield) j1 (market cap) 
                 //b (bid) a (ask) r (peRatio) a5 (ask size) b6 (bid size)
                 const string base_url =
-                    "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=snl1yj1barvb6a5";
+                    "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=l1yj1barvb6a5";
                 url = base_url.Replace("@", url); //Add my tickers to the middle of the url
 
                 // Get the response.
                 try
                 {
-                    _securities = new List<Security>(); //Instantiate the list to return
+                    _securitiesWithMarketData = new List<Security>(); //Instantiate the list to return
 
                     // Get the web response.
                     string result = GetWebResponse(url);
@@ -175,7 +176,7 @@ namespace Asset_Management_Platform.Utility
                     
 
                     // Pull out the current prices.
-                    string[] lines = result.Split(
+                    lines = result.Split(
                         new char[] { '\r', '\n' },
                         StringSplitOptions.RemoveEmptyEntries);
 
@@ -187,82 +188,112 @@ namespace Asset_Management_Platform.Utility
                     foreach (string line in lines)
                     {
                         string cusip = "";
-                        string ticker = "";
-                        string description = "";
                         float lastPrice;
-                        double yield;
-                        double bid;
-                        double ask;
-                        string marketCap;
-                        double peRatio;
-                        int volume;
-                        int bidSize;
-                        int askSize;
+                        double yield = 0;
+                        double bid = 0;
+                        double ask = 0;
+                        string marketCap = "0";
+                        double peRatio = 0;
+                        int volume = 0;
+                        int bidSize = 0;
+                        int askSize = 0;
 
-                        bool ratioIsNA;
+                        bool lastPriceIsNA = false;
+                        bool yieldIsNA = false;
+                        bool bidIsNA = false;
+                        bool askIsNA = false;
+                        bool marketCapIsNA = false;
+                        bool peRatioIsNA = false;
+                        bool volumeIsNA = false;
+                        bool bidSizeIsNA = false;
+                        bool askSizeIsNA = false;
+                        
+                        
                         //cusip = "" no CUSIP ability in this API. Load via my own database
                         //Some stock names contain a comma, which is the character that 
                         //we are using to split up the results. The below code accounts for that possibility
-
+                        //description = lines[j].Split(',')[1];
+                        //description += lines[j].Split(',')[2];
+                        //bool noComma = float.TryParse(lines[j].Split(',')[2], out lastPrice);
                         System.Diagnostics.Debug.Write(string.Format("Creating Security #{0}", j));
 
-                        if (lines[j].Split(',')[1] == "N/A")
+                        lastPriceIsNA = !float.TryParse(lines[j].Split(',')[0], out lastPrice);
+                        if (j == 496)
                         {
-
+                            System.Diagnostics.Debug.Write("Waiting");
                         }
-
-                        ticker = lines[j].Split(',')[0];
-                        description = lines[j].Split(',')[1];
-                        bool noComma = float.TryParse(lines[j].Split(',')[2], out lastPrice);
-                        if (noComma)
+                        yieldIsNA = !double.TryParse(lines[j].Split(',')[1], out yield);
+                        if (lines[j].Split(',')[2] == "N/A") {
+                            marketCapIsNA = true;
+                            marketCap = "0.0B";
+                        }
+                        else
                         {
-                            yield = double.Parse(lines[j].Split(',')[3]);
-                            marketCap = lines[j].Split(',')[4];
-                            bid = double.Parse(lines[j].Split(',')[5]);
-                            ask = double.Parse(lines[j].Split(',')[6]);                           
-                            ratioIsNA = double.TryParse(lines[j].Split(',')[7], out peRatio);
-                            volume = int.Parse(lines[j].Split(',')[8]);
-                            bidSize = int.Parse(lines[j].Split(',')[9]);
-                            askSize = int.Parse(lines[j].Split(',')[10]);
+                            marketCapIsNA = false;
+                            marketCap = lines[j].Split(',')[2];
                         }
-                        else {
-                            description += lines[j].Split(',')[2];
-                            lastPrice = float.Parse(lines[j].Split(',')[3]);
-                            yield = double.Parse(lines[j].Split(',')[4]);
-                            marketCap = lines[j].Split(',')[5];
-                            bid = double.Parse(lines[j].Split(',')[6]);
-                            ask = double.Parse(lines[j].Split(',')[7]);                           
-                            ratioIsNA = double.TryParse(lines[j].Split(',')[8], out peRatio);
-                            volume = int.Parse(lines[j].Split(',')[9]);
-                            bidSize = int.Parse(lines[j].Split(',')[10]);
-                            askSize = int.Parse(lines[j].Split(',')[11]);
-                        }
+                        bidIsNA = !double.TryParse(lines[j].Split(',')[3], out bid);
+                        askIsNA = !double.TryParse(lines[j].Split(',')[4], out ask);                           
+                        peRatioIsNA = !double.TryParse(lines[j].Split(',')[5], out peRatio);
+                        volumeIsNA = !int.TryParse(lines[j].Split(',')[6], out volume);
+                        bidSizeIsNA = !int.TryParse(lines[j].Split(',')[7], out bidSize);
+                        askSizeIsNA = !int.TryParse(lines[j].Split(',')[8], out askSize);
 
-                        if (!ratioIsNA) peRatio = 0;
+                        if (IsSecurityUnavailable(lastPriceIsNA, yieldIsNA, marketCapIsNA, bidIsNA, askIsNA, peRatioIsNA, volumeIsNA, bidSizeIsNA, askSizeIsNA))
+                        {
+                            j++;
+                            continue; //do not add security
+                        }
+                            
+
+                        if (!peRatioIsNA) peRatio = 0;
+                        if (yieldIsNA) yield = 0;
+
                         marketCap = marketCap.Substring(0, marketCap.Length - 1);
 
                         var floatMarketCap = float.Parse(marketCap);
 
-                        _securities.Add(new Stock(cusip, ticker, description, lastPrice, yield, bid, ask, floatMarketCap, peRatio, volume, bidSize, askSize));
+                        _securitiesWithMarketData.Add(new Stock(cusip, securities[j].Ticker, securities[j].Description , lastPrice, yield, bid, ask, floatMarketCap, peRatio, volume, bidSize, askSize));
                         j++; //advance to next security
                         
                     }
-                    return _securities;
+                    return _securitiesWithMarketData;
                 }
+
                 catch (Exception ex) //Error in parsing Yahoo API results.
                 {
                     Console.WriteLine(ex.Message);
                     Console.ReadKey(true);
-                    return _securities; //probably null
+                    return _securitiesWithMarketData; //probably null
                 }
             }
 
-            return _securities; //probably null
+            return _securitiesWithMarketData; //probably null
+        }
+
+        private bool IsSecurityUnavailable(bool lastPriceIsNA, bool yieldIsNA, bool marketCapIsNA, bool bidIsNA, bool askIsNA, bool peRatioIsNA, bool volumeIsNA, bool bidSizeIsNA, bool askSizeIsNA)
+        {
+            int numberOfNA = 0;
+
+            if (lastPriceIsNA) numberOfNA++;
+            if (yieldIsNA) numberOfNA++;
+            if (marketCapIsNA) numberOfNA++;
+            if (bidIsNA) numberOfNA++;
+            if (askIsNA) numberOfNA++;
+            if (peRatioIsNA) numberOfNA++;
+            if (volumeIsNA) numberOfNA++;
+            if (bidSizeIsNA) numberOfNA++;
+            if (askSizeIsNA) numberOfNA++;
+
+            if (numberOfNA > 2)
+                return true;
+
+            return false;
         }
 
         public void Dispose()
         {
-            _securities = null;
+            _securitiesWithMarketData = null;
         }
     }
 }

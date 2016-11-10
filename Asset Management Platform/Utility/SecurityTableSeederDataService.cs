@@ -44,7 +44,7 @@ namespace Asset_Management_Platform.Utility
             // Add the columns in the temp table
             dataTable.Columns.Add("CUSIP");
             dataTable.Columns.Add("Ticker", typeof(string));
-            dataTable.Columns.Add("Description");
+            dataTable.Columns.Add("Description", typeof(string));
             dataTable.Columns.Add("LastPrice");
             dataTable.Columns.Add("Yield");
 

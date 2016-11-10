@@ -106,21 +106,15 @@ namespace Asset_Management_Platform.Utility
 
         public bool UpdateSecurityDatabase()
         {
-            var tickers = new List<string>();
-            foreach (var security in _securityList)
-            {
-                tickers.Add(security.Ticker);
-            }
-
-            if (tickers.Count > 0)
+            if (_securityList.Count > 0)
             {
                 using (var yahooAPI = new YahooAPIService())
                 {
-                    _securityList = yahooAPI.GetData(tickers);
+                    _securityList = yahooAPI.GetData(_securityList);
                 }
             }
             else
-                return false;
+                return false; //_securityList has no members
 
             return true;
         }
