@@ -47,27 +47,6 @@ namespace Asset_Management_Platform.Utility
 
             _currentPortfolio = portfolio;
 
-            CalculatePositionValues();
-        }
-
-        private void BuildPortfolio()
-        {
-            
-        }
-
-        public void CalculatePositionValues()
-        {
-            var positions = _currentPortfolio.GetPositions();
-
-            foreach (var pos in positions)
-            {
-                var ticker = pos.Ticker;
-                var security = _securityList.Find(s => s.Ticker == ticker);
-                var value = security.LastPrice * pos.SharesOwned;
-                _positionValues.Add(ticker, value);
-            }
-
-            //Add try catch when you know what kind of errors this can lead to.
         }
 
         /// <summary>
@@ -107,9 +86,8 @@ namespace Asset_Management_Platform.Utility
             bool updateSuccessful = _stockDataService.UpdateSecurityDatabase();
             if (updateSuccessful)
             {
-                _securityList = _stockDataService.GetSecurityList();
+                _securityList = _stockDataService.GetUpdatedPrices();
             }
-            CalculatePositionValues();
         }
 
         /// <summary>

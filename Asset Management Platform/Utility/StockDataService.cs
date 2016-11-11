@@ -119,6 +119,12 @@ namespace Asset_Management_Platform.Utility
             return true;
         }
 
+        public List<Security> GetUpdatedPrices()
+        {
+
+            return new List<Security>();
+        }
+
 
         /// <summary>
         /// Insert position(s) into the database and returns true if successful

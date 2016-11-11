@@ -26,5 +26,6 @@ namespace Asset_Management_Platform.Utility
         List<Security> GetSecurityList();
 
         void Dispose();
+        List<Security> GetUpdatedPrices();
     }
 }

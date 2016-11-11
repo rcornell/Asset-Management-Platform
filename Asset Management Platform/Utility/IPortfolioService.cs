@@ -12,8 +12,6 @@ namespace Asset_Management_Platform.Utility
 
         void _timer_Tick(object sender, EventArgs e);
 
-        void CalculatePositionValues();
-
         void StartUpdates();
 
         void StopUpdates();
