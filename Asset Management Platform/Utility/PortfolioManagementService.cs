@@ -10,7 +10,7 @@ using Asset_Management_Platform.Messages;
 
 namespace Asset_Management_Platform.Utility
 {
-    public class PortfolioService : IPortfolioService
+    public class PortfolioManagementService : IPortfolioManagementService
     {
         private Dictionary<string, double> _positionValues;
         public Dictionary<string, double> PositionValues
@@ -23,9 +23,9 @@ namespace Asset_Management_Platform.Utility
         private DispatcherTimer _timer;
         private List<Security> _securityList;
 
-        private IPortfolio _currentPortfolio;
+        private IPortfolioDatabaseService _currentPortfolio;
 
-        public PortfolioService(IStockDataService service, IPortfolio portfolio)
+        public PortfolioManagementService(IStockDataService service, IPortfolioDatabaseService portfolio)
         {
             _stockDataService = service;
             _stockDataService.Initialize();
@@ -69,7 +69,7 @@ namespace Asset_Management_Platform.Utility
             return tickers;
         }
 
-        public IPortfolio GetPortfolio()
+        public IPortfolioDatabaseService GetPortfolio()
         {
             return _currentPortfolio;
         }

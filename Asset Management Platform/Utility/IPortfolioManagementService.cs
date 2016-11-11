@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Asset_Management_Platform.Utility
 {
-    public interface IPortfolioService
+    public interface IPortfolioManagementService
     {
-        IPortfolio GetPortfolio();
+        IPortfolioDatabaseService GetPortfolio();
 
         void _timer_Tick(object sender, EventArgs e);
 

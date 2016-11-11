@@ -110,7 +110,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DisplayStock.cs" />
-    <Compile Include="Utility\IPortfolio.cs" />
+    <Compile Include="Utility\IPortfolioDatabaseService.cs" />
     <Compile Include="Messages\DatabaseMessage.cs" />
     <Compile Include="Messages\PortfolioMessage.cs" />
     <Compile Include="SecurityClasses\CorporateBond.cs" />
@@ -123,16 +123,16 @@
     <Compile Include="SecurityClasses\Stock.cs" />
     <Compile Include="SecurityClasses\StockFromJSON.cs" />
     <Compile Include="SecurityClasses\Treasury.cs" />
-    <Compile Include="Utility\IPortfolioService.cs" />
+    <Compile Include="Utility\IPortfolioManagementService.cs" />
     <Compile Include="Utility\IStockDataService.cs" />
     <Compile Include="Utility\SecurityTableSeederDataService.cs" />
     <Compile Include="Utility\TradeExecutionService.cs" />
-    <Compile Include="Utility\PortfolioService.cs" />
+    <Compile Include="Utility\PortfolioManagementService.cs" />
     <Compile Include="Utility\StockDataService.cs" />
     <Compile Include="Utility\YahooAPIService.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="SecuritiesList.cs" />
-    <Compile Include="Utility\Portfolio.cs" />
+    <Compile Include="Utility\PortfolioDatabaseService.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

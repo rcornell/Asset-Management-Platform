@@ -27,10 +27,10 @@ namespace Asset_Management_Platform
         /// </summary>
         /// 
 
-        private IPortfolioService _portfolioService;
+        private IPortfolioManagementService _portfolioService;
         public ObservableCollection<Security> SecurityList;
 
-        public MainViewModel(IPortfolioService portfolioService)
+        public MainViewModel(IPortfolioManagementService portfolioService)
         {
  
             //SOLVE THE 8 SECOND PAUSE WHEN POLLING YAHOO.

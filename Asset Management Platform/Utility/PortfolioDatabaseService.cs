@@ -13,7 +13,7 @@ using System.Configuration;
 
 namespace Asset_Management_Platform
 {
-    public class Portfolio : IPortfolio
+    public class PortfolioDatabaseService : IPortfolioDatabaseService
     {
         private List<Position> positionsToDelete;
         private SqlDataReader reader;
@@ -21,7 +21,7 @@ namespace Asset_Management_Platform
 
         private List<Position> _myPositions;
 
-        public Portfolio()
+        public PortfolioDatabaseService()
         {
              positionsToDelete = new List<Position>();
             _myPositions = new List<Position>();

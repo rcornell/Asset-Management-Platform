@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Asset_Management_Platform.Utility
 {
-    public interface IPortfolio
+    public interface IPortfolioDatabaseService
     {
         bool CheckDBForPositions();
 
