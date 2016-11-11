@@ -109,6 +109,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DisplayStock.cs" />
     <Compile Include="Utility\IPortfolio.cs" />
     <Compile Include="Messages\DatabaseMessage.cs" />
     <Compile Include="Messages\PortfolioMessage.cs" />

@@ -33,11 +33,21 @@ namespace Asset_Management_Platform
         public MainViewModel(IPortfolioService portfolioService)
         {
  
+            //SOLVE THE 8 SECOND PAUSE WHEN POLLING YAHOO.
+
+
 
             _portfolioService = portfolioService;
             Messenger.Default.Register<PortfolioMessage>(this, RefreshCollection);
             //_portfolioService.StartUpdates(); //TURNED OFF FOR TESTING
 
+            GetSecurityList();
+
+        }
+
+        private void GetSecurityList()
+        {
+            
         }
 
         private void RefreshCollection(PortfolioMessage obj)

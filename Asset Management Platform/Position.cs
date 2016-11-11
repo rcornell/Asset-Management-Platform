@@ -21,9 +21,9 @@ namespace Asset_Management_Platform
             set { _sharesOwned = value; }
         }
 
-        public Position(string security, int shares)
+        public Position(string ticker, int shares)
         {
-            _ticker = security;
+            _ticker = ticker;
             _sharesOwned = shares;
         }
     }

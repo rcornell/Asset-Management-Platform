@@ -17,10 +17,8 @@ namespace Asset_Management_Platform.Utility
         {
             get { return _positionValues; }
             set { _positionValues = value; }
-        }
-
+        }    
         private List<string> _tickers;
-
         private IStockDataService _stockDataService;
         private DispatcherTimer _timer;
         private List<Security> _securityList;
