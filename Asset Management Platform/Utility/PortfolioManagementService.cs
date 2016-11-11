@@ -12,23 +12,26 @@ namespace Asset_Management_Platform.Utility
 {
     public class PortfolioManagementService : IPortfolioManagementService
     {
-        private Dictionary<string, double> _positionValues;
-        public Dictionary<string, double> PositionValues
-        {
-            get { return _positionValues; }
-            set { _positionValues = value; }
-        }    
         private List<string> _tickers;
         private IStockDataService _stockDataService;
         private IPortfolioDatabaseService _portfolioDatabaseService;
         private DispatcherTimer _timer;
         private List<Security> _securityList;
 
-        
+        private List<DisplayStock> _displayStocks;
+        public List<DisplayStock> DisplayStocks
+        {
+            get
+            {
+                return _displayStocks;
+            }
+        }
 
         public PortfolioManagementService(IStockDataService stockDataService, IPortfolioDatabaseService portfolioDatabaseService)
         {
             _stockDataService = stockDataService;
+            _portfolioDatabaseService = portfolioDatabaseService;
+
             _stockDataService.Initialize();
 
             //Load stock info from SQL DB
@@ -51,14 +54,21 @@ namespace Asset_Management_Platform.Utility
             _timer.Tick += _timer_Tick;
             _timer.Interval = new TimeSpan(0, 0, 10);
 
-            _portfolioDatabaseService = portfolioDatabaseService;
-
             BuildDisplayStocks();
         }
 
         private void BuildDisplayStocks()
         {
-            
+            var positions = _portfolioDatabaseService.GetPositions();
+            var stocks = _stockDataService.GetSecurityList();
+
+            var displayStock = new List<DisplayStock>();
+
+            foreach (var pos in positions)
+            {
+                var stock = stocks.Find(s => s.Ticker == pos.Ticker);
+                displayStock.Add(new DisplayStock(pos, (Stock)stock));
+            } //check to see if the stocks are Stocks or Securities
         }
 
         /// <summary>
@@ -111,6 +121,11 @@ namespace Asset_Management_Platform.Utility
         public void StopUpdates()
         {
             _timer.Stop();
+        }
+
+        public List<DisplayStock> GetDisplayStocks()
+        {
+            return DisplayStocks;
         }
     }
 }

@@ -20,5 +20,6 @@ namespace Asset_Management_Platform.Utility
         void AddToPortfolio(Security securityToAdd, int shares);
       
         void SellSharesFromPortfolio(Security security, int shares);
+
     }
 }

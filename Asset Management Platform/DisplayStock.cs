@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Asset_Management_Platform
 {
-    class DisplayStock
+    public class DisplayStock
     {
         private Position _position;
         private Stock _stock;

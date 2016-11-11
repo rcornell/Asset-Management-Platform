@@ -84,19 +84,21 @@ namespace Asset_Management_Platform
         /// MyPortfolio table.
         /// </summary>
         public void LoadPositionsFromDatabase()
-        {           
-            using (var connection = new SqlConnection("StorageConnectionString"))
+        {
+            var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
+            using (var connection = new SqlConnection(storageString))
             {
                 connection.Open();
                 using (var command = new SqlCommand())
                 {
+                    command.Connection = connection;
                     command.CommandText = @"SELECT * FROM MyPortfolio;";
                     var reader = command.ExecuteReader();
 
                     while (reader.Read())
                     {
                         var ticker = reader.GetString(0);
-                        var quantity = reader.GetInt32(1);
+                        var quantity = int.Parse(reader.GetString(1));
                         _myPositions.Add(new Position(ticker, quantity));
                     }
                 }
@@ -265,6 +267,8 @@ namespace Asset_Management_Platform
             }
             //PROBABLY NEED TO SEND A MESSAGE TO UPDATE UI
         }
+
+
     }
 
 }

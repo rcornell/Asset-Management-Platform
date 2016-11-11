@@ -13,5 +13,7 @@ namespace Asset_Management_Platform.Utility
         void StartUpdates();
 
         void StopUpdates();
+
+        List<DisplayStock> GetDisplayStocks();
     }
 }

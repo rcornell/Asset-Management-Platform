@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Asset_Management_Platform
 {
-    class Stock : Security
+    public class Stock : Security
     {
 
         public double Bid;

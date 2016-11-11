@@ -28,7 +28,7 @@ namespace Asset_Management_Platform
         /// 
 
         private IPortfolioManagementService _portfolioService;
-        public ObservableCollection<Security> SecurityList;
+        public ObservableCollection<DisplayStock> StockList;
 
         public MainViewModel(IPortfolioManagementService portfolioService)
         {
@@ -41,13 +41,14 @@ namespace Asset_Management_Platform
             Messenger.Default.Register<PortfolioMessage>(this, RefreshCollection);
             //_portfolioService.StartUpdates(); //TURNED OFF FOR TESTING
 
-            GetSecurityList();
+            GetDisplayStocks();
 
         }
 
-        private void GetSecurityList()
+        private void GetDisplayStocks()
         {
-            
+            var displayStocks = _portfolioService.GetDisplayStocks();
+            StockList = new ObservableCollection<DisplayStock>(displayStocks);
         }
 
         private void RefreshCollection(PortfolioMessage obj)
