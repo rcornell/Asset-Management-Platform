@@ -20,17 +20,23 @@ namespace Asset_Management_Platform.Utility
         }    
         private List<string> _tickers;
         private IStockDataService _stockDataService;
+        private IPortfolioDatabaseService _portfolioDatabaseService;
         private DispatcherTimer _timer;
         private List<Security> _securityList;
 
-        private IPortfolioDatabaseService _currentPortfolio;
+        
 
-        public PortfolioManagementService(IStockDataService service, IPortfolioDatabaseService portfolio)
+        public PortfolioManagementService(IStockDataService stockDataService, IPortfolioDatabaseService portfolioDatabaseService)
         {
-            _stockDataService = service;
+            _stockDataService = stockDataService;
             _stockDataService.Initialize();
-            _securityList = _stockDataService.LoadSecurityDatabase(); //Load stock info from SQL DB
-            var updateSuccessful = _stockDataService.UpdateSecurityDatabase();//Use yahooAPI to pull in updated info
+
+            //Load stock info from SQL DB
+            _securityList = _stockDataService.LoadSecurityDatabase();
+
+            //Use yahooAPI to pull in updated info
+            var updateSuccessful = _stockDataService.UpdateSecurityDatabase();
+
             if (updateSuccessful) 
             {
                 _tickers = GetTickers();
@@ -45,8 +51,14 @@ namespace Asset_Management_Platform.Utility
             _timer.Tick += _timer_Tick;
             _timer.Interval = new TimeSpan(0, 0, 10);
 
-            _currentPortfolio = portfolio;
+            _portfolioDatabaseService = portfolioDatabaseService;
 
+            BuildDisplayStocks();
+        }
+
+        private void BuildDisplayStocks()
+        {
+            
         }
 
         /// <summary>
@@ -67,11 +79,6 @@ namespace Asset_Management_Platform.Utility
                 tickers.Add(security.Ticker);
             }
             return tickers;
-        }
-
-        public IPortfolioDatabaseService GetPortfolio()
-        {
-            return _currentPortfolio;
         }
 
         /// <summary>

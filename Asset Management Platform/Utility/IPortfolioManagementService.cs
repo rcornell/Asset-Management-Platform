@@ -8,8 +8,6 @@ namespace Asset_Management_Platform.Utility
 {
     public interface IPortfolioManagementService
     {
-        IPortfolioDatabaseService GetPortfolio();
-
         void _timer_Tick(object sender, EventArgs e);
 
         void StartUpdates();
