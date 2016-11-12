@@ -2,6 +2,7 @@ using Asset_Management_Platform.Utility;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
+using GalaSoft.MvvmLight.Command;
 using System.Collections.ObjectModel;
 using System;
 using Asset_Management_Platform.Messages;
@@ -26,6 +27,38 @@ namespace Asset_Management_Platform
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
         /// 
+
+
+        private string _orderTickerText;
+        public string OrderTickerText
+        {
+            get { return _orderTickerText; }
+            set { _orderTickerText = value;
+                RaisePropertyChanged(() => OrderTickerText); }
+        }
+
+
+        private int _orderShareQuantity;
+        public int OrderShareQuantity
+        {
+            get { return _orderShareQuantity; }
+            set { _orderShareQuantity = value;
+                RaisePropertyChanged(() => OrderShareQuantity);
+            }
+        }
+
+
+
+        public RelayCommand AddPosition
+        {
+            get { return new RelayCommand(ExecuteAddPosition); }
+        }
+
+        public RelayCommand SellPosition
+        {
+            get { return new RelayCommand(ExecuteSellPosition); }
+        }
+       
 
         private IPortfolioManagementService _portfolioService;
 
@@ -70,6 +103,16 @@ namespace Asset_Management_Platform
         private void RefreshCollection(PortfolioMessage obj)
         {
             //_portfolio = _portfolioService.GetPortfolio();
+        }
+
+        private void ExecuteAddPosition()
+        {
+            
+        }
+
+        private void ExecuteSellPosition()
+        {
+
         }
 
         private void Initialize()

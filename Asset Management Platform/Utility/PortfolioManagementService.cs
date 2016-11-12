@@ -127,5 +127,15 @@ namespace Asset_Management_Platform.Utility
         {
             return DisplayStocks;
         }
+
+        public void AddPosition(string ticker, int shares)
+        {
+
+        }
+
+        public void SellPosition(string ticker, int shares)
+        {
+
+        }
     }
 }

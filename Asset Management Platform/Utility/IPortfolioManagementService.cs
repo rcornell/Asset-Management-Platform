@@ -14,6 +14,10 @@ namespace Asset_Management_Platform.Utility
 
         void StopUpdates();
 
+        void AddPosition(string ticker, int shares);
+
+        void SellPosition(string ticker, int shares);
+
         List<DisplayStock> GetDisplayStocks();
     }
 }

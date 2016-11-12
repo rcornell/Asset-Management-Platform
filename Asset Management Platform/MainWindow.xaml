@@ -7,6 +7,12 @@
         mc:Ignorable="d"
         Title="MainWindow" 
         DataContext="{Binding Main, Source={StaticResource Locator}}">
+    <Window.Resources>
+        <Style x:Key="DataGridCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
+            <Setter Property="HorizontalContentAlignment" Value="Right"/>
+            <Setter Property="Background" Value="DarkSlateGray"/>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>
@@ -15,54 +21,40 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
-        <!--<ListView ItemsSource="{Binding StockList}" Grid.Column="2" Grid.Row="1" Margin="5">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding Ticker}"/>
-                        <TextBlock Grid.Column="1" Text="{Binding Description}"/>
-                        <TextBlock Grid.Column="2" Text="{Binding Price}"/>
-                        <TextBlock Grid.Column="3" Text="{Binding MarketValue}"/>
-                        <TextBlock Grid.Column="4" Text="{Binding Yield}"/>
-                        <TextBlock Grid.Column="5" Text="{Binding PeRatio}"/>
-                        <TextBlock Grid.Column="6" Text="{Binding Ask}"/>
-                        <TextBlock Grid.Column="7" Text="{Binding AskSize}"/>
-                        <TextBlock Grid.Column="8" Text="{Binding Bid}"/>
-                        <TextBlock Grid.Column="9" Text="{Binding BidSize}"/>
-                        <TextBlock Grid.Column="10" Text="{Binding Volume}"/>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>-->
-        <DataGrid ItemsSource="{Binding StockList}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="5" AlternatingRowBackground="AliceBlue" AutoGenerateColumns="False">
+        <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="All Assets" Margin="5"/>
+            <Button Grid.Column="1" Content="Equities" Margin="5"/>
+            <Button Grid.Column="2" Content="Fixed Income" Margin="5"/>
+            <Button Grid.Column="3" Content="Funds and ETFs" Margin="5"/>
+        </Grid>
+        <!-- When you have to make a DataGrid that groups objects by type: http://wpftutorial.net/DataGrid.html-->
+        <DataGrid ItemsSource="{Binding StockList, 
+                                NotifyOnSourceUpdated=True, 
+                                UpdateSourceTrigger=PropertyChanged}" 
+                  HorizontalAlignment="Right"
+                  Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" AlternatingRowBackground="AliceBlue" AutoGenerateColumns="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Ticker"  Binding="{Binding Ticker}"/>
-                <DataGridTextColumn Header="Description" Binding="{Binding Description}"/>
-                <DataGridTextColumn Header="Price" Binding="{Binding Price}"/>
-                <DataGridTextColumn Header="Market Value" Binding="{Binding MarketValue}"/>
-                <DataGridTextColumn Header="Yield" Binding="{Binding Yield}"/>
-                <DataGridTextColumn Header="P/E Ratio" Binding="{Binding PeRatio}"/>
-                <DataGridTextColumn Header="Ask" Binding="{Binding Ask}"/>
-                <DataGridTextColumn Header="Ask Size" Binding="{Binding AskSize}"/>
-                <DataGridTextColumn Header="Bid" Binding="{Binding Bid}"/>
-                <DataGridTextColumn Header="Bid Size" Binding="{Binding BidSize}"/>
-                <DataGridTextColumn Header="Volume" Binding="{Binding Volume}"/>
+                <DataGridTextColumn Width="Auto" Header="Ticker"  Binding="{Binding Ticker}"  TextOptions.TextFormattingMode="Display"/>
+                <DataGridTextColumn Width="Auto" Header="Description" Binding="{Binding Description}"/>
+                <DataGridTextColumn Width="Auto" Header="Price" Binding="{Binding Price}"/>
+                <DataGridTextColumn Width="Auto" Header="Market Value" Binding="{Binding MarketValue}"/>
+                <DataGridTextColumn Width="Auto" Header="Yield" Binding="{Binding Yield}"/>
+                <DataGridTextColumn Width="Auto" Header="P/E Ratio" Binding="{Binding PeRatio}"/>
+                <DataGridTextColumn Width="Auto" Header="Ask" Binding="{Binding Ask}"/>
+                <DataGridTextColumn Width="Auto" Header="Ask Size" Binding="{Binding AskSize}"/>
+                <DataGridTextColumn Width="Auto" Header="Bid" Binding="{Binding Bid}"/>
+                <DataGridTextColumn Width="Auto" Header="Bid Size" Binding="{Binding BidSize}"/>
+                <DataGridTextColumn Width="Auto" Header="Volume" Binding="{Binding Volume}"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
