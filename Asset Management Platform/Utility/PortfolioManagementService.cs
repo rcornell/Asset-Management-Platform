@@ -62,12 +62,12 @@ namespace Asset_Management_Platform.Utility
             var positions = _portfolioDatabaseService.GetPositions();
             var stocks = _stockDataService.GetSecurityList();
 
-            var displayStock = new List<DisplayStock>();
+            _displayStocks = new List<DisplayStock>();
 
             foreach (var pos in positions)
             {
                 var stock = stocks.Find(s => s.Ticker == pos.Ticker);
-                displayStock.Add(new DisplayStock(pos, (Stock)stock));
+                _displayStocks.Add(new DisplayStock(pos, (Stock)stock));
             } //check to see if the stocks are Stocks or Securities
         }
 

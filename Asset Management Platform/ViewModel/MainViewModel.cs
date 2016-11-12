@@ -28,11 +28,27 @@ namespace Asset_Management_Platform
         /// 
 
         private IPortfolioManagementService _portfolioService;
-        public ObservableCollection<DisplayStock> StockList;
+
+        private ObservableCollection<DisplayStock> _stockList;
+        public ObservableCollection<DisplayStock> StockList
+        {
+            get { return _stockList;}
+            set { _stockList = value;
+                RaisePropertyChanged(() => StockList);
+            }
+        }
 
         public MainViewModel(IPortfolioManagementService portfolioService)
         {
- 
+
+            if (IsInDesignModeStatic)
+            {
+                StockList = new ObservableCollection<DisplayStock>()
+                {
+                    new DisplayStock(new Position("AAPL", 100), new Stock("", "AAPL", "Apple Computers, Inc.", float.Parse("110.50"), 1.01))
+                };
+            }
+
             //SOLVE THE 8 SECOND PAUSE WHEN POLLING YAHOO.
 
 
