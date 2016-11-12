@@ -41,6 +41,13 @@ namespace Asset_Management_Platform
             }
         }
 
+        public double Yield
+        {
+            get {
+                return _stock.Yield;
+            }
+        }
+
         public double Bid
         {
             get
@@ -87,6 +94,11 @@ namespace Asset_Management_Platform
             {
                 return _stock.BidSize;
             }
+        }
+
+        public double Volume
+        {
+            get { return _stock.Volume; }
         }
 
 
