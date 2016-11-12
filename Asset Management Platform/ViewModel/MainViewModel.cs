@@ -29,6 +29,9 @@ namespace Asset_Management_Platform
         /// 
 
 
+        public ObservableCollection<String> TradeTypeStrings;
+        public string SelectedTradeType;
+
         private string _orderTickerText;
         public string OrderTickerText
         {
@@ -84,7 +87,11 @@ namespace Asset_Management_Platform
         {
             get { return new RelayCommand(ExecutePreviewOrder); }
         }
-       
+
+        public RelayCommand ExecuteOrder
+        {
+            get { return new RelayCommand(ExecuteExecuteOrder); }
+        }
 
         private IPortfolioManagementService _portfolioService;
 
@@ -100,6 +107,7 @@ namespace Asset_Management_Platform
         public MainViewModel(IPortfolioManagementService portfolioService)
         {
             SelectedDisplayStock = null;
+            TradeTypeStrings = new ObservableCollection<string>() { "Buy", "Sell" };
 
             //if (IsInDesignModeStatic)
             //{
@@ -153,6 +161,14 @@ namespace Asset_Management_Platform
                 previewStock = _portfolioService.GetOrderPreviewStock(_orderTickerText);
                 PreviewPrice = previewStock.LastPrice;
             }
+        }
+
+        private void ExecuteExecuteOrder()
+        {
+            if (SelectedTradeType == "Buy")
+                _portfolioService.AddPosition(_orderTickerText, _orderShareQuantity);
+            else
+                _portfolioService.SellPosition(_orderTickerText, _orderShareQuantity);
         }
 
         private void Initialize()
