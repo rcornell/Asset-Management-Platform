@@ -29,7 +29,17 @@ namespace Asset_Management_Platform
         /// 
 
 
-        public ObservableCollection<String> TradeTypeStrings;
+        private ObservableCollection<String> _tradeTypeStrings;
+        public ObservableCollection<String> TradeTypeStrings
+        {
+            get { return _tradeTypeStrings; }
+            set
+            {
+                _tradeTypeStrings = value;
+                RaisePropertyChanged(() => TradeTypeStrings);
+            }
+        }
+
         public string SelectedTradeType;
 
         private string _orderTickerText;

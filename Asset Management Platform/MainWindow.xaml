@@ -65,27 +65,33 @@
                 <RowDefinition></RowDefinition>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Center">
-                <TextBlock Text="Ticker:" Margin="3" />
-                <TextBox Text="{Binding OrderTickerText, Mode=TwoWay}" Width="100" Height="20" Margin="3" />
-                <TextBlock Text="Shares:" Margin="3" />
-                <TextBox Text="{Binding OrderShareQuantity, Mode=TwoWay}" Width="100" Height="20" Margin="3" />
-                <Button Content="Preview Order" Margin="3" Command="{Binding PreviewOrder}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" VerticalAlignment="Center">
-                <TextBlock Text="Mkt Price:" Margin="3" />
-                <TextBox Text="{Binding PreviewPrice, Mode=OneWay}" Width="100" Height="20" Margin="3" />
-                <TextBlock Text="Order Value:" Margin="3" />
-                <TextBox Text="{Binding PreviewValue, Mode=OneWay}" Width="100" Height="20" Margin="3" />
-                <Button Content="Execute" Command="{Binding ExecuteOrder}" Margin="3"/>
-            </StackPanel>
-            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock Text="Trade Type:" Margin="3" />
-                <ListBox ItemsSource="{Binding TradeTypeStrings}" SelectedItem="{Binding SelectedTradeType}" Margin="3" Width="100"/>
-            </StackPanel>
+            
+                <TextBlock Text="Ticker:" Margin="3" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center"/>
+                <TextBox Text="{Binding OrderTickerText, Mode=TwoWay}" Grid.Row="1" Grid.Column="1" Width="100" Height="20" Margin="3" VerticalAlignment="Center" />
+                <TextBlock Text="Shares:" Margin="40,3,3,3" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center"/>
+                <TextBox Text="{Binding OrderShareQuantity, Mode=TwoWay}" Grid.Row="1" Grid.Column="3" Width="100" Height="20" Margin="3"  VerticalAlignment="Center"/>
+                <Button Content="Preview Order" Margin="3" Command="{Binding PreviewOrder}" Grid.Row="1" Grid.Column="4" VerticalAlignment="Center"/>
+            
+            
+                <TextBlock Text="Mkt Price:" Margin="3" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
+                <TextBox Text="{Binding PreviewPrice, Mode=OneWay}" Width="100" Height="20" Margin="3" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center"/>
+
+                <TextBlock Text="Order Value:" Margin="40,3,3,3" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" />
+                <TextBox Text="{Binding PreviewValue, Mode=OneWay}" Width="100" Height="20" Margin="3" Grid.Row="2" Grid.Column="3" VerticalAlignment="Center" />
+                
+                <Button Content="Execute" Command="{Binding ExecuteOrder}" Margin="3" Grid.Row="2" Grid.Column="4" VerticalAlignment="Center" />
+            
+                <TextBlock Text="Trade Type:" Margin="3" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center"/>
+                <ComboBox ItemsSource="{Binding TradeTypeStrings}"  SelectedItem="{Binding SelectedTradeType}" Height="25" Width="100"  Margin="3" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
+            
 
         </Grid>
     </Grid>
