@@ -33,18 +33,20 @@ namespace Asset_Management_Platform
             }
         }
 
-        public float MarketValue
+        public string MarketValue
         {
             get
             {
-                return _stock.LastPrice * _position.SharesOwned;
+                var value =_stock.LastPrice * _position.SharesOwned;
+                var valueString = value.ToString("#,##0");
+                return valueString;
             }
         }
 
-        public double Yield
+        public string Yield
         {
             get {
-                return _stock.Yield;
+                return string.Format(_stock.Yield + "%");
             }
         }
 
@@ -64,11 +66,13 @@ namespace Asset_Management_Platform
             }
         }
 
-        public double MarketCap
+        public string MarketCap
         {
             get
             {
-                return _stock.MarketCap;
+                var stringChars = _stock.MarketCap.ToString().Split('.');
+                var newString = stringChars[0] + " Billion";
+                return newString;
             }
         }
 
@@ -96,9 +100,11 @@ namespace Asset_Management_Platform
             }
         }
 
-        public double Volume
+        public string Volume
         {
-            get { return _stock.Volume; }
+            get {
+                return _stock.Volume.ToString("#,##0");
+            }
         }
 
 

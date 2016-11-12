@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Asset_Management_Platform.ViewModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525"
+        Title="MainWindow" 
         DataContext="{Binding Main, Source={StaticResource Locator}}">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -50,7 +50,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>-->
-        <DataGrid ItemsSource="{Binding StockList}" Grid.Row="1" Grid.Column="1" Margin="5" AlternatingRowBackground="AliceBlue">
+        <DataGrid ItemsSource="{Binding StockList}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="5" AlternatingRowBackground="AliceBlue" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Ticker"  Binding="{Binding Ticker}"/>
                 <DataGridTextColumn Header="Description" Binding="{Binding Description}"/>

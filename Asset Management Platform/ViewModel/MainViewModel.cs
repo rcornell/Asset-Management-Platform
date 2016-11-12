@@ -41,13 +41,13 @@ namespace Asset_Management_Platform
         public MainViewModel(IPortfolioManagementService portfolioService)
         {
 
-            if (IsInDesignModeStatic)
-            {
-                StockList = new ObservableCollection<DisplayStock>()
-                {
-                    new DisplayStock(new Position("AAPL", 100), new Stock("", "AAPL", "Apple Computers, Inc.", float.Parse("110.50"), 1.01))
-                };
-            }
+            //if (IsInDesignModeStatic)
+            //{
+            //    StockList = new ObservableCollection<DisplayStock>()
+            //    {
+            //        new DisplayStock(new Position("AAPL", 100), new Stock("", "AAPL", "Apple Computers, Inc.", float.Parse("110.50"), 1.01))
+            //    };
+            //}
 
             //SOLVE THE 8 SECOND PAUSE WHEN POLLING YAHOO.
 
