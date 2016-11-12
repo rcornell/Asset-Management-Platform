@@ -47,7 +47,28 @@ namespace Asset_Management_Platform
             }
         }
 
+        private float _previewPrice;
+        public float PreviewPrice
+        {
+            get
+            {
+                return _previewPrice;
+            }
+            set
+            {
+                _previewPrice = value;
+                RaisePropertyChanged(() => PreviewPrice);
+                RaisePropertyChanged(() => PreviewValue);
+            }
+        }
 
+        public float PreviewValue
+        {
+            get { return (_previewPrice * _orderShareQuantity); }
+        }
+
+
+        public DisplayStock SelectedDisplayStock;
 
         public RelayCommand AddPosition
         {
@@ -57,6 +78,11 @@ namespace Asset_Management_Platform
         public RelayCommand SellPosition
         {
             get { return new RelayCommand(ExecuteSellPosition); }
+        }
+
+        public RelayCommand PreviewOrder
+        {
+            get { return new RelayCommand(ExecutePreviewOrder); }
         }
        
 
@@ -73,6 +99,7 @@ namespace Asset_Management_Platform
 
         public MainViewModel(IPortfolioManagementService portfolioService)
         {
+            SelectedDisplayStock = null;
 
             //if (IsInDesignModeStatic)
             //{
@@ -107,12 +134,25 @@ namespace Asset_Management_Platform
 
         private void ExecuteAddPosition()
         {
-            
+            _portfolioService.AddPosition(_orderTickerText, _orderShareQuantity);
+            GetDisplayStocks();
         }
 
         private void ExecuteSellPosition()
         {
+            
+            _portfolioService.SellPosition(_orderTickerText, _orderShareQuantity);
+            GetDisplayStocks();
+        }
 
+        private void ExecutePreviewOrder()
+        {
+            Security previewStock;
+            if (!string.IsNullOrEmpty(_orderTickerText) && _orderShareQuantity > 0)
+            {
+                previewStock = _portfolioService.GetOrderPreviewStock(_orderTickerText);
+                PreviewPrice = previewStock.LastPrice;
+            }
         }
 
         private void Initialize()

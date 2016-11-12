@@ -57,5 +57,30 @@
                 <DataGridTextColumn Width="Auto" Header="Volume" Binding="{Binding Volume}"/>
             </DataGrid.Columns>
         </DataGrid>
+        <Grid Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" VerticalAlignment="Center">
+                <TextBlock Text="Ticker:" Margin="3" />
+                <TextBox Text="{Binding OrderTickerText, Mode=TwoWay}" Width="100" Height="20" Margin="3" />
+                <TextBlock Text="Shares:" Margin="3" />
+                <TextBox Text="{Binding OrderShareQuantity, Mode=TwoWay}" Width="100" Height="20" Margin="3" />
+                <Button Content="Preview Order" Margin="3" Command="{Binding PreviewOrder}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Center">
+                <TextBlock Text="Mkt Price:" Margin="3" />
+                <TextBox Text="{Binding PreviewPrice, Mode=OneWay}" Width="100" Height="20" Margin="3" />
+                <TextBlock Text="Order Value:" Margin="3" />
+                <TextBox Text="{Binding PreviewValue, Mode=OneWay}" Width="100" Height="20" Margin="3" />
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>

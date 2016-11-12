@@ -18,6 +18,8 @@ namespace Asset_Management_Platform.Utility
 
         void SellPosition(string ticker, int shares);
 
+        Asset_Management_Platform.Security GetOrderPreviewStock(string ticker);
+
         List<DisplayStock> GetDisplayStocks();
     }
 }

@@ -137,5 +137,11 @@ namespace Asset_Management_Platform.Utility
         {
 
         }
+
+        public Asset_Management_Platform.Security GetOrderPreviewStock(string ticker)
+        {
+            var securityToReturn = _stockDataService.GetSpecificSecurityInfo(ticker);
+            return securityToReturn;
+        }
     }
 }
