@@ -18,7 +18,7 @@
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
-        <ListView ItemsSource="{Binding StockList}" Grid.Column="2" Grid.Row="1" Margin="10">
+        <!--<ListView ItemsSource="{Binding StockList}" Grid.Column="2" Grid.Row="1" Margin="5">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid>
@@ -49,9 +49,21 @@
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
-            
-            
-            
-        </ListView>
+        </ListView>-->
+        <DataGrid ItemsSource="{Binding StockList}" Grid.Row="1" Grid.Column="1" Margin="5" AlternatingRowBackground="AliceBlue">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Ticker"  Binding="{Binding Ticker}"/>
+                <DataGridTextColumn Header="Description" Binding="{Binding Description}"/>
+                <DataGridTextColumn Header="Price" Binding="{Binding Price}"/>
+                <DataGridTextColumn Header="Market Value" Binding="{Binding MarketValue}"/>
+                <DataGridTextColumn Header="Yield" Binding="{Binding Yield}"/>
+                <DataGridTextColumn Header="P/E Ratio" Binding="{Binding PeRatio}"/>
+                <DataGridTextColumn Header="Ask" Binding="{Binding Ask}"/>
+                <DataGridTextColumn Header="Ask Size" Binding="{Binding AskSize}"/>
+                <DataGridTextColumn Header="Bid" Binding="{Binding Bid}"/>
+                <DataGridTextColumn Header="Bid Size" Binding="{Binding BidSize}"/>
+                <DataGridTextColumn Header="Volume" Binding="{Binding Volume}"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Window>
