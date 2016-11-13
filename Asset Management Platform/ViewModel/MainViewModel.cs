@@ -40,11 +40,11 @@ namespace Asset_Management_Platform
             }
         }
 
-        private bool _limiBoxActive;
+        private bool _limitBoxActive;
         public bool LimitBoxActive
         {
-            get { return _limiBoxActive; }
-            set { _limiBoxActive = value;
+            get { return _limitBoxActive; }
+            set { _limitBoxActive = value;
                 RaisePropertyChanged(() => LimitBoxActive);
             }
         }
@@ -184,7 +184,7 @@ namespace Asset_Management_Platform
         public string OrderTickerText
         {
             get { return _orderTickerText; }
-            set { _orderTickerText = value;
+            set { _orderTickerText = value.ToUpper();
                 RaisePropertyChanged(() => OrderTickerText); }
         }
 
@@ -319,6 +319,7 @@ namespace Asset_Management_Platform
                 PreviewAskSize = previewStock.AskSize.ToString();
                 PreviewBid = previewStock.Bid.ToString();
                 PreviewBidSize = previewStock.BidSize.ToString();
+                ExecuteButtonEnabled = true;
             }
         }
 
@@ -334,6 +335,7 @@ namespace Asset_Management_Platform
             SelectedTermType = "";
             SelectedTradeType = "";
             LimitPrice = 0.00;
+            ExecuteButtonEnabled = false;
         }
 
         private void Initialize()
