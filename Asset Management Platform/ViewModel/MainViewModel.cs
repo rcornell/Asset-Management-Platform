@@ -29,6 +29,37 @@ namespace Asset_Management_Platform
         /// 
 
 
+        private bool _limiBoxActive;
+        public bool LimitBoxActive
+        {
+            get { return _limiBoxActive; }
+            set { _limiBoxActive = value;
+                RaisePropertyChanged(() => LimitBoxActive);
+            }
+        }
+
+        private ObservableCollection<String> _tradeDurationStrings;
+        public ObservableCollection<String> TradeDurationStrings
+        {
+            get { return _tradeDurationStrings; }
+            set
+            {
+                _tradeDurationStrings = value;
+                RaisePropertyChanged(() => TradeDurationStrings);
+            }
+        }
+
+        private ObservableCollection<String> _tradeTermStrings;
+        public ObservableCollection<String> TradeTermStrings
+        {
+            get { return _tradeTermStrings; }
+            set
+            {
+                _tradeTermStrings = value;
+                RaisePropertyChanged(() => TradeTermStrings);
+            }
+        }
+
         private ObservableCollection<String> _tradeTypeStrings;
         public ObservableCollection<String> TradeTypeStrings
         {
@@ -37,6 +68,33 @@ namespace Asset_Management_Platform
             {
                 _tradeTypeStrings = value;
                 RaisePropertyChanged(() => TradeTypeStrings);
+            }
+        }
+
+
+        private double _limitPrice;
+        public double LimitPrice {
+            get { return _limitPrice; }
+                set { _limitPrice = value ;
+                RaisePropertyChanged(() => LimitPrice); }
+            }
+
+
+        public string SelectedDurationType;
+
+        private string _selectedTermType;
+        public string SelectedTermType
+        {
+            get { return _selectedTermType; }
+            set { _selectedTermType = value;
+                RaisePropertyChanged(() => SelectedTermType);
+                if (_selectedTermType == "Limit" || _selectedTermType == "Stop Limit" || _selectedTermType == "Stop") { 
+                    LimitBoxActive = true;
+                }
+                else
+                {
+                    LimitBoxActive = false;
+                }
             }
         }
 
@@ -118,6 +176,11 @@ namespace Asset_Management_Platform
         {
             SelectedDisplayStock = null;
             TradeTypeStrings = new ObservableCollection<string>() { "Buy", "Sell" };
+            TradeTermStrings = new ObservableCollection<string>() { "Market", "Limit", "Stop", "Stop Limit" };
+            TradeDurationStrings = new ObservableCollection<string> { "Day", "GTC", "Market Close", "Market Open", "Overnight" };
+            SelectedDurationType = "Day";
+            LimitBoxActive = false;
+            LimitPrice = 0;
 
             //if (IsInDesignModeStatic)
             //{
@@ -179,6 +242,12 @@ namespace Asset_Management_Platform
                 _portfolioService.AddPosition(_orderTickerText, _orderShareQuantity);
             else
                 _portfolioService.SellPosition(_orderTickerText, _orderShareQuantity);
+            GetDisplayStocks();
+
+            SelectedDurationType = "Day";
+            SelectedTermType = "";
+            SelectedTradeType = "";
+            LimitPrice = 0.00;
         }
 
         private void Initialize()

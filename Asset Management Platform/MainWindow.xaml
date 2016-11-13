@@ -25,39 +25,48 @@
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
+        <Grid HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Background="Azure">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Content="All Assets" Margin="5"/>
-            <Button Grid.Column="1" Content="Equities" Margin="5"/>
-            <Button Grid.Column="2" Content="Fixed Income" Margin="5"/>
-            <Button Grid.Column="3" Content="Funds and ETFs" Margin="5"/>
+            <Button Content="All Assets" Margin="5" Grid.Column="0"/>
+            <Button Content="Equities" Margin="5" Grid.Column="1"/>
+            <Button Content="Fixed Income" Margin="5" Grid.Column="2"/>
+            <Button Content="Funds and ETFs" Margin="5" Grid.Column="3"/>
         </Grid>
         <!-- When you have to make a DataGrid that groups objects by type: http://wpftutorial.net/DataGrid.html-->
         <DataGrid ItemsSource="{Binding StockList, 
                                 NotifyOnSourceUpdated=True, 
                                 UpdateSourceTrigger=PropertyChanged}" 
-                  HorizontalAlignment="Right"
-                  Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" AlternatingRowBackground="AliceBlue" AutoGenerateColumns="False">
+                  Grid.Row="2"
+                  Grid.Column="1"
+                  Grid.ColumnSpan="2"
+                  HorizontalAlignment="Center" 
+                  Margin="0,3,0,3" 
+                  AlternatingRowBackground="AliceBlue" 
+                  AutoGenerateColumns="False" 
+                  CanUserDeleteRows="False"
+                  VerticalScrollBarVisibility="Visible"
+                  CanUserAddRows="False"  
+                  ColumnWidth="Auto">
             <DataGrid.Columns>
                 <DataGridTextColumn Width="Auto" Header="Ticker"  Binding="{Binding Ticker}"  TextOptions.TextFormattingMode="Display"/>
                 <DataGridTextColumn Width="Auto" Header="Description" Binding="{Binding Description}"/>
-                <DataGridTextColumn Width="Auto" Header="Price" Binding="{Binding Price}"/>
+                <DataGridTextColumn Width="*" Header="Price" Binding="{Binding Price}"/>
                 <DataGridTextColumn Width="Auto" Header="Market Value" Binding="{Binding MarketValue}"/>
-                <DataGridTextColumn Width="Auto" Header="Yield" Binding="{Binding Yield}"/>
-                <DataGridTextColumn Width="Auto" Header="P/E Ratio" Binding="{Binding PeRatio}"/>
-                <DataGridTextColumn Width="Auto" Header="Ask" Binding="{Binding Ask}"/>
-                <DataGridTextColumn Width="Auto" Header="Ask Size" Binding="{Binding AskSize}"/>
-                <DataGridTextColumn Width="Auto" Header="Bid" Binding="{Binding Bid}"/>
-                <DataGridTextColumn Width="Auto" Header="Bid Size" Binding="{Binding BidSize}"/>
-                <DataGridTextColumn Width="Auto" Header="Volume" Binding="{Binding Volume}"/>
+                <DataGridTextColumn Width="*" Header="Yield" Binding="{Binding Yield}"/>
+                <DataGridTextColumn Width="*" Header="P/E Ratio" Binding="{Binding PeRatio}"/>
+                <DataGridTextColumn Width="*" Header="Ask" Binding="{Binding Ask}"/>
+                <DataGridTextColumn Width="*" Header="Ask Size" Binding="{Binding AskSize}"/>
+                <DataGridTextColumn Width="*" Header="Bid" Binding="{Binding Bid}"/>
+                <DataGridTextColumn Width="*" Header="Bid Size" Binding="{Binding BidSize}"/>
+                <DataGridTextColumn Width="*" Header="Volume" Binding="{Binding Volume}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <Grid Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2">
+        <Grid Grid.Row="3" Grid.Column="1"  Background="Azure">
             <Grid.RowDefinitions>
                 <RowDefinition></RowDefinition>
                 <RowDefinition></RowDefinition>
@@ -73,26 +82,33 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            
-                <TextBlock Text="Ticker:" Margin="3" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center"/>
-                <TextBox Text="{Binding OrderTickerText, Mode=TwoWay}" Grid.Row="1" Grid.Column="1" Width="100" Height="20" Margin="3" VerticalAlignment="Center" />
-                <TextBlock Text="Shares:" Margin="40,3,3,3" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center"/>
-                <TextBox Text="{Binding OrderShareQuantity, Mode=TwoWay}" Grid.Row="1" Grid.Column="3" Width="100" Height="20" Margin="3"  VerticalAlignment="Center"/>
-                <Button Content="Preview Order" Margin="3" Command="{Binding PreviewOrder}" Grid.Row="1" Grid.Column="4" VerticalAlignment="Center"/>
-            
-            
-                <TextBlock Text="Mkt Price:" Margin="3" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
-                <TextBox Text="{Binding PreviewPrice, Mode=OneWay}" Width="100" Height="20" Margin="3" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center"/>
-
-                <TextBlock Text="Order Value:" Margin="40,3,3,3" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" />
-                <TextBox Text="{Binding PreviewValue, Mode=OneWay}" Width="100" Height="20" Margin="3" Grid.Row="2" Grid.Column="3" VerticalAlignment="Center" />
-                
-                <Button Content="Execute" Command="{Binding ExecuteOrder}" Margin="3" Grid.Row="2" Grid.Column="4" VerticalAlignment="Center" />
-            
                 <TextBlock Text="Trade Type:" Margin="3" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center"/>
                 <ComboBox ItemsSource="{Binding TradeTypeStrings}"  SelectedItem="{Binding SelectedTradeType}" Height="25" Width="100"  Margin="3" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
-            
 
+                <TextBlock Text="Trade Terms:" Margin="40,3,3,3" Grid.Column="2" Grid.Row="0"  VerticalAlignment="Center"/>
+                <ComboBox ItemsSource="{Binding TradeTermStrings}"  SelectedItem="{Binding SelectedTermType}" Height="25" Width="100"  Margin="3" Grid.Row="0" Grid.Column="3" VerticalAlignment="Center"/>
+
+                <TextBlock Text="Duration:" Margin="3" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center"/>
+                <ComboBox ItemsSource="{Binding TradeDurationStrings}"  SelectedItem="{Binding SelectedDurationType}" Height="25" Width="100"  Margin="3" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
+
+                <TextBlock Text="Limit/Stop:" Margin="40,3,3,3" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center"/>
+                <TextBox Text="{Binding LimitPrice, Mode=TwoWay}" Grid.Row="1" Grid.Column="3" Width="100" Height="20" Margin="3"  VerticalAlignment="Center" IsEnabled="{Binding LimitBoxActive}"/>
+
+                <TextBlock Text="Ticker:" Margin="3" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center"/>
+                <TextBox Text="{Binding OrderTickerText, Mode=TwoWay}" Grid.Row="2" Grid.Column="1" Width="100" Height="20" Margin="3" VerticalAlignment="Center" />
+            
+                <TextBlock Text="Shares:" Margin="40,3,3,3" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center"/>
+                <TextBox Text="{Binding OrderShareQuantity, Mode=TwoWay}" Grid.Row="2" Grid.Column="3" Width="100" Height="20" Margin="3"  VerticalAlignment="Center"/>
+                <Button Content="Preview Order" Margin="3" Command="{Binding PreviewOrder}" Grid.Row="2" Grid.Column="4" VerticalAlignment="Center"/>
+            
+            
+                <TextBlock Text="Mkt Price:" Margin="3" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"/>
+                <TextBox Text="{Binding PreviewPrice, Mode=OneWay}" Width="100" Height="20" Margin="3" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center"/>
+
+                <TextBlock Text="Order Value:" Margin="40,3,3,3" Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" />
+                <TextBox Text="{Binding PreviewValue, Mode=OneWay}" Width="100" Height="20" Margin="3" Grid.Row="3" Grid.Column="3" VerticalAlignment="Center" />
+
+            <Button Content="Execute" Command="{Binding ExecuteOrder}" Margin="3" Grid.Row="3" Grid.Column="4" VerticalAlignment="Center" />
         </Grid>
     </Grid>
 </Window>
