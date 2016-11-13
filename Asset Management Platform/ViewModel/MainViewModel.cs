@@ -29,6 +29,17 @@ namespace Asset_Management_Platform
         /// 
 
 
+        private bool _executeButtonEnabled;
+        public bool ExecuteButtonEnabled
+        {
+            get { return _executeButtonEnabled; }
+            set
+            {
+                _executeButtonEnabled = value;
+                RaisePropertyChanged(() => ExecuteButtonEnabled);
+            }
+        }
+
         private bool _limiBoxActive;
         public bool LimitBoxActive
         {
@@ -68,6 +79,75 @@ namespace Asset_Management_Platform
             {
                 _tradeTypeStrings = value;
                 RaisePropertyChanged(() => TradeTypeStrings);
+            }
+        }
+
+        //PreviewDescription = previewStock.Description;
+        //        PreviewVolume = previewStock.Volume;
+        //        PreviewAsk = previewStock.Ask;
+        //        PreviewAskSize = previewStock.AskSize;
+        //        PreviewBid = previewStock.Bid;
+        //        PreviewBidSize = previewStock.BidSize;
+
+        private string _previewDescription;
+        public string PreviewDescription {
+            get { return _previewDescription; }
+            set { _previewDescription = value;
+                RaisePropertyChanged(() => PreviewDescription); }
+        }
+
+        private string _previewVolume;
+        public string PreviewVolume
+        {
+            get { return _previewVolume; }
+            set
+            {
+                _previewVolume = value;
+                RaisePropertyChanged(() => PreviewVolume);
+            }
+        }
+
+        private string _previewAsk;
+        public string PreviewAsk
+        {
+            get { return _previewAsk; }
+            set
+            {
+                _previewAsk = value;
+                RaisePropertyChanged(() => PreviewAsk);
+            }
+        }
+
+        private string _previewAskSize;
+        public string PreviewAskSize
+        {
+            get { return _previewAskSize; }
+            set
+            {
+                _previewAskSize = value;
+                RaisePropertyChanged(() => PreviewAskSize);
+            }
+        }
+
+        private string _previewBid;
+        public string PreviewBid
+        {
+            get { return _previewBid; }
+            set
+            {
+                _previewBid = value;
+                RaisePropertyChanged(() => PreviewBid);
+            }
+        }
+
+        private string _previewBidSize;
+        public string PreviewBidSize
+        {
+            get { return _previewBidSize; }
+            set
+            {
+                _previewBidSize = value;
+                RaisePropertyChanged(() => PreviewBidSize);
             }
         }
 
@@ -228,11 +308,17 @@ namespace Asset_Management_Platform
 
         private void ExecutePreviewOrder()
         {
-            Security previewStock;
+            Stock previewStock;
             if (!string.IsNullOrEmpty(_orderTickerText) && _orderShareQuantity > 0)
             {
-                previewStock = _portfolioService.GetOrderPreviewStock(_orderTickerText);
+                previewStock = (Stock)_portfolioService.GetOrderPreviewStock(_orderTickerText);
                 PreviewPrice = previewStock.LastPrice;
+                PreviewDescription = previewStock.Description;
+                PreviewVolume = previewStock.Volume.ToString();
+                PreviewAsk = previewStock.Ask.ToString();
+                PreviewAskSize = previewStock.AskSize.ToString();
+                PreviewBid = previewStock.Bid.ToString();
+                PreviewBidSize = previewStock.BidSize.ToString();
             }
         }
 
