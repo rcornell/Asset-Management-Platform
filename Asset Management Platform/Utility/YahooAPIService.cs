@@ -140,6 +140,14 @@ namespace Asset_Management_Platform.Utility
         }
         public List<Security> GetData(List<Security> securities)
         {
+            bool singleStockInquiry = false;
+
+            if (securities.Count == 1)
+            {
+                singleStockInquiry = true;
+            }
+
+            const string base_url = "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=l1yj1barvb6a5n";
 
             // Build the URL.
             string url = "";
@@ -161,8 +169,7 @@ namespace Asset_Management_Platform.Utility
                 // Prepend the base URL.
                 //s (symbol) n (name) l1 (last price) y (yield) j1 (market cap) 
                 //b (bid) a (ask) r (peRatio) a5 (ask size) b6 (bid size)
-                const string base_url =
-                    "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=l1yj1barvb6a5";
+                
                 url = base_url.Replace("@", url); //Add my tickers to the middle of the url
 
                 // Get the response.
@@ -187,6 +194,7 @@ namespace Asset_Management_Platform.Utility
 
                     foreach (string line in lines)
                     {
+                        string description = "";
                         string cusip = "";
                         float lastPrice;
                         double yield = 0;
@@ -198,6 +206,7 @@ namespace Asset_Management_Platform.Utility
                         int bidSize = 0;
                         int askSize = 0;
 
+                        bool descriptionIsNA = false;
                         bool lastPriceIsNA = false;
                         bool yieldIsNA = false;
                         bool bidIsNA = false;
@@ -212,9 +221,6 @@ namespace Asset_Management_Platform.Utility
                         //cusip = "" no CUSIP ability in this API. Load via my own database
                         //Some stock names contain a comma, which is the character that 
                         //we are using to split up the results. The below code accounts for that possibility
-                        //description = lines[j].Split(',')[1];
-                        //description += lines[j].Split(',')[2];
-                        //bool noComma = float.TryParse(lines[j].Split(',')[2], out lastPrice);
                         System.Diagnostics.Debug.Write(string.Format("Creating Security #{0}", j));
 
                         lastPriceIsNA = !float.TryParse(lines[j].Split(',')[0], out lastPrice);
@@ -232,12 +238,18 @@ namespace Asset_Management_Platform.Utility
                             marketCapIsNA = false;
                             marketCap = lines[j].Split(',')[2];
                         }
+
+                        
                         bidIsNA = !double.TryParse(lines[j].Split(',')[3], out bid);
                         askIsNA = !double.TryParse(lines[j].Split(',')[4], out ask);                           
                         peRatioIsNA = !double.TryParse(lines[j].Split(',')[5], out peRatio);
                         volumeIsNA = !int.TryParse(lines[j].Split(',')[6], out volume);
                         bidSizeIsNA = !int.TryParse(lines[j].Split(',')[7], out bidSize);
                         askSizeIsNA = !int.TryParse(lines[j].Split(',')[8], out askSize);
+                        if (string.IsNullOrEmpty(lines[j].Split(',')[9]))
+                            descriptionIsNA = true;
+                        else
+                            description = lines[j].Split(',')[9].Replace("\"", "" );
 
                         if (IsSecurityUnavailable(lastPriceIsNA, yieldIsNA, marketCapIsNA, bidIsNA, askIsNA, peRatioIsNA, volumeIsNA, bidSizeIsNA, askSizeIsNA))
                         {
@@ -245,15 +257,14 @@ namespace Asset_Management_Platform.Utility
                             continue; //do not add security
                         }
                             
-
                         if (!peRatioIsNA) peRatio = 0;
                         if (yieldIsNA) yield = 0;
 
-                        marketCap = marketCap.Substring(0, marketCap.Length - 1);
+                        marketCap = marketCap.Substring(0, marketCap.Length - 1); //removed the amount suffix, e.g. "B"
+                        var floatMarketCap = float.Parse(marketCap); //you should fix this
 
-                        var floatMarketCap = float.Parse(marketCap);
+                        _securitiesWithMarketData.Add(new Stock(cusip, securities[j].Ticker, description, lastPrice, yield, bid, ask, floatMarketCap, peRatio, volume, bidSize, askSize));
 
-                        _securitiesWithMarketData.Add(new Stock(cusip, securities[j].Ticker, securities[j].Description , lastPrice, yield, bid, ask, floatMarketCap, peRatio, volume, bidSize, askSize));
                         j++; //advance to next security
                         
                     }

@@ -106,8 +106,8 @@
                 <TextBlock Text="Mkt Price:" Margin="3" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"/>
                 <TextBox Text="{Binding PreviewPrice, Mode=OneWay}" Width="100" Height="20" Margin="3" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center"/>
 
-                <TextBlock Text="Order Value:" Margin="40,3,3,3" Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" />
-                <TextBox Text="{Binding PreviewValue, Mode=OneWay}" Width="100" Height="20" Margin="3" Grid.Row="3" Grid.Column="3" VerticalAlignment="Center" />
+                
+                
             <Button Content="Preview Order" Margin="3" Command="{Binding PreviewOrder}" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center"/>
             <Button Content="Execute" Command="{Binding ExecuteOrder}" Margin="3" Grid.Row="4" Grid.Column="3" VerticalAlignment="Center" IsEnabled="{Binding ExecuteButtonEnabled}"/>
         </Grid>
@@ -128,7 +128,25 @@
                     <RowDefinition/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                <TextBlock Text="Preview Stuff Goes Here"/>
+
+                <TextBox Text="{Binding PreviewDescription, Mode=OneWay}" Grid.Row="0" Grid.Column="1" Width="100" Height="20" Margin="3"  VerticalAlignment="Center"/>
+                <TextBlock Text="Description:" Margin="3,3,3,3" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Center" />
+
+                <TextBox Text="{Binding PreviewAsk, Mode=OneWay}" Grid.Row="1" Grid.Column="3" Width="100" Height="20" Margin="3"  VerticalAlignment="Center"/>
+                <TextBlock Text="Ask:" Margin="40,3,3,3" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" />
+                
+                <TextBox Text="{Binding PreviewBid, Mode=OneWay}" Grid.Row="1" Grid.Column="1" Width="100" Height="20" Margin="3"  VerticalAlignment="Center"/>
+                <TextBlock Text="Bid:" Margin="3,3,3,3" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" />
+                
+                <TextBox Text="{Binding PreviewAskSize, Mode=OneWay}" Grid.Row="2" Grid.Column="3" Width="100" Height="20" Margin="3"  VerticalAlignment="Center"/>
+                <TextBlock Text="Ask Size:" Margin="40,3,3,3" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" />
+                
+                <TextBox Text="{Binding PreviewBidSize, Mode=OneWay}" Grid.Row="2" Grid.Column="1" Width="100" Height="20" Margin="3"  VerticalAlignment="Center"/>
+                <TextBlock Text="Bid Size:" Margin="3,3,3,3" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" />
+                
+                <TextBox Text="{Binding PreviewValue, Mode=OneWay}" Grid.Row="3" Grid.Column="1" Width="100" Height="20" Margin="3"  VerticalAlignment="Center"/>
+                <TextBlock Text="Order Value:" Margin="3,3,3,3" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" />
+                
             </Grid>
         </Border>
     </Grid>
