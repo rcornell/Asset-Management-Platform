@@ -156,11 +156,21 @@ namespace Asset_Management_Platform
         public double LimitPrice {
             get { return _limitPrice; }
                 set { _limitPrice = value ;
+                _executeButtonEnabled = false;
                 RaisePropertyChanged(() => LimitPrice); }
             }
 
 
-        public string SelectedDurationType;
+        private string _selectedDurationType;
+        public string SelectedDurationType {
+            get { return _selectedDurationType; }
+            set
+            {
+                _selectedDurationType = value;
+                RaisePropertyChanged(() => SelectedDurationType);
+            }
+        }
+
 
         private string _selectedTermType;
         public string SelectedTermType
@@ -175,17 +185,28 @@ namespace Asset_Management_Platform
                 {
                     LimitBoxActive = false;
                 }
+                _executeButtonEnabled = false;
             }
         }
 
-        public string SelectedTradeType;
+        private string _selectedTradeType;
+        public string SelectedTradeType
+        {
+            get { return _selectedTradeType; }
+            set { _selectedTradeType = value;
+                RaisePropertyChanged(() => SelectedTradeType);
+                _executeButtonEnabled = false;
+            }
+        }
 
         private string _orderTickerText;
         public string OrderTickerText
         {
             get { return _orderTickerText; }
             set { _orderTickerText = value.ToUpper();
-                RaisePropertyChanged(() => OrderTickerText); }
+                RaisePropertyChanged(() => OrderTickerText);
+                _executeButtonEnabled = false;
+            }
         }
 
 
@@ -195,6 +216,7 @@ namespace Asset_Management_Platform
             get { return _orderShareQuantity; }
             set { _orderShareQuantity = value;
                 RaisePropertyChanged(() => OrderShareQuantity);
+                _executeButtonEnabled = false;
             }
         }
 
@@ -219,7 +241,14 @@ namespace Asset_Management_Platform
         }
 
 
-        public DisplayStock SelectedDisplayStock;
+        private DisplayStock _selectedDisplayStock;
+        public DisplayStock SelectedDisplayStock
+        {
+            get { return _selectedDisplayStock; }
+            set { _selectedDisplayStock = value;
+                RaisePropertyChanged(() => SelectedDisplayStock);
+            }
+        }
 
         public RelayCommand AddPosition
         {

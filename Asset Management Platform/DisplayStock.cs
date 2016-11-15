@@ -17,6 +17,11 @@ namespace Asset_Management_Platform
             }
         }
 
+        public int Shares
+        {
+            get { return _position.SharesOwned; }
+        }
+
         public string Description
         {
             get

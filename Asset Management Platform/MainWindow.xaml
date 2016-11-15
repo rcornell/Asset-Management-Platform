@@ -51,10 +51,12 @@
                   CanUserDeleteRows="False"
                   VerticalScrollBarVisibility="Visible"
                   CanUserAddRows="False"  
-                  ColumnWidth="Auto">
+                  ColumnWidth="Auto"
+                  SelectedItem="{Binding SelectedDisplayStock}">
             <DataGrid.Columns>
                 <DataGridTextColumn Width="Auto" Header="Ticker"  Binding="{Binding Ticker}"  TextOptions.TextFormattingMode="Display"/>
                 <DataGridTextColumn Width="Auto" Header="Description" Binding="{Binding Description}"/>
+                <DataGridTextColumn Width="Auto" Header="Shares" Binding="{Binding Shares}"/>
                 <DataGridTextColumn Width="*" Header="Price" Binding="{Binding Price}"/>
                 <DataGridTextColumn Width="Auto" Header="Market Value" Binding="{Binding MarketValue}"/>
                 <DataGridTextColumn Width="*" Header="Yield" Binding="{Binding Yield}"/>
