@@ -16,10 +16,10 @@ namespace Asset_Management_Platform.Utility
         private IStockDataService _stockDataService;
         private IPortfolioDatabaseService _portfolioDatabaseService;
         private DispatcherTimer _timer;
-        private List<Security> _securityList;
+        private List<Security> _securityList; //used for pricing
 
         private List<DisplayStock> _displayStocks;
-        public List<DisplayStock> DisplayStocks
+        public List<DisplayStock> DisplayStocks //used to display in MainViewModel
         {
             get
             {
@@ -128,14 +128,49 @@ namespace Asset_Management_Platform.Utility
             return DisplayStocks;
         }
 
-        public void AddPosition(string ticker, int shares)
+        public void AddPosition(Stock stock, string ticker, int shares)
         {
+            if (stock != null && !string.IsNullOrEmpty(ticker) && shares > 0) {
+                if (!_securityList.Contains(stock))
+                {
+                    _securityList.Add(stock);
+                }
 
+                if (!ticker.Contains(ticker))
+                    _tickers.Add(ticker); //use boolean return for something?
+
+                var position = new Position(ticker, shares); 
+                _displayStocks.Add(new DisplayStock(position, stock)); //add a new DisplayStock bc of taxlot tracking
+
+
+
+
+            }
         }
 
-        public void SellPosition(string ticker, int shares)
+        public void SellPosition(Stock stock, string ticker, int shares)
         {
+            if (stock != null && !string.IsNullOrEmpty(ticker) && shares > 0)
+            {
+                var displayStock = _displayStocks.Find(s => s.Ticker == ticker);
+                if (shares == displayStock.Shares)
+                {
+                    _securityList.Remove(stock);
+                    _tickers.Remove(ticker); //use boolean return for something?
+                    _displayStocks.Remove(displayStock);
+                }
+                else if (shares > displayStock.Shares)
+                {
+                    var message = new TradeMessage() { Shares = shares, Ticker = ticker, Message = "Order quantity exceeds shares owned!" };
+                    Messenger.Default.Send(message);
+                }
+                else //selling partial position
+                {
+                    displayStock.ReduceShares(shares);
+                }
+                
 
+            }
         }
 
         public Asset_Management_Platform.Security GetOrderPreviewStock(string ticker)

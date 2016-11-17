@@ -110,6 +110,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DisplayStock.cs" />
+    <Compile Include="Messages\TradeMessage.cs" />
     <Compile Include="Utility\IPortfolioDatabaseService.cs" />
     <Compile Include="Messages\DatabaseMessage.cs" />
     <Compile Include="Messages\PortfolioMessage.cs" />

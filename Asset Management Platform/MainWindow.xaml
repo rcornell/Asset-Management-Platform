@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:Asset_Management_Platform.ViewModel"
         mc:Ignorable="d"
         Title="MainWindow" 
@@ -12,6 +13,18 @@
             <Setter Property="HorizontalContentAlignment" Value="Right"/>
             <Setter Property="Background" Value="DarkSlateGray"/>
         </Style>
+        <!--<Style TargetType="{x:Type Control}" x:Key="baseStyle">
+            <Setter Property="FontFamily" Value="Comic Sans"/>
+        </Style>
+        <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource baseStyle}"/>
+
+        <Style TargetType="{x:Type TextBlock}">
+            <Setter Property="FontFamily" Value="Comic Sans"/>
+        </Style>
+        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource baseStyle}">
+            
+        </Style>-->
+        
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -52,7 +65,7 @@
                   VerticalScrollBarVisibility="Visible"
                   CanUserAddRows="False"  
                   ColumnWidth="Auto"
-                  SelectedItem="{Binding SelectedDisplayStock}">
+                  SelectedItem="{Binding SelectedDisplayStock, Mode=OneWay}">
             <DataGrid.Columns>
                 <DataGridTextColumn Width="Auto" Header="Ticker"  Binding="{Binding Ticker}"  TextOptions.TextFormattingMode="Display"/>
                 <DataGridTextColumn Width="Auto" Header="Description" Binding="{Binding Description}"/>
@@ -69,6 +82,9 @@
             </DataGrid.Columns>
         </DataGrid>
         <Grid Grid.Row="3" Grid.Column="1"  Background="Azure">
+            <Grid.Style>
+                <Style/>
+            </Grid.Style>
             <Grid.RowDefinitions>
                 <RowDefinition></RowDefinition>
                 <RowDefinition></RowDefinition>
@@ -86,13 +102,13 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
                 <TextBlock Text="Trade Type:" Margin="3" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center"/>
-                <ComboBox ItemsSource="{Binding TradeTypeStrings}"  SelectedItem="{Binding SelectedTradeType}" Height="25" Width="100"  Margin="3" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
+                <ComboBox ItemsSource="{Binding TradeTypeStrings}"  SelectedItem="{Binding SelectedTradeType}" Height="Auto" Width="100"  Margin="3" Grid.Row="0" Grid.Column="1" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
 
                 <TextBlock Text="Trade Terms:" Margin="40,3,3,3" Grid.Column="2" Grid.Row="0"  VerticalAlignment="Center"/>
-                <ComboBox ItemsSource="{Binding TradeTermStrings}"  SelectedItem="{Binding SelectedTermType}" Height="25" Width="100"  Margin="3" Grid.Row="0" Grid.Column="3" VerticalAlignment="Center"/>
+                <ComboBox ItemsSource="{Binding TradeTermStrings}"  SelectedItem="{Binding SelectedTermType}" Height="Auto" Width="100"  Margin="3" Grid.Row="0" Grid.Column="3" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
 
                 <TextBlock Text="Duration:" Margin="3" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center"/>
-                <ComboBox ItemsSource="{Binding TradeDurationStrings}"  SelectedItem="{Binding SelectedDurationType}" Height="25" Width="100"  Margin="3" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
+                <ComboBox ItemsSource="{Binding TradeDurationStrings}"  SelectedItem="{Binding SelectedDurationType}" Height="Auto" Width="100"  Margin="3" Grid.Row="1" Grid.Column="1" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
 
                 <TextBlock Text="Limit/Stop:" Margin="40,3,3,3" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center"/>
                 <TextBox Text="{Binding LimitPrice, Mode=TwoWay}" Grid.Row="1" Grid.Column="3" Width="100" Height="20" Margin="3"  VerticalAlignment="Center" IsEnabled="{Binding LimitBoxActive}"/>
@@ -106,18 +122,18 @@
             
             
                 <TextBlock Text="Mkt Price:" Margin="3" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"/>
-                <TextBox Text="{Binding PreviewPrice, Mode=OneWay}" Width="100" Height="20" Margin="3" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center"/>
+                <TextBox Text="{Binding PreviewPrice, Mode=OneWay}" Width="100" Height="20" Margin="3" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" IsManipulationEnabled="False"/>
 
                 
                 
-            <Button Content="Preview Order" Margin="3" Command="{Binding PreviewOrder}" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center"/>
+            <Button Content="Preview Order" Margin="3" Command="{Binding PreviewOrder}" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
             <Button Content="Execute" Command="{Binding ExecuteOrder}" Margin="3" Grid.Row="4" Grid.Column="3" VerticalAlignment="Center" IsEnabled="{Binding ExecuteButtonEnabled}"/>
         </Grid>
         <Border Grid.Column="2" 
                 Grid.Row="3" 
                 CornerRadius="10,10,10,10" 
                 Background="Aqua">
-            <Grid Background="Bisque">
+            <Grid Background="Azure">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
@@ -125,6 +141,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition/>
                     <RowDefinition/>
                     <RowDefinition/>
                     <RowDefinition/>
@@ -148,7 +165,26 @@
                 
                 <TextBox Text="{Binding PreviewValue, Mode=OneWay}" Grid.Row="3" Grid.Column="1" Width="100" Height="20" Margin="3"  VerticalAlignment="Center"/>
                 <TextBlock Text="Order Value:" Margin="3,3,3,3" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" />
-                
+
+                <TextBox Text="{Binding AlertBoxMessage, Mode=OneWay}" 
+                         Name="AlertBox"  
+                         Background="Azure" 
+                         Grid.Row="4" 
+                         Grid.Column="0" 
+                         Grid.ColumnSpan="4" 
+                         VerticalContentAlignment="Center" 
+                         HorizontalContentAlignment="Center" 
+                         FontSize="20" 
+                         Foreground="Red"
+                         BorderBrush="Azure">
+                    <TextBox.Style>
+                        <Style>
+                            <Style.Triggers>
+                            
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
             </Grid>
         </Border>
     </Grid>

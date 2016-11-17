@@ -139,13 +139,7 @@ namespace Asset_Management_Platform.Utility
             }
         }
         public List<Security> GetData(List<Security> securities)
-        {
-            bool singleStockInquiry = false;
-
-            if (securities.Count == 1)
-            {
-                singleStockInquiry = true;
-            }
+        {           
 
             const string base_url = "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=l1yj1barvb6a5n";
 
@@ -257,7 +251,7 @@ namespace Asset_Management_Platform.Utility
                             continue; //do not add security
                         }
                             
-                        if (!peRatioIsNA) peRatio = 0;
+                        if (peRatioIsNA) peRatio = 0;
                         if (yieldIsNA) yield = 0;
 
                         marketCap = marketCap.Substring(0, marketCap.Length - 1); //removed the amount suffix, e.g. "B"

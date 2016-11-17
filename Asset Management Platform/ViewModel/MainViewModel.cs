@@ -29,6 +29,14 @@ namespace Asset_Management_Platform
         /// 
 
 
+        private string _alertBoxMessage;
+        public string AlertBoxMessage {
+            get { return _alertBoxMessage; }
+            set { _alertBoxMessage = value;
+            RaisePropertyChanged(() => AlertBoxMessage);
+            }
+        }
+
         private bool _executeButtonEnabled;
         public bool ExecuteButtonEnabled
         {
@@ -49,8 +57,8 @@ namespace Asset_Management_Platform
             }
         }
 
-        private ObservableCollection<String> _tradeDurationStrings;
-        public ObservableCollection<String> TradeDurationStrings
+        private ObservableCollection<string> _tradeDurationStrings;
+        public ObservableCollection<string> TradeDurationStrings
         {
             get { return _tradeDurationStrings; }
             set
@@ -60,8 +68,8 @@ namespace Asset_Management_Platform
             }
         }
 
-        private ObservableCollection<String> _tradeTermStrings;
-        public ObservableCollection<String> TradeTermStrings
+        private ObservableCollection<string> _tradeTermStrings;
+        public ObservableCollection<string> TradeTermStrings
         {
             get { return _tradeTermStrings; }
             set
@@ -71,8 +79,8 @@ namespace Asset_Management_Platform
             }
         }
 
-        private ObservableCollection<String> _tradeTypeStrings;
-        public ObservableCollection<String> TradeTypeStrings
+        private ObservableCollection<string> _tradeTypeStrings;
+        public ObservableCollection<string> TradeTypeStrings
         {
             get { return _tradeTypeStrings; }
             set
@@ -81,13 +89,6 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => TradeTypeStrings);
             }
         }
-
-        //PreviewDescription = previewStock.Description;
-        //        PreviewVolume = previewStock.Volume;
-        //        PreviewAsk = previewStock.Ask;
-        //        PreviewAskSize = previewStock.AskSize;
-        //        PreviewBid = previewStock.Bid;
-        //        PreviewBidSize = previewStock.BidSize;
 
         private string _previewDescription;
         public string PreviewDescription {
@@ -240,6 +241,7 @@ namespace Asset_Management_Platform
             get { return (_previewPrice * _orderShareQuantity); }
         }
 
+        private Stock _previewStock;
 
         private DisplayStock _selectedDisplayStock;
         public DisplayStock SelectedDisplayStock
@@ -248,16 +250,6 @@ namespace Asset_Management_Platform
             set { _selectedDisplayStock = value;
                 RaisePropertyChanged(() => SelectedDisplayStock);
             }
-        }
-
-        public RelayCommand AddPosition
-        {
-            get { return new RelayCommand(ExecuteAddPosition); }
-        }
-
-        public RelayCommand SellPosition
-        {
-            get { return new RelayCommand(ExecuteSellPosition); }
         }
 
         public RelayCommand PreviewOrder
@@ -291,13 +283,6 @@ namespace Asset_Management_Platform
             LimitBoxActive = false;
             LimitPrice = 0;
 
-            //if (IsInDesignModeStatic)
-            //{
-            //    StockList = new ObservableCollection<DisplayStock>()
-            //    {
-            //        new DisplayStock(new Position("AAPL", 100), new Stock("", "AAPL", "Apple Computers, Inc.", float.Parse("110.50"), 1.01))
-            //    };
-            //}
 
             //SOLVE THE 8 SECOND PAUSE WHEN POLLING YAHOO.
 
@@ -305,6 +290,7 @@ namespace Asset_Management_Platform
 
             _portfolioService = portfolioService;
             Messenger.Default.Register<PortfolioMessage>(this, RefreshCollection);
+            Messenger.Default.Register<TradeMessage>(this, SetAlertMessage);
             //_portfolioService.StartUpdates(); //TURNED OFF FOR TESTING
 
             GetDisplayStocks();
@@ -322,32 +308,19 @@ namespace Asset_Management_Platform
             //_portfolio = _portfolioService.GetPortfolio();
         }
 
-        private void ExecuteAddPosition()
-        {
-            _portfolioService.AddPosition(_orderTickerText, _orderShareQuantity);
-            GetDisplayStocks();
-        }
-
-        private void ExecuteSellPosition()
-        {
-            
-            _portfolioService.SellPosition(_orderTickerText, _orderShareQuantity);
-            GetDisplayStocks();
-        }
-
         private void ExecutePreviewOrder()
         {
-            Stock previewStock;
+            
             if (!string.IsNullOrEmpty(_orderTickerText) && _orderShareQuantity > 0)
             {
-                previewStock = (Stock)_portfolioService.GetOrderPreviewStock(_orderTickerText);
-                PreviewPrice = previewStock.LastPrice;
-                PreviewDescription = previewStock.Description;
-                PreviewVolume = previewStock.Volume.ToString();
-                PreviewAsk = previewStock.Ask.ToString();
-                PreviewAskSize = previewStock.AskSize.ToString();
-                PreviewBid = previewStock.Bid.ToString();
-                PreviewBidSize = previewStock.BidSize.ToString();
+                _previewStock = (Stock)_portfolioService.GetOrderPreviewStock(_orderTickerText);
+                PreviewPrice = _previewStock.LastPrice;
+                PreviewDescription = _previewStock.Description;
+                PreviewVolume = _previewStock.Volume.ToString();
+                PreviewAsk = _previewStock.Ask.ToString();
+                PreviewAskSize = _previewStock.AskSize.ToString();
+                PreviewBid = _previewStock.Bid.ToString();
+                PreviewBidSize = _previewStock.BidSize.ToString();
                 ExecuteButtonEnabled = true;
             }
         }
@@ -355,9 +328,9 @@ namespace Asset_Management_Platform
         private void ExecuteExecuteOrder()
         {
             if (SelectedTradeType == "Buy")
-                _portfolioService.AddPosition(_orderTickerText, _orderShareQuantity);
+                _portfolioService.AddPosition(_previewStock, _orderTickerText, _orderShareQuantity);
             else
-                _portfolioService.SellPosition(_orderTickerText, _orderShareQuantity);
+                _portfolioService.SellPosition(_previewStock, _orderTickerText, _orderShareQuantity);
             GetDisplayStocks();
 
             SelectedDurationType = "Day";
@@ -367,9 +340,9 @@ namespace Asset_Management_Platform
             ExecuteButtonEnabled = false;
         }
 
-        private void Initialize()
+        private void SetAlertMessage(TradeMessage message)
         {
-            throw new NotImplementedException();
+            AlertBoxMessage = message.Message;
         }
     }
 }

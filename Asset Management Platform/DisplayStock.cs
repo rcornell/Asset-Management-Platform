@@ -119,5 +119,15 @@ namespace Asset_Management_Platform
             _stock = stock;
         }
 
+        public void ReduceShares(int shares)
+        {
+            _position.SharesOwned -= shares;
+        }
+
+        public void AddShares(int shares)
+        {
+            _position.SharesOwned += shares;
+        }
+
     }
 }

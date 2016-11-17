@@ -14,9 +14,9 @@ namespace Asset_Management_Platform.Utility
 
         void StopUpdates();
 
-        void AddPosition(string ticker, int shares);
+        void AddPosition(Stock stock, string ticker, int shares);
 
-        void SellPosition(string ticker, int shares);
+        void SellPosition(Stock stock, string ticker, int shares);
 
         Asset_Management_Platform.Security GetOrderPreviewStock(string ticker);
 
