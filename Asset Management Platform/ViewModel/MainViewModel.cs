@@ -28,6 +28,28 @@ namespace Asset_Management_Platform
         /// </summary>
         /// 
 
+        private Stock _screenerStock;
+        public Stock ScreenerStock
+        {
+            get { return _screenerStock; }
+            set { _screenerStock = value;
+                RaisePropertyChanged(() => ScreenerStock);
+            }
+        }
+
+
+        private string _stockScreenerTicker;
+        public string StockScreenerTicker
+        {
+            get { return _stockScreenerTicker; }
+            set
+            {
+                _stockScreenerTicker = value.ToUpper();
+                RaisePropertyChanged(() => StockScreenerTicker);
+                ExecuteScreenerPreview(_stockScreenerTicker);
+            }
+        }
+
 
         private string _alertBoxMessage;
         public string AlertBoxMessage {
@@ -207,6 +229,7 @@ namespace Asset_Management_Platform
             set { _orderTickerText = value.ToUpper();
                 RaisePropertyChanged(() => OrderTickerText);
                 _executeButtonEnabled = false;
+                AlertBoxMessage = "";
             }
         }
 
@@ -218,6 +241,7 @@ namespace Asset_Management_Platform
             set { _orderShareQuantity = value;
                 RaisePropertyChanged(() => OrderShareQuantity);
                 _executeButtonEnabled = false;
+                AlertBoxMessage = "";
             }
         }
 
@@ -322,6 +346,14 @@ namespace Asset_Management_Platform
                 PreviewBid = _previewStock.Bid.ToString();
                 PreviewBidSize = _previewStock.BidSize.ToString();
                 ExecuteButtonEnabled = true;
+            }
+        }
+
+        private void ExecuteScreenerPreview(string screenerTicker)
+        {
+            if (!string.IsNullOrEmpty(screenerTicker))
+            {
+                ScreenerStock = (Stock)_portfolioService.GetOrderPreviewStock(screenerTicker);
             }
         }
 
