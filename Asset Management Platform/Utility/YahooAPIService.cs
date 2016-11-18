@@ -138,7 +138,87 @@ namespace Asset_Management_Platform.Utility
                 return result;
             }
         }
-        public List<Security> GetData(List<Security> securities)
+
+
+        public Stock GetSingleStock(string ticker)
+        {
+            Stock result;
+            const string base_url = "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=l1yj1barvb6a5n";
+
+            var url = base_url.Replace("@", ticker);
+
+            var response = GetWebResponse(url);
+
+            Console.WriteLine(response.Replace("\\r\\n", "\r\n"));
+
+            string description = "";
+            string cusip = "";
+            float lastPrice;
+            double yield = 0;
+            double bid = 0;
+            double ask = 0;
+            string marketCap = "0";
+            double peRatio = 0;
+            int volume = 0;
+            int bidSize = 0;
+            int askSize = 0;
+
+            bool descriptionIsNA = false;
+            bool lastPriceIsNA = false;
+            bool yieldIsNA = false;
+            bool bidIsNA = false;
+            bool askIsNA = false;
+            bool marketCapIsNA = false;
+            bool peRatioIsNA = false;
+            bool volumeIsNA = false;
+            bool bidSizeIsNA = false;
+            bool askSizeIsNA = false;
+
+
+            //cusip = "" no CUSIP ability in this API. Load via my own database
+            //Some stock names contain a comma, which is the character that 
+            //we are using to split up the results. The below code accounts for that possibility
+
+            lastPriceIsNA = !float.TryParse(response.Split(',')[0], out lastPrice);
+            yieldIsNA = !double.TryParse(response.Split(',')[1], out yield);
+            if (response.Split(',')[2] == "N/A")
+            {
+                marketCapIsNA = true;
+                marketCap = "0.0B";
+            }
+            else
+            {
+                marketCapIsNA = false;
+                marketCap = response.Split(',')[2];
+            }
+            bidIsNA = !double.TryParse(response.Split(',')[3], out bid);
+            askIsNA = !double.TryParse(response.Split(',')[4], out ask);
+            peRatioIsNA = !double.TryParse(response.Split(',')[5], out peRatio);
+            volumeIsNA = !int.TryParse(response.Split(',')[6], out volume);
+            bidSizeIsNA = !int.TryParse(response.Split(',')[7], out bidSize);
+            askSizeIsNA = !int.TryParse(response.Split(',')[8], out askSize);
+            if (string.IsNullOrEmpty(response.Split(',')[9]))
+                descriptionIsNA = true;
+            else
+                description = response.Split(',')[9].Replace("\"", "");
+
+            if (IsSecurityUnavailable(lastPriceIsNA, yieldIsNA, marketCapIsNA, bidIsNA, askIsNA, peRatioIsNA, volumeIsNA, bidSizeIsNA, askSizeIsNA, descriptionIsNA))
+            {
+                result = new Stock("", "", "Unknown Ticker", 0, 0.00);
+                return result;
+            }
+
+            if (peRatioIsNA) peRatio = 0;
+            if (yieldIsNA) yield = 0;
+
+            marketCap = marketCap.Substring(0, marketCap.Length - 1); //removed the amount suffix, e.g. "B"
+            var floatMarketCap = float.Parse(marketCap); //you should fix this
+
+            result = new Stock(cusip, ticker, description, lastPrice, yield, bid, ask, floatMarketCap, peRatio, volume, bidSize, askSize);
+            return result;
+        }
+
+        public List<Security> GetMultipleStocks(List<Security> securities)
         {           
 
             const string base_url = "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=l1yj1barvb6a5n";
@@ -245,7 +325,7 @@ namespace Asset_Management_Platform.Utility
                         else
                             description = lines[j].Split(',')[9].Replace("\"", "" );
 
-                        if (IsSecurityUnavailable(lastPriceIsNA, yieldIsNA, marketCapIsNA, bidIsNA, askIsNA, peRatioIsNA, volumeIsNA, bidSizeIsNA, askSizeIsNA))
+                        if (IsSecurityUnavailable(lastPriceIsNA, yieldIsNA, marketCapIsNA, bidIsNA, askIsNA, peRatioIsNA, volumeIsNA, bidSizeIsNA, askSizeIsNA, descriptionIsNA))
                         {
                             j++;
                             continue; //do not add security
@@ -276,7 +356,7 @@ namespace Asset_Management_Platform.Utility
             return _securitiesWithMarketData; //probably null
         }
 
-        private bool IsSecurityUnavailable(bool lastPriceIsNA, bool yieldIsNA, bool marketCapIsNA, bool bidIsNA, bool askIsNA, bool peRatioIsNA, bool volumeIsNA, bool bidSizeIsNA, bool askSizeIsNA)
+        private bool IsSecurityUnavailable(bool lastPriceIsNA, bool yieldIsNA, bool marketCapIsNA, bool bidIsNA, bool askIsNA, bool peRatioIsNA, bool volumeIsNA, bool bidSizeIsNA, bool askSizeIsNA, bool descriptionIsNA)
         {
             int numberOfNA = 0;
 

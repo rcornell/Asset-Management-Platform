@@ -110,7 +110,7 @@ namespace Asset_Management_Platform.Utility
             {
                 using (var yahooAPI = new YahooAPIService())
                 {
-                    _securityList = yahooAPI.GetData(_securityList);
+                    _securityList = yahooAPI.GetMultipleStocks(_securityList);
                 }
             }
             else
@@ -187,20 +187,17 @@ namespace Asset_Management_Platform.Utility
             return SecurityList;
         }
 
-        public Security GetSpecificSecurityInfo(string ticker)
+        public Stock GetSpecificStockInfo(string ticker)
         {
             if (!string.IsNullOrEmpty(ticker))
             {
                 using (var yahooAPI = new YahooAPIService())
                 {
-                    var listOfOneSecurity = new List<Security>(){
-                        new Security("", ticker, "", 0, 0.00)
-                    };
-                    var resultSecurity = yahooAPI.GetData(listOfOneSecurity)[0];
-                    return resultSecurity;
+                    var result = yahooAPI.GetSingleStock(ticker);
+                    return result;
                 }
             }
-            return new Security("", "", "", 0, 0.00); //If you hit this, the ticker was null or empty
+            return new Stock("", "", "", 0, 0.00); //If you hit this, the ticker was null or empty
         }
 
         public void Dispose()

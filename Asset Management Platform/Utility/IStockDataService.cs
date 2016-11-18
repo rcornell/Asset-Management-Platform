@@ -28,6 +28,6 @@ namespace Asset_Management_Platform.Utility
         void Dispose();
         List<Security> GetUpdatedPrices();
 
-        Security GetSpecificSecurityInfo(string ticker);
+        Stock GetSpecificStockInfo(string ticker);
     }
 }

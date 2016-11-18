@@ -351,9 +351,11 @@ namespace Asset_Management_Platform
 
         private void ExecuteScreenerPreview(string screenerTicker)
         {
+
             if (!string.IsNullOrEmpty(screenerTicker))
             {
-                ScreenerStock = (Stock)_portfolioService.GetOrderPreviewStock(screenerTicker);
+                var resultStock = _portfolioService.GetOrderPreviewStock(screenerTicker);
+                ScreenerStock = resultStock;
             }
         }
 
