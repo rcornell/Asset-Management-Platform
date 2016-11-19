@@ -23,6 +23,7 @@ namespace Asset_Management_Platform
 
         public PortfolioDatabaseService()
         {
+            _databaseOriginalState = new List<Position>();
              positionsToDelete = new List<Position>();
             _myPositions = new List<Position>();
             if (CheckDBForPositions())
@@ -104,8 +105,12 @@ namespace Asset_Management_Platform
                 }
             }
 
-            //Does this work as intended?
-            _databaseOriginalState = _myPositions;
+
+            //Does this work as intended? Nope
+            foreach (var pos in _myPositions)
+            {
+                _databaseOriginalState.Add(new Position(pos.Ticker, pos.SharesOwned));
+            }
         }
 
      
@@ -122,8 +127,11 @@ namespace Asset_Management_Platform
 
             foreach (var p in _myPositions)
             {
-                //Is current position in _myPortfolio unchanged from original state?
-                if (_databaseOriginalState.Contains(p))
+                
+                //MAKE THIS LOGIC WORK
+
+
+                if (_databaseOriginalState.Any(pos => pos.Ticker == p.Ticker && pos.SharesOwned == p.SharesOwned))
                 {
                     continue;
                 }
@@ -152,17 +160,20 @@ namespace Asset_Management_Platform
                 return;
 
             try {
-                using (var connection = new SqlConnection("StorageConnectionString"))
+
+                var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
+                using (var connection = new SqlConnection(storageString))
                 {
                     connection.Open();
                     using (var command = new SqlCommand())
                     {
+                        command.Connection = connection;
                         //UPDATE POSITIONS IF NECESSARY
                         //May be unstable if it pushes too many commands too quickly
                         if (positionsToUpdate.Any()) { 
                             foreach (var pos in positionsToUpdate)
                             {
-                                command.CommandText = string.Format("UPDATE MyPortfolio SET Quantity = {0} WHERE Ticker = {1}", pos.SharesOwned, pos.Ticker);
+                                command.CommandText = string.Format("UPDATE dbo.MyPortfolio SET Quantity = {0} WHERE Ticker = {1}", pos.SharesOwned, pos.Ticker);
                                 command.ExecuteNonQuery();
                             }
                         }
@@ -170,7 +181,7 @@ namespace Asset_Management_Platform
                         //INSERT POSITIONS IF NECESSARY
                         if (positionsToInsert.Any())
                         {
-                            string insertString = @"INSERT INTO MyPortfolio (Ticker, Quantity) VALUES";
+                            string insertString = @"INSERT INTO dbo.MyPortfolio (Ticker, Shares) VALUES ";
 
                             var final = positionsToInsert.Last();
                             foreach (var pos in positionsToInsert)
@@ -178,11 +189,11 @@ namespace Asset_Management_Platform
                                 //If the position being iterated is the last one, add the terminating SQL clause instead
                                 if (pos != final)
                                 {
-                                    insertString += string.Format("({0}, {1}), ", pos.Ticker, pos.SharesOwned);
+                                    insertString += string.Format("('{0}', '{1}'), ", pos.Ticker, pos.SharesOwned);
                                 }
                                 else
                                 {
-                                    insertString += string.Format("({0}, {1});", pos.Ticker, pos.SharesOwned);
+                                    insertString += string.Format("('{0}', '{1}');", pos.Ticker, pos.SharesOwned);
                                 }
                             }
                             command.CommandText = insertString;
@@ -224,23 +235,29 @@ namespace Asset_Management_Platform
         /// </summary>
         public void BackupDatabase()
         {
+            var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             //Perhaps a way to create multiple backups?
-            string backup = @"SELECT * FROM MyPortfolio INTO MyPortfolioBackup;";
-            using (SqlConnection connection = new SqlConnection("StorageConnectionString"))
+            //string backup = @"SELECT * INTO MyPortfolioBackup FROM MyPortfolio;";
+            string backup = @"INSERT INTO MyPortfolioBackup SELECT * FROM MyPortfolio";
+            using (SqlConnection connection = new SqlConnection(storageString))
             {
+                connection.Open();
                 using (var command = new SqlCommand())
                 {
+                    command.Connection = connection;
+
+                    command.CommandText = @"TRUNCATE Table [MyPortfolioBackup];";
+                    command.ExecuteNonQuery();
+
                     command.CommandText = backup;
                     command.ExecuteNonQuery();
                 }
             }
         }
 
-        public void AddToPortfolio(Security securityToAdd, int shares)
+        public void AddToPortfolio(Position positionToAdd)
         {
-            var position = new Position(securityToAdd.Ticker, shares);
-            _myPositions.Add(position);
-            //PROBABLY NEED TO SEND A MESSAGE TO UPDATE UI
+            _myPositions.Add(positionToAdd);   
         }
 
         /// <summary>

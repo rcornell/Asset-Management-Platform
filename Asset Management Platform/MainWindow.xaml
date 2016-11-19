@@ -13,17 +13,6 @@
             <Setter Property="HorizontalContentAlignment" Value="Right"/>
             <Setter Property="Background" Value="DarkSlateGray"/>
         </Style>
-        <!--<Style TargetType="{x:Type Control}" x:Key="baseStyle">
-            <Setter Property="FontFamily" Value="Comic Sans"/>
-        </Style>
-        <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource baseStyle}"/>
-
-        <Style TargetType="{x:Type TextBlock}">
-            <Setter Property="FontFamily" Value="Comic Sans"/>
-        </Style>
-        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource baseStyle}">
-            
-        </Style>-->
         <Style x:Key="ScreenerStyle" TargetType="TextBox">
             <Setter Property="FontSize" Value="30"/>
         </Style>
@@ -40,6 +29,24 @@
             <RowDefinition ></RowDefinition>
             <RowDefinition Height="Auto" MinHeight="175"></RowDefinition>
         </Grid.RowDefinitions>
+        <DockPanel Grid.Row="0" Grid.Column="0">
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="_File">
+                    <MenuItem Header="_New Portfolio" />
+                    <MenuItem Header="_Load Portfolio" />
+                    <MenuItem Header="_Save Portfolio" Command="{Binding SavePortfolio}"/>
+                    <MenuItem Header="_Active Market Data" IsCheckable="True" />
+                    <Separator />
+                    <MenuItem Header="_Exit" Command="{Binding CloseApplication}" />
+                </MenuItem>
+                <MenuItem Header="_Help">
+                    <MenuItem Header="Manual" />
+                    <Separator />
+                    <MenuItem Header="About" />
+                </MenuItem>
+            </Menu>
+            <TextBox AcceptsReturn="True" />
+        </DockPanel>
         <Grid Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="0" Background="Black">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"></RowDefinition>
@@ -74,12 +81,12 @@
                              MinWidth="45" 
                              Background="Black" 
                              CaretBrush="Red"
-                             BorderBrush="Black"/>
+                             BorderBrush="Black"
+                             IsTabStop="True"/>
 
             </StackPanel>
             <StackPanel Orientation="Horizontal" Grid.Row="2">
-                <TextBlock Text="{Binding ScreenerStock.Description, Mode=OneWay}"
- />
+                <TextBlock Text="{Binding ScreenerStock.Description, Mode=OneWay}"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0" >
@@ -241,7 +248,7 @@
             
             
                 <TextBlock Text="Mkt Price:" Margin="3" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"/>
-                <TextBox Text="{Binding PreviewPrice, Mode=OneWay}" Width="100" Height="20" Margin="3" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" IsManipulationEnabled="False" IsReadOnly="True" />
+                <TextBox Text="{Binding PreviewPrice, Mode=OneWay}" Width="100" Height="20" Margin="3" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" IsManipulationEnabled="False" IsReadOnly="True" IsTabStop="False"/>
 
                 
                 
@@ -268,22 +275,22 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
 
-                <TextBox Text="{Binding PreviewDescription, Mode=OneWay}" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Width="Auto" Height="20" Margin="3"  VerticalAlignment="Center"/>
+                <TextBox Text="{Binding PreviewDescription, Mode=OneWay}" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Width="Auto" Height="20" Margin="3"  VerticalAlignment="Center" IsTabStop="False"/>
                 <TextBlock Text="Description:" Margin="3,3,3,3" Grid.Row="0" Grid.Column="0"  VerticalAlignment="Center" />
 
-                <TextBox Text="{Binding PreviewAsk, Mode=OneWay}" Grid.Row="1" Grid.Column="3" Width="100" Height="20" Margin="3"  VerticalAlignment="Center"/>
+                <TextBox Text="{Binding PreviewAsk, Mode=OneWay}" Grid.Row="1" Grid.Column="3" Width="100" Height="20" Margin="3"  VerticalAlignment="Center" IsTabStop="False"/>
                 <TextBlock Text="Ask:" Margin="40,3,3,3" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" />
-                
-                <TextBox Text="{Binding PreviewBid, Mode=OneWay}" Grid.Row="1" Grid.Column="1" Width="100" Height="20" Margin="3"  VerticalAlignment="Center"/>
+
+                <TextBox Text="{Binding PreviewBid, Mode=OneWay}" Grid.Row="1" Grid.Column="1" Width="100" Height="20" Margin="3"  VerticalAlignment="Center" IsTabStop="False"/>
                 <TextBlock Text="Bid:" Margin="3,3,3,3" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" />
-                
-                <TextBox Text="{Binding PreviewAskSize, Mode=OneWay}" Grid.Row="2" Grid.Column="3" Width="100" Height="20" Margin="3"  VerticalAlignment="Center"/>
+
+                <TextBox Text="{Binding PreviewAskSize, Mode=OneWay}" Grid.Row="2" Grid.Column="3" Width="100" Height="20" Margin="3"  VerticalAlignment="Center" IsTabStop="False"/>
                 <TextBlock Text="Ask Size:" Margin="40,3,3,3" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" />
-                
-                <TextBox Text="{Binding PreviewBidSize, Mode=OneWay}" Grid.Row="2" Grid.Column="1" Width="100" Height="20" Margin="3"  VerticalAlignment="Center"/>
+
+                <TextBox Text="{Binding PreviewBidSize, Mode=OneWay}" Grid.Row="2" Grid.Column="1" Width="100" Height="20" Margin="3"  VerticalAlignment="Center" IsTabStop="False"/>
                 <TextBlock Text="Bid Size:" Margin="3,3,3,3" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" />
-                
-                <TextBox Text="{Binding PreviewValue, Mode=OneWay}" Grid.Row="3" Grid.Column="1" Width="100" Height="20" Margin="3"  VerticalAlignment="Center"/>
+
+                <TextBox Text="{Binding PreviewValue, Mode=OneWay}" Grid.Row="3" Grid.Column="1" Width="100" Height="20" Margin="3"  VerticalAlignment="Center" IsTabStop="False"/>
                 <TextBlock Text="Order Value:" Margin="3,3,3,3" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" />
                 <Border Grid.Row="4" 
                              Grid.Column="0" 

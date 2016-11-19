@@ -139,11 +139,9 @@ namespace Asset_Management_Platform.Utility
                 if (!ticker.Contains(ticker))
                     _tickers.Add(ticker); //use boolean return for something?
 
-                var position = new Position(ticker, shares); 
+                var position = new Position(ticker, shares);
+                _portfolioDatabaseService.AddToPortfolio(position);
                 _displayStocks.Add(new DisplayStock(position, stock)); //add a new DisplayStock bc of taxlot tracking
-
-
-
 
             }
         }
@@ -177,6 +175,11 @@ namespace Asset_Management_Platform.Utility
         {
             var securityToReturn = _stockDataService.GetSpecificStockInfo(ticker);
             return securityToReturn;
+        }
+
+        public void UploadPortfolio()
+        {
+            _portfolioDatabaseService.SavePortfolioToDatabase();
         }
     }
 }

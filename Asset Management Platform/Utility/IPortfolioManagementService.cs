@@ -21,5 +21,6 @@ namespace Asset_Management_Platform.Utility
         Stock GetOrderPreviewStock(string ticker);
 
         List<DisplayStock> GetDisplayStocks();
+        void UploadPortfolio();
     }
 }

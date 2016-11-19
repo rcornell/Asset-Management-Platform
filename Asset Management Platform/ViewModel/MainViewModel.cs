@@ -29,12 +29,6 @@ namespace Asset_Management_Platform
         /// </summary>
         /// 
 
-
-
-        //Customers = new ListCollectionView(_customers);
-        //Customers.GroupDescriptions.Add(new PropertyGroupDescription("Gender"));
-
-
         private ListCollectionView _displayStockCollectionView;
         public ListCollectionView DisplayStockCollectionView
         {
@@ -298,6 +292,16 @@ namespace Asset_Management_Platform
             }
         }
 
+        public RelayCommand SavePortfolio
+        {
+            get { return new RelayCommand(ExecuteSavePortfolio); }
+        }
+
+        public RelayCommand CloseApplication
+        {
+            get { return new RelayCommand(ExecuteCloseApplication); }
+        }
+
         public RelayCommand PreviewOrder
         {
             get { return new RelayCommand(ExecutePreviewOrder); }
@@ -321,7 +325,18 @@ namespace Asset_Management_Platform
 
         public MainViewModel(IPortfolioManagementService portfolioService)
         {
-            
+            if (IsInDesignMode)
+            {
+                DisplayStockCollectionView = new ListCollectionView(new ObservableCollection<DisplayStock>()
+                {
+                    new DisplayStock(new Position("AAPL", 1000), new Stock("", "AAPL", "Apple Inc.", 5, 1.00)),
+                    new DisplayStock(new Position("IBM", 500), new Stock("", "IBM", "Intl Business Machines.", 10, 3.00)),
+                });
+
+                TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
+                TradeTermStrings = new ObservableCollection<string>() { "Market", "Limit", "Stop", "Stop Limit" };
+                TradeDurationStrings = new ObservableCollection<string> { "Day", "GTC", "Market Close", "Market Open", "Overnight" };
+            }
 
             SelectedDisplayStock = null;
             TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
@@ -407,6 +422,17 @@ namespace Asset_Management_Platform
             PreviewVolume = "";
            
             ExecuteButtonEnabled = false;
+        }
+
+        public void ExecuteSavePortfolio()
+        {
+            _portfolioService.UploadPortfolio();
+        }
+
+        private void ExecuteCloseApplication()
+        {
+            _portfolioService.UploadPortfolio();
+            System.Windows.Application.Current.Shutdown();
         }
 
         private void SetAlertMessage(TradeMessage message)
