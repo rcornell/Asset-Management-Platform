@@ -83,31 +83,36 @@
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0" >
-                <TextBlock />
+                <TextBlock Text="Bid:  "/>
+                <TextBlock Text="{Binding ScreenerStock.Bid, Mode=OneWay}" Width="Auto"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1" >
-                <TextBlock Text="Last: " Foreground="Red"/>
+                <TextBlock Text="Last: " />
                 <TextBlock Text="{Binding ScreenerStock.LastPrice}"
                            Width="Auto"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="2" >
-                <TextBlock Text="Yield:  " Foreground="Red"/>
+                <TextBlock Text="Yield:  " />
                 <TextBlock Text="{Binding ScreenerStock.Yield}"
                            Width="Auto"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="0" >
-                <TextBlock />
+                <TextBlock Text="Ask: "/>
+                <TextBlock Text="{Binding ScreenerStock.Ask, Mode=OneWay}" Width="Auto"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="1" >
-                <TextBlock />
+                <TextBlock Text="P/E Ratio: "/>
+                <TextBlock Text="{Binding ScreenerStock.PeRatio, Mode=OneWay}" Width="Auto"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="2" >
-                <TextBlock />
+                <TextBlock Text="Market Cap: "/>
+                <TextBlock Text="{Binding ScreenerStock.MarketCap, Mode=OneWay}" Width="Auto"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="0" >
-                <TextBlock />
+                <TextBlock Text="Volume:  "/>
+                <TextBlock Text="{Binding ScreenerStock.Volume, Mode=OneWay}" Width="Auto"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="1" >
                 <TextBlock />
@@ -133,7 +138,7 @@
             <Button Content="Funds and ETFs" Margin="5" Grid.Column="3"/>
         </Grid>
         <!-- When you have to make a DataGrid that groups objects by type: http://wpftutorial.net/DataGrid.html-->
-        <DataGrid ItemsSource="{Binding StockList, 
+        <DataGrid ItemsSource="{Binding DisplayStockCollectionView, 
                                 NotifyOnSourceUpdated=True, 
                                 UpdateSourceTrigger=PropertyChanged}" 
                   Grid.Row="2"
@@ -184,7 +189,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
                 <TextBlock Text="Trade Type:" Margin="3" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center"/>
-                <ComboBox ItemsSource="{Binding TradeTypeStrings}"  SelectedItem="{Binding SelectedTradeType}" Height="Auto" Width="100"  Margin="3" Grid.Row="0" Grid.Column="1" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+                <ComboBox ItemsSource="{Binding TradeTypeStrings}"  SelectedItem="{Binding SelectedTradeType, Mode=TwoWay}" Height="Auto" Width="100"  Margin="3" Grid.Row="0" Grid.Column="1" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
 
                 <TextBlock Text="Trade Terms:" Margin="40,3,3,3" Grid.Column="2" Grid.Row="0"  VerticalAlignment="Center"/>
                 <ComboBox ItemsSource="{Binding TradeTermStrings}"  SelectedItem="{Binding SelectedTermType}" Height="Auto" Width="100"  Margin="3" Grid.Row="0" Grid.Column="3" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
@@ -204,7 +209,7 @@
             
             
                 <TextBlock Text="Mkt Price:" Margin="3" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"/>
-                <TextBox Text="{Binding PreviewPrice, Mode=OneWay}" Width="100" Height="20" Margin="3" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" IsManipulationEnabled="False"/>
+                <TextBox Text="{Binding PreviewPrice, Mode=OneWay}" Width="100" Height="20" Margin="3" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" IsManipulationEnabled="False" IsReadOnly="True" />
 
                 
                 

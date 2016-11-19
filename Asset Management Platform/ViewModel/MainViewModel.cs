@@ -4,7 +4,7 @@ using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Command;
 using System.Collections.ObjectModel;
-using System;
+using System.Windows.Data;
 using Asset_Management_Platform.Messages;
 
 namespace Asset_Management_Platform
@@ -27,6 +27,22 @@ namespace Asset_Management_Platform
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
         /// 
+
+
+
+        //Customers = new ListCollectionView(_customers);
+        //Customers.GroupDescriptions.Add(new PropertyGroupDescription("Gender"));
+
+
+        private ListCollectionView _displayStockCollectionView;
+        public ListCollectionView DisplayStockCollectionView
+        {
+            get { return _displayStockCollectionView; }
+            set { _displayStockCollectionView = value;
+                RaisePropertyChanged(() => DisplayStockCollectionView);
+            }
+        }
+
 
         private Stock _screenerStock;
         public Stock ScreenerStock
@@ -299,8 +315,10 @@ namespace Asset_Management_Platform
 
         public MainViewModel(IPortfolioManagementService portfolioService)
         {
+            
+
             SelectedDisplayStock = null;
-            TradeTypeStrings = new ObservableCollection<string>() { "Buy", "Sell" };
+            TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
             TradeTermStrings = new ObservableCollection<string>() { "Market", "Limit", "Stop", "Stop Limit" };
             TradeDurationStrings = new ObservableCollection<string> { "Day", "GTC", "Market Close", "Market Open", "Overnight" };
             SelectedDurationType = "Day";
@@ -318,13 +336,14 @@ namespace Asset_Management_Platform
             //_portfolioService.StartUpdates(); //TURNED OFF FOR TESTING
 
             GetDisplayStocks();
-
+            DisplayStockCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Ticker"));
         }
 
         private void GetDisplayStocks()
         {
             var displayStocks = _portfolioService.GetDisplayStocks();
             StockList = new ObservableCollection<DisplayStock>(displayStocks);
+            DisplayStockCollectionView = new ListCollectionView(StockList);
         }
 
         private void RefreshCollection(PortfolioMessage obj)
@@ -354,7 +373,7 @@ namespace Asset_Management_Platform
 
             if (!string.IsNullOrEmpty(screenerTicker))
             {
-                var resultStock = _portfolioService.GetOrderPreviewStock(screenerTicker);
+                var resultStock = (Stock)_portfolioService.GetOrderPreviewStock(screenerTicker);
                 ScreenerStock = resultStock;
             }
         }
@@ -363,13 +382,15 @@ namespace Asset_Management_Platform
         {
             if (SelectedTradeType == "Buy")
                 _portfolioService.AddPosition(_previewStock, _orderTickerText, _orderShareQuantity);
-            else
+            else if (SelectedTradeType == "Sell")
                 _portfolioService.SellPosition(_previewStock, _orderTickerText, _orderShareQuantity);
             GetDisplayStocks();
 
             SelectedDurationType = "Day";
+            OrderTickerText = "";
+            OrderShareQuantity = 0;
             SelectedTermType = "";
-            SelectedTradeType = "";
+            SelectedTradeType = " ";
             LimitPrice = 0.00;
             ExecuteButtonEnabled = false;
         }

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Asset_Management_Platform.Utility
@@ -149,7 +150,10 @@ namespace Asset_Management_Platform.Utility
 
             var response = GetWebResponse(url);
 
-            Console.WriteLine(response.Replace("\\r\\n", "\r\n"));
+            //Console.WriteLine(response.Replace("\\r\\n", "\r\n"));
+            //Console.WriteLine(response.Replace(@"\n", ""));
+            
+            string fixedResponse = Regex.Replace(response, @"\r\n?|\n", string.Empty);
 
             string description = "";
             string cusip = "";
@@ -179,9 +183,9 @@ namespace Asset_Management_Platform.Utility
             //Some stock names contain a comma, which is the character that 
             //we are using to split up the results. The below code accounts for that possibility
 
-            lastPriceIsNA = !float.TryParse(response.Split(',')[0], out lastPrice);
-            yieldIsNA = !double.TryParse(response.Split(',')[1], out yield);
-            if (response.Split(',')[2] == "N/A")
+            lastPriceIsNA = !float.TryParse(fixedResponse.Split(',')[0], out lastPrice);
+            yieldIsNA = !double.TryParse(fixedResponse.Split(',')[1], out yield);
+            if (fixedResponse.Split(',')[2] == "N/A")
             {
                 marketCapIsNA = true;
                 marketCap = "0.0B";
@@ -189,18 +193,18 @@ namespace Asset_Management_Platform.Utility
             else
             {
                 marketCapIsNA = false;
-                marketCap = response.Split(',')[2];
+                marketCap = fixedResponse.Split(',')[2];
             }
-            bidIsNA = !double.TryParse(response.Split(',')[3], out bid);
-            askIsNA = !double.TryParse(response.Split(',')[4], out ask);
-            peRatioIsNA = !double.TryParse(response.Split(',')[5], out peRatio);
-            volumeIsNA = !int.TryParse(response.Split(',')[6], out volume);
-            bidSizeIsNA = !int.TryParse(response.Split(',')[7], out bidSize);
-            askSizeIsNA = !int.TryParse(response.Split(',')[8], out askSize);
-            if (string.IsNullOrEmpty(response.Split(',')[9]))
+            bidIsNA = !double.TryParse(fixedResponse.Split(',')[3], out bid);
+            askIsNA = !double.TryParse(fixedResponse.Split(',')[4], out ask);
+            peRatioIsNA = !double.TryParse(fixedResponse.Split(',')[5], out peRatio);
+            volumeIsNA = !int.TryParse(fixedResponse.Split(',')[6], out volume);
+            bidSizeIsNA = !int.TryParse(fixedResponse.Split(',')[7], out bidSize);
+            askSizeIsNA = !int.TryParse(fixedResponse.Split(',')[8], out askSize);
+            if (string.IsNullOrEmpty(fixedResponse.Split(',')[9]))
                 descriptionIsNA = true;
             else
-                description = response.Split(',')[9].Replace("\"", "");
+                description = fixedResponse.Split(',')[9].Replace("\"", "");
 
             if (IsSecurityUnavailable(lastPriceIsNA, yieldIsNA, marketCapIsNA, bidIsNA, askIsNA, peRatioIsNA, volumeIsNA, bidSizeIsNA, askSizeIsNA, descriptionIsNA))
             {
@@ -252,8 +256,10 @@ namespace Asset_Management_Platform.Utility
                     _securitiesWithMarketData = new List<Security>(); //Instantiate the list to return
 
                     // Get the web response.
-                    string result = GetWebResponse(url);
-                    Console.WriteLine(result.Replace("\\r\\n", "\r\n"));
+                    string response = GetWebResponse(url);
+
+                    string result = Regex.Replace(response, "\\r\\n", "\r\n");
+                    //Console.WriteLine(result.Replace("\\r\\n", "\r\n"));
                     
 
                     // Pull out the current prices.
