@@ -152,7 +152,39 @@
                   VerticalScrollBarVisibility="Visible"
                   CanUserAddRows="False"  
                   ColumnWidth="Auto"
+                  Width="Auto"
                   SelectedItem="{Binding SelectedDisplayStock, Mode=OneWay}">
+            <!--<DataGrid.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Path=Ticker}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="{x:Type GroupItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type GroupItem}">
+                                        <Expander>
+                                            <Expander.Header>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Path=Ticker}" />
+                                                    <TextBlock Text="{Binding Path=ItemCount}"/>
+                                                    <TextBlock Text="Items"/>
+                                                </StackPanel>
+                                            </Expander.Header>
+                                            <ItemsPresenter />
+                                        </Expander>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
+                </GroupStyle>
+            </DataGrid.GroupStyle>-->
             <DataGrid.Columns>
                 <DataGridTextColumn Width="Auto" Header="Ticker"  Binding="{Binding Ticker}"  TextOptions.TextFormattingMode="Display"/>
                 <DataGridTextColumn Width="Auto" Header="Description" Binding="{Binding Description}"/>
@@ -219,6 +251,7 @@
         <Border Grid.Column="2" 
                 Grid.Row="3" 
                 CornerRadius="10,10,10,10" 
+                BorderBrush="Azure"
                 Background="Aqua">
             <Grid Background="Azure">
                 <Grid.ColumnDefinitions>
@@ -252,26 +285,40 @@
                 
                 <TextBox Text="{Binding PreviewValue, Mode=OneWay}" Grid.Row="3" Grid.Column="1" Width="100" Height="20" Margin="3"  VerticalAlignment="Center"/>
                 <TextBlock Text="Order Value:" Margin="3,3,3,3" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" />
-
-                <TextBox Text="{Binding AlertBoxMessage, Mode=OneWay}" 
-                         Name="AlertBox"  
-                         Background="Azure" 
-                         Grid.Row="4" 
-                         Grid.Column="0" 
-                         Grid.ColumnSpan="4" 
-                         VerticalContentAlignment="Center" 
-                         HorizontalContentAlignment="Center" 
-                         FontSize="20" 
-                         Foreground="Red"
-                         BorderBrush="Azure">
-                    <TextBox.Style>
-                        <Style>
-                            <Style.Triggers>
-                            
-                            </Style.Triggers>
-                        </Style>
-                    </TextBox.Style>
-                </TextBox>
+                <Border Grid.Row="4" 
+                             Grid.Column="0" 
+                             Grid.ColumnSpan="4" 
+                             VerticalAlignment="Center" 
+                             HorizontalAlignment="Center" >
+                    <TextBlock Text="{Binding AlertBoxMessage, Mode=OneWay, NotifyOnSourceUpdated=True}" 
+                             Name="AlertBox"  
+                             Background="Azure"                              
+                             FontSize="20" 
+                             Foreground="Red"
+                               >
+                        <TextBlock.Style>
+                            <Style>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding AlertBoxVisible}" 
+                                                 Value="True">
+                                        <DataTrigger.EnterActions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation  Storyboard.TargetProperty="(TextBlock.Opacity)"
+                                                                      From="0"
+                                                                      To="1"
+                                                                      Duration="0:0:0.5"
+                                                                      RepeatBehavior="5x"
+                                                                      AutoReverse="True"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </DataTrigger.EnterActions>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Border>
             </Grid>
         </Border>
     </Grid>

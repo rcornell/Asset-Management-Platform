@@ -6,6 +6,7 @@ using GalaSoft.MvvmLight.Command;
 using System.Collections.ObjectModel;
 using System.Windows.Data;
 using Asset_Management_Platform.Messages;
+using System.ComponentModel;
 
 namespace Asset_Management_Platform
 {
@@ -66,6 +67,13 @@ namespace Asset_Management_Platform
             }
         }
 
+
+        private bool _alertBoxVisible;
+        public bool AlertBoxVisible {
+            get { return _alertBoxVisible; }
+            set { _alertBoxVisible = value;
+                RaisePropertyChanged(() => AlertBoxVisible); }
+        }
 
         private string _alertBoxMessage;
         public string AlertBoxMessage {
@@ -245,7 +253,6 @@ namespace Asset_Management_Platform
             set { _orderTickerText = value.ToUpper();
                 RaisePropertyChanged(() => OrderTickerText);
                 _executeButtonEnabled = false;
-                AlertBoxMessage = "";
             }
         }
 
@@ -257,7 +264,6 @@ namespace Asset_Management_Platform
             set { _orderShareQuantity = value;
                 RaisePropertyChanged(() => OrderShareQuantity);
                 _executeButtonEnabled = false;
-                AlertBoxMessage = "";
             }
         }
 
@@ -278,7 +284,7 @@ namespace Asset_Management_Platform
 
         public float PreviewValue
         {
-            get { return (_previewPrice * _orderShareQuantity); }
+            get { return (PreviewPrice * OrderShareQuantity); }
         }
 
         private Stock _previewStock;
@@ -373,7 +379,7 @@ namespace Asset_Management_Platform
 
             if (!string.IsNullOrEmpty(screenerTicker))
             {
-                var resultStock = (Stock)_portfolioService.GetOrderPreviewStock(screenerTicker);
+                var resultStock = _portfolioService.GetOrderPreviewStock(screenerTicker);
                 ScreenerStock = resultStock;
             }
         }
@@ -392,12 +398,21 @@ namespace Asset_Management_Platform
             SelectedTermType = "";
             SelectedTradeType = " ";
             LimitPrice = 0.00;
+            PreviewPrice = 0;
+            PreviewBid = "";
+            PreviewAsk = "";
+            PreviewAskSize = "";
+            PreviewBidSize = "";
+            PreviewDescription = "";
+            PreviewVolume = "";
+           
             ExecuteButtonEnabled = false;
         }
 
         private void SetAlertMessage(TradeMessage message)
         {
             AlertBoxMessage = message.Message;
+            AlertBoxVisible = true;
         }
     }
 }

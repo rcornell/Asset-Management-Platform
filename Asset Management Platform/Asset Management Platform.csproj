@@ -109,6 +109,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\BoolToOpacityConverter.cs" />
     <Compile Include="DisplayStock.cs" />
     <Compile Include="Messages\TradeMessage.cs" />
     <Compile Include="Utility\IPortfolioDatabaseService.cs" />
