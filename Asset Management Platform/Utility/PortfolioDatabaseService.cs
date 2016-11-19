@@ -100,7 +100,8 @@ namespace Asset_Management_Platform
                     {
                         var ticker = reader.GetString(0);
                         var quantity = int.Parse(reader.GetString(1));
-                        _myPositions.Add(new Position(ticker, quantity));
+                        var costBasis = decimal.Parse(reader.GetString(2));
+                        _myPositions.Add(new Position(ticker, quantity, costBasis));
                     }
                 }
             }
@@ -181,7 +182,7 @@ namespace Asset_Management_Platform
                         //INSERT POSITIONS IF NECESSARY
                         if (positionsToInsert.Any())
                         {
-                            string insertString = @"INSERT INTO dbo.MyPortfolio (Ticker, Shares) VALUES ";
+                            string insertString = @"INSERT INTO dbo.MyPortfolio (Ticker, Shares, CostBasis) VALUES ";
 
                             var final = positionsToInsert.Last();
                             foreach (var pos in positionsToInsert)
@@ -189,11 +190,11 @@ namespace Asset_Management_Platform
                                 //If the position being iterated is the last one, add the terminating SQL clause instead
                                 if (pos != final)
                                 {
-                                    insertString += string.Format("('{0}', '{1}'), ", pos.Ticker, pos.SharesOwned);
+                                    insertString += string.Format("('{0}', '{1}', '{2}'), ", pos.Ticker, pos.SharesOwned, pos.CostBasis);
                                 }
                                 else
                                 {
-                                    insertString += string.Format("('{0}', '{1}');", pos.Ticker, pos.SharesOwned);
+                                    insertString += string.Format("('{0}', '{1}', '{2}');", pos.Ticker, pos.SharesOwned, pos.CostBasis);
                                 }
                             }
                             command.CommandText = insertString;
