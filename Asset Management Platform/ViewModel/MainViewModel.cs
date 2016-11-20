@@ -261,8 +261,8 @@ namespace Asset_Management_Platform
             }
         }
 
-        private float _previewPrice;
-        public float PreviewPrice
+        private decimal _previewPrice;
+        public decimal PreviewPrice
         {
             get
             {
@@ -276,7 +276,7 @@ namespace Asset_Management_Platform
             }
         }
 
-        public float PreviewValue
+        public decimal PreviewValue
         {
             get { return (PreviewPrice * OrderShareQuantity); }
         }
@@ -325,18 +325,18 @@ namespace Asset_Management_Platform
 
         public MainViewModel(IPortfolioManagementService portfolioService)
         {
-            if (IsInDesignMode)
-            {
-                DisplayStockCollectionView = new ListCollectionView(new ObservableCollection<DisplayStock>()
-                {
-                    new DisplayStock(new Position("AAPL", 1000), new Stock("", "AAPL", "Apple Inc.", 5, 1.00)),
-                    new DisplayStock(new Position("IBM", 500), new Stock("", "IBM", "Intl Business Machines.", 10, 3.00)),
-                });
+            //if (IsInDesignMode)
+            //{
+            //    DisplayStockCollectionView = new ListCollectionView(new ObservableCollection<DisplayStock>()
+            //    {
+            //        new DisplayStock(new Position("AAPL", 1000), new Stock("", "AAPL", "Apple Inc.", 5, 1.00)),
+            //        new DisplayStock(new Position("IBM", 500), new Stock("", "IBM", "Intl Business Machines.", 10, 3.00)),
+            //    });
 
-                TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
-                TradeTermStrings = new ObservableCollection<string>() { "Market", "Limit", "Stop", "Stop Limit" };
-                TradeDurationStrings = new ObservableCollection<string> { "Day", "GTC", "Market Close", "Market Open", "Overnight" };
-            }
+            //    TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
+            //    TradeTermStrings = new ObservableCollection<string>() { "Market", "Limit", "Stop", "Stop Limit" };
+            //    TradeDurationStrings = new ObservableCollection<string> { "Day", "GTC", "Market Close", "Market Open", "Overnight" };
+            //}
 
             SelectedDisplayStock = null;
             TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
@@ -345,11 +345,6 @@ namespace Asset_Management_Platform
             SelectedDurationType = "Day";
             LimitBoxActive = false;
             LimitPrice = 0;
-
-
-            //SOLVE THE 8 SECOND PAUSE WHEN POLLING YAHOO.
-
-
 
             _portfolioService = portfolioService;
             Messenger.Default.Register<PortfolioMessage>(this, RefreshCollection);

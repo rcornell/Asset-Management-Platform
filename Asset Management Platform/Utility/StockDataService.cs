@@ -54,7 +54,7 @@ namespace Asset_Management_Platform.Utility
                     string cusip = "";
                     string ticker = "";
                     string description = "";
-                    float lastPrice = 0;
+                    decimal lastPrice = 0;
                     double yield = 0;
                     connection.Open();
                     var reader = command.ExecuteReader();
@@ -69,7 +69,7 @@ namespace Asset_Management_Platform.Utility
                         if (!reader.IsDBNull(2))
                             description = string.IsNullOrEmpty(reader.GetString(2)) ? "" : reader.GetString(2);
                         if (!reader.IsDBNull(3))
-                            lastPrice = reader.GetFloat(3); //if paused here, it's because you're not sure if Float will work.
+                            lastPrice = reader.GetDecimal(3); //if paused here, it's because you're not sure if Float will work.
                         if (!reader.IsDBNull(4))
                             yield = reader.GetDouble(4);
                         _securityList.Add(new Security(cusip, ticker, description, lastPrice, yield));

@@ -30,7 +30,7 @@ namespace Asset_Management_Platform
             }
         }
 
-        public float Price
+        public decimal Price
         {
             get
             {
@@ -112,6 +112,17 @@ namespace Asset_Management_Platform
             }
         }
 
+        public decimal CostBasis
+        {
+            get { return _position.CostBasis; }
+        }
+
+        public decimal GainLoss
+        {
+            get {  return ((_stock.LastPrice - _position.CostBasis) * _position.SharesOwned); }
+        }
+
+
 
         public DisplayStock(Position position, Stock stock)
         {
@@ -121,12 +132,12 @@ namespace Asset_Management_Platform
 
         public void ReduceShares(int shares)
         {
-            _position.SharesOwned -= shares;
+            _position.SellShares(shares);
         }
 
-        public void AddShares(int shares)
+        public void AddShares(Taxlot taxlot)
         {
-            _position.SharesOwned += shares;
+            _position.AddTaxlot(taxlot);
         }
 
     }

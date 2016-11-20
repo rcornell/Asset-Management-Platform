@@ -19,19 +19,15 @@ namespace Asset_Management_Platform
             get { return ComputeDatePurchased(); }
         }
 
-        private int _sharesOwned;
         public int SharesOwned
         {
-            get { return _sharesOwned; }
-            set { _sharesOwned = value; }
+            get { return ComputeSharesOwned(); }
+
         }
 
-
-        private decimal _costBasis;
         public decimal CostBasis
         {
-            get { return _costBasis; }
-            set { _costBasis = value; }
+            get { return ComputeCostBasis(); }
         }
 
         private List<Taxlot> _taxlots;
@@ -41,27 +37,43 @@ namespace Asset_Management_Platform
             set { _taxlots = value; }
         }
 
-        public Position(string ticker, int shares)
-        {
-            _ticker = ticker;
-            _sharesOwned = shares;
-        }
+        //public Position(string ticker, int shares)
+        //{
+        //    _ticker = ticker;
+        //    _sharesOwned = shares;
+        //}
 
-        public Position(string ticker, int shares, decimal costBasis)
-        {
-            _ticker = ticker;
-            _sharesOwned = shares;
-            _costBasis = costBasis;
-        }
+        //public Position(string ticker, int shares, decimal costBasis)
+        //{
+        //    _ticker = ticker;
+        //    _sharesOwned = shares;
+        //    _costBasis = costBasis;
+        //}
 
         public Position(List<Taxlot> taxlots)
         {
+            if (_taxlots == null)
+                _taxlots = new List<Taxlot>();
+
             if (taxlots != null)
-                _ticker = taxlots[0].Ticker; ;
+                _ticker = taxlots[0].Ticker;
+        
+
             foreach (var lot in taxlots)
             {
                 _taxlots.Add(lot);
             }
+        }
+
+        public Position(Taxlot taxlot)
+        {
+            if (_taxlots == null)
+                _taxlots = new List<Taxlot>();
+
+            if (_taxlots != null)
+                _ticker = taxlot.Ticker;
+
+            _taxlots.Add(taxlot);
         }
 
         private string ComputeDatePurchased()
@@ -70,6 +82,54 @@ namespace Asset_Management_Platform
                 return "Multiple";
             else
                 return _taxlots[0].DatePurchased.ToShortDateString();
+        }
+
+        private int ComputeSharesOwned()
+        {
+            if (_taxlots.Count == 1)
+                return _taxlots[0].Shares;
+
+            int shares = 0;
+
+            foreach (var lot in _taxlots)
+            {
+                shares += lot.Shares;
+            }
+
+            return shares;
+        }
+
+        private decimal ComputeCostBasis()
+        {
+            if (_taxlots.Count == 1)
+                return _taxlots[0].CostBasis;
+
+            int shares = 0;
+
+            foreach (var lot in _taxlots)
+            {
+                shares += lot.Shares;
+            }
+
+            var weightedPieces = new List<decimal>();
+
+            foreach (var lot in _taxlots)
+            {
+                var piece = (lot.Shares / shares) * lot.CostBasis;
+                weightedPieces.Add(piece);
+            }
+
+            return weightedPieces.Sum();
+        }
+
+        public void AddTaxlot(Taxlot taxlotToAdd)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SellShares(int shares)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Asset_Management_Platform
 {
     public class PortfolioDatabaseService : IPortfolioDatabaseService
     {
-        private List<Position> positionsToDelete;
+        private List<string> positionsToDelete;
         private SqlDataReader reader;
         private List<Position> _databaseOriginalState;
 
@@ -24,7 +24,7 @@ namespace Asset_Management_Platform
         public PortfolioDatabaseService()
         {
             _databaseOriginalState = new List<Position>();
-             positionsToDelete = new List<Position>();
+             positionsToDelete = new List<string>();
             _myPositions = new List<Position>();
             if (CheckDBForPositions())
                 LoadPositionsFromDatabase();
@@ -86,6 +86,7 @@ namespace Asset_Management_Platform
         /// </summary>
         public void LoadPositionsFromDatabase()
         {
+            List<Taxlot> taxlotsFromDatabase = new List<Taxlot>();
             var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             using (var connection = new SqlConnection(storageString))
             {
@@ -95,22 +96,46 @@ namespace Asset_Management_Platform
                     command.Connection = connection;
                     command.CommandText = @"SELECT * FROM MyPortfolio;";
                     var reader = command.ExecuteReader();
-
                     while (reader.Read())
                     {
                         var ticker = reader.GetString(0);
                         var quantity = int.Parse(reader.GetString(1));
                         var costBasis = decimal.Parse(reader.GetString(2));
-                        _myPositions.Add(new Position(ticker, quantity, costBasis));
+                        DateTime datePurchased = new DateTime();
+                        if(reader.IsDBNull(3))
+                            datePurchased = new DateTime(2000,12,31);
+                        else if (!string.IsNullOrEmpty(reader.GetString(3)))
+                            datePurchased = DateTime.Parse(reader.GetString(3));
+
+                        var taxLot = new Taxlot(ticker, quantity, costBasis, datePurchased);
+                        taxlotsFromDatabase.Add(taxLot);
                     }
                 }
             }
 
+            foreach (var lot in taxlotsFromDatabase)
+            {
+                if (!_myPositions.Any(s => s.Ticker == lot.Ticker))
+                {
+                    _myPositions.Add(new Position(lot));
+                }
+                else if (_myPositions.Any(s => s.Ticker == lot.Ticker && s.SharesOwned != lot.Shares))
+                {
+                    _myPositions.Find(s => s.Ticker == lot.Ticker).AddTaxlot(lot);
+                }
+                else if (_myPositions.Any(s => s.Ticker == lot.Ticker && s.SharesOwned == lot.Shares))
+                {
+                    var pos = _myPositions.Find(s => s.Ticker == lot.Ticker);
+                    if (pos.Taxlots.Any(d => d.DatePurchased == lot.DatePurchased))
+                        continue;
+                    else
+                        pos.AddTaxlot(lot);
+                }
+            }
 
-            //Does this work as intended? Nope
             foreach (var pos in _myPositions)
             {
-                _databaseOriginalState.Add(new Position(pos.Ticker, pos.SharesOwned));
+                _databaseOriginalState.Add(new Position(pos.Taxlots));
             }
         }
 
@@ -152,7 +177,7 @@ namespace Asset_Management_Platform
                 //Is the quantity zero'd out from a sale?
                 if (_databaseOriginalState.Any(pos => pos.Ticker == p.Ticker && pos.SharesOwned == 0))
                 {
-                    positionsToDelete.Add(p);
+                    positionsToDelete.Add(p.Ticker);
                 }
             }
 
@@ -208,7 +233,7 @@ namespace Asset_Management_Platform
 
                             foreach (var pos in positionsToDelete)
                             {
-                                var deleteCommand = deleteString += pos.Ticker;
+                                var deleteCommand = deleteString += pos;
                                 command.CommandText = deleteCommand;
                                 command.BeginExecuteNonQuery();
                             }
@@ -274,13 +299,13 @@ namespace Asset_Management_Platform
             {
                 if (p.SharesOwned == shares)
                 {
-                    var deleteThis = new Position(security.Ticker, shares);
-                    _myPositions.Remove(deleteThis);
-                    positionsToDelete.Add(deleteThis);
+                    _myPositions.Remove(p);
+                    //var deleteThis = new Position(security.Ticker, shares);
+                    positionsToDelete.Add(p.Ticker);
                 }
                 else
                 {
-                    p.SharesOwned -= shares;
+                    p.SellShares(shares);
                 }
             }
             //PROBABLY NEED TO SEND A MESSAGE TO UPDATE UI

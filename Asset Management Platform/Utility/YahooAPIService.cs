@@ -157,7 +157,7 @@ namespace Asset_Management_Platform.Utility
 
             string description = "";
             string cusip = "";
-            float lastPrice;
+            decimal lastPrice;
             double yield = 0;
             double bid = 0;
             double ask = 0;
@@ -183,7 +183,7 @@ namespace Asset_Management_Platform.Utility
             //Some stock names contain a comma, which is the character that 
             //we are using to split up the results. The below code accounts for that possibility
 
-            lastPriceIsNA = !float.TryParse(fixedResponse.Split(',')[0], out lastPrice);
+            lastPriceIsNA = !decimal.TryParse(fixedResponse.Split(',')[0], out lastPrice);
             yieldIsNA = !double.TryParse(fixedResponse.Split(',')[1], out yield);
             if (fixedResponse.Split(',')[2] == "N/A")
             {
@@ -276,7 +276,7 @@ namespace Asset_Management_Platform.Utility
                     {
                         string description = "";
                         string cusip = "";
-                        float lastPrice;
+                        decimal lastPrice;
                         double yield = 0;
                         double bid = 0;
                         double ask = 0;
@@ -303,7 +303,7 @@ namespace Asset_Management_Platform.Utility
                         //we are using to split up the results. The below code accounts for that possibility
                         System.Diagnostics.Debug.Write(string.Format("Creating Security #{0}", j));
 
-                        lastPriceIsNA = !float.TryParse(lines[j].Split(',')[0], out lastPrice);
+                        lastPriceIsNA = !decimal.TryParse(lines[j].Split(',')[0], out lastPrice);
                         if (j == 496)
                         {
                             System.Diagnostics.Debug.Write("Waiting");
