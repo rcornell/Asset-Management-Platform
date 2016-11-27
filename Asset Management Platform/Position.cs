@@ -30,6 +30,11 @@ namespace Asset_Management_Platform
             get { return ComputeCostBasis(); }
         }
 
+        public decimal PurchasePrice
+        {
+            get { return ComputePurchasePrice(); }
+        }
+
         private List<Taxlot> _taxlots;
         public List<Taxlot> Taxlots
         {
@@ -116,6 +121,29 @@ namespace Asset_Management_Platform
             foreach (var lot in _taxlots)
             {
                 var piece = (lot.Shares / shares) * lot.CostBasis;
+                weightedPieces.Add(piece);
+            }
+
+            return weightedPieces.Sum();
+        }
+
+        private decimal ComputePurchasePrice()
+        {
+            if (_taxlots.Count == 1)
+                return (_taxlots[0].CostBasis / _taxlots[0].Shares);
+
+            int shares = 0;
+
+            foreach (var lot in _taxlots)
+            {
+                shares += lot.Shares;
+            }
+
+            var weightedPieces = new List<decimal>();
+
+            foreach (var lot in _taxlots)
+            {
+                var piece = (lot.Shares / shares) * lot.PurchasePrice;
                 weightedPieces.Add(piece);
             }
 

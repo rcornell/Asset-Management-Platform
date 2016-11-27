@@ -23,11 +23,16 @@ namespace Asset_Management_Platform
             set { _ticker = value; }
         }
 
-        private decimal _costBasis;
         public decimal CostBasis
         {
-            get { return _costBasis; }
-            set { _costBasis = value; }
+            get { return (_purchasePrice * _shares); }
+        }
+
+        private decimal _purchasePrice;
+        public decimal PurchasePrice
+        {
+            get { return _purchasePrice; }
+            set { _purchasePrice = value; }
         }
 
         private int _shares;
@@ -37,12 +42,12 @@ namespace Asset_Management_Platform
             set { _shares = value; }
         }
 
-        public Taxlot(string ticker, int shares, decimal costBasis, DateTime datePurchased)
+        public Taxlot(string ticker, int shares, decimal purchasePrice, DateTime datePurchased)
         {
-            _ticker = ticker;
-            _shares = shares;
-            _costBasis = costBasis;
-            _datePurchased = datePurchased;
+            Ticker = ticker;
+            Shares = shares;
+            PurchasePrice = purchasePrice;
+            DatePurchased = datePurchased;
         }
     }
 }

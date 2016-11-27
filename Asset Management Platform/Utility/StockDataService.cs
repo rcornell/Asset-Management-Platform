@@ -59,9 +59,7 @@ namespace Asset_Management_Platform.Utility
                     connection.Open();
                     var reader = command.ExecuteReader();
                     while (reader.Read())
-                    {
-                        
-                        //handle null values in table?
+                    {                       
                         if (!reader.IsDBNull(0))
                             cusip = string.IsNullOrEmpty(reader.GetString(0)) ? "" : reader.GetString(0);
                         if (!reader.IsDBNull(1))
@@ -131,8 +129,28 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         /// <param name="securitiesToInsert"></param>
         /// <returns></returns>
-        public bool InsertIntoDatabase(List<Security> securitiesToInsert)
+        public bool InsertIntoDatabase(Security securityToInsert)
         {
+            if (_securityList.Any(s => s.Ticker == securityToInsert.Ticker))
+                return false;
+            else
+            {
+                var insertString = @"INSERT INTO Stocks (Ticker, Description, LastPrice, Yield) VALUES ";
+                var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
+                using (var connection = new SqlConnection(storageString))
+                {
+                    connection.Open(); //is this necessary in a Using?
+                    using (var command = new SqlCommand())
+                    {
+                        var securityInfo = string.Format(@"('{0}', '{1}', {2}, {3});", securityToInsert.Ticker, securityToInsert.Description, 
+                                                                                  securityToInsert.LastPrice, securityToInsert.Yield);
+                        insertString += securityInfo;
+                        command.Connection = connection;
+                        command.CommandText = insertString;
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
             return true;
         }
 
@@ -194,6 +212,7 @@ namespace Asset_Management_Platform.Utility
                 using (var yahooAPI = new YahooAPIService())
                 {
                     var result = yahooAPI.GetSingleStock(ticker);
+                    var insertedOrNot = InsertIntoDatabase(result);
                     return result;
                 }
             }

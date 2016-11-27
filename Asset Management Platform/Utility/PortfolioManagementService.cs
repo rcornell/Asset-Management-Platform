@@ -61,12 +61,18 @@ namespace Asset_Management_Platform.Utility
         {
             var positions = _portfolioDatabaseService.GetPositions();
             var stocks = _stockDataService.GetSecurityList();
+            //this cannot find GME in the stock list...beacuse it's not in S&P. Need to refactor. The list at
+            //startup may be pointless
+
 
             _displayStocks = new List<DisplayStock>();
 
             foreach (var pos in positions)
             {
                 var stock = stocks.Find(s => s.Ticker == pos.Ticker);
+                if (stock == null)
+                    //shouldn't hit this once StockDataService is keeping database up to date
+                    stock = _stockDataService.GetSpecificStockInfo(pos.Ticker);
                 _displayStocks.Add(new DisplayStock(pos, (Stock)stock));
             } //check to see if the stocks are Stocks or Securities
         }
@@ -130,13 +136,17 @@ namespace Asset_Management_Platform.Utility
 
         public void AddPosition(Stock stock, string ticker, int shares)
         {
+
+
+            //BUILD COST BASIS CORRECTLY
+
             if (stock != null && !string.IsNullOrEmpty(ticker) && shares > 0) {
                 if (!_securityList.Contains(stock))
                 {
                     _securityList.Add(stock);
                 }
 
-                if (!ticker.Contains(ticker))
+                if (!ticker.Contains(ticker))//wrong
                     _tickers.Add(ticker); //use boolean return for something?
 
                 var taxlot = new Taxlot(ticker, shares, decimal.Parse(stock.LastPrice.ToString()), DateTime.Now);

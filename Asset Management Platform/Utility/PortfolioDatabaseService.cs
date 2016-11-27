@@ -154,9 +154,7 @@ namespace Asset_Management_Platform
             foreach (var p in _myPositions)
             {
                 
-                //MAKE THIS LOGIC WORK
-
-
+   
                 if (_databaseOriginalState.Any(pos => pos.Ticker == p.Ticker && pos.SharesOwned == p.SharesOwned))
                 {
                     continue;

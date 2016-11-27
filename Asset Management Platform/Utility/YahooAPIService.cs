@@ -156,7 +156,7 @@ namespace Asset_Management_Platform.Utility
             string fixedResponse = Regex.Replace(response, @"\r\n?|\n", string.Empty);
 
             string description = "";
-            string cusip = "";
+            string cusip = " ";
             decimal lastPrice;
             double yield = 0;
             double bid = 0;

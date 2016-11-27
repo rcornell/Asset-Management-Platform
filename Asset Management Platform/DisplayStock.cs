@@ -117,12 +117,15 @@ namespace Asset_Management_Platform
             get { return _position.CostBasis; }
         }
 
-        public decimal GainLoss
+        public decimal PurchasePrice
         {
-            get {  return ((_stock.LastPrice - _position.CostBasis) * _position.SharesOwned); }
+            get { return _position.PurchasePrice; }
         }
 
-
+        public decimal GainLoss
+        {
+            get {  return ((_stock.LastPrice - _position.PurchasePrice) * _position.SharesOwned); }
+        }
 
         public DisplayStock(Position position, Stock stock)
         {
