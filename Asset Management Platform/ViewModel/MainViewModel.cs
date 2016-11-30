@@ -292,6 +292,10 @@ namespace Asset_Management_Platform
             }
         }
 
+        public RelayCommand DeletePortfolio
+        {
+            get { return new RelayCommand(ExecuteDeletePortfolio); }
+        }
         public RelayCommand SavePortfolio
         {
             get { return new RelayCommand(ExecuteSavePortfolio); }
@@ -417,6 +421,12 @@ namespace Asset_Management_Platform
             PreviewVolume = "";
            
             ExecuteButtonEnabled = false;
+        }
+
+        public void ExecuteDeletePortfolio()
+        {
+            _portfolioService.DeletePortfolio();
+            GetDisplayStocks();
         }
 
         public void ExecuteSavePortfolio()

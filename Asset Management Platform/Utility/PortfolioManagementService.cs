@@ -193,5 +193,13 @@ namespace Asset_Management_Platform.Utility
         {
             _portfolioDatabaseService.SavePortfolioToDatabase();
         }
+
+        public void DeletePortfolio()
+        {
+            _tickers.Clear();
+            _displayStocks.Clear();
+            _securityList.Clear();
+            _portfolioDatabaseService.DeletePortfolio();
+        }
     }
 }

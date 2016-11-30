@@ -15,8 +15,8 @@ namespace Asset_Management_Platform
 {
     public class PortfolioDatabaseService : IPortfolioDatabaseService
     {
-        private List<string> positionsToDelete;
-        private SqlDataReader reader;
+        private List<string> _positionsToDelete;
+        private SqlDataReader _reader;
         private List<Position> _databaseOriginalState;
 
         private List<Position> _myPositions;
@@ -24,7 +24,7 @@ namespace Asset_Management_Platform
         public PortfolioDatabaseService()
         {
             _databaseOriginalState = new List<Position>();
-             positionsToDelete = new List<string>();
+             _positionsToDelete = new List<string>();
             _myPositions = new List<Position>();
             if (CheckDBForPositions())
                 LoadPositionsFromDatabase();
@@ -55,8 +55,8 @@ namespace Asset_Management_Platform
                     {
                         command.Connection = connection;
                         command.CommandText = @"SELECT * FROM MyPortfolio;";
-                        reader = command.ExecuteReader();
-                        if (reader.HasRows == true)
+                        _reader = command.ExecuteReader();
+                        if (_reader.HasRows == true)
                             return true;
                     }
                 }
@@ -175,12 +175,12 @@ namespace Asset_Management_Platform
                 //Is the quantity zero'd out from a sale?
                 if (_databaseOriginalState.Any(pos => pos.Ticker == p.Ticker && pos.SharesOwned == 0))
                 {
-                    positionsToDelete.Add(p.Ticker);
+                    _positionsToDelete.Add(p.Ticker);
                 }
             }
 
             //If no inserts, updates, or deletes, exit method.
-            if (positionsToInsert.Count == 0 && positionsToUpdate.Count == 0 && positionsToDelete.Count == 0)
+            if (positionsToInsert.Count == 0 && positionsToUpdate.Count == 0 && _positionsToDelete.Count == 0)
                 return;
 
             try {
@@ -225,11 +225,11 @@ namespace Asset_Management_Platform
                         }
 
                         //DELETE POSITIONS IF NECESSARY
-                        if (positionsToDelete.Any())
+                        if (_positionsToDelete.Any())
                         {
                             string deleteString = @"DELETE FROM MyPortfolio WHERE Ticker =";
 
-                            foreach (var pos in positionsToDelete)
+                            foreach (var pos in _positionsToDelete)
                             {
                                 var deleteCommand = deleteString += pos;
                                 command.CommandText = deleteCommand;
@@ -299,7 +299,7 @@ namespace Asset_Management_Platform
                 {
                     _myPositions.Remove(p);
                     //var deleteThis = new Position(security.Ticker, shares);
-                    positionsToDelete.Add(p.Ticker);
+                    _positionsToDelete.Add(p.Ticker);
                 }
                 else
                 {
@@ -309,6 +309,18 @@ namespace Asset_Management_Platform
             //PROBABLY NEED TO SEND A MESSAGE TO UPDATE UI
         }
 
+        /// <summary>
+        /// Adds all tickers in the portfolio to the
+        /// positions to be deleted from the database
+        /// upon exit.
+        /// </summary>
+        public void DeletePortfolio()
+        {
+            foreach (var position in _myPositions)
+            {
+                _positionsToDelete.Add(position.Ticker);
+            }
+        }
 
     }
 

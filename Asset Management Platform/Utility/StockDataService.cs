@@ -67,9 +67,9 @@ namespace Asset_Management_Platform.Utility
                         if (!reader.IsDBNull(2))
                             description = string.IsNullOrEmpty(reader.GetString(2)) ? "" : reader.GetString(2);
                         if (!reader.IsDBNull(3))
-                            lastPrice = reader.GetDecimal(3); //if paused here, it's because you're not sure if Float will work.
+                            lastPrice = decimal.Parse(reader.GetString(3)); //if paused here, it's because you're not sure if Float will work.
                         if (!reader.IsDBNull(4))
-                            yield = reader.GetDouble(4);
+                            yield = double.Parse(reader.GetString(4));
                         _securityList.Add(new Security(cusip, ticker, description, lastPrice, yield));
                     }
                 }

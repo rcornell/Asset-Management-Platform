@@ -112,9 +112,9 @@ namespace Asset_Management_Platform
             }
         }
 
-        public decimal CostBasis
+        public string CostBasis
         {
-            get { return _position.CostBasis; }
+            get { return _position.CostBasis.ToString("#,##0"); }
         }
 
         public decimal PurchasePrice
@@ -122,9 +122,9 @@ namespace Asset_Management_Platform
             get { return _position.PurchasePrice; }
         }
 
-        public decimal GainLoss
+        public string GainLoss
         {
-            get {  return ((_stock.LastPrice - _position.PurchasePrice) * _position.SharesOwned); }
+            get {  return (((_stock.LastPrice - _position.PurchasePrice) * _position.SharesOwned)).ToString("#,##0"); }
         }
 
         public DisplayStock(Position position, Stock stock)

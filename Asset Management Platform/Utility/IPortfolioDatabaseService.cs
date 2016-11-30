@@ -21,5 +21,7 @@ namespace Asset_Management_Platform.Utility
       
         void SellSharesFromPortfolio(Security security, int shares);
 
+        void DeletePortfolio();
+
     }
 }

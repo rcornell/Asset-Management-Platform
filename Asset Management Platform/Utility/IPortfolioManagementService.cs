@@ -22,5 +22,7 @@ namespace Asset_Management_Platform.Utility
 
         List<DisplayStock> GetDisplayStocks();
         void UploadPortfolio();
+
+        void DeletePortfolio();
     }
 }

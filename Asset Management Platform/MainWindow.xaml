@@ -32,10 +32,9 @@
         <DockPanel Grid.Row="0" Grid.Column="0">
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="_File">
-                    <MenuItem Header="_New Portfolio" />
+                    <MenuItem Header="_New Portfolio" Command="{Binding DeletePortfolio}"/>
                     <MenuItem Header="_Load Portfolio" />
                     <MenuItem Header="_Save Portfolio" Command="{Binding SavePortfolio}"/>
-                    <MenuItem Header="_Active Market Data" IsCheckable="True" />
                     <Separator />
                     <MenuItem Header="_Exit" Command="{Binding CloseApplication}" />
                 </MenuItem>
@@ -201,12 +200,12 @@
                 <DataGridTextColumn Width="Auto" Header="Cost Basis" Binding="{Binding CostBasis}"/>
                 <DataGridTextColumn Width="Auto" Header="Gain/Loss" Binding="{Binding GainLoss}"/>
                 <DataGridTextColumn Width="*" Header="Yield" Binding="{Binding Yield}"/>
-                <DataGridTextColumn Width="*" Header="P/E Ratio" Binding="{Binding PeRatio}"/>
+                <DataGridTextColumn Width="Auto" Header="P/E Ratio" Binding="{Binding PeRatio}"/>
                 <DataGridTextColumn Width="*" Header="Ask" Binding="{Binding Ask}"/>
                 <DataGridTextColumn Width="*" Header="Ask Size" Binding="{Binding AskSize}"/>
                 <DataGridTextColumn Width="*" Header="Bid" Binding="{Binding Bid}"/>
                 <DataGridTextColumn Width="*" Header="Bid Size" Binding="{Binding BidSize}"/>
-                <DataGridTextColumn Width="*" Header="Volume" Binding="{Binding Volume}"/>
+                <DataGridTextColumn Width="Auto" Header="Volume" Binding="{Binding Volume}"/>
             </DataGrid.Columns>
         </DataGrid>
         <Grid Grid.Row="3" Grid.Column="1"  Background="Azure">
