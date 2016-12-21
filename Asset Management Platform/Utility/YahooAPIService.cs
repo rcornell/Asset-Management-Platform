@@ -208,7 +208,11 @@ namespace Asset_Management_Platform.Utility
 
             if (IsSecurityUnavailable(lastPriceIsNA, yieldIsNA, marketCapIsNA, bidIsNA, askIsNA, peRatioIsNA, volumeIsNA, bidSizeIsNA, askSizeIsNA, descriptionIsNA))
             {
-                result = new Stock("", "", "Unknown Ticker", 0, 0.00);
+                var desc = !descriptionIsNA ? description : "Unknown Ticker";
+                var price = !lastPriceIsNA ? lastPrice : 0;
+                var yld = !yieldIsNA ? yield : 0.00;
+
+                result = new Stock("", ticker, desc, price, yld);
                 return result;
             }
 
@@ -369,12 +373,12 @@ namespace Asset_Management_Platform.Utility
             if (lastPriceIsNA) numberOfNA++;
             if (yieldIsNA) numberOfNA++;
             if (marketCapIsNA) numberOfNA++;
-            if (bidIsNA) numberOfNA++;
-            if (askIsNA) numberOfNA++;
+            //if (bidIsNA) numberOfNA++; these can be N/A after market hours
+            //if (askIsNA) numberOfNA++;
             if (peRatioIsNA) numberOfNA++;
             if (volumeIsNA) numberOfNA++;
-            if (bidSizeIsNA) numberOfNA++;
-            if (askSizeIsNA) numberOfNA++;
+            //if (bidSizeIsNA) numberOfNA++; these can be N/A after market hours
+            //if (askSizeIsNA) numberOfNA++;
 
             if (numberOfNA > 2)
                 return true;
