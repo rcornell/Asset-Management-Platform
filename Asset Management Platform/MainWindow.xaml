@@ -6,7 +6,7 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:Asset_Management_Platform.ViewModel"
         mc:Ignorable="d"
-        Title="MainWindow" 
+        Title="Portfolio Management Test Utility" 
         DataContext="{Binding Main, Source={StaticResource Locator}}">
     <Window.Resources>
         <Style x:Key="DataGridCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
@@ -17,15 +17,16 @@
             <Setter Property="FontSize" Value="30"/>
         </Style>
     </Window.Resources>
-    <Grid>
+    <Grid Background="Azure">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition ></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto" ></RowDefinition>
             <RowDefinition ></RowDefinition>
             <RowDefinition Height="Auto" MinHeight="175"></RowDefinition>
         </Grid.RowDefinitions>
@@ -44,9 +45,8 @@
                     <MenuItem Header="About" />
                 </MenuItem>
             </Menu>
-            <TextBox AcceptsReturn="True" />
         </DockPanel>
-        <Grid Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="0" Background="Black">
+        <Grid Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Background="Black">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto" MinHeight="20"></RowDefinition>
@@ -131,7 +131,7 @@
         </Grid>
         
         
-        <Grid HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Background="Azure">
+        <Grid HorizontalAlignment="Stretch" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Background="Azure">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
@@ -147,8 +147,8 @@
         <DataGrid ItemsSource="{Binding DisplayStockCollectionView, 
                                 NotifyOnSourceUpdated=True, 
                                 UpdateSourceTrigger=PropertyChanged}" 
-                  Grid.Row="2"
-                  Grid.Column="1"
+                  Grid.Row="3"
+                  Grid.Column="0"
                   Grid.ColumnSpan="2"
                   HorizontalAlignment="Center" 
                   Margin="0,3,0,3" 
@@ -208,7 +208,8 @@
                 <DataGridTextColumn Width="Auto" Header="Volume" Binding="{Binding Volume}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <Grid Grid.Row="3" Grid.Column="1"  Background="Azure">
+        <TextBlock Grid.Row="3" Grid.Column="2"    Text="ChartGoesHere"/>
+        <Grid Grid.Row="4" Grid.Column="0"  Background="Azure">
             <Grid.Style>
                 <Style/>
             </Grid.Style>
@@ -256,8 +257,8 @@
             <Button Content="Preview Order" Margin="3" Command="{Binding PreviewOrder}" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
             <Button Content="Execute" Command="{Binding ExecuteOrder}" Margin="40,3,3,3" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2" VerticalAlignment="Center" IsEnabled="{Binding ExecuteButtonEnabled}"/>
         </Grid>
-        <Border Grid.Column="2" 
-                Grid.Row="3" 
+        <Border Grid.Column="1" 
+                Grid.Row="4" 
                 CornerRadius="10,10,10,10" 
                 BorderBrush="Azure"
                 Background="Aqua">
