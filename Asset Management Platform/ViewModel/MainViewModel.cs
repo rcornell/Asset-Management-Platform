@@ -29,6 +29,11 @@ namespace Asset_Management_Platform
         /// </summary>
         /// 
 
+
+
+
+
+
         private ListCollectionView _displayStockCollectionView;
         public ListCollectionView DisplayStockCollectionView
         {

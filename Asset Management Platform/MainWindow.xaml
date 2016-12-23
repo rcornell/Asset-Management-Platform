@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:dxc="http://schemas.devexpress.com/winfx/2008/xaml/charts"
         xmlns:local="clr-namespace:Asset_Management_Platform.ViewModel"
         mc:Ignorable="d"
         Title="Portfolio Management Test Utility" 
@@ -17,6 +18,7 @@
             <Setter Property="FontSize" Value="30"/>
         </Style>
     </Window.Resources>
+    
     <Grid Background="Azure">
         <Grid.ColumnDefinitions>
             <ColumnDefinition ></ColumnDefinition>
@@ -204,6 +206,7 @@
             </DataGrid.Columns>
         </DataGrid>
         <TextBlock Grid.Row="3" Grid.Column="2"    Text="ChartGoesHere"/>
+        
         <Grid Grid.Row="4" Grid.Column="0"  Background="Azure">
             <Grid.Style>
                 <Style/>
