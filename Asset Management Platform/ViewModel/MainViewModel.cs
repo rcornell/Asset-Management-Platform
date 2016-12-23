@@ -410,6 +410,7 @@ namespace Asset_Management_Platform
                 decimal weight = (decimal.Parse(stock.MarketValue) / totalValue);
                 posByWeight.Add(new PositionByWeight(stock.Ticker, weight));
             }
+            AllocationChartPositions = posByWeight;
         }
 
         private void RefreshCollection(PortfolioMessage obj)
