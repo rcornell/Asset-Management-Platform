@@ -118,6 +118,7 @@
     <Compile Include="Converters\BoolToOpacityConverter.cs" />
     <Compile Include="DisplayStock.cs" />
     <Compile Include="Messages\TradeMessage.cs" />
+    <Compile Include="PositionByWeight.cs" />
     <Compile Include="Taxlot.cs" />
     <Compile Include="Utility\IPortfolioDatabaseService.cs" />
     <Compile Include="Messages\DatabaseMessage.cs" />

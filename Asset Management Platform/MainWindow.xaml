@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-        xmlns:dxc="http://schemas.devexpress.com/winfx/2008/xaml/charts"
+        xmlns:chart="clr-namespace:De.TorstenMandelkow.MetroChart;assembly=De.TorstenMandelkow.MetroChart"
         xmlns:local="clr-namespace:Asset_Management_Platform.ViewModel"
         mc:Ignorable="d"
         Title="Portfolio Management Test Utility" 
@@ -205,7 +205,25 @@
                 <DataGridTextColumn Width="Auto" Header="Volume" Binding="{Binding Volume}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <TextBlock Grid.Row="3" Grid.Column="2"    Text="ChartGoesHere"/>
+        
+
+        
+        
+        <chart:PieChart
+            Grid.Row="3" 
+            Grid.Column="2"
+            Style="{StaticResource MinimalChartStyle}"
+            ChartTitle="Asset Allocation"
+            ChartSubTitle="Sub title">
+                <chart:PieChart.Series>
+                    <chart:ChartSeries                        
+                        DisplayMember="Ticker"
+                        ValueMember="Weight"
+                        ItemsSource="{Binding Path=AllocationChartPositions}" />
+                </chart:PieChart.Series>
+        </chart:PieChart>
+
+        
         
         <Grid Grid.Row="4" Grid.Column="0"  Background="Azure">
             <Grid.Style>
