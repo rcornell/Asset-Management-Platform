@@ -407,8 +407,8 @@ namespace Asset_Management_Platform
             ObservableCollection<PositionByWeight> posByWeight = new ObservableCollection<PositionByWeight>();
             foreach (var stock in displayStocks)
             {
-                decimal weight = (decimal.Parse(stock.MarketValue) / totalValue);
-                posByWeight.Add(new PositionByWeight(stock.Ticker, weight));
+                decimal weight = (decimal.Parse(stock.MarketValue) / totalValue) * 100;
+                posByWeight.Add(new PositionByWeight(stock.Ticker, System.Math.Round(weight,2)));
             }
             AllocationChartPositions = posByWeight;
         }

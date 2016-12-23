@@ -212,6 +212,8 @@
         <chart:PieChart
             Grid.Row="3" 
             Grid.Column="2"
+            Height="Auto"
+            Width="Auto"
             Style="{StaticResource MinimalChartStyle}"
             ChartTitle="Asset Allocation"
             ChartSubTitle="Sub title">
@@ -219,7 +221,9 @@
                     <chart:ChartSeries                        
                         DisplayMember="Ticker"
                         ValueMember="Weight"
-                        ItemsSource="{Binding Path=AllocationChartPositions}" />
+                        ItemsSource="{Binding AllocationChartPositions, 
+                                NotifyOnSourceUpdated=True, 
+                                UpdateSourceTrigger=PropertyChanged}" />
                 </chart:PieChart.Series>
         </chart:PieChart>
 
