@@ -184,6 +184,9 @@
     <Content Include="SeedJson\SeedTickers.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="SeedJson\SeedMutualFundInfo.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
