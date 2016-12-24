@@ -206,7 +206,7 @@ namespace Asset_Management_Platform
                                 //Re-adds all current taxlots
                                 foreach (var lot in pos.Taxlots) {                                   
                                     command.CommandText = string.Format(@"INSERT INTO dbo.MyPortfolio (Ticker, Shares, CostBasis, DatePurchased) 
-                                                                        VALUES ({0} ,{1} ,{2} , {3});", lot.Ticker, lot.Shares, lot.CostBasis, lot.DatePurchased);
+                                                                        VALUES ('{0}' ,'{1}' ,'{2}' , '{3}');", lot.Ticker, lot.Shares, lot.CostBasis, lot.DatePurchased);
                                     command.ExecuteNonQuery();
                                 }
                             }
@@ -215,19 +215,22 @@ namespace Asset_Management_Platform
                         //INSERT POSITIONS IF NECESSARY
                         if (positionsToInsert.Any())
                         {
-                            string insertString = @"INSERT INTO dbo.MyPortfolio (Ticker, Shares, CostBasis) VALUES ";
+                            string insertString = @"INSERT INTO dbo.MyPortfolio (Ticker, Shares, CostBasis, DatePurchased) VALUES ";
 
-                            var final = positionsToInsert.Last();
+                            var finalPosition = positionsToInsert.Last();
+                            var finalTaxlot = positionsToInsert.Last().Taxlots.Last();
                             foreach (var pos in positionsToInsert)
                             {
-                                //If the position being iterated is the last one, add the terminating SQL clause instead
-                                if (pos != final)
-                                {
-                                    insertString += string.Format("('{0}', '{1}', '{2}'), ", pos.Ticker, pos.SharesOwned, pos.CostBasis);
-                                }
-                                else
-                                {
-                                    insertString += string.Format("('{0}', '{1}', '{2}');", pos.Ticker, pos.SharesOwned, pos.CostBasis);
+                                foreach (var lot in pos.Taxlots) { 
+                                    //If the position being iterated is the last one, add the terminating SQL clause instead
+                                    if (pos != finalPosition && lot != finalTaxlot)
+                                    {
+                                        insertString += string.Format("('{0}', '{1}', '{2}', '{3}'), ", lot.Ticker, lot.Shares, lot.CostBasis, lot.DatePurchased);
+                                    }
+                                    else
+                                    {
+                                        insertString += string.Format("('{0}', '{1}', '{2}', '{3}');", lot.Ticker, lot.Shares, lot.CostBasis, lot.DatePurchased);
+                                    }
                                 }
                             }
                             command.CommandText = insertString;
