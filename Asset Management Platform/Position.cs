@@ -152,7 +152,7 @@ namespace Asset_Management_Platform
 
         public void AddTaxlot(Taxlot taxlotToAdd)
         {
-            throw new NotImplementedException();
+            Taxlots.Add(taxlotToAdd);
         }
 
         public void SellShares(int shares)

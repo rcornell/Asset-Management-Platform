@@ -98,14 +98,14 @@ namespace Asset_Management_Platform
                     var reader = command.ExecuteReader();
                     while (reader.Read())
                     {
-                        var ticker = reader.GetString(0);
-                        var quantity = int.Parse(reader.GetString(1));
-                        var costBasis = decimal.Parse(reader.GetString(2));
+                        var ticker = reader.GetString(1);
+                        var quantity = int.Parse(reader.GetString(2));
+                        var costBasis = decimal.Parse(reader.GetString(3));
                         DateTime datePurchased = new DateTime();
-                        if(reader.IsDBNull(3))
+                        if(reader.IsDBNull(4))
                             datePurchased = new DateTime(2000,12,31);
-                        else if (!string.IsNullOrEmpty(reader.GetString(3)))
-                            datePurchased = DateTime.Parse(reader.GetString(3));
+                        else if (!string.IsNullOrEmpty(reader.GetString(4)))
+                            datePurchased = DateTime.Parse(reader.GetString(4));
 
                         var taxLot = new Taxlot(ticker, quantity, costBasis, datePurchased);
                         taxlotsFromDatabase.Add(taxLot);
@@ -198,15 +198,13 @@ namespace Asset_Management_Platform
                             foreach (var pos in positionsToUpdate)
                             {
                                 //Deletes all taxlots for position being updated
-                                string deleteString = @"DELETE FROM MyPortfolio WHERE Ticker =";
-                                deleteString += pos.Ticker;
+                                string deleteString = string.Format(@"DELETE FROM MyPortfolio WHERE Ticker='{0}';", pos.Ticker);     
                                 command.CommandText = deleteString;
                                 command.ExecuteNonQuery();
                             
                                 //Re-adds all current taxlots
                                 foreach (var lot in pos.Taxlots) {                                   
-                                    command.CommandText = string.Format(@"INSERT INTO dbo.MyPortfolio (Ticker, Shares, CostBasis, DatePurchased) 
-                                                                        VALUES ('{0}' ,'{1}' ,'{2}' , '{3}');", lot.Ticker, lot.Shares, lot.CostBasis, lot.DatePurchased);
+                                    command.CommandText = string.Format(@"INSERT INTO dbo.MyPortfolio (Ticker, Shares, CostBasis, DatePurchased) VALUES ('{0}' ,'{1}' ,'{2}' , '{3}');", lot.Ticker, lot.Shares, lot.CostBasis, lot.DatePurchased);
                                     command.ExecuteNonQuery();
                                 }
                             }
@@ -292,9 +290,25 @@ namespace Asset_Management_Platform
             }
         }
 
+        /// <summary>
+        /// Adds a new security to a portfolio as a new Position
+        /// with one taxlot
+        /// </summary>
+        /// <param name="positionToAdd"></param>
         public void AddToPortfolio(Position positionToAdd)
         {
             _myPositions.Add(positionToAdd);   
+        }
+
+        /// <summary>
+        /// Adds a taxlot to an existing position in some security
+        /// </summary>
+        /// <param name="taxlotToAdd"></param>
+        public void AddToPortfolio(Taxlot taxlotToAdd)
+        {
+            foreach(var pos in _myPositions.Where(s => s.Ticker == taxlotToAdd.Ticker)){
+                pos.Taxlots.Add(taxlotToAdd);
+            }
         }
 
         /// <summary>

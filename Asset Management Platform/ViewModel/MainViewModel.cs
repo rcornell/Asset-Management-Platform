@@ -452,6 +452,7 @@ namespace Asset_Management_Platform
             else if (SelectedTradeType == "Sell")
                 _portfolioService.SellPosition(_previewStock, _orderTickerText, _orderShareQuantity);
             GetDisplayStocks();
+            GetAllocationChartPositions();
 
             SelectedDurationType = "Day";
             OrderTickerText = "";

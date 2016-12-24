@@ -139,21 +139,28 @@ namespace Asset_Management_Platform.Utility
 
 
             //BUILD COST BASIS CORRECTLY
+            var taxlot = new Taxlot(ticker, shares, decimal.Parse(stock.LastPrice.ToString()), DateTime.Now);
+            var position = new Position(taxlot);
 
+            //Check if any values are null or useless
             if (stock != null && !string.IsNullOrEmpty(ticker) && shares > 0) {
-                if (!_securityList.Contains(stock))
+
+                //Check to confirm that shares of this security aren't already owned.
+                if (!_securityList.Any(s => s.Ticker == ticker))
                 {
                     _securityList.Add(stock);
+                    _portfolioDatabaseService.AddToPortfolio(position);
+                    _displayStocks.Add(new DisplayStock(position, stock)); //add a new DisplayStock bc of taxlot tracking
+                }
+                else { //This ticker isn't already owned.
+
+                _portfolioDatabaseService.AddToPortfolio(taxlot);
+
                 }
 
-                if (!ticker.Contains(ticker))//wrong
+                
+                if (!ticker.Contains(ticker))//I don't remember what this is for...
                     _tickers.Add(ticker); //use boolean return for something?
-
-                var taxlot = new Taxlot(ticker, shares, decimal.Parse(stock.LastPrice.ToString()), DateTime.Now);
-                var position = new Position(taxlot);
-
-                _portfolioDatabaseService.AddToPortfolio(position);
-                _displayStocks.Add(new DisplayStock(position, stock)); //add a new DisplayStock bc of taxlot tracking
 
             }
         }

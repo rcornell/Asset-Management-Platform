@@ -18,6 +18,8 @@ namespace Asset_Management_Platform.Utility
         void BackupDatabase();
 
         void AddToPortfolio(Position positionToAdd);
+
+        void AddToPortfolio(Taxlot taxlotToAdd);
       
         void SellSharesFromPortfolio(Security security, int shares);
 
