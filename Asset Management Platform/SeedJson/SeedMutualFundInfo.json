@@ -1,0 +1,782 @@
+﻿[
+  {
+    "Ticker": "VMFXX",
+    "AssetClass": "Money Market",
+    "Category": "Money Market",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VMMXX",
+    "AssetClass": "Money Market",
+    "Category": "Money Market",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VMFXX",
+    "AssetClass": "Money Market",
+    "Category": "Money Market",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VMMXX",
+    "AssetClass": "Money Market",
+    "Category": "Money Market",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VCTXX",
+    "AssetClass": "Money Market",
+    "Category": "Money Market",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VNJXX",
+    "AssetClass": "Money Market",
+    "Category": "Money Market",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VYFXX",
+    "AssetClass": "Money Market",
+    "Category": "Money Market",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VOHXX",
+    "AssetClass": "Money Market",
+    "Category": "Money Market",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VPTXX",
+    "AssetClass": "Money Market",
+    "Category": "Money Market",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VMSXX",
+    "AssetClass": "Money Market",
+    "Category": "Money Market",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VFIIX",
+    "AssetClass": "Bond",
+    "Category": "Government",
+    "Subcategory": "Intermediate"
+  },
+  {
+    "Ticker": "VIPSX",
+    "AssetClass": "Bond",
+    "Category": "Government",
+    "Subcategory": "Intermediate"
+  },
+  {
+    "Ticker": "VBILX",
+    "AssetClass": "Bond",
+    "Category": "Government",
+    "Subcategory": "Intermediate"
+  },
+  {
+    "Ticker": "VSIGX",
+    "AssetClass": "Bond",
+    "Category": "Government",
+    "Subcategory": "Intermediate"
+  },
+  {
+    "Ticker": "VFITX",
+    "AssetClass": "Bond",
+    "Category": "Government",
+    "Subcategory": "Intermediate"
+  },
+  {
+    "Ticker": "VBLTX",
+    "AssetClass": "Bond",
+    "Category": "Government",
+    "Subcategory": "Long"
+  },
+  {
+    "Ticker": "VLGSX",
+    "AssetClass": "Bond",
+    "Category": "Government",
+    "Subcategory": "Long"
+  },
+  {
+    "Ticker": "VUSTX",
+    "AssetClass": "Bond",
+    "Category": "Government",
+    "Subcategory": "Long"
+  },
+  {
+    "Ticker": "VMBSX",
+    "AssetClass": "Bond",
+    "Category": "Government",
+    "Subcategory": "Intermediate"
+  },
+  {
+    "Ticker": "VBIRX",
+    "AssetClass": "Bond",
+    "Category": "Government",
+    "Subcategory": "Short"
+  },
+  {
+    "Ticker": "VSGBX",
+    "AssetClass": "Bond",
+    "Category": "Government",
+    "Subcategory": "Short"
+  },
+  {
+    "Ticker": "VSBSX",
+    "AssetClass": "Bond",
+    "Category": "Government",
+    "Subcategory": "Short"
+  },
+  {
+    "Ticker": "VTAPX",
+    "AssetClass": "Bond",
+    "Category": "Government",
+    "Subcategory": "Short"
+  },
+  {
+    "Ticker": "VFISX",
+    "AssetClass": "Bond",
+    "Category": "Government",
+    "Subcategory": "Short"
+  },
+  {
+    "Ticker": "VBTLX",
+    "AssetClass": "Bond",
+    "Category": "Government",
+    "Subcategory": "Intermediate"
+  },
+  {
+    "Ticker": "VCORX",
+    "AssetClass": "Bond",
+    "Category": "Investment-Grade",
+    "Subcategory": "Intermediate"
+  },
+  {
+    "Ticker": "VICSX",
+    "AssetClass": "Bond",
+    "Category": "Investment-Grade",
+    "Subcategory": "Intermediate"
+  },
+  {
+    "Ticker": "VFICX",
+    "AssetClass": "Bond",
+    "Category": "Investment-Grade",
+    "Subcategory": "Intermediate"
+  },
+  {
+    "Ticker": "VLTCX",
+    "AssetClass": "Bond",
+    "Category": "Investment-Grade",
+    "Subcategory": "Long"
+  },
+  {
+    "Ticker": "VWESX",
+    "AssetClass": "Bond",
+    "Category": "Investment-Grade",
+    "Subcategory": "Long"
+  },
+  {
+    "Ticker": "VSCSX",
+    "AssetClass": "Bond",
+    "Category": "Investment-Grade",
+    "Subcategory": "Short"
+  },
+  {
+    "Ticker": "VFSTX",
+    "AssetClass": "Bond",
+    "Category": "Investment-Grade",
+    "Subcategory": "Short"
+  },
+  {
+    "Ticker": "VUBFX",
+    "AssetClass": "Bond",
+    "Category": "Investment-Grade",
+    "Subcategory": "Short"
+  },
+  {
+    "Ticker": "VWEHX",
+    "AssetClass": "Bond",
+    "Category": "High Yield",
+    "Subcategory": "Intermediate"
+  },
+  {
+    "Ticker": "VCAIX",
+    "AssetClass": "Bond",
+    "Category": "Tax Exempt",
+    "Subcategory": "Intermediate"
+  },
+  {
+    "Ticker": "VCITX",
+    "AssetClass": "Bond",
+    "Category": "Tax Exempt",
+    "Subcategory": "Long"
+  },
+  {
+    "Ticker": "VWAHX",
+    "AssetClass": "Bond",
+    "Category": "Tax Exempt",
+    "Subcategory": "Long"
+  },
+  {
+    "Ticker": "VWITX",
+    "AssetClass": "Bond",
+    "Category": "Tax Exempt",
+    "Subcategory": "Intermediate"
+  },
+  {
+    "Ticker": "VMLTX",
+    "AssetClass": "Bond",
+    "Category": "Tax Exempt",
+    "Subcategory": "Short"
+  },
+  {
+    "Ticker": "VWLTX",
+    "AssetClass": "Bond",
+    "Category": "Tax Exempt",
+    "Subcategory": "Long"
+  },
+  {
+    "Ticker": "VMATX",
+    "AssetClass": "Bond",
+    "Category": "Tax Exempt",
+    "Subcategory": "Long"
+  },
+  {
+    "Ticker": "VNJTX",
+    "AssetClass": "Bond",
+    "Category": "Tax Exempt",
+    "Subcategory": "Long"
+  },
+  {
+    "Ticker": "VNYTX",
+    "AssetClass": "Bond",
+    "Category": "Tax Exempt",
+    "Subcategory": "Long"
+  },
+  {
+    "Ticker": "VOHIX",
+    "AssetClass": "Bond",
+    "Category": "Tax Exempt",
+    "Subcategory": "Long"
+  },
+  {
+    "Ticker": "VPAIX",
+    "AssetClass": "Bond",
+    "Category": "Tax Exempt",
+    "Subcategory": "Long"
+  },
+  {
+    "Ticker": "VWSTX",
+    "AssetClass": "Bond",
+    "Category": "Tax Exempt",
+    "Subcategory": "Short"
+  },
+  {
+    "Ticker": "VTEAX",
+    "AssetClass": "Bond",
+    "Category": "Tax Exempt",
+    "Subcategory": "Long"
+  },
+  {
+    "Ticker": "VTENX",
+    "AssetClass": "Balanced",
+    "Category": "2010",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VTXVX",
+    "AssetClass": "Balanced",
+    "Category": "2015",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VTWNX",
+    "AssetClass": "Balanced",
+    "Category": "2020",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VTTVX",
+    "AssetClass": "Balanced",
+    "Category": "2025",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VTHRX",
+    "AssetClass": "Balanced",
+    "Category": "2030",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VTTHX",
+    "AssetClass": "Balanced",
+    "Category": "2035",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VFORX",
+    "AssetClass": "Balanced",
+    "Category": "2040",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VTIVX",
+    "AssetClass": "Balanced",
+    "Category": "2045",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VFIFX",
+    "AssetClass": "Balanced",
+    "Category": "2050",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VFFVX",
+    "AssetClass": "Balanced",
+    "Category": "2055",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VTTSX",
+    "AssetClass": "Balanced",
+    "Category": "2060",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VTINX",
+    "AssetClass": "Balanced",
+    "Category": "2065",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VSCGX",
+    "AssetClass": "Balanced",
+    "Category": "Conservative Growth",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VASGX",
+    "AssetClass": "Balanced",
+    "Category": "Growth",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VASIX",
+    "AssetClass": "Balanced",
+    "Category": "Income",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VSMGX",
+    "AssetClass": "Balanced",
+    "Category": "Moderate Growth",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VBIAX",
+    "AssetClass": "Balanced",
+    "Category": "Balanced",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VCVSX",
+    "AssetClass": "Balanced",
+    "Category": "Balanced",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VGSTX",
+    "AssetClass": "Balanced",
+    "Category": "Balanced",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VTMFX",
+    "AssetClass": "Balanced",
+    "Category": "Balanced",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VWINX",
+    "AssetClass": "Balanced",
+    "Category": "Balanced",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VWELX",
+    "AssetClass": "Balanced",
+    "Category": "Balanced",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VPGDX",
+    "AssetClass": "Balanced",
+    "Category": "Managed Payout",
+    "Subcategory": ""
+  },
+  {
+    "Ticker": "VFIAX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Large-Cap"
+  },
+  {
+    "Ticker": "VDEQX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Large-Cap"
+  },
+  {
+    "Ticker": "VDADX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Large-Cap"
+  },
+  {
+    "Ticker": "VDIGX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Large-Cap"
+  },
+  {
+    "Ticker": "VEIPX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Large-Cap"
+  },
+  {
+    "Ticker": "VFTSX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Large-Cap"
+  },
+  {
+    "Ticker": "VQNPX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Large-Cap"
+  },
+  {
+    "Ticker": "VIGAX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Large-Cap"
+  },
+  {
+    "Ticker": "VHDYX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Large-Cap"
+  },
+  {
+    "Ticker": "VLCAX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Large-Cap"
+  },
+  {
+    "Ticker": "VMRGX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Large-Cap"
+  },
+  {
+    "Ticker": "VPMAX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Large-Cap"
+  },
+  {
+    "Ticker": "VPCCX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Large-Cap"
+  },
+  {
+    "Ticker": "VTCLX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Large-Cap"
+  },
+  {
+    "Ticker": "VTSAX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Large-Cap"
+  },
+  {
+    "Ticker": "VWUSX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Large-Cap"
+  },
+  {
+    "Ticker": "VUVLX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Large-Cap"
+  },
+  {
+    "Ticker": "VVIAX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Large-Cap"
+  },
+  {
+    "Ticker": "VWNDX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Large-Cap"
+  },
+  {
+    "Ticker": "VWNFX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Large-Cap"
+  },
+  {
+    "Ticker": "VHCAX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Mid-Cap"
+  },
+  {
+    "Ticker": "VCVLX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Mid-Cap"
+  },
+  {
+    "Ticker": "VEXAX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Mid-Cap"
+  },
+  {
+    "Ticker": "VMGRX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Mid-Cap"
+  },
+  {
+    "Ticker": "VMGMX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Mid-Cap"
+  },
+  {
+    "Ticker": "VIMAX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Mid-Cap"
+  },
+  {
+    "Ticker": "VMVAX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Mid-Cap"
+  },
+  {
+    "Ticker": "VASVX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Mid-Cap"
+  },
+  {
+    "Ticker": "VSEQX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Mid-Cap"
+  },
+  {
+    "Ticker": "VEXPX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Small-Cap"
+  },
+  {
+    "Ticker": "Ticker",
+    "AssetClass": "AssetClass",
+    "Category": "Category",
+    "Subcategory": "Subcategory"
+  },
+  {
+    "Ticker": "VEVFX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Small-Cap"
+  },
+  {
+    "Ticker": "VSGAX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Small-Cap"
+  },
+  {
+    "Ticker": "VSMAX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Small-Cap"
+  },
+  {
+    "Ticker": "VSIAX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Small-Cap"
+  },
+  {
+    "Ticker": "VSTCX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Small-Cap"
+  },
+  {
+    "Ticker": "VTMSX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Small-Cap"
+  },
+  {
+    "Ticker": "VTMGX",
+    "AssetClass": "Equity",
+    "Category": "International",
+    "Subcategory": "Developed"
+  },
+  {
+    "Ticker": "VGAVX",
+    "AssetClass": "Equity",
+    "Category": "International",
+    "Subcategory": "Emerging"
+  },
+  {
+    "Ticker": "VMMSX",
+    "AssetClass": "Equity",
+    "Category": "International",
+    "Subcategory": "Emerging"
+  },
+  {
+    "Ticker": "VEMAX",
+    "AssetClass": "Equity",
+    "Category": "International",
+    "Subcategory": "Emerging"
+  },
+  {
+    "Ticker": "VEUSX",
+    "AssetClass": "Equity",
+    "Category": "International",
+    "Subcategory": "Europe"
+  },
+  {
+    "Ticker": "VFWAX",
+    "AssetClass": "Equity",
+    "Category": "International",
+    "Subcategory": "FTSE All-World ex-US"
+  },
+  {
+    "Ticker": "VFSVX",
+    "AssetClass": "Equity",
+    "Category": "International",
+    "Subcategory": "FTSE All-World ex-US Small Cap"
+  },
+  {
+    "Ticker": "VGRLX",
+    "AssetClass": "Equity",
+    "Category": "International",
+    "Subcategory": "Global ex. US Real Estate"
+  },
+  {
+    "Ticker": "VIAAX",
+    "AssetClass": "Equity",
+    "Category": "International",
+    "Subcategory": "International Dividend"
+  },
+  {
+    "Ticker": "VINEX",
+    "AssetClass": "Equity",
+    "Category": "International",
+    "Subcategory": "International Explorer"
+  },
+  {
+    "Ticker": "VWIGX",
+    "AssetClass": "Equity",
+    "Category": "International",
+    "Subcategory": "International Growth"
+  },
+  {
+    "Ticker": "VIHAX",
+    "AssetClass": "Equity",
+    "Category": "International",
+    "Subcategory": "International HY Div"
+  },
+  {
+    "Ticker": "VTRIX",
+    "AssetClass": "Equity",
+    "Category": "International",
+    "Subcategory": "International Value"
+  },
+  {
+    "Ticker": "VPADX",
+    "AssetClass": "Equity",
+    "Category": "International",
+    "Subcategory": "Pacific Stock"
+  },
+  {
+    "Ticker": "VTAVX",
+    "AssetClass": "Equity",
+    "Category": "International",
+    "Subcategory": "Total International Bond"
+  },
+  {
+    "Ticker": "VTIAX",
+    "AssetClass": "Equity",
+    "Category": "International",
+    "Subcategory": "Total International Bond"
+  },
+  {
+    "Ticker": "VHGEX",
+    "AssetClass": "Equity",
+    "Category": "International",
+    "Subcategory": "Global"
+  },
+  {
+    "Ticker": "VMVFX",
+    "AssetClass": "Equity",
+    "Category": "International",
+    "Subcategory": "Global"
+  },
+  {
+    "Ticker": "VTWSX",
+    "AssetClass": "Equity",
+    "Category": "International",
+    "Subcategory": "Global"
+  },
+  {
+    "Ticker": "VGENX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Energy"
+  },
+  {
+    "Ticker": "VGHCX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Health Care"
+  },
+  {
+    "Ticker": "VGPMX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "Metals & Mining"
+  },
+  {
+    "Ticker": "VGSLX",
+    "AssetClass": "Equity",
+    "Category": "US",
+    "Subcategory": "REIT"
+  }
+]

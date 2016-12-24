@@ -78,7 +78,7 @@ namespace Asset_Management_Platform
         public string AlertBoxMessage {
             get { return _alertBoxMessage; }
             set { _alertBoxMessage = value;
-            RaisePropertyChanged(() => AlertBoxMessage);
+                RaisePropertyChanged(() => AlertBoxMessage);
             }
         }
 
@@ -201,10 +201,10 @@ namespace Asset_Management_Platform
         private double _limitPrice;
         public double LimitPrice {
             get { return _limitPrice; }
-                set { _limitPrice = value ;
+            set { _limitPrice = value;
                 _executeButtonEnabled = false;
                 RaisePropertyChanged(() => LimitPrice); }
-            }
+        }
 
 
         private string _selectedDurationType;
@@ -224,7 +224,7 @@ namespace Asset_Management_Platform
             get { return _selectedTermType; }
             set { _selectedTermType = value;
                 RaisePropertyChanged(() => SelectedTermType);
-                if (_selectedTermType == "Limit" || _selectedTermType == "Stop Limit" || _selectedTermType == "Stop") { 
+                if (_selectedTermType == "Limit" || _selectedTermType == "Stop Limit" || _selectedTermType == "Stop") {
                     LimitBoxActive = true;
                 }
                 else
@@ -321,16 +321,35 @@ namespace Asset_Management_Platform
             get { return new RelayCommand(ExecuteExecuteOrder); }
         }
 
-        private IPortfolioManagementService _portfolioService;
+
+        public decimal _totalValue;
+        public decimal TotalValue {
+            get { return _totalValue; }
+            set { _totalValue = value;
+                RaisePropertyChanged(() => TotalValue); }
+        }
+
+        private ObservableCollection<PositionByWeight> _allocationChartPositions;
+        public ObservableCollection<PositionByWeight> AllocationChartPositions {
+            get {
+                return _allocationChartPositions;
+            }
+            set {
+                _allocationChartPositions = value;
+                RaisePropertyChanged(() => AllocationChartPositions);
+            }
+        }
 
         private ObservableCollection<DisplayStock> _stockList;
         public ObservableCollection<DisplayStock> StockList
         {
-            get { return _stockList;}
+            get { return _stockList; }
             set { _stockList = value;
                 RaisePropertyChanged(() => StockList);
             }
         }
+
+        private IPortfolioManagementService _portfolioService;
 
         public MainViewModel(IPortfolioManagementService portfolioService)
         {
@@ -354,6 +373,7 @@ namespace Asset_Management_Platform
             SelectedDurationType = "Day";
             LimitBoxActive = false;
             LimitPrice = 0;
+            TotalValue = 0;
 
             _portfolioService = portfolioService;
             Messenger.Default.Register<PortfolioMessage>(this, RefreshCollection);
@@ -361,6 +381,7 @@ namespace Asset_Management_Platform
             //_portfolioService.StartUpdates(); //TURNED OFF FOR TESTING
 
             GetDisplayStocks();
+            GetAllocationChartPositions();
             DisplayStockCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Ticker"));
         }
 
@@ -369,6 +390,27 @@ namespace Asset_Management_Platform
             var displayStocks = _portfolioService.GetDisplayStocks();
             StockList = new ObservableCollection<DisplayStock>(displayStocks);
             DisplayStockCollectionView = new ListCollectionView(StockList);
+        }
+
+        private void GetAllocationChartPositions()
+        {
+            var displayStocks = _portfolioService.GetDisplayStocks();
+            decimal totalValue = 0;
+
+            foreach (var stock in displayStocks)
+            {
+                totalValue += decimal.Parse(stock.MarketValue);
+            }
+
+            TotalValue = totalValue;
+
+            ObservableCollection<PositionByWeight> posByWeight = new ObservableCollection<PositionByWeight>();
+            foreach (var stock in displayStocks)
+            {
+                decimal weight = (decimal.Parse(stock.MarketValue) / totalValue) * 100;
+                posByWeight.Add(new PositionByWeight(stock.Ticker, System.Math.Round(weight,2)));
+            }
+            AllocationChartPositions = posByWeight;
         }
 
         private void RefreshCollection(PortfolioMessage obj)
@@ -432,6 +474,7 @@ namespace Asset_Management_Platform
         {
             _portfolioService.DeletePortfolio();
             GetDisplayStocks();
+            GetAllocationChartPositions();
         }
 
         public void ExecuteSavePortfolio()
