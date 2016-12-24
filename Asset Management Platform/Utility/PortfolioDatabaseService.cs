@@ -197,8 +197,18 @@ namespace Asset_Management_Platform
                         if (positionsToUpdate.Any()) { 
                             foreach (var pos in positionsToUpdate)
                             {
-                                command.CommandText = string.Format("UPDATE dbo.MyPortfolio SET Quantity = {0} WHERE Ticker = {1}", pos.SharesOwned, pos.Ticker);
+                                //Deletes all taxlots for position being updated
+                                string deleteString = @"DELETE FROM MyPortfolio WHERE Ticker =";
+                                deleteString += pos.Ticker;
+                                command.CommandText = deleteString;
                                 command.ExecuteNonQuery();
+                            
+                                //Re-adds all current taxlots
+                                foreach (var lot in pos.Taxlots) {                                   
+                                    command.CommandText = string.Format(@"INSERT INTO dbo.MyPortfolio (Ticker, Shares, CostBasis, DatePurchased) 
+                                                                        VALUES ({0} ,{1} ,{2} , {3});", lot.Ticker, lot.Shares, lot.CostBasis, lot.DatePurchased);
+                                    command.ExecuteNonQuery();
+                                }
                             }
                         }
 
