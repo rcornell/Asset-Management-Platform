@@ -588,12 +588,6 @@
     "Subcategory": "Small-Cap"
   },
   {
-    "Ticker": "Ticker",
-    "AssetClass": "AssetClass",
-    "Category": "Category",
-    "Subcategory": "Subcategory"
-  },
-  {
     "Ticker": "VEVFX",
     "AssetClass": "Equity",
     "Category": "US",

@@ -50,21 +50,25 @@ namespace Asset_Management_Platform.Utility
         public List<Security> LoadSecurityDatabase()
         {
             var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
-            var cmdText = @"SELECT * FROM STOCKS";
+            
             using (var connection = new SqlConnection(storageString))
             {
 
-                using (var command = new SqlCommand(cmdText, connection))
+                using (var command = new SqlCommand())
                 {
+                    connection.Open();
+
+                    command.Connection = connection;
+                    command.CommandText = @"SELECT * FROM STOCKS";
                     string cusip = "";
                     string ticker = "";
                     string description = "";
                     decimal lastPrice = 0;
                     double yield = 0;
-                    connection.Open();
+
                     var reader = command.ExecuteReader();
                     while (reader.Read())
-                    {                       
+                    {
                         if (!reader.IsDBNull(0))
                             cusip = string.IsNullOrEmpty(reader.GetString(0)) ? "" : reader.GetString(0);
                         if (!reader.IsDBNull(1))
@@ -77,7 +81,46 @@ namespace Asset_Management_Platform.Utility
                             yield = double.Parse(reader.GetString(4));
                         _securityList.Add(new Security(cusip, ticker, description, lastPrice, yield));
                     }
+                    reader.Close();
                 }
+
+                using (var command = new SqlCommand())
+                {
+                    command.Connection = connection;
+                    command.CommandText = @"SELECT * FROM MUTUALFUNDS";
+                    string cusip = "";
+                    string ticker = "";
+                    string description = "";
+                    decimal lastPrice = 0;
+                    double yield = 0;
+                    string assetClass = "";
+                    string category = "";
+                    string subCategory = "";
+
+                    var reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        if (!reader.IsDBNull(0))
+                            cusip = string.IsNullOrEmpty(reader.GetString(0)) ? "" : reader.GetString(0);
+                        if (!reader.IsDBNull(1))
+                            ticker = string.IsNullOrEmpty(reader.GetString(1)) ? "" : reader.GetString(1);
+                        if (!reader.IsDBNull(2))
+                            description = string.IsNullOrEmpty(reader.GetString(2)) ? "" : reader.GetString(2);
+                        if (!reader.IsDBNull(3))
+                            lastPrice = decimal.Parse(reader.GetString(3)); //if paused here, it's because you're not sure if Float will work.
+                        if (!reader.IsDBNull(4))
+                            yield = double.Parse(reader.GetString(4));
+                        if (!reader.IsDBNull(5))
+                            assetClass = string.IsNullOrEmpty(reader.GetString(5)) ? "" : reader.GetString(5);
+                        if (!reader.IsDBNull(6))
+                            category = string.IsNullOrEmpty(reader.GetString(6)) ? "" : reader.GetString(6);
+                        if (!reader.IsDBNull(7))
+                            subCategory = string.IsNullOrEmpty(reader.GetString(7)) ? "" : reader.GetString(7);
+                        _securityList.Add(new MutualFund(cusip, ticker, description, lastPrice, yield, assetClass, category, subCategory));
+                    }
+                }
+
+
             }
 
             return _securityList;
@@ -145,8 +188,7 @@ namespace Asset_Management_Platform.Utility
 
         public List<Security> GetUpdatedPrices()
         {
-
-            return new List<Security>();
+            throw new NotImplementedException();
         }
 
 

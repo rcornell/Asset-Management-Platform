@@ -52,8 +52,8 @@ namespace Asset_Management_Platform
         }
 
         [JsonConstructor]
-        public MutualFund(string ticker, string assetClass, string category, string subcategory)
-            : base("", ticker, "", 0, 0.00)
+        public MutualFund(string cusip, string ticker, string description, decimal lastPrice, double yield, string assetClass, string category, string subcategory)
+            : base(cusip, ticker, description, lastPrice, yield)
         {
             SecurityType = "Mutual Fund";
             AssetClass = assetClass;
