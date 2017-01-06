@@ -13,7 +13,7 @@ namespace Asset_Management_Platform.Utility
 
         List<Security> LoadSecurityDatabase();
 
-        bool IsDatabaseNull();
+        bool IsStockDatabaseNull();
 
         bool UpdateSecurityDatabase();
 
@@ -21,7 +21,7 @@ namespace Asset_Management_Platform.Utility
 
         void UploadDatabase();
 
-        void SeedDatabase();
+        void SeedStockDatabase();
 
         List<Security> GetSecurityList();
 

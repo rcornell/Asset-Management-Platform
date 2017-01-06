@@ -16,7 +16,9 @@ namespace Asset_Management_Platform.Utility
     class SecurityTableSeederDataService : IDisposable
     {
         private List<SecurityClasses.StockFromJSON> stockList;
-        protected const string _truncateLiveTableCommandText = @"TRUNCATE TABLE [Stocks]"; //My table name 
+        private List<MutualFund> mutualFundList;
+        protected const string _truncateStockLiveTableCommandText = @"TRUNCATE TABLE [Stocks]"; //My table name 
+        protected const string _truncateMutualFundLiveTableCommandText = @"TRUNCATE TABLE [MutualFunds]";
         protected const int _batchSize = 2000; //max number times this look to add. Adjust for need vs. speed.
 
         public SecurityTableSeederDataService()
@@ -24,7 +26,61 @@ namespace Asset_Management_Platform.Utility
             
         }
 
-        public void LoadJsonDataIntoSqlServer(string connection)
+        public void LoadMutualFundJsonDataIntoSqlServer(string connectionString)
+        {
+            //var jsonFi = new FileInfo(@"Assets\Games.json");
+            //return jsonFi.Exists
+            //    ?
+            //    JsonConvert.DeserializeObject<ObservableCollection<Game>>(File.ReadAllText(jsonFi.FullName))
+            //    : null;
+
+            //Can I find a better way that deserializing to the StockTicker class with one property?
+            var fileInfo = new FileInfo(@"SeedJson\SeedMutualFundInfo.json");
+            var tickerJson = File.ReadAllText(fileInfo.FullName);
+            mutualFundList = JsonConvert.DeserializeObject<List<MutualFund>>(tickerJson);
+
+
+            var dataTable = new DataTable("MutualFunds");
+
+            // Add the columns in the temp table
+            dataTable.Columns.Add("CUSIP");
+            dataTable.Columns.Add("Ticker", typeof(string));
+            dataTable.Columns.Add("Description");
+            dataTable.Columns.Add("LastPrice");
+            dataTable.Columns.Add("Yield");
+            dataTable.Columns.Add("AssetClass", typeof(string));
+            dataTable.Columns.Add("Category", typeof(string));
+            dataTable.Columns.Add("Subcategory", typeof(string));
+
+            using (var sqlConnection = new SqlConnection(connectionString))
+            {
+                sqlConnection.Open();
+
+                // Truncate the live table
+                using (var sqlCommand = new SqlCommand(_truncateMutualFundLiveTableCommandText, sqlConnection))
+                {
+                    sqlCommand.ExecuteNonQuery();
+                }
+
+
+                var sqlBulkCopy = new SqlBulkCopy(sqlConnection)
+                {
+                    DestinationTableName = "MutualFunds"
+
+                };
+
+                foreach (var fund in mutualFundList)
+                {
+                    dataTable.Rows.Add("", fund.Ticker, "", fund.LastPrice, fund.Yield, fund.AssetClass, fund.Category, fund.Subcategory);
+                }
+
+                InsertDataTable(sqlBulkCopy, sqlConnection, dataTable);
+
+                sqlConnection.Close();
+            }
+        }
+
+        public void LoadStockJsonDataIntoSqlServer(string connectionString)
         {
 
             //var jsonFi = new FileInfo(@"Assets\Games.json");
@@ -48,12 +104,12 @@ namespace Asset_Management_Platform.Utility
             dataTable.Columns.Add("LastPrice");
             dataTable.Columns.Add("Yield");
 
-            using (var sqlConnection = new SqlConnection(connection))
+            using (var sqlConnection = new SqlConnection(connectionString))
             {
                 sqlConnection.Open();
 
                 // Truncate the live table
-                using (var sqlCommand = new SqlCommand(_truncateLiveTableCommandText, sqlConnection))
+                using (var sqlCommand = new SqlCommand(_truncateStockLiveTableCommandText, sqlConnection))
                 {
                     sqlCommand.ExecuteNonQuery();
                 }

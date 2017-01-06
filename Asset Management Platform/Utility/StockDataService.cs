@@ -32,9 +32,14 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         public void Initialize()
         {
-            if (IsDatabaseNull())
+            if (IsStockDatabaseNull())
             {
-                SeedDatabase();
+                SeedStockDatabase();
+                Messenger.Default.Send(new DatabaseMessage("Empty database restored.", false));
+            }
+            if (IsMutualFundDatabaseNull())
+            {
+                SeedMutualFundDatabase();
                 Messenger.Default.Send(new DatabaseMessage("Empty database restored.", false));
             }
         }
@@ -81,10 +86,31 @@ namespace Asset_Management_Platform.Utility
         /// <summary>
         /// Check to see if SQL Database is empty. If it is, return true. 
         /// </summary>
-        public bool IsDatabaseNull()
+        public bool IsStockDatabaseNull()
         {
             var result = 0;
             var cmdText = @"SELECT COUNT(*) from Stocks";
+            var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
+
+            using (var connection = new SqlConnection(storageString))
+            {
+                connection.Open();
+                using (var command = new SqlCommand(cmdText, connection))
+                {
+                    int.TryParse(command.ExecuteScalar().ToString(), out result);
+                }
+            }
+
+            if (result > 0)
+                return false; //Database IS NOT empty
+            else
+                return true; //Database IS empty
+        }
+
+        public bool IsMutualFundDatabaseNull()
+        {
+            var result = 0;
+            var cmdText = @"SELECT COUNT(*) from MutualFunds";
             var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
 
             using (var connection = new SqlConnection(storageString))
@@ -191,12 +217,21 @@ namespace Asset_Management_Platform.Utility
         /// Seeds the SQL table if it has no contents using 
         /// local SeedTicker.json file.
         /// </summary>
-        public void SeedDatabase()
+        public void SeedStockDatabase()
         {
             var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             using (var seeder = new SecurityTableSeederDataService())
             {
-                seeder.LoadJsonDataIntoSqlServer(storageString);
+                seeder.LoadStockJsonDataIntoSqlServer(storageString);
+            }
+        }
+
+        public void SeedMutualFundDatabase()
+        {
+            var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
+            using (var seeder = new SecurityTableSeederDataService())
+            {
+                seeder.LoadMutualFundJsonDataIntoSqlServer(storageString);
             }
         }
 

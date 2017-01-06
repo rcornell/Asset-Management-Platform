@@ -1,11 +1,5 @@
 ﻿[
   {
-    "Ticker": "VMFXX",
-    "AssetClass": "Money Market",
-    "Category": "Money Market",
-    "Subcategory": ""
-  },
-  {
     "Ticker": "VMMXX",
     "AssetClass": "Money Market",
     "Category": "Money Market",
@@ -13,12 +7,6 @@
   },
   {
     "Ticker": "VMFXX",
-    "AssetClass": "Money Market",
-    "Category": "Money Market",
-    "Subcategory": ""
-  },
-  {
-    "Ticker": "VMMXX",
     "AssetClass": "Money Market",
     "Category": "Money Market",
     "Subcategory": ""

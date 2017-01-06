@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,10 +7,12 @@ using System.Threading.Tasks;
 
 namespace Asset_Management_Platform
 {
-    class MutualFund : Security
+    public class MutualFund : Security
     {
 
         private string _assetClass;
+
+        [JsonProperty("AssetClass")]
         public string AssetClass
         {
             get { return _assetClass; }
@@ -21,6 +24,7 @@ namespace Asset_Management_Platform
         }
 
         private string _category;
+        [JsonProperty("Category")]
         public string Category
         {
             get { return _category; }
@@ -32,6 +36,7 @@ namespace Asset_Management_Platform
         }
 
         private string _subcategory;
+        [JsonProperty("Subcategory")]
         public string Subcategory {
             get { return _subcategory; }
             set { _subcategory = value;
@@ -46,10 +51,21 @@ namespace Asset_Management_Platform
             SecurityType = "Mutual Fund";
         }
 
-        public MutualFund(string cusip, string ticker, string description, double yield, decimal lastPrice, double load)
-            : base(cusip, ticker, description, lastPrice, yield)
+        [JsonConstructor]
+        public MutualFund(string ticker, string assetClass, string category, string subcategory)
+            : base("", ticker, "", 0, 0.00)
         {
             SecurityType = "Mutual Fund";
+            AssetClass = assetClass;
+            Category = category;
+            Subcategory = subcategory;
         }
+
+
+        //public MutualFund(string cusip, string ticker, string description, double yield, decimal lastPrice, double load)
+        //    : base(cusip, ticker, description, lastPrice, yield)
+        //{
+        //    SecurityType = "Mutual Fund";
+        //}
     }
 }
