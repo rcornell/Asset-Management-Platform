@@ -79,7 +79,7 @@ namespace Asset_Management_Platform.Utility
                             lastPrice = decimal.Parse(reader.GetString(3)); //if paused here, it's because you're not sure if Float will work.
                         if (!reader.IsDBNull(4))
                             yield = double.Parse(reader.GetString(4));
-                        _securityList.Add(new Security(cusip, ticker, description, lastPrice, yield));
+                        _securityList.Add(new Stock(cusip, ticker, description, lastPrice, yield));
                     }
                     reader.Close();
                 }
@@ -177,7 +177,7 @@ namespace Asset_Management_Platform.Utility
             {
                 using (var yahooAPI = new YahooAPIService())
                 {
-                    _securityList = yahooAPI.GetMultipleStocks(_securityList);
+                    _securityList = yahooAPI.GetMultipleSecurities(_securityList);
                 }
             }
             else

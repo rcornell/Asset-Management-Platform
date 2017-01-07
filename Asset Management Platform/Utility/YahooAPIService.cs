@@ -206,7 +206,7 @@ namespace Asset_Management_Platform.Utility
             else
                 description = fixedResponse.Split(',')[9].Replace("\"", "");
 
-            if (IsSecurityUnavailable(lastPriceIsNA, yieldIsNA, marketCapIsNA, bidIsNA, askIsNA, peRatioIsNA, volumeIsNA, bidSizeIsNA, askSizeIsNA, descriptionIsNA))
+            if (IsStockUnknown(lastPriceIsNA, yieldIsNA, marketCapIsNA, bidIsNA, askIsNA, peRatioIsNA, volumeIsNA, bidSizeIsNA, askSizeIsNA, descriptionIsNA))
             {
                 var desc = !descriptionIsNA ? description : "Unknown Ticker";
                 var price = !lastPriceIsNA ? lastPrice : 0;
@@ -226,60 +226,58 @@ namespace Asset_Management_Platform.Utility
             return result;
         }
 
-        public List<Security> GetMultipleStocks(List<Security> securities)
+        public List<Security> GetMultipleSecurities(List<Security> securities)
         {           
-
-            const string base_url = "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=l1yj1barvb6a5n";
+            const string baseUrl = "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=sl1yj1barvb6a5n";
 
             // Build the URL.
-            string url = "";
-            int i = 0;
+            string tickerString = "";
             int j = 0; //index for looping through array of results from yahooAPI
             string[] lines;
-
+            
             foreach (var s in securities)
             {
-                url += s.Ticker + "+";
-                i++;
+                tickerString += s.Ticker + "+";
             }
 
-            if (url != "")
+            if (tickerString != "")
             {
-                // Remove the trailing plus sign.
-                url = url.Substring(0, url.Length - 1);
+                //Remove the trailing plus sign. Faster than comparing
+                //for the last item in the foreach loop above and not
+                //adding the + at the end
+                tickerString = tickerString.Substring(0, tickerString.Length - 1);
 
-                // Prepend the base URL.
+                //Prepend the base URL.
                 //s (symbol) n (name) l1 (last price) y (yield) j1 (market cap) 
                 //b (bid) a (ask) r (peRatio) a5 (ask size) b6 (bid size)
-                
-                url = base_url.Replace("@", url); //Add my tickers to the middle of the url
+                tickerString = baseUrl.Replace("@", tickerString); //Add my tickers to the middle of the url
 
-                // Get the response.
+                //Get the response.
                 try
                 {
                     _securitiesWithMarketData = new List<Security>(); //Instantiate the list to return
 
-                    // Get the web response.
-                    string response = GetWebResponse(url);
+                    //Get the web response.
+                    string response = GetWebResponse(tickerString);
 
                     string result = Regex.Replace(response, "\\r\\n", "\r\n");
-                    //Console.WriteLine(result.Replace("\\r\\n", "\r\n"));
                     
 
-                    // Pull out the current prices.
+                    //Create an array of the results
                     lines = result.Split(
                         new char[] { '\r', '\n' },
                         StringSplitOptions.RemoveEmptyEntries);
 
-                    //
                     //Should find a way to determine at runtime whether each item is a stock, mutual fund, or ETF.
                     //Compare tickers to list of tickers that determine which ticker is which type of security
                     //Use LINQ?
 
                     foreach (string line in lines)
                     {
+                        string ticker = "";
                         string description = "";
                         string cusip = "";
+                        string securityType = "";
                         decimal lastPrice;
                         double yield = 0;
                         double bid = 0;
@@ -288,7 +286,7 @@ namespace Asset_Management_Platform.Utility
                         double peRatio = 0;
                         int volume = 0;
                         int bidSize = 0;
-                        int askSize = 0;
+                        int askSize = 0;                        
 
                         bool descriptionIsNA = false;
                         bool lastPriceIsNA = false;
@@ -307,39 +305,42 @@ namespace Asset_Management_Platform.Utility
                         //we are using to split up the results. The below code accounts for that possibility
                         System.Diagnostics.Debug.Write(string.Format("Creating Security #{0}", j));
 
-                        lastPriceIsNA = !decimal.TryParse(lines[j].Split(',')[0], out lastPrice);
+
+                        if (string.IsNullOrEmpty(lines[j].Split(',')[0]))
+                            ticker = "";
+                        else
+                            ticker = lines[j].Split(',')[0].Replace("\"", "");
+
+                        lastPriceIsNA = !decimal.TryParse(lines[j].Split(',')[1], out lastPrice);
                         if (j == 496)
                         {
                             System.Diagnostics.Debug.Write("Waiting");
                         }
-                        yieldIsNA = !double.TryParse(lines[j].Split(',')[1], out yield);
-                        if (lines[j].Split(',')[2] == "N/A") {
+                        yieldIsNA = !double.TryParse(lines[j].Split(',')[2], out yield);
+                        if (lines[j].Split(',')[3] == "N/A") {
                             marketCapIsNA = true;
                             marketCap = "0.0B";
                         }
                         else
                         {
                             marketCapIsNA = false;
-                            marketCap = lines[j].Split(',')[2];
+                            marketCap = lines[j].Split(',')[3];
                         }
 
                         
-                        bidIsNA = !double.TryParse(lines[j].Split(',')[3], out bid);
-                        askIsNA = !double.TryParse(lines[j].Split(',')[4], out ask);                           
-                        peRatioIsNA = !double.TryParse(lines[j].Split(',')[5], out peRatio);
-                        volumeIsNA = !int.TryParse(lines[j].Split(',')[6], out volume);
-                        bidSizeIsNA = !int.TryParse(lines[j].Split(',')[7], out bidSize);
-                        askSizeIsNA = !int.TryParse(lines[j].Split(',')[8], out askSize);
-                        if (string.IsNullOrEmpty(lines[j].Split(',')[9]))
+                        bidIsNA = !double.TryParse(lines[j].Split(',')[4], out bid);
+                        askIsNA = !double.TryParse(lines[j].Split(',')[5], out ask);                           
+                        peRatioIsNA = !double.TryParse(lines[j].Split(',')[6], out peRatio);
+                        volumeIsNA = !int.TryParse(lines[j].Split(',')[7], out volume);
+                        bidSizeIsNA = !int.TryParse(lines[j].Split(',')[8], out bidSize);
+                        askSizeIsNA = !int.TryParse(lines[j].Split(',')[9], out askSize);
+                        if (string.IsNullOrEmpty(lines[j].Split(',')[10]))
                             descriptionIsNA = true;
                         else
-                            description = lines[j].Split(',')[9].Replace("\"", "" );
+                            description = lines[j].Split(',')[10].Replace("\"", "" );
+                        if(lines[j].Split(',').Length == 12)
+                            description += lines[j].Split(',')[11].Replace("\"", "");
 
-                        if (IsSecurityUnavailable(lastPriceIsNA, yieldIsNA, marketCapIsNA, bidIsNA, askIsNA, peRatioIsNA, volumeIsNA, bidSizeIsNA, askSizeIsNA, descriptionIsNA))
-                        {
-                            j++;
-                            continue; //do not add security
-                        }
                             
                         if (peRatioIsNA) peRatio = 0;
                         if (yieldIsNA) yield = 0;
@@ -347,8 +348,32 @@ namespace Asset_Management_Platform.Utility
                         marketCap = marketCap.Substring(0, marketCap.Length - 1); //removed the amount suffix, e.g. "B"
                         var floatMarketCap = float.Parse(marketCap); //you should fix this
 
-                        _securitiesWithMarketData.Add(new Stock(cusip, securities[j].Ticker, description, lastPrice, yield, bid, ask, floatMarketCap, peRatio, volume, bidSize, askSize));
+                        securityType = securities.Find(s => s.Ticker == ticker).SecurityType;
 
+                        if (securityType == "Stock")
+                        {
+                            if (IsStockUnknown(lastPriceIsNA, yieldIsNA, marketCapIsNA, bidIsNA, askIsNA, peRatioIsNA, volumeIsNA, bidSizeIsNA, askSizeIsNA, descriptionIsNA))
+                            {
+                                j++;
+                                continue; //do not add stock
+                            }
+                            _securitiesWithMarketData.Add(new Stock(cusip, securities[j].Ticker, description, lastPrice, yield, bid, ask, floatMarketCap, peRatio, volume, bidSize, askSize));
+                        }
+                        else if (securityType == "Mutual Fund")
+                        {
+                            var mutualFund = (MutualFund)securities.Find(s => s.Ticker == ticker);
+
+                            string assetClass = mutualFund.AssetClass;
+                            string category = mutualFund.Category;
+                            string subcategory = mutualFund.Subcategory;
+
+                            _securitiesWithMarketData.Add(new MutualFund(cusip, ticker, description, lastPrice, yield, assetClass, category, subcategory));
+
+                        }
+                        else
+                            //Unknown security type
+                            throw new NotImplementedException();
+                            
                         j++; //advance to next security
                         
                     }
@@ -358,7 +383,6 @@ namespace Asset_Management_Platform.Utility
                 catch (Exception ex) //Error in parsing Yahoo API results.
                 {
                     Console.WriteLine(ex.Message);
-                    Console.ReadKey(true);
                     return _securitiesWithMarketData; //probably null
                 }
             }
@@ -366,7 +390,7 @@ namespace Asset_Management_Platform.Utility
             return _securitiesWithMarketData; //probably null
         }
 
-        private bool IsSecurityUnavailable(bool lastPriceIsNA, bool yieldIsNA, bool marketCapIsNA, bool bidIsNA, bool askIsNA, bool peRatioIsNA, bool volumeIsNA, bool bidSizeIsNA, bool askSizeIsNA, bool descriptionIsNA)
+        private bool IsStockUnknown(bool lastPriceIsNA, bool yieldIsNA, bool marketCapIsNA, bool bidIsNA, bool askIsNA, bool peRatioIsNA, bool volumeIsNA, bool bidSizeIsNA, bool askSizeIsNA, bool descriptionIsNA)
         {
             int numberOfNA = 0;
 
