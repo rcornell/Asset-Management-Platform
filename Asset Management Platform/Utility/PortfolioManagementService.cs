@@ -72,7 +72,7 @@ namespace Asset_Management_Platform.Utility
                 var stock = stocks.Find(s => s.Ticker == pos.Ticker);
                 if (stock == null)
                     //shouldn't hit this once StockDataService is keeping database up to date
-                    stock = _stockDataService.GetSpecificStockInfo(pos.Ticker);
+                    stock = _stockDataService.GetSpecificSecurityInfo(pos.Ticker);
                 _displayStocks.Add(new DisplayStock(pos, (Stock)stock));
             } //check to see if the stocks are Stocks or Securities
         }
@@ -190,9 +190,9 @@ namespace Asset_Management_Platform.Utility
             }
         }
 
-        public Stock GetOrderPreviewStock(string ticker)
+        public Security GetOrderPreviewStock(string ticker)
         {
-            var securityToReturn = _stockDataService.GetSpecificStockInfo(ticker);
+            var securityToReturn = _stockDataService.GetSpecificSecurityInfo(ticker);
             return securityToReturn;
         }
 

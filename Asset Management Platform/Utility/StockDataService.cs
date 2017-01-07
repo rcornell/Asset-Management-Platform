@@ -282,13 +282,13 @@ namespace Asset_Management_Platform.Utility
             return SecurityList;
         }
 
-        public Stock GetSpecificStockInfo(string ticker)
+        public Security GetSpecificSecurityInfo(string ticker)
         {
             if (!string.IsNullOrEmpty(ticker))
             {
                 using (var yahooAPI = new YahooAPIService())
                 {
-                    var result = yahooAPI.GetSingleStock(ticker);
+                    var result = yahooAPI.GetSingleSecurity(ticker, _securityList);
                     var insertedOrNot = InsertIntoDatabase(result);
                     return result;
                 }

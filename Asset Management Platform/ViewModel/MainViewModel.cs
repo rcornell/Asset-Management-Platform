@@ -44,8 +44,8 @@ namespace Asset_Management_Platform
         }
 
 
-        private Stock _screenerStock;
-        public Stock ScreenerStock
+        private Security _screenerStock;
+        public Security ScreenerStock
         {
             get { return _screenerStock; }
             set { _screenerStock = value;
