@@ -139,18 +139,105 @@ namespace Asset_Management_Platform.Utility
         {
             
             const string base_url = "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=sl1yj1barvb6a5n";
+            Security result;
+            Security securityBeingUpdated;
+            string securityType = "";
 
             var url = base_url.Replace("@", tickerToLookUp);
-
             var response = GetWebResponse(url);
-            
-            string fixedResponse = Regex.Replace(response, @"\r\n?|\n", string.Empty);
+            var yahooResult = CreateYahooAPIResult(response);
 
-            string securityType = "";
-            //cusip = "" no CUSIP ability in the Yahoo API. Load via my own database?
+            
+
+
+            if (securityList.Any(s => s.Ticker == yahooResult.Ticker)) {
+                securityBeingUpdated = securityList.Find(s => s.Ticker == yahooResult.Ticker);
+                securityType = securityBeingUpdated.SecurityType;
+
+                if (securityType == "Stock")
+                {
+                    var stockIsUnknown = IsStockUnknown(yahooResult);
+
+                    if (stockIsUnknown)
+                    {
+                        if (yahooResult.PeRatioIsNA) yahooResult.PeRatio = 0;
+                        if (yahooResult.YieldIsNA) yahooResult.Yield = 0;
+                        if (yahooResult.DescriptionIsNA) yahooResult.Description = "Unknown Ticker";
+                        if (yahooResult.LastPriceIsNA) yahooResult.LastPrice = 0;
+
+                        //This should change the yahooResult value, right?
+                        var marketCap = yahooResult.MarketCap; 
+                        marketCap = marketCap.Substring(0, marketCap.Length - 1); //removed the amount suffix, e.g. "B"
+
+                        result = CreateNewStock(yahooResult);
+                        return result;
+                    }
+                    else //Can you get here?
+                    {
+                        if (yahooResult.PeRatioIsNA) yahooResult.PeRatio = 0;
+                        if (yahooResult.YieldIsNA) yahooResult.Yield = 0;
+                        if (yahooResult.DescriptionIsNA) yahooResult.Description = "Unknown Ticker";
+                        if (yahooResult.LastPriceIsNA) yahooResult.LastPrice = 0;
+
+                        var marketCap = yahooResult.MarketCap;
+                        marketCap = marketCap.Substring(0, marketCap.Length - 1); //removed the amount suffix, e.g. "B"
+
+                        var stockBeingUpdated = (Stock)securityBeingUpdated;
+                        stockBeingUpdated.LastPrice = yahooResult.LastPrice;
+                        stockBeingUpdated.PeRatio = yahooResult.PeRatio;
+                        stockBeingUpdated.Yield = yahooResult.Yield;
+                        stockBeingUpdated.Volume = yahooResult.Volume;
+                        stockBeingUpdated.Bid = yahooResult.Bid;
+                        stockBeingUpdated.Ask = yahooResult.Ask;
+                        stockBeingUpdated.AskSize = yahooResult.AskSize;
+                        stockBeingUpdated.BidSize = yahooResult.BidSize;
+                        stockBeingUpdated.MarketCap = double.Parse(yahooResult.MarketCap);
+                        stockBeingUpdated.Description = yahooResult.Description;
+                        stockBeingUpdated.Ticker = yahooResult.Ticker; //Match?
+
+                        return stockBeingUpdated;
+                    }
+                }
+                else if (securityType == "Mutual Fund")
+                {
+                    var mutualFund = (MutualFund)securityList.Find(s => s.Ticker == yahooResult.Ticker);
+
+                    mutualFund.LastPrice = yahooResult.LastPrice;
+                    mutualFund.Description = yahooResult.Description;
+                    mutualFund.Yield = yahooResult.Yield;
+                    return mutualFund;
+                }
+                else
+                {
+                    //Known unknown security?
+                    throw new NotImplementedException();
+                }
+            }
+            else //Security is unknown, figure out what it is.
+            {
+                var determinedType = DetermineIfStockOrFund(yahooResult);
+
+                if (determinedType == "Stock")
+                {
+                    var newStock = CreateNewStock(yahooResult);
+                    return newStock;
+                }
+                else if(determinedType == "Mutual Fund")
+                {
+                    var newFund = CreateNewMutualFund(yahooResult);
+                    return newFund;
+                }
+                else
+                    throw new NotImplementedException();
+            }
+        }
+
+        private YahooAPIResult CreateYahooAPIResult(string result)
+        {
+            string fixedResponse = Regex.Replace(result, @"\r\n?|\n", string.Empty);
+
             string ticker = "";
             string description = "";
-            string cusip = " ";
             decimal lastPrice;
             double yield = 0;
             double bid = 0;
@@ -172,8 +259,6 @@ namespace Asset_Management_Platform.Utility
             bool bidSizeIsNA = false;
             bool askSizeIsNA = false;
 
-            //Some stock names contain a comma, which is the character that 
-            //we are using to split up the results. The below code accounts for that possibility
             if (string.IsNullOrEmpty(fixedResponse.Split(',')[0]))
                 ticker = ""; //Why are you here?
             else
@@ -199,6 +284,8 @@ namespace Asset_Management_Platform.Utility
             askSizeIsNA = !int.TryParse(fixedResponse.Split(',')[9], out askSize);
 
             //Index out of bounds?
+            //Some Descriptions are split by a comma, e.g. ",Inc."
+            //So the method searches for an extra item and appends it
             if (string.IsNullOrEmpty(fixedResponse.Split(',')[10]))
                 descriptionIsNA = true;
             else
@@ -206,50 +293,53 @@ namespace Asset_Management_Platform.Utility
             if (fixedResponse.Split(',').Length == 12)
                 description += fixedResponse.Split(',')[11].Replace("\"", "");
 
-            if (securityList.Any(s => s.Ticker == ticker))
-                securityType = securityList.Find(s => s.Ticker == ticker).SecurityType;
 
 
-            Security result;
-            if (securityType == "Stock") {
-                if (IsStockUnknown(lastPriceIsNA, yieldIsNA, marketCapIsNA, bidIsNA, askIsNA, peRatioIsNA, volumeIsNA, bidSizeIsNA, askSizeIsNA, descriptionIsNA))
-                {
-                    var desc = !descriptionIsNA ? description : "Unknown Ticker";
-                    var price = !lastPriceIsNA ? lastPrice : 0;
-                    var yld = !yieldIsNA ? yield : 0.00;
+            return new YahooAPIResult(ticker, description, lastPrice, yield, bid, ask, marketCap,
+                                      peRatio, volume, bidSize, askSize, descriptionIsNA, lastPriceIsNA, 
+                                      yieldIsNA, bidIsNA, askIsNA,marketCapIsNA, peRatioIsNA, volumeIsNA,
+                                      bidSizeIsNA, askSizeIsNA);
+        }
 
-                    if (peRatioIsNA) peRatio = 0;
-                    if (yieldIsNA) yield = 0;
+        private List<YahooAPIResult> CreateYahooAPIResultList(string result)
+        {
+            var yahooResultList = new List<YahooAPIResult>();
 
-                    marketCap = marketCap.Substring(0, marketCap.Length - 1); //removed the amount suffix, e.g. "B"
-                    var floatMarketCap = float.Parse(marketCap); //you should fix this
+            string fixedResponse = Regex.Replace(result, @"\r\n?|\n", string.Empty);
+            string[] lines = result.Split(
+                        new char[] { '\r', '\n' },
+                        StringSplitOptions.RemoveEmptyEntries);
 
-                    result = new Stock("", ticker, desc, price, yld);
-                    return result;
-                }
-            }
-            else if (securityType == "Mutual Fund")
+            foreach (var line in lines)
             {
-                var mutualFund = (MutualFund)securityList.Find(s => s.Ticker == ticker);
+                var yahooResult = CreateYahooAPIResult(line);
 
-                string assetClass = mutualFund.AssetClass;
-                string category = mutualFund.Category;
-                string subcategory = mutualFund.Subcategory;
-
-                //Don't return a new MutualFund. Modify what the _securitiesWithMarketData list contains.
-                //result = new MutualFund(cusip, ticker, description, lastPrice, yield, assetClass, category, subcategory));
-                mutualFund.LastPrice = lastPrice;
-                mutualFund.Description = description;
-                mutualFund.Yield = yield;
-                return mutualFund;
-            }
-            else { 
-                //Unknown mutual fund?
-                throw new NotImplementedException();
+                if (yahooResult.PeRatioIsNA) yahooResult.PeRatio = 0;
+                if (yahooResult.YieldIsNA) yahooResult.Yield = 0;
+                if (yahooResult.DescriptionIsNA) yahooResult.Description = "Unknown Ticker";
+                if (yahooResult.LastPriceIsNA) yahooResult.LastPrice = 0;
+                yahooResultList.Add(yahooResult);
             }
 
-            return new Stock("", "XXX", "Unknown Security", 0, 0.00);
-             //new Stock(cusip, ticker, description, lastPrice, yield, bid, ask, floatMarketCap, peRatio, volume, bidSize, askSize);
+            return yahooResultList;
+        }
+
+        private Stock CreateNewStock(YahooAPIResult yahooResult)
+        {
+            throw new NotImplementedException();
+        }
+
+        private MutualFund CreateNewMutualFund(YahooAPIResult yahooResult)
+        {
+            throw new NotImplementedException();
+        }
+
+        private string DetermineIfStockOrFund(YahooAPIResult yahooResult)
+        {
+            if (yahooResult.MarketCapIsNA && yahooResult.PeRatioIsNA)
+                return "Stock";
+            else
+                return "Mutual Fund";
         }
 
         public List<Security> GetMultipleSecurities(List<Security> securities)
@@ -257,10 +347,7 @@ namespace Asset_Management_Platform.Utility
             const string baseUrl = "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=sl1yj1barvb6a5n";
 
             // Build the URL.
-            string tickerString = "";
-            int j = 0; //index for looping through array of results from yahooAPI
-            string[] lines;
-            
+            string tickerString = "";            
             foreach (var s in securities)
             {
                 tickerString += s.Ticker + "+";
@@ -283,126 +370,49 @@ namespace Asset_Management_Platform.Utility
                 {
                     _securitiesWithMarketData = new List<Security>(); //Instantiate the list to return
 
-                    //Get the web response.
+                    //Get the web response and clean it up
                     string response = GetWebResponse(tickerString);
-
                     string result = Regex.Replace(response, "\\r\\n", "\r\n");
-                    
 
                     //Create an array of the results
-                    lines = result.Split(
-                        new char[] { '\r', '\n' },
-                        StringSplitOptions.RemoveEmptyEntries);
+                    var yahooResults = CreateYahooAPIResultList(result);
 
-                    //Should find a way to determine at runtime whether each item is a stock, mutual fund, or ETF.
-                    //Compare tickers to list of tickers that determine which ticker is which type of security
-                    //Use LINQ?
-
-                    foreach (string line in lines)
+                    //logic for looping through results
+                    foreach (var yahooResult in yahooResults)
                     {
-                        string ticker = "";
-                        string description = "";
-                        string cusip = "";
-                        string securityType = "";
-                        decimal lastPrice;
-                        double yield = 0;
-                        double bid = 0;
-                        double ask = 0;
-                        string marketCap = "0";
-                        double peRatio = 0;
-                        int volume = 0;
-                        int bidSize = 0;
-                        int askSize = 0;                        
-
-                        bool descriptionIsNA = false;
-                        bool lastPriceIsNA = false;
-                        bool yieldIsNA = false;
-                        bool bidIsNA = false;
-                        bool askIsNA = false;
-                        bool marketCapIsNA = false;
-                        bool peRatioIsNA = false;
-                        bool volumeIsNA = false;
-                        bool bidSizeIsNA = false;
-                        bool askSizeIsNA = false;
-                        
-                        
-                        //cusip = "" no CUSIP ability in this API. Load via my own database
-                        //Some stock names contain a comma, which is the character that 
-                        //we are using to split up the results. The below code accounts for that possibility
-                        System.Diagnostics.Debug.Write(string.Format("Creating Security #{0}", j));
-
-
-                        if (string.IsNullOrEmpty(lines[j].Split(',')[0]))
-                            ticker = "";
-                        else
-                            ticker = lines[j].Split(',')[0].Replace("\"", "");
-
-                        lastPriceIsNA = !decimal.TryParse(lines[j].Split(',')[1], out lastPrice);
-                        if (j == 496)
-                        {
-                            System.Diagnostics.Debug.Write("Waiting");
-                        }
-                        yieldIsNA = !double.TryParse(lines[j].Split(',')[2], out yield);
-                        if (lines[j].Split(',')[3] == "N/A") {
-                            marketCapIsNA = true;
-                            marketCap = "0.0B";
-                        }
-                        else
-                        {
-                            marketCapIsNA = false;
-                            marketCap = lines[j].Split(',')[3];
-                        }
-
-                        
-                        bidIsNA = !double.TryParse(lines[j].Split(',')[4], out bid);
-                        askIsNA = !double.TryParse(lines[j].Split(',')[5], out ask);                           
-                        peRatioIsNA = !double.TryParse(lines[j].Split(',')[6], out peRatio);
-                        volumeIsNA = !int.TryParse(lines[j].Split(',')[7], out volume);
-                        bidSizeIsNA = !int.TryParse(lines[j].Split(',')[8], out bidSize);
-                        askSizeIsNA = !int.TryParse(lines[j].Split(',')[9], out askSize);
-                        if (string.IsNullOrEmpty(lines[j].Split(',')[10]))
-                            descriptionIsNA = true;
-                        else
-                            description = lines[j].Split(',')[10].Replace("\"", "" );
-                        if(lines[j].Split(',').Length == 12)
-                            description += lines[j].Split(',')[11].Replace("\"", "");
-
-                            
-                        if (peRatioIsNA) peRatio = 0;
-                        if (yieldIsNA) yield = 0;
-
-                        marketCap = marketCap.Substring(0, marketCap.Length - 1); //removed the amount suffix, e.g. "B"
-                        var floatMarketCap = float.Parse(marketCap); //you should fix this
-
-                        securityType = securities.Find(s => s.Ticker == ticker).SecurityType;
+                        var securityType = securities.Find(s => s.Ticker == yahooResult.Ticker).SecurityType;
 
                         if (securityType == "Stock")
                         {
-                            if (IsStockUnknown(lastPriceIsNA, yieldIsNA, marketCapIsNA, bidIsNA, askIsNA, peRatioIsNA, volumeIsNA, bidSizeIsNA, askSizeIsNA, descriptionIsNA))
+                            if (IsStockUnknown(yahooResult))
                             {
-                                j++;
                                 continue; //do not add stock
                             }
-                            _securitiesWithMarketData.Add(new Stock(cusip, securities[j].Ticker, description, lastPrice, yield, bid, ask, floatMarketCap, peRatio, volume, bidSize, askSize));
+                            _securitiesWithMarketData.Add(new Stock(yahooResult));
                         }
                         else if (securityType == "Mutual Fund")
                         {
-                            var mutualFund = (MutualFund)securities.Find(s => s.Ticker == ticker);
+                            var mutualFund = (MutualFund)securities.Find(s => s.Ticker == yahooResult.Ticker);
 
                             string assetClass = mutualFund.AssetClass;
                             string category = mutualFund.Category;
                             string subcategory = mutualFund.Subcategory;
 
-                            _securitiesWithMarketData.Add(new MutualFund(cusip, ticker, description, lastPrice, yield, assetClass, category, subcategory));
+                            _securitiesWithMarketData.Add(new MutualFund(yahooResult, assetClass, category, subcategory));
 
                         }
                         else
+                        {
                             //Unknown security type
                             throw new NotImplementedException();
-                            
-                        j++; //advance to next security
-                        
+                        }
+
+
+
                     }
+                    
+                    
+
                     return _securitiesWithMarketData;
                 }
 
@@ -416,19 +426,22 @@ namespace Asset_Management_Platform.Utility
             return _securitiesWithMarketData; //probably null
         }
 
-        private bool IsStockUnknown(bool lastPriceIsNA, bool yieldIsNA, bool marketCapIsNA, bool bidIsNA, bool askIsNA, bool peRatioIsNA, bool volumeIsNA, bool bidSizeIsNA, bool askSizeIsNA, bool descriptionIsNA)
+        /// <summary>
+        /// Determine based on N/A results if a yahoo result is not known
+        /// Bid/Ask and BidSize/AskSize can be N/A after market hours
+        /// so they are not used in this determination.
+        /// </summary>
+        /// <param name="yahooResult"></param>
+        /// <returns></returns>
+        private bool IsStockUnknown(YahooAPIResult yahooResult)
         {
             int numberOfNA = 0;
 
-            if (lastPriceIsNA) numberOfNA++;
-            if (yieldIsNA) numberOfNA++;
-            if (marketCapIsNA) numberOfNA++;
-            //if (bidIsNA) numberOfNA++; these can be N/A after market hours
-            //if (askIsNA) numberOfNA++;
-            if (peRatioIsNA) numberOfNA++;
-            if (volumeIsNA) numberOfNA++;
-            //if (bidSizeIsNA) numberOfNA++; these can be N/A after market hours
-            //if (askSizeIsNA) numberOfNA++;
+            if (yahooResult.LastPriceIsNA) numberOfNA++;
+            if (yahooResult.YieldIsNA) numberOfNA++;
+            if (yahooResult.MarketCapIsNA) numberOfNA++;
+            if (yahooResult.PeRatioIsNA) numberOfNA++;
+            if (yahooResult.VolumeIsNA) numberOfNA++;
 
             if (numberOfNA > 2)
                 return true;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Asset_Management_Platform.Utility;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -58,6 +59,20 @@ namespace Asset_Management_Platform
             : base (cusip, ticker, description, lastPrice, yield)
         {
             SecurityType = "Stock";
+        }
+
+        public Stock(YahooAPIResult yahooResult)
+            : base("", yahooResult.Ticker, yahooResult.Description, yahooResult.LastPrice, yahooResult.Yield)
+        {
+            SecurityType = "Stock";
+
+            Bid = yahooResult.Bid;
+            Ask = yahooResult.Ask;
+            MarketCap = double.Parse(yahooResult.MarketCap);
+            PeRatio = yahooResult.PeRatio;
+            Volume = yahooResult.Volume;
+            BidSize = yahooResult.BidSize;
+            AskSize = yahooResult.AskSize;
         }
 
         public Stock(

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Asset_Management_Platform.Utility;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,6 +55,24 @@ namespace Asset_Management_Platform
         [JsonConstructor]
         public MutualFund(string cusip, string ticker, string description, decimal lastPrice, double yield, string assetClass, string category, string subcategory)
             : base(cusip, ticker, description, lastPrice, yield)
+        {
+            SecurityType = "Mutual Fund";
+            AssetClass = assetClass;
+            Category = category;
+            Subcategory = subcategory;
+        }
+
+        public MutualFund(YahooAPIResult yahooResult)
+            : base ("", yahooResult.Ticker, yahooResult.Description, yahooResult.LastPrice, yahooResult.Yield)
+        {
+            SecurityType = "Mutual Fund";
+            AssetClass = "-";
+            Category = "-";
+            Subcategory = "-";
+        }
+
+        public MutualFund(YahooAPIResult yahooResult, string assetClass, string category, string subcategory)
+            : base("", yahooResult.Ticker, yahooResult.Description, yahooResult.LastPrice, yahooResult.Yield)
         {
             SecurityType = "Mutual Fund";
             AssetClass = assetClass;

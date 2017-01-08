@@ -140,6 +140,7 @@
     <Compile Include="Utility\TradeExecutionService.cs" />
     <Compile Include="Utility\PortfolioManagementService.cs" />
     <Compile Include="Utility\StockDataService.cs" />
+    <Compile Include="Utility\YahooAPIResult.cs" />
     <Compile Include="Utility\YahooAPIService.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="SecuritiesList.cs" />
