@@ -164,12 +164,10 @@ namespace Asset_Management_Platform.Utility
                         if (yahooResult.YieldIsNA) yahooResult.Yield = 0;
                         if (yahooResult.DescriptionIsNA) yahooResult.Description = "Unknown Ticker";
                         if (yahooResult.LastPriceIsNA) yahooResult.LastPrice = 0;
+                        
+                        yahooResult.MarketCap = yahooResult.MarketCap.Substring(0, yahooResult.MarketCap.Length - 1); //removed the amount suffix, e.g. "B"
 
-                        //This should change the yahooResult value, right?
-                        var marketCap = yahooResult.MarketCap; 
-                        marketCap = marketCap.Substring(0, marketCap.Length - 1); //removed the amount suffix, e.g. "B"
-
-                        result = CreateNewStock(yahooResult);
+                        result = new Stock(yahooResult);
                         return result;
                     }
                     else //Can you get here?
@@ -179,8 +177,7 @@ namespace Asset_Management_Platform.Utility
                         if (yahooResult.DescriptionIsNA) yahooResult.Description = "Unknown Ticker";
                         if (yahooResult.LastPriceIsNA) yahooResult.LastPrice = 0;
 
-                        var marketCap = yahooResult.MarketCap;
-                        marketCap = marketCap.Substring(0, marketCap.Length - 1); //removed the amount suffix, e.g. "B"
+                        yahooResult.MarketCap = yahooResult.MarketCap.Substring(0, yahooResult.MarketCap.Length - 1);
 
                         var stockBeingUpdated = (Stock)securityBeingUpdated;
                         stockBeingUpdated.LastPrice = yahooResult.LastPrice;
@@ -219,12 +216,13 @@ namespace Asset_Management_Platform.Utility
 
                 if (determinedType == "Stock")
                 {
-                    var newStock = CreateNewStock(yahooResult);
+                    yahooResult.MarketCap = yahooResult.MarketCap.Substring(0, yahooResult.MarketCap.Length - 1);
+                    var newStock = new Stock(yahooResult);
                     return newStock;
                 }
                 else if(determinedType == "Mutual Fund")
                 {
-                    var newFund = CreateNewMutualFund(yahooResult);
+                    var newFund = new MutualFund(yahooResult);
                     return newFund;
                 }
                 else
@@ -318,28 +316,20 @@ namespace Asset_Management_Platform.Utility
                 if (yahooResult.YieldIsNA) yahooResult.Yield = 0;
                 if (yahooResult.DescriptionIsNA) yahooResult.Description = "Unknown Ticker";
                 if (yahooResult.LastPriceIsNA) yahooResult.LastPrice = 0;
+                yahooResult.MarketCap = yahooResult.MarketCap.Substring(0, yahooResult.MarketCap.Length - 1); //removed the amount suffix, e.g. "B"
+
                 yahooResultList.Add(yahooResult);
             }
 
             return yahooResultList;
         }
 
-        private Stock CreateNewStock(YahooAPIResult yahooResult)
-        {
-            throw new NotImplementedException();
-        }
-
-        private MutualFund CreateNewMutualFund(YahooAPIResult yahooResult)
-        {
-            throw new NotImplementedException();
-        }
-
         private string DetermineIfStockOrFund(YahooAPIResult yahooResult)
         {
             if (yahooResult.MarketCapIsNA && yahooResult.PeRatioIsNA)
-                return "Stock";
-            else
                 return "Mutual Fund";
+            else
+                return "Stock";
         }
 
         public List<Security> GetMultipleSecurities(List<Security> securities)
