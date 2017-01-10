@@ -19,7 +19,7 @@ namespace Asset_Management_Platform.Utility
 
         bool InsertIntoDatabase(Security securitiesToInsert);
 
-        void UploadDatabase();
+        void UploadSecuritiesToDatabase();
 
         void SeedStockDatabase();
 

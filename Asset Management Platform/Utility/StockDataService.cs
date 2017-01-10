@@ -201,22 +201,41 @@ namespace Asset_Management_Platform.Utility
         {
             if (_securityList.Any(s => s.Ticker == securityToInsert.Ticker))
                 return false;
-            else
+            else if(securityToInsert.SecurityType == "Stock")
             {
                 var insertString = @"INSERT INTO Stocks (Ticker, Description, LastPrice, Yield) VALUES ";
                 var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
                 using (var connection = new SqlConnection(storageString))
                 {
-                    connection.Open(); //is this necessary in a Using?
-                    using (var command = new SqlCommand())
-                    {
-                        var securityInfo = string.Format(@"('{0}', '{1}', {2}, {3});", securityToInsert.Ticker, securityToInsert.Description, 
+                    var securityInfo = string.Format(@"('{0}', '{1}', {2}, {3});", securityToInsert.Ticker, securityToInsert.Description,
                                                                                   securityToInsert.LastPrice, securityToInsert.Yield);
-                        insertString += securityInfo;
-                        command.Connection = connection;
-                        command.CommandText = insertString;
+                    insertString += securityInfo;
+
+                    using (var command = new SqlCommand(insertString, connection))
+                    {
+                        connection.Open(); //is this necessary in a Using?
                         command.ExecuteNonQuery();
                     }
+                }
+            }
+            else if (securityToInsert is MutualFund)
+            {
+                var fund = (MutualFund)securityToInsert;
+                var insertString = @"INSERT INTO MutualFunds (Ticker, Description, LastPrice, Yield, AssetClass, Category, Subcategory) VALUES ";
+                var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
+                using (var connection = new SqlConnection(storageString))
+                {
+                    var securityInfo = string.Format(@"('{0}', '{1}', {2}, {3}, '{4}', '{5}', '{6}')", securityToInsert.Ticker, securityToInsert.Description,
+                        securityToInsert.LastPrice, securityToInsert.Yield, fund.AssetClass, fund.Category, fund.Subcategory);
+
+                    insertString += securityInfo;
+
+                    using (var command = new SqlCommand(insertString, connection))
+                    {
+                        connection.Open();
+                        command.ExecuteNonQuery();
+                    }
+                    
                 }
             }
             return true;
@@ -226,30 +245,53 @@ namespace Asset_Management_Platform.Utility
         /// Uploads table to database upon closing.
         /// </summary>
         /// <returns></returns>
-        public void UploadDatabase()
+        public void UploadSecuritiesToDatabase()
         {
             if (_securityList != null)
             {
-                var insertString = @"INSERT INTO Stocks (Cusip, Ticker, Description, LastPrice, Yield) VALUES ";
                 var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
                 using (var connection = new SqlConnection(storageString))
                 {
+                    connection.Open();
                     using (var command = new SqlCommand())
                     {
-                        command.CommandText = @"DELETE * FROM STOCKS;";
+                        command.CommandText = @"DELETE * FROM dbo.Stocks;";
                         command.ExecuteNonQuery();
 
-                        var final = _securityList.Last();
+                        var insertString = @"INSERT INTO Stocks (Cusip, Ticker, Description, LastPrice, Yield) VALUES ";
                         foreach (var sec in _securityList)
                         {
-                            var newValue = string.Format("({0}, {1}, {2}, {3}, {4}) ", sec.Cusip, sec.Ticker, sec.Description, sec.LastPrice, sec.Yield);
-                            insertString += newValue;
-                            if (sec == final)
-                                insertString += @";";
+                            if (sec is Stock) { 
+                                var newValue = string.Format("('{0}', '{1}', '{2}', {3}, {4}) ", sec.Cusip, sec.Ticker, sec.Description, sec.LastPrice, sec.Yield);
+                                insertString += newValue;
+                            }
                         }
 
+                        insertString += @";";
+                        command.CommandText = insertString;
                         command.ExecuteNonQuery();
                     }
+
+                    using (var command = new SqlCommand())
+                    {
+                        command.CommandText = @"DELETE * FROM dbo.MutualFunds;";
+                        command.ExecuteNonQuery();
+
+                        var insertString = @"INSERT INTO MutualFunds (Ticker, Description, LastPrice, Yield, AssetClass, Category, Subcategory) VALUES ";
+                        foreach(var sec in _securityList)
+                        {
+                            if(sec is MutualFund)
+                            {
+                                var fund = (MutualFund)sec;
+                                var newValue = string.Format(@"('{0}', {1}, {2}, '{3}', '{4}', '{5}', '{6}')", fund.Ticker, fund.Description,
+                                    fund.LastPrice, fund.Yield, fund.AssetClass, fund.Category, fund.Subcategory);
+                                insertString += newValue;
+                            }
+                            insertString += @";";
+                            command.CommandText = insertString;
+                            command.ExecuteNonQuery();
+                        }
+                    }  
                 }
             }
         }
@@ -298,7 +340,7 @@ namespace Asset_Management_Platform.Utility
 
         public void Dispose()
         {
-            UploadDatabase();
+            UploadSecuritiesToDatabase();
             _securityList = null;
         }
     }
