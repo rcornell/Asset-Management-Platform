@@ -12,7 +12,6 @@ namespace Asset_Management_Platform.Utility
 {
     public class PortfolioManagementService : IPortfolioManagementService
     {
-        private List<string> _tickers;
         private IStockDataService _stockDataService;
         private IPortfolioDatabaseService _portfolioDatabaseService;
         private DispatcherTimer _timer;
@@ -49,16 +48,6 @@ namespace Asset_Management_Platform.Utility
             //Use yahooAPI to pull in updated info
             var updateSuccessful = _stockDataService.UpdateSecurityDatabase();
 
-            if (updateSuccessful) 
-            {
-                _tickers = GetTickers();
-            }
-            else
-            {
-                //Security list update failed.
-                throw new NotImplementedException();
-            }
-            
             _timer = new DispatcherTimer();
             _timer.Tick += _timer_Tick;
             _timer.Interval = new TimeSpan(0, 0, 10);
@@ -73,6 +62,7 @@ namespace Asset_Management_Platform.Utility
             var securities = _stockDataService.GetSecurityList();
 
             _displayStocks = new List<DisplayStock>();
+            _displayMutualFunds = new List<DisplayMutualFund>();
 
             foreach (var pos in positions)
             {
@@ -92,25 +82,6 @@ namespace Asset_Management_Platform.Utility
             } 
         }
 
-        /// <summary>
-        /// Extracts the tickers from the list of securities
-        /// so that the simple list can be sent to the yahooAPI
-        /// without having to foreach throught the list and
-        /// make a list of tickers every time.
-        /// </summary>
-        /// <returns></returns>
-        private List<string> GetTickers()
-        {
-            var tickers = new List<string>();
-            if (_securityDatabaseList == null || _securityDatabaseList.Count == 0)
-                return tickers;
-
-            foreach (var security in _securityDatabaseList)
-            {
-                tickers.Add(security.Ticker);
-            }
-            return tickers;
-        }
 
         /// <summary>
         /// When timer ticks, StockDataService uses YahooAPIService to update pricing 
@@ -180,17 +151,6 @@ namespace Asset_Management_Platform.Utility
                     //Ticker exists in portfolio and security is mutualfund
                     _portfolioDatabaseService.AddToPortfolio(taxlot);
                 }
-
-
-
-
-
-
-
-
-                if (!ticker.Contains(ticker))//I don't remember what this is for...
-                    _tickers.Add(ticker); //use boolean return for something?
-
             }
         }
 
@@ -202,7 +162,6 @@ namespace Asset_Management_Platform.Utility
                 if (shares == displayStock.Shares)
                 {
                     _securityDatabaseList.Remove(security);
-                    _tickers.Remove(ticker); //use boolean return for something?
                     _displayStocks.Remove(displayStock);
                 }
                 else if (shares > displayStock.Shares)
@@ -236,7 +195,6 @@ namespace Asset_Management_Platform.Utility
 
         public void DeletePortfolio()
         {
-            _tickers.Clear();
             _displayStocks.Clear();
             _securityDatabaseList.Clear();
             _portfolioDatabaseService.DeletePortfolio();
