@@ -14,11 +14,11 @@ namespace Asset_Management_Platform.Utility
 
         void StopUpdates();
 
-        void AddPosition(Stock stock, string ticker, int shares);
+        void AddPosition(Security security, string ticker, int shares);
 
-        void SellPosition(Stock stock, string ticker, int shares);
+        void SellPosition(Security security, string ticker, int shares);
 
-        Security GetOrderPreviewStock(string ticker);
+        Security GetOrderPreviewSecurity(string ticker);
 
         List<DisplayStock> GetDisplayStocks();
         void UploadPortfolio();

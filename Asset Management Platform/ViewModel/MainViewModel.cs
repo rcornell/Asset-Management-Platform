@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Data;
 using Asset_Management_Platform.Messages;
 using System.ComponentModel;
+using System;
 
 namespace Asset_Management_Platform
 {
@@ -286,7 +287,7 @@ namespace Asset_Management_Platform
             get { return (PreviewPrice * OrderShareQuantity); }
         }
 
-        private Stock _previewStock;
+        
 
         private DisplayStock _selectedDisplayStock;
         public DisplayStock SelectedDisplayStock
@@ -351,6 +352,14 @@ namespace Asset_Management_Platform
 
         private IPortfolioManagementService _portfolioService;
 
+        private Security _previewSecurity;
+        public Security PreviewSecurity {
+            get { return _previewSecurity; }
+            set { _previewSecurity = value;
+                RaisePropertyChanged(() => PreviewSecurity);
+            }
+
+        }
         public MainViewModel(IPortfolioManagementService portfolioService)
         {
             //if (IsInDesignMode)
@@ -419,18 +428,34 @@ namespace Asset_Management_Platform
         }
 
         private void ExecutePreviewOrder()
-        {
-            
+        {            
             if (!string.IsNullOrEmpty(_orderTickerText) && _orderShareQuantity > 0)
             {
-                _previewStock = (Stock)_portfolioService.GetOrderPreviewStock(_orderTickerText);
-                PreviewPrice = _previewStock.LastPrice;
-                PreviewDescription = _previewStock.Description;
-                PreviewVolume = _previewStock.Volume.ToString();
-                PreviewAsk = _previewStock.Ask.ToString();
-                PreviewAskSize = _previewStock.AskSize.ToString();
-                PreviewBid = _previewStock.Bid.ToString();
-                PreviewBidSize = _previewStock.BidSize.ToString();
+                PreviewSecurity = _portfolioService.GetOrderPreviewSecurity(_orderTickerText);
+
+                if (PreviewSecurity is Stock)
+                {
+                    PreviewPrice = PreviewSecurity.LastPrice;
+                    PreviewDescription = PreviewSecurity.Description;
+                    throw new NotImplementedException();
+                    //PreviewVolume = (Stock)PreviewSecurity.Volume.ToString();
+                    //PreviewAsk = PreviewSecurity.Ask.ToString();
+                    //PreviewAskSize = PreviewSecurity.AskSize.ToString();
+                    //PreviewBid = PreviewSecurity.Bid.ToString();
+                    //PreviewBidSize = PreviewSecurity.BidSize.ToString();
+
+                }
+                else if (PreviewSecurity is MutualFund)
+                {
+                    PreviewPrice = PreviewSecurity.LastPrice;
+                    PreviewDescription = PreviewSecurity.Description;
+                    PreviewVolume = "Mutual Fund: No Volume";
+                    PreviewAsk = "-";
+                    PreviewAskSize = "-";
+                    PreviewBid = "-";
+                    PreviewBidSize = "-";
+                }
+
                 ExecuteButtonEnabled = true;
             }
         }
@@ -440,7 +465,7 @@ namespace Asset_Management_Platform
 
             if (!string.IsNullOrEmpty(screenerTicker))
             {
-                var resultStock = _portfolioService.GetOrderPreviewStock(screenerTicker);
+                var resultStock = _portfolioService.GetOrderPreviewSecurity(screenerTicker);
                 ScreenerStock = resultStock;
             }
         }
@@ -448,9 +473,9 @@ namespace Asset_Management_Platform
         private void ExecuteExecuteOrder()
         {
             if (SelectedTradeType == "Buy")
-                _portfolioService.AddPosition(_previewStock, _orderTickerText, _orderShareQuantity);
+                _portfolioService.AddPosition(_previewSecurity, _orderTickerText, _orderShareQuantity);
             else if (SelectedTradeType == "Sell")
-                _portfolioService.SellPosition(_previewStock, _orderTickerText, _orderShareQuantity);
+                _portfolioService.SellPosition(_previewSecurity, _orderTickerText, _orderShareQuantity);
             GetDisplayStocks();
             GetAllocationChartPositions();
 

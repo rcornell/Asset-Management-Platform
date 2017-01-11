@@ -16,7 +16,7 @@ namespace Asset_Management_Platform.Utility
         private IStockDataService _stockDataService;
         private IPortfolioDatabaseService _portfolioDatabaseService;
         private DispatcherTimer _timer;
-        private List<Security> _securityList; //used for pricing
+        private List<Security> _securityDatabaseList; //Known securities, used for pricing
 
         private List<DisplayStock> _displayStocks;
         public List<DisplayStock> DisplayStocks //used to display in MainViewModel
@@ -24,6 +24,15 @@ namespace Asset_Management_Platform.Utility
             get
             {
                 return _displayStocks;
+            }
+        }
+
+        private List<DisplayMutualFund> _displayMutualFunds;
+        public List<DisplayMutualFund> DisplayMutualFunds //used to display in MainViewModel
+        {
+            get
+            {
+                return _displayMutualFunds;
             }
         }
 
@@ -35,7 +44,7 @@ namespace Asset_Management_Platform.Utility
             _stockDataService.Initialize();
 
             //Load stock info from SQL DB
-            _securityList = _stockDataService.LoadSecurityDatabase();
+            _securityDatabaseList = _stockDataService.LoadSecurityDatabase();
 
             //Use yahooAPI to pull in updated info
             var updateSuccessful = _stockDataService.UpdateSecurityDatabase();
@@ -54,27 +63,33 @@ namespace Asset_Management_Platform.Utility
             _timer.Tick += _timer_Tick;
             _timer.Interval = new TimeSpan(0, 0, 10);
 
-            BuildDisplayStocks();
+            BuildDisplaySecurityLists();
         }
 
-        private void BuildDisplayStocks()
+
+        private void BuildDisplaySecurityLists()
         {
             var positions = _portfolioDatabaseService.GetPositions();
-            var stocks = _stockDataService.GetSecurityList();
-            //this cannot find GME in the stock list...beacuse it's not in S&P. Need to refactor. The list at
-            //startup may be pointless
-
+            var securities = _stockDataService.GetSecurityList();
 
             _displayStocks = new List<DisplayStock>();
 
             foreach (var pos in positions)
             {
-                var stock = stocks.Find(s => s.Ticker == pos.Ticker);
-                if (stock == null)
-                    //shouldn't hit this once StockDataService is keeping database up to date
-                    stock = _stockDataService.GetSpecificSecurityInfo(pos.Ticker);
-                _displayStocks.Add(new DisplayStock(pos, (Stock)stock));
-            } //check to see if the stocks are Stocks or Securities
+                //Search the known securities list for a match
+                var matchingSecurity = securities.Find(s => s.Ticker == pos.Ticker);
+
+                //If no match within security list, look it up.
+                if (matchingSecurity == null) { 
+                    matchingSecurity = _stockDataService.GetSpecificSecurityInfo(pos.Ticker);
+                }
+
+                //Create appropriate security type and add to lists for UI.
+                if (matchingSecurity != null && matchingSecurity is Stock)
+                    _displayStocks.Add(new DisplayStock(pos, (Stock)matchingSecurity));
+                else if (matchingSecurity != null && matchingSecurity is MutualFund)
+                    _displayMutualFunds.Add(new DisplayMutualFund(pos, (MutualFund)matchingSecurity));
+            } 
         }
 
         /// <summary>
@@ -87,10 +102,10 @@ namespace Asset_Management_Platform.Utility
         private List<string> GetTickers()
         {
             var tickers = new List<string>();
-            if (_securityList == null || _securityList.Count == 0)
+            if (_securityDatabaseList == null || _securityDatabaseList.Count == 0)
                 return tickers;
 
-            foreach (var security in _securityList)
+            foreach (var security in _securityDatabaseList)
             {
                 tickers.Add(security.Ticker);
             }
@@ -109,7 +124,7 @@ namespace Asset_Management_Platform.Utility
             bool updateSuccessful = _stockDataService.UpdateSecurityDatabase();
             if (updateSuccessful)
             {
-                _securityList = _stockDataService.GetUpdatedPrices();
+                _securityDatabaseList = _stockDataService.GetUpdatedPrices();
             }
         }
 
@@ -134,45 +149,59 @@ namespace Asset_Management_Platform.Utility
             return DisplayStocks;
         }
 
-        public void AddPosition(Stock stock, string ticker, int shares)
+        public void AddPosition(Security security, string ticker, int shares)
         {
-
-
-            //BUILD COST BASIS CORRECTLY
-            var taxlot = new Taxlot(ticker, shares, decimal.Parse(stock.LastPrice.ToString()), DateTime.Now);
-            var position = new Position(taxlot);
-
             //Check if any values are null or useless
-            if (stock != null && !string.IsNullOrEmpty(ticker) && shares > 0) {
+            if (security != null && !string.IsNullOrEmpty(ticker) && shares > 0) {
+
+
+                var taxlot = new Taxlot(ticker, shares, decimal.Parse(security.LastPrice.ToString()), DateTime.Now);
+                var position = new Position(taxlot);
+
 
                 //Check to confirm that shares of this security aren't already owned.
-                if (!_securityList.Any(s => s.Ticker == ticker))
+                if (!_securityDatabaseList.Any(s => s.Ticker == ticker && s.SecurityType =="Stock"))
                 {
-                    _securityList.Add(stock);
+                    _securityDatabaseList.Add(security);
                     _portfolioDatabaseService.AddToPortfolio(position);
-                    _displayStocks.Add(new DisplayStock(position, stock)); //add a new DisplayStock bc of taxlot tracking
+                    _displayStocks.Add(new DisplayStock(position, (Stock)security)); //add a new DisplayStock bc of taxlot tracking
                 }
-                else { //This ticker isn't already owned.
-
-                _portfolioDatabaseService.AddToPortfolio(taxlot);
-
+                else if(_securityDatabaseList.Any(s => s.Ticker == ticker && s.SecurityType == "Stock"))
+                {
+                    //Ticker exists in portfolio and security is stock
+                    _portfolioDatabaseService.AddToPortfolio(taxlot);
+                }
+                else if (!_securityDatabaseList.Any(s => s.Ticker == ticker && s.SecurityType == "Mutual Fund")){ 
+                    
+                    //This ticker isn't already owned and it is a MutualFund
+                }
+                else if (_securityDatabaseList.Any(s => s.Ticker == ticker && s.SecurityType == "Stock"))
+                {
+                    //Ticker exists in portfolio and security is mutualfund
+                    _portfolioDatabaseService.AddToPortfolio(taxlot);
                 }
 
-                
+
+
+
+
+
+
+
                 if (!ticker.Contains(ticker))//I don't remember what this is for...
                     _tickers.Add(ticker); //use boolean return for something?
 
             }
         }
 
-        public void SellPosition(Stock stock, string ticker, int shares)
+        public void SellPosition(Security security, string ticker, int shares)
         {
-            if (stock != null && !string.IsNullOrEmpty(ticker) && shares > 0)
+            if (security != null && !string.IsNullOrEmpty(ticker) && shares > 0)
             {
                 var displayStock = _displayStocks.Find(s => s.Ticker == ticker);
                 if (shares == displayStock.Shares)
                 {
-                    _securityList.Remove(stock);
+                    _securityDatabaseList.Remove(security);
                     _tickers.Remove(ticker); //use boolean return for something?
                     _displayStocks.Remove(displayStock);
                 }
@@ -190,10 +219,14 @@ namespace Asset_Management_Platform.Utility
             }
         }
 
-        public Security GetOrderPreviewStock(string ticker)
+        public Security GetOrderPreviewSecurity(string ticker)
         {
             var securityToReturn = _stockDataService.GetSpecificSecurityInfo(ticker);
-            return securityToReturn;
+            if (securityToReturn is Stock)
+                return (Stock)securityToReturn;
+            else if (securityToReturn is MutualFund)
+                return (MutualFund)securityToReturn;
+            else return new Stock("", "XXX", "Unknown Stock", 0, 0.00);
         }
 
         public void UploadPortfolio()
@@ -205,7 +238,7 @@ namespace Asset_Management_Platform.Utility
         {
             _tickers.Clear();
             _displayStocks.Clear();
-            _securityList.Clear();
+            _securityDatabaseList.Clear();
             _portfolioDatabaseService.DeletePortfolio();
         }
     }

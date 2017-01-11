@@ -119,10 +119,7 @@ namespace Asset_Management_Platform.Utility
                         _securityList.Add(new MutualFund(cusip, ticker, description, lastPrice, yield, assetClass, category, subCategory));
                     }
                 }
-
-
             }
-
             return _securityList;
         }
 
@@ -321,7 +318,7 @@ namespace Asset_Management_Platform.Utility
 
         public List<Security> GetSecurityList()
         {
-            return SecurityList;
+            return _securityList;
         }
 
         public Security GetSpecificSecurityInfo(string ticker)
