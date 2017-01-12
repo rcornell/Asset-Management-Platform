@@ -112,7 +112,6 @@ namespace Asset_Management_Platform
                     }
                 }
             }
-
             foreach (var lot in taxlotsFromDatabase)
             {
                 if (!_myPositions.Any(s => s.Ticker == lot.Ticker))

@@ -120,6 +120,11 @@ namespace Asset_Management_Platform.Utility
             return DisplayStocks;
         }
 
+        public List<DisplayMutualFund> GetDisplayMutualFunds()
+        {
+            return DisplayMutualFunds;
+        }
+
         public void AddPosition(Security security, string ticker, int shares)
         {
             //Check if any values are null or useless
@@ -130,7 +135,8 @@ namespace Asset_Management_Platform.Utility
                 var position = new Position(taxlot);
 
 
-                //Check to confirm that shares of this security aren't already owned.
+                //Check to confirm that shares of this security aren't in the database
+                //and that it is a stock
                 if (!_securityDatabaseList.Any(s => s.Ticker == ticker && s.SecurityType =="Stock"))
                 {
                     _securityDatabaseList.Add(security);
@@ -139,7 +145,7 @@ namespace Asset_Management_Platform.Utility
                 }
                 else if(_securityDatabaseList.Any(s => s.Ticker == ticker && s.SecurityType == "Stock"))
                 {
-                    //Ticker exists in portfolio and security is stock
+                    //Ticker exists in database and security is stock
                     _portfolioDatabaseService.AddToPortfolio(taxlot);
                 }
                 else if (!_securityDatabaseList.Any(s => s.Ticker == ticker && s.SecurityType == "Mutual Fund")){ 

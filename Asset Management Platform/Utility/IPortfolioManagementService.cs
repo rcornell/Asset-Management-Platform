@@ -21,6 +21,9 @@ namespace Asset_Management_Platform.Utility
         Security GetOrderPreviewSecurity(string ticker);
 
         List<DisplayStock> GetDisplayStocks();
+
+        List<DisplayMutualFund> GetDisplayMutualFunds();
+
         void UploadPortfolio();
 
         void DeletePortfolio();

@@ -136,6 +136,17 @@ namespace Asset_Management_Platform
             }
         }
 
+        private ObservableCollection<string> _securityTypeStrings;
+        public ObservableCollection<string> SecurityTypeStrings
+        {
+            get { return _securityTypeStrings; }
+            set
+            {
+                _securityTypeStrings = value;
+                RaisePropertyChanged(() => SecurityTypeStrings);
+            }
+        }
+
         private string _previewDescription;
         public string PreviewDescription {
             get { return _previewDescription; }
@@ -207,6 +218,17 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => LimitPrice); }
         }
 
+
+        private string _selectedSecurityType;
+        public string SelectedSecurityType
+        {
+            get { return _selectedSecurityType; }
+            set
+            {
+                _selectedSecurityType = value;
+                RaisePropertyChanged(() => SelectedSecurityType);
+            }
+        }
 
         private string _selectedDurationType;
         public string SelectedDurationType {
@@ -379,6 +401,7 @@ namespace Asset_Management_Platform
             TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
             TradeTermStrings = new ObservableCollection<string>() { "Market", "Limit", "Stop", "Stop Limit" };
             TradeDurationStrings = new ObservableCollection<string> { "Day", "GTC", "Market Close", "Market Open", "Overnight" };
+            SecurityTypeStrings = new ObservableCollection<string> { " ", "Stock", "Mutual Fund" };
             SelectedDurationType = "Day";
             LimitBoxActive = false;
             LimitPrice = 0;
@@ -397,6 +420,10 @@ namespace Asset_Management_Platform
         private void GetDisplayStocks()
         {
             var displayStocks = _portfolioService.GetDisplayStocks();
+            var displayMutualFunds = _portfolioService.GetDisplayMutualFunds();
+            //Create a use for this.
+
+
             StockList = new ObservableCollection<DisplayStock>(displayStocks);
             DisplayStockCollectionView = new ListCollectionView(StockList);
         }
@@ -428,8 +455,9 @@ namespace Asset_Management_Platform
         }
 
         private void ExecutePreviewOrder()
-        {            
-            if (!string.IsNullOrEmpty(_orderTickerText) && _orderShareQuantity > 0)
+        {
+            var orderOk = CheckOrderTerms();     
+            if (orderOk)
             {
                 PreviewSecurity = _portfolioService.GetOrderPreviewSecurity(_orderTickerText);
 
@@ -437,12 +465,11 @@ namespace Asset_Management_Platform
                 {
                     PreviewPrice = PreviewSecurity.LastPrice;
                     PreviewDescription = PreviewSecurity.Description;
-                    throw new NotImplementedException();
-                    //PreviewVolume = (Stock)PreviewSecurity.Volume.ToString();
-                    //PreviewAsk = PreviewSecurity.Ask.ToString();
-                    //PreviewAskSize = PreviewSecurity.AskSize.ToString();
-                    //PreviewBid = PreviewSecurity.Bid.ToString();
-                    //PreviewBidSize = PreviewSecurity.BidSize.ToString();
+                    PreviewVolume = ((Stock)PreviewSecurity).Volume.ToString();
+                    PreviewAsk = ((Stock)PreviewSecurity).Ask.ToString();
+                    PreviewAskSize = ((Stock)PreviewSecurity).AskSize.ToString();
+                    PreviewBid = ((Stock)PreviewSecurity).Bid.ToString();
+                    PreviewBidSize = ((Stock)PreviewSecurity).BidSize.ToString();
 
                 }
                 else if (PreviewSecurity is MutualFund)
@@ -458,6 +485,16 @@ namespace Asset_Management_Platform
 
                 ExecuteButtonEnabled = true;
             }
+        }
+
+        private bool CheckOrderTerms()
+        {
+            var tickerNotEmpty = !string.IsNullOrEmpty(_orderTickerText);
+            var shareQuantityValid = (_orderShareQuantity > 0);
+            var securityTypeValid = (_selectedSecurityType == "Mutual Fund" || _selectedSecurityType == "Stock");
+            if (tickerNotEmpty && shareQuantityValid && securityTypeValid)
+                return true;
+            return false;
         }
 
         private void ExecuteScreenerPreview(string screenerTicker)
