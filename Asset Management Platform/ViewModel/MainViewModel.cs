@@ -44,6 +44,28 @@ namespace Asset_Management_Platform
             }
         }
 
+        private ListCollectionView _displayFundCollectionView;
+        public ListCollectionView DisplayFundCollectionView
+        {
+            get { return _displayFundCollectionView; }
+            set
+            {
+                _displayFundCollectionView = value;
+                RaisePropertyChanged(() => DisplayFundCollectionView);
+            }
+        }
+
+        private ListCollectionView _displaySecurityCollectionView;
+        public ListCollectionView DisplaySecurityCollectionView
+        {
+            get { return _displaySecurityCollectionView; }
+            set
+            {
+                _displaySecurityCollectionView = value;
+                RaisePropertyChanged(() => DisplaySecurityCollectionView);
+            }
+        }
+
 
         private Security _screenerStock;
         public Security ScreenerStock
@@ -369,6 +391,17 @@ namespace Asset_Management_Platform
             get { return _stockList; }
             set { _stockList = value;
                 RaisePropertyChanged(() => StockList);
+            }
+        }
+
+        private ObservableCollection<DisplayStock> _fundList;
+        public ObservableCollection<DisplayStock> MutualFundList
+        {
+            get { return _fundList; }
+            set
+            {
+                _fundList = value;
+                RaisePropertyChanged(() => MutualFundList);
             }
         }
 
