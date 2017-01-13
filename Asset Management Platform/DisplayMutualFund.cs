@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Asset_Management_Platform
 {
-    public class DisplayMutualFund
+    public class DisplayMutualFund : DisplaySecurity
     {
 
         private Position _position;

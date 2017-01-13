@@ -117,6 +117,7 @@
     <Compile Include="Chart\SecurityChart.cs" />
     <Compile Include="Converters\BoolToOpacityConverter.cs" />
     <Compile Include="DisplayMutualFund.cs" />
+    <Compile Include="DisplaySecurity.cs" />
     <Compile Include="DisplayStock.cs" />
     <Compile Include="Messages\TradeMessage.cs" />
     <Compile Include="PositionByWeight.cs" />

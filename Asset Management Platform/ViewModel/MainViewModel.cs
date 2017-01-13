@@ -394,14 +394,25 @@ namespace Asset_Management_Platform
             }
         }
 
-        private ObservableCollection<DisplayStock> _fundList;
-        public ObservableCollection<DisplayStock> MutualFundList
+        private ObservableCollection<DisplayMutualFund> _fundList;
+        public ObservableCollection<DisplayMutualFund> MutualFundList
         {
             get { return _fundList; }
             set
             {
                 _fundList = value;
                 RaisePropertyChanged(() => MutualFundList);
+            }
+        }
+
+        private ObservableCollection<DisplaySecurity> _securityList;
+        public ObservableCollection<DisplaySecurity> SecurityList
+        {
+            get { return _securityList; }
+            set
+            {
+                _securityList = value;
+                RaisePropertyChanged(() => SecurityList);
             }
         }
 
@@ -447,7 +458,7 @@ namespace Asset_Management_Platform
 
             GetDisplaySecurities();
             GetAllocationChartPositions();
-            DisplayStockCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Ticker"));
+            DisplaySecurityCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Ticker"));
         }
 
         private void GetDisplaySecurities()
@@ -458,7 +469,23 @@ namespace Asset_Management_Platform
 
 
             StockList = new ObservableCollection<DisplayStock>(displayStocks);
-            DisplayStockCollectionView = new ListCollectionView(StockList);
+            MutualFundList = new ObservableCollection<DisplayMutualFund>(displayMutualFunds);
+            DisplaySecurityCollectionView = new ListCollectionView(StockList);
+        }
+
+        private void ShowAllSecurities()
+        {
+
+        }
+
+        private void ShowAllStocks()
+        {
+
+        }
+
+        private void ShowAllMutualFunds()
+        {
+
         }
 
         private void GetAllocationChartPositions()

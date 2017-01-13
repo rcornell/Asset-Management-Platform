@@ -141,7 +141,7 @@
             <Button Content="Funds and ETFs" Margin="5" Grid.Column="3"/>
         </Grid>
         <!-- When you have to make a DataGrid that groups objects by type: http://wpftutorial.net/DataGrid.html-->
-        <DataGrid ItemsSource="{Binding DisplayStockCollectionView, 
+        <DataGrid ItemsSource="{Binding DisplaySecurityCollectionView, 
                                 NotifyOnSourceUpdated=True, 
                                 UpdateSourceTrigger=PropertyChanged}" 
                   Grid.Row="3"
