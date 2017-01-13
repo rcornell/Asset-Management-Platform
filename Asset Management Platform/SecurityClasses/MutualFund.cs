@@ -81,10 +81,14 @@ namespace Asset_Management_Platform
         }
 
 
-        //public MutualFund(string cusip, string ticker, string description, double yield, decimal lastPrice, double load)
-        //    : base(cusip, ticker, description, lastPrice, yield)
-        //{
-        //    SecurityType = "Mutual Fund";
-        //}
+        public MutualFund()
+        {
+
+        }
+
+        public override string ToString()
+        {
+            return "Mutual Fund";
+        }
     }
 }

@@ -20,6 +20,8 @@ namespace Asset_Management_Platform.Utility
 
         Security GetOrderPreviewSecurity(string ticker);
 
+        Security GetOrderPreviewSecurity(string ticker, Security SelectedSecurityType);
+
         List<DisplayStock> GetDisplayStocks();
 
         List<DisplayMutualFund> GetDisplayMutualFunds();

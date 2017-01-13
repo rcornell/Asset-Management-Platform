@@ -136,14 +136,14 @@ namespace Asset_Management_Platform
             }
         }
 
-        private ObservableCollection<string> _securityTypeStrings;
-        public ObservableCollection<string> SecurityTypeStrings
+        private ObservableCollection<Security> _securityTypeStrings;
+        public ObservableCollection<Security> SecurityTypes
         {
             get { return _securityTypeStrings; }
             set
             {
                 _securityTypeStrings = value;
-                RaisePropertyChanged(() => SecurityTypeStrings);
+                RaisePropertyChanged(() => SecurityTypes);
             }
         }
 
@@ -219,8 +219,8 @@ namespace Asset_Management_Platform
         }
 
 
-        private string _selectedSecurityType;
-        public string SelectedSecurityType
+        private Security _selectedSecurityType;
+        public Security SelectedSecurityType
         {
             get { return _selectedSecurityType; }
             set
@@ -401,7 +401,7 @@ namespace Asset_Management_Platform
             TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
             TradeTermStrings = new ObservableCollection<string>() { "Market", "Limit", "Stop", "Stop Limit" };
             TradeDurationStrings = new ObservableCollection<string> { "Day", "GTC", "Market Close", "Market Open", "Overnight" };
-            SecurityTypeStrings = new ObservableCollection<string> { " ", "Stock", "Mutual Fund" };
+            SecurityTypes = new ObservableCollection<Security> { new Security(), new Stock(), new MutualFund() };
             SelectedDurationType = "Day";
             LimitBoxActive = false;
             LimitPrice = 0;
@@ -412,12 +412,12 @@ namespace Asset_Management_Platform
             Messenger.Default.Register<TradeMessage>(this, SetAlertMessage);
             //_portfolioService.StartUpdates(); //TURNED OFF FOR TESTING
 
-            GetDisplayStocks();
+            GetDisplaySecurities();
             GetAllocationChartPositions();
             DisplayStockCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Ticker"));
         }
 
-        private void GetDisplayStocks()
+        private void GetDisplaySecurities()
         {
             var displayStocks = _portfolioService.GetDisplayStocks();
             var displayMutualFunds = _portfolioService.GetDisplayMutualFunds();
@@ -459,7 +459,7 @@ namespace Asset_Management_Platform
             var orderOk = CheckOrderTerms();     
             if (orderOk)
             {
-                PreviewSecurity = _portfolioService.GetOrderPreviewSecurity(_orderTickerText);
+                PreviewSecurity = _portfolioService.GetOrderPreviewSecurity(_orderTickerText, SelectedSecurityType);
 
                 if (PreviewSecurity is Stock)
                 {
@@ -491,7 +491,7 @@ namespace Asset_Management_Platform
         {
             var tickerNotEmpty = !string.IsNullOrEmpty(_orderTickerText);
             var shareQuantityValid = (_orderShareQuantity > 0);
-            var securityTypeValid = (_selectedSecurityType == "Mutual Fund" || _selectedSecurityType == "Stock");
+            var securityTypeValid = (_selectedSecurityType is Stock || _selectedSecurityType is MutualFund);
             if (tickerNotEmpty && shareQuantityValid && securityTypeValid)
                 return true;
             return false;
@@ -513,7 +513,7 @@ namespace Asset_Management_Platform
                 _portfolioService.AddPosition(_previewSecurity, _orderTickerText, _orderShareQuantity);
             else if (SelectedTradeType == "Sell")
                 _portfolioService.SellPosition(_previewSecurity, _orderTickerText, _orderShareQuantity);
-            GetDisplayStocks();
+            GetDisplaySecurities();
             GetAllocationChartPositions();
 
             SelectedDurationType = "Day";
@@ -529,6 +529,7 @@ namespace Asset_Management_Platform
             PreviewBidSize = "";
             PreviewDescription = "";
             PreviewVolume = "";
+            SelectedSecurityType = SecurityTypes[0];
            
             ExecuteButtonEnabled = false;
         }
@@ -536,7 +537,7 @@ namespace Asset_Management_Platform
         public void ExecuteDeletePortfolio()
         {
             _portfolioService.DeletePortfolio();
-            GetDisplayStocks();
+            GetDisplaySecurities();
             GetAllocationChartPositions();
         }
 

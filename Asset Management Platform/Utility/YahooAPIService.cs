@@ -230,6 +230,107 @@ namespace Asset_Management_Platform.Utility
             }
         }
 
+        /// <summary>
+        /// This is called when the user specifically selects that they want to
+        /// buy a stock or mutual fund through the order entry screen
+        /// </summary>
+        /// <param name="tickerToLookUp"></param>
+        /// <param name="securityList"></param>
+        /// <param name="securityType"></param>
+        /// <returns></returns>
+        public Security GetSingleSecurity(string tickerToLookUp, List<Security> securityList, Security securityType)
+        {
+
+            const string base_url = "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=sl1yj1barvb6a5n";
+            Security result;
+            Security securityBeingUpdated;
+
+            var url = base_url.Replace("@", tickerToLookUp);
+            var response = GetWebResponse(url);
+            var yahooResult = CreateYahooAPIResult(response);
+
+
+
+
+            if (securityList.Any(s => s.Ticker == yahooResult.Ticker))
+            {
+                securityBeingUpdated = securityList.Find(s => s.Ticker == yahooResult.Ticker);
+
+                if (securityType is Stock)
+                {
+                    var stockIsUnknown = IsStockUnknown(yahooResult);
+
+                    if (stockIsUnknown)
+                    {
+                        if (yahooResult.PeRatioIsNA) yahooResult.PeRatio = 0;
+                        if (yahooResult.YieldIsNA) yahooResult.Yield = 0;
+                        if (yahooResult.DescriptionIsNA) yahooResult.Description = "Unknown Ticker";
+                        if (yahooResult.LastPriceIsNA) yahooResult.LastPrice = 0;
+
+                        yahooResult.MarketCap = yahooResult.MarketCap.Substring(0, yahooResult.MarketCap.Length - 1); //removed the amount suffix, e.g. "B"
+
+                        result = new Stock(yahooResult);
+                        return result;
+                    }
+                    else //Can you get here?
+                    {
+                        if (yahooResult.PeRatioIsNA) yahooResult.PeRatio = 0;
+                        if (yahooResult.YieldIsNA) yahooResult.Yield = 0;
+                        if (yahooResult.DescriptionIsNA) yahooResult.Description = "Unknown Ticker";
+                        if (yahooResult.LastPriceIsNA) yahooResult.LastPrice = 0;
+
+                        yahooResult.MarketCap = yahooResult.MarketCap.Substring(0, yahooResult.MarketCap.Length - 1);
+
+                        var stockBeingUpdated = (Stock)securityBeingUpdated;
+                        stockBeingUpdated.LastPrice = yahooResult.LastPrice;
+                        stockBeingUpdated.PeRatio = yahooResult.PeRatio;
+                        stockBeingUpdated.Yield = yahooResult.Yield;
+                        stockBeingUpdated.Volume = yahooResult.Volume;
+                        stockBeingUpdated.Bid = yahooResult.Bid;
+                        stockBeingUpdated.Ask = yahooResult.Ask;
+                        stockBeingUpdated.AskSize = yahooResult.AskSize;
+                        stockBeingUpdated.BidSize = yahooResult.BidSize;
+                        stockBeingUpdated.MarketCap = double.Parse(yahooResult.MarketCap);
+                        stockBeingUpdated.Description = yahooResult.Description;
+                        stockBeingUpdated.Ticker = yahooResult.Ticker; //Match?
+
+                        return stockBeingUpdated;
+                    }
+                }
+                else if (securityType is MutualFund)
+                {
+                    var mutualFund = (MutualFund)securityList.Find(s => s.Ticker == yahooResult.Ticker);
+
+                    mutualFund.LastPrice = yahooResult.LastPrice;
+                    mutualFund.Description = yahooResult.Description;
+                    mutualFund.Yield = yahooResult.Yield;
+                    return mutualFund;
+                }
+                else
+                {
+                    //Known unknown security?
+                    throw new NotImplementedException();
+                }
+            }
+            else //Security is unknown, figure out what it is.
+            {
+                //See if this code works properly
+                if (securityType is Stock)
+                {
+                    yahooResult.MarketCap = yahooResult.MarketCap.Substring(0, yahooResult.MarketCap.Length - 1);
+                    var newStock = new Stock(yahooResult);
+                    return newStock;
+                }
+                else if (securityType is MutualFund)
+                {
+                    var newFund = new MutualFund(yahooResult);
+                    return newFund;
+                }
+                else
+                    throw new NotImplementedException();
+            }
+        }
+
         private YahooAPIResult CreateYahooAPIResult(string result)
         {
             string fixedResponse = Regex.Replace(result, @"\r\n?|\n", string.Empty);

@@ -103,5 +103,15 @@ namespace Asset_Management_Platform
             SecurityType = "Stock";
         }
 
+        public Stock()
+        {
+
+        }
+
+        public override string ToString()
+        {
+            return "Stock";
+        }
+
     }
 }

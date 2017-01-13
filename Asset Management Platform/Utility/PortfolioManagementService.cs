@@ -7,6 +7,7 @@ using GalaSoft.MvvmLight.Ioc;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight.Messaging;
 using Asset_Management_Platform.Messages;
+using System.Collections.ObjectModel;
 
 namespace Asset_Management_Platform.Utility
 {
@@ -125,36 +126,41 @@ namespace Asset_Management_Platform.Utility
             return DisplayMutualFunds;
         }
 
-        public void AddPosition(Security security, string ticker, int shares)
+        public void AddPosition(Security securityToAdd, string ticker, int shares)
         {
             //Check if any values are null or useless
-            if (security != null && !string.IsNullOrEmpty(ticker) && shares > 0) {
+            if (securityToAdd != null && !string.IsNullOrEmpty(ticker) && shares > 0) {
 
-
-                var taxlot = new Taxlot(ticker, shares, decimal.Parse(security.LastPrice.ToString()), DateTime.Now);
+                var taxlot = new Taxlot(ticker, shares, securityToAdd.LastPrice, DateTime.Now);
                 var position = new Position(taxlot);
+                if (!_securityDatabaseList.Any(s => s.Ticker == ticker))
+                    _securityDatabaseList.Add(securityToAdd);
 
-
-                //Check to confirm that shares of this security aren't in the database
-                //and that it is a stock
-                if (!_securityDatabaseList.Any(s => s.Ticker == ticker && s.SecurityType =="Stock"))
+                //Check to confirm that shares of this security aren't in relevant
+                //Stock or MutualFund list
+                if (securityToAdd is Stock && !DisplayStocks.Any(s => s.Ticker == ticker))
                 {
-                    _securityDatabaseList.Add(security);
+                    //Add position to portfolio database for online storage
                     _portfolioDatabaseService.AddToPortfolio(position);
-                    _displayStocks.Add(new DisplayStock(position, (Stock)security)); //add a new DisplayStock bc of taxlot tracking
+
+                    //Add new displaystock for UI
+                    DisplayStocks.Add(new DisplayStock(position, (Stock)securityToAdd));
                 }
-                else if(_securityDatabaseList.Any(s => s.Ticker == ticker && s.SecurityType == "Stock"))
+                //Ticker exists in database and security is stock
+                else if (securityToAdd is Stock && DisplayStocks.Any(s => s.Ticker == ticker))
                 {
-                    //Ticker exists in database and security is stock
+                    //See if this affects the DisplayStock in the UI
                     _portfolioDatabaseService.AddToPortfolio(taxlot);
                 }
-                else if (!_securityDatabaseList.Any(s => s.Ticker == ticker && s.SecurityType == "Mutual Fund")){ 
+                //This ticker isn't already owned and it is a MutualFund
+                else if (securityToAdd is MutualFund && !DisplayMutualFunds.Any(s => s.Ticker == ticker)){  
                     
-                    //This ticker isn't already owned and it is a MutualFund
+                    _portfolioDatabaseService.AddToPortfolio(position);
+                    DisplayMutualFunds.Add(new DisplayMutualFund(position, (MutualFund)securityToAdd));
                 }
-                else if (_securityDatabaseList.Any(s => s.Ticker == ticker && s.SecurityType == "Stock"))
+                else if (securityToAdd is MutualFund && DisplayMutualFunds.Any(s => s.Ticker == ticker))
                 {
-                    //Ticker exists in portfolio and security is mutualfund
+                    //Security is known and already held, so just add the new taxlot.
                     _portfolioDatabaseService.AddToPortfolio(taxlot);
                 }
             }
@@ -184,9 +190,32 @@ namespace Asset_Management_Platform.Utility
             }
         }
 
+        /// <summary>
+        /// Will be called by the security screener
+        /// </summary>
+        /// <param name="ticker"></param>
+        /// <returns></returns>
         public Security GetOrderPreviewSecurity(string ticker)
         {
             var securityToReturn = _stockDataService.GetSpecificSecurityInfo(ticker);
+            if (securityToReturn is Stock)
+                return (Stock)securityToReturn;
+            else if (securityToReturn is MutualFund)
+                return (MutualFund)securityToReturn;
+            else return new Stock("", "XXX", "Unknown Stock", 0, 0.00);
+        }
+
+
+        /// <summary>
+        /// Will be called through the order entry system, where a security type
+        /// must be selected to proceed
+        /// </summary>
+        /// <param name="ticker"></param>
+        /// <param name="securityType"></param>
+        /// <returns></returns>
+        public Security GetOrderPreviewSecurity(string ticker, Security securityType)
+        {
+            var securityToReturn = _stockDataService.GetSpecificSecurityInfo(ticker, securityType);
             if (securityToReturn is Stock)
                 return (Stock)securityToReturn;
             else if (securityToReturn is MutualFund)

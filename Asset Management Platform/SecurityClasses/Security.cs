@@ -65,5 +65,15 @@ namespace Asset_Management_Platform
             _yield = yield;
         }
 
+        public Security()
+        {
+
+        }
+
+        public override string ToString()
+        {
+            return "Security";
+        }
+
     }
 }

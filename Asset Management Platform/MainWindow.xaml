@@ -253,7 +253,7 @@
                 <ComboBox ItemsSource="{Binding TradeTypeStrings}"  SelectedItem="{Binding SelectedTradeType, Mode=TwoWay}" Height="Auto" Width="100"  Margin="3" Grid.Row="0" Grid.Column="1" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
 
                 <TextBlock Text="Security Type:" Margin="40,3,3,3" Grid.Column="2" Grid.Row="0"  VerticalAlignment="Center"/>
-                <ComboBox ItemsSource="{Binding SecurityTypeStrings}"  SelectedItem="{Binding SelectedSecurityType}" Height="Auto" Width="100"  Margin="3" Grid.Row="0" Grid.Column="3" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+                <ComboBox ItemsSource="{Binding SecurityTypes}"  SelectedItem="{Binding SelectedSecurityType}" Height="Auto" Width="100"  Margin="3" Grid.Row="0" Grid.Column="3" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
 
                 <TextBlock Text="Trade Terms:" Margin="40,3,3,3" Grid.Column="2" Grid.Row="1"  VerticalAlignment="Center"/>
                 <ComboBox ItemsSource="{Binding TradeTermStrings}"  SelectedItem="{Binding SelectedTermType}" Height="Auto" Width="100"  Margin="3" Grid.Row="1" Grid.Column="3" VerticalContentAlignment="Center" VerticalAlignment="Center"/>

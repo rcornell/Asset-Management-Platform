@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
+using GalaSoft.MvvmLight;
 using System.Text;
 using System.Threading.Tasks;
 using Asset_Management_Platform.Messages;
@@ -13,6 +14,9 @@ using System.Configuration;
 
 namespace Asset_Management_Platform
 {
+    /// <summary>
+    /// Manages the logic of the user's positions and taxlots
+    /// </summary>
     public class PortfolioDatabaseService : IPortfolioDatabaseService
     {
         private List<string> _positionsToDelete;
@@ -20,6 +24,7 @@ namespace Asset_Management_Platform
         private List<Position> _databaseOriginalState;
 
         private List<Position> _myPositions;
+
 
         public PortfolioDatabaseService()
         {

@@ -29,5 +29,7 @@ namespace Asset_Management_Platform.Utility
         List<Security> GetUpdatedPrices();
 
         Security GetSpecificSecurityInfo(string ticker);
+
+        Security GetSpecificSecurityInfo(string ticker, Security securityType);
     }
 }
