@@ -105,14 +105,14 @@ namespace Asset_Management_Platform
                     {
                         var ticker = reader.GetString(1);
                         var quantity = int.Parse(reader.GetString(2));
-                        var costBasis = decimal.Parse(reader.GetString(3));
+                        var purchasePrice = decimal.Parse(reader.GetString(3));
                         DateTime datePurchased = new DateTime();
                         if(reader.IsDBNull(4))
                             datePurchased = new DateTime(2000,12,31);
                         else if (!string.IsNullOrEmpty(reader.GetString(4)))
                             datePurchased = DateTime.Parse(reader.GetString(4));
 
-                        var taxLot = new Taxlot(ticker, quantity, costBasis, datePurchased);
+                        var taxLot = new Taxlot(ticker, quantity, purchasePrice, datePurchased);
                         taxlotsFromDatabase.Add(taxLot);
                     }
                 }
@@ -208,7 +208,7 @@ namespace Asset_Management_Platform
                             
                                 //Re-adds all current taxlots
                                 foreach (var lot in pos.Taxlots) {                                   
-                                    command.CommandText = string.Format(@"INSERT INTO dbo.MyPortfolio (Ticker, Shares, CostBasis, DatePurchased) VALUES ('{0}' ,'{1}' ,'{2}' , '{3}');", lot.Ticker, lot.Shares, lot.CostBasis, lot.DatePurchased);
+                                    command.CommandText = string.Format(@"INSERT INTO dbo.MyPortfolio (Ticker, Shares, CostBasis, DatePurchased) VALUES ('{0}' ,'{1}' ,'{2}' , '{3}');", lot.Ticker, lot.Shares, lot.PurchasePrice, lot.DatePurchased);
                                     command.ExecuteNonQuery();
                                 }
                             }
@@ -227,11 +227,11 @@ namespace Asset_Management_Platform
                                     //If the position being iterated is the last one, add the terminating SQL clause instead
                                     if (pos != finalPosition && lot != finalTaxlot)
                                     {
-                                        insertString += string.Format("('{0}', '{1}', '{2}', '{3}'), ", lot.Ticker, lot.Shares, lot.CostBasis, lot.DatePurchased);
+                                        insertString += string.Format("('{0}', '{1}', '{2}', '{3}'), ", lot.Ticker, lot.Shares, lot.PurchasePrice, lot.DatePurchased);
                                     }
                                     else
                                     {
-                                        insertString += string.Format("('{0}', '{1}', '{2}', '{3}');", lot.Ticker, lot.Shares, lot.CostBasis, lot.DatePurchased);
+                                        insertString += string.Format("('{0}', '{1}', '{2}', '{3}');", lot.Ticker, lot.Shares, lot.PurchasePrice, lot.DatePurchased);
                                     }
                                 }
                             }

@@ -42,19 +42,6 @@ namespace Asset_Management_Platform
             set { _taxlots = value; }
         }
 
-        //public Position(string ticker, int shares)
-        //{
-        //    _ticker = ticker;
-        //    _sharesOwned = shares;
-        //}
-
-        //public Position(string ticker, int shares, decimal costBasis)
-        //{
-        //    _ticker = ticker;
-        //    _sharesOwned = shares;
-        //    _costBasis = costBasis;
-        //}
-
         public Position(List<Taxlot> taxlots)
         {
             if (_taxlots == null)
@@ -109,45 +96,36 @@ namespace Asset_Management_Platform
             if (_taxlots.Count == 1)
                 return _taxlots[0].CostBasis;
 
-            int shares = 0;
+            decimal totalCost = 0;
 
-            foreach (var lot in _taxlots)
+            foreach (var lot in Taxlots)
             {
-                shares += lot.Shares;
+                totalCost += lot.CostBasis;
             }
 
-            var weightedPieces = new List<decimal>();
-
-            foreach (var lot in _taxlots)
-            {
-                var piece = (lot.Shares / shares) * lot.CostBasis;
-                weightedPieces.Add(piece);
-            }
-
-            return weightedPieces.Sum();
+            return totalCost;
         }
 
         private decimal ComputePurchasePrice()
         {
             if (_taxlots.Count == 1)
-                return (_taxlots[0].CostBasis / _taxlots[0].Shares);
+                return _taxlots[0].PurchasePrice;
 
-            int shares = 0;
+            decimal averagePrice = 0;
+            decimal totalShares = 0;
 
-            foreach (var lot in _taxlots)
+            foreach (var lot in Taxlots)
             {
-                shares += lot.Shares;
+                totalShares += lot.Shares;
             }
 
-            var weightedPieces = new List<decimal>();
-
-            foreach (var lot in _taxlots)
+            foreach (var lot in Taxlots)
             {
-                var piece = (lot.Shares / shares) * lot.PurchasePrice;
-                weightedPieces.Add(piece);
+                decimal weight = lot.Shares / totalShares;
+                averagePrice += lot.PurchasePrice * weight;
             }
 
-            return weightedPieces.Sum();
+            return averagePrice;
         }
 
         public void AddTaxlot(Taxlot taxlotToAdd)
