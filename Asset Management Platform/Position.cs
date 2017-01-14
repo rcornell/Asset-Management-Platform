@@ -61,7 +61,7 @@ namespace Asset_Management_Platform
                 _taxlots = new List<Taxlot>();
 
             if (taxlots != null)
-                _ticker = taxlots[0].Ticker;
+                Ticker = taxlots[0].Ticker;
         
 
             foreach (var lot in taxlots)
@@ -76,7 +76,7 @@ namespace Asset_Management_Platform
                 _taxlots = new List<Taxlot>();
 
             if (_taxlots != null)
-                _ticker = taxlot.Ticker;
+                Ticker = taxlot.Ticker;
 
             _taxlots.Add(taxlot);
         }

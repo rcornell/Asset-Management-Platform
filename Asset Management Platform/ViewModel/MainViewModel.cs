@@ -30,11 +30,6 @@ namespace Asset_Management_Platform
         /// </summary>
         /// 
 
-
-
-
-
-
         private ListCollectionView _displayStockCollectionView;
         public ListCollectionView DisplayStockCollectionView
         {
@@ -461,16 +456,36 @@ namespace Asset_Management_Platform
             DisplaySecurityCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Ticker"));
         }
 
+        /// <summary>
+        /// Calls the PortfolioManagementService to find the current list
+        /// of stocks and mutual funds. Creates observable collections of each
+        /// for binding, then creates the list of all securities for binding.
+        /// </summary>
         private void GetDisplaySecurities()
         {
-            var displayStocks = _portfolioService.GetDisplayStocks();
-            var displayMutualFunds = _portfolioService.GetDisplayMutualFunds();
-            //Create a use for this.
+            //Get each List<T> for stocks and mutual funds, then 
+            //create or update the corresponding ObservableCollection<T>
+            var displayStocksList = _portfolioService.GetDisplayStocks();
+            StockList = new ObservableCollection<DisplayStock>(displayStocksList);
 
+            var displayMutualFundList = _portfolioService.GetDisplayMutualFunds();
+            MutualFundList = new ObservableCollection<DisplayMutualFund>(displayMutualFundList);
 
-            StockList = new ObservableCollection<DisplayStock>(displayStocks);
-            MutualFundList = new ObservableCollection<DisplayMutualFund>(displayMutualFunds);
-            DisplaySecurityCollectionView = new ListCollectionView(StockList);
+            //Instantiate list of all securities, then add all stock and MF items to it.
+            SecurityList = new ObservableCollection<DisplaySecurity>();
+            
+            foreach (var item in StockList)
+            {
+                SecurityList.Add(item);
+            }
+
+            foreach (var item in MutualFundList)
+            {
+                SecurityList.Add(item);
+            }
+
+            //Create or update the ListCollectionViews
+            DisplaySecurityCollectionView = new ListCollectionView(SecurityList);
         }
 
         private void ShowAllSecurities()

@@ -246,9 +246,11 @@ namespace Asset_Management_Platform
 
                             foreach (var pos in _positionsToDelete)
                             {
-                                var deleteCommand = deleteString += pos;
+                                var deleteCommand = deleteString += string.Format(@" '{0}';", pos);
                                 command.CommandText = deleteCommand;
-                                command.BeginExecuteNonQuery();
+                                command.ExecuteNonQuery();
+                                //This will crash if more than one security is being deleted
+                                //at a time.
                             }
 
                         }
@@ -328,9 +330,9 @@ namespace Asset_Management_Platform
             {
                 if (p.SharesOwned == shares)
                 {
-                    _myPositions.Remove(p);
                     //var deleteThis = new Position(security.Ticker, shares);
                     _positionsToDelete.Add(p.Ticker);
+                    break;
                 }
                 else
                 {

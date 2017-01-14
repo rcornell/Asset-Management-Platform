@@ -166,14 +166,54 @@ namespace Asset_Management_Platform.Utility
             }
         }
 
+        /// <summary>
+        /// Directs the executing code to the proper method for disposing
+        /// of the security type. No real differences at the moment, but 
+        /// there may be later.
+        /// </summary>
+        /// <param name="security"></param>
+        /// <param name="ticker"></param>
+        /// <param name="shares"></param>
         public void SellPosition(Security security, string ticker, int shares)
+        {
+            if (security is Stock)
+                SellStock(security, ticker, shares);
+            if (security is MutualFund)
+                SellMutualFund(security, ticker, shares);     
+        }
+
+        private void SellMutualFund(Security security, string ticker, int shares)
+        {
+            if (security != null && !string.IsNullOrEmpty(ticker) && shares > 0){
+                var displayMutualFund = _displayMutualFunds.Find(s => s.Ticker == ticker);
+
+                if (shares == displayMutualFund.Shares)
+                {
+                    _portfolioDatabaseService.SellSharesFromPortfolio(security, shares);
+                    _displayMutualFunds.Remove(displayMutualFund);
+                }
+                else if (shares > displayMutualFund.Shares)
+                {
+                    var message = new TradeMessage() { Shares = shares, Ticker = ticker, Message = "Order quantity exceeds shares owned!" };
+                    Messenger.Default.Send(message);
+                }
+                else //selling partial position
+                {
+                    _portfolioDatabaseService.SellSharesFromPortfolio(security, shares);
+                    displayMutualFund.ReduceShares(shares);
+                }
+            }
+        }
+
+        private void SellStock(Security security, string ticker, int shares)
         {
             if (security != null && !string.IsNullOrEmpty(ticker) && shares > 0)
             {
                 var displayStock = _displayStocks.Find(s => s.Ticker == ticker);
+
                 if (shares == displayStock.Shares)
                 {
-                    _securityDatabaseList.Remove(security);
+                    _portfolioDatabaseService.SellSharesFromPortfolio(security, shares);
                     _displayStocks.Remove(displayStock);
                 }
                 else if (shares > displayStock.Shares)
@@ -183,10 +223,9 @@ namespace Asset_Management_Platform.Utility
                 }
                 else //selling partial position
                 {
+                    _portfolioDatabaseService.SellSharesFromPortfolio(security, shares);
                     displayStock.ReduceShares(shares);
                 }
-                
-
             }
         }
 
