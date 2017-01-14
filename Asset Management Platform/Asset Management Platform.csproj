@@ -122,6 +122,7 @@
     <Compile Include="Messages\TradeMessage.cs" />
     <Compile Include="PositionByWeight.cs" />
     <Compile Include="Taxlot.cs" />
+    <Compile Include="Trade.cs" />
     <Compile Include="Utility\IPortfolioDatabaseService.cs" />
     <Compile Include="Messages\DatabaseMessage.cs" />
     <Compile Include="Messages\PortfolioMessage.cs" />

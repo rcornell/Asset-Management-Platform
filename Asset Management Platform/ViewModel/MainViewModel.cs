@@ -597,8 +597,9 @@ namespace Asset_Management_Platform
 
         private void ExecuteExecuteOrder()
         {
+            var newTrade = new Trade(_previewSecurity, _orderTickerText, _orderShareQuantity, _selectedTermType, _limitPrice, _selectedDurationType);
             if (SelectedTradeType == "Buy")
-                _portfolioService.AddPosition(_previewSecurity, _orderTickerText, _orderShareQuantity, _selectedTermType, _limitPrice, _selectedDurationType);
+                _portfolioService.AddPosition(newTrade);
             else if (SelectedTradeType == "Sell")
                 _portfolioService.SellPosition(_previewSecurity, _orderTickerText, _orderShareQuantity);
             GetDisplaySecurities();

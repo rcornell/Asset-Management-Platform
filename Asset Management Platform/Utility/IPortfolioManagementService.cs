@@ -14,7 +14,7 @@ namespace Asset_Management_Platform.Utility
 
         void StopUpdates();
 
-        void AddPosition(Security security, string ticker, int shares, string term, double limit, string orderDuration);
+        void AddPosition(Trade trade);
 
         void SellPosition(Security security, string ticker, int shares);
 

@@ -126,78 +126,88 @@ namespace Asset_Management_Platform.Utility
             return DisplayMutualFunds;
         }
 
-        public void AddPosition(Security securityToAdd, string ticker, int shares, string terms, double limit, string orderDuration)
+        public void AddPosition(Trade trade)
         {
             //Check if any values are null or useless
-            var validOrder = OrderTermsAreValid(securityToAdd, ticker, shares, terms, limit, orderDuration);
-            var isAwayFromLimit = CheckBuyOrderLimit(securityToAdd, terms, limit);
+            var validOrder = OrderTermsAreValid(trade);
+            var isAwayFromLimit = CheckBuyOrderLimit(trade);
 
-            if (validOrder && terms == "Limit" && isAwayFromLimit)
+            if (validOrder && trade.Terms == "Limit" && isAwayFromLimit)
             {
                 //Order is OK but limit prevents execution
-                CreateLimitOrder(securityToAdd, ticker, shares, terms, limit, orderDuration);
+                CreateLimitOrder(trade);
                 return;
             }
-            else if (validOrder && terms == "Market")
+            else if (validOrder && trade.Terms == "Market")
             {
-                if (!_securityDatabaseList.Any(s => s.Ticker == ticker))
-                    _securityDatabaseList.Add(securityToAdd);
+                if (!_securityDatabaseList.Any(s => s.Ticker == trade.Ticker))
+                    _securityDatabaseList.Add(trade.Security);
 
                 //Check to confirm that shares of this security aren't in relevant
                 //Stock or MutualFund list
-                if (securityToAdd is Stock && !DisplayStocks.Any(s => s.Ticker == ticker))
+                if (trade.Security is Stock && !DisplayStocks.Any(s => s.Ticker == trade.Ticker))
                 {
                     //Add position to portfolio database for online storage
-                    var taxlot = new Taxlot(ticker, shares, securityToAdd.LastPrice, DateTime.Now);
+                    var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now);
                     var position = new Position(taxlot);
                     _portfolioDatabaseService.AddToPortfolio(position);
 
                     //Add new displaystock for UI
-                    DisplayStocks.Add(new DisplayStock(position, (Stock)securityToAdd));
+                    DisplayStocks.Add(new DisplayStock(position, (Stock)trade.Security));
                 }
                 //Ticker exists in database and security is stock
-                else if (securityToAdd is Stock && DisplayStocks.Any(s => s.Ticker == ticker))
+                else if (trade.Security is Stock && DisplayStocks.Any(s => s.Ticker == trade.Ticker))
                 {
                     //See if this affects the DisplayStock in the UI
-                    var taxlot = new Taxlot(ticker, shares, securityToAdd.LastPrice, DateTime.Now);
+                    var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now);
                     _portfolioDatabaseService.AddToPortfolio(taxlot);
                 }
                 //This ticker isn't already owned and it is a MutualFund
-                else if (securityToAdd is MutualFund && !DisplayMutualFunds.Any(s => s.Ticker == ticker)){
+                else if (trade.Security is MutualFund && !DisplayMutualFunds.Any(s => s.Ticker == trade.Ticker)){
 
-                    var taxlot = new Taxlot(ticker, shares, securityToAdd.LastPrice, DateTime.Now);
+                    var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now);
                     var position = new Position(taxlot);
                     _portfolioDatabaseService.AddToPortfolio(position);
-                    DisplayMutualFunds.Add(new DisplayMutualFund(position, (MutualFund)securityToAdd));
+                    DisplayMutualFunds.Add(new DisplayMutualFund(position, (MutualFund)trade.Security));
                 }
-                else if (securityToAdd is MutualFund && DisplayMutualFunds.Any(s => s.Ticker == ticker))
+                else if (trade.Security is MutualFund && DisplayMutualFunds.Any(s => s.Ticker == trade.Ticker))
                 {
                     //Security is known and already held, so just add the new taxlot.
-                    var taxlot = new Taxlot(ticker, shares, securityToAdd.LastPrice, DateTime.Now);
+                    var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now);
                     _portfolioDatabaseService.AddToPortfolio(taxlot);
                 }
             }
         }
 
-        private void CreateLimitOrder(Security securityToAdd, string ticker, int shares, string terms, double limit, string orderDuration)
+        private void CreateLimitOrder(Trade trade)
         {
             throw new NotImplementedException();
         }
 
-        private bool OrderTermsAreValid(Security securityToAdd, string ticker, int shares, string terms, double limit, string orderDuration)
+        private bool OrderTermsAreValid(Trade trade)
         {
-            if (securityToAdd != null && !string.IsNullOrEmpty(ticker) && shares > 0 && !string.IsNullOrEmpty(terms) && !string.IsNullOrEmpty(orderDuration))
+            var security = trade.Security;
+            var ticker = trade.Ticker;
+            var shares = trade.Shares;
+            var terms = trade.Terms;
+            var limit = trade.Limit;
+            var orderDuration = trade.OrderDuration;
+
+            if (security != null && !string.IsNullOrEmpty(ticker) && shares > 0 && !string.IsNullOrEmpty(terms) && !string.IsNullOrEmpty(orderDuration))
                 return true;
             return false;
         }
 
-        private bool CheckBuyOrderLimit(Security securityToAdd, string terms, double limit)
+        private bool CheckBuyOrderLimit(Trade trade)
         {
-            if (terms == "Limit" && securityToAdd.LastPrice <= (decimal)limit)
+            var terms = trade.Terms;
+            var security = trade.Security;
+            var limit = (decimal)trade.Limit;
+            if (terms == "Limit" && security.LastPrice <= limit)
             {
                 return false;
             }
-            else if (terms == "Limit" && securityToAdd.LastPrice >= (decimal)limit)
+            else if (terms == "Limit" && security.LastPrice >= limit)
                 return true;
 
             return false;
