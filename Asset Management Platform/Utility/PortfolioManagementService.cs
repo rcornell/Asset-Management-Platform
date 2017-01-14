@@ -126,13 +126,20 @@ namespace Asset_Management_Platform.Utility
             return DisplayMutualFunds;
         }
 
-        public void AddPosition(Security securityToAdd, string ticker, int shares)
+        public void AddPosition(Security securityToAdd, string ticker, int shares, string terms, double limit, string orderDuration)
         {
             //Check if any values are null or useless
-            if (securityToAdd != null && !string.IsNullOrEmpty(ticker) && shares > 0) {
+            var validOrder = OrderTermsAreValid(securityToAdd, ticker, shares, terms, limit, orderDuration);
+            var isAwayFromLimit = CheckBuyOrderLimit(securityToAdd, terms, limit);
 
-                var taxlot = new Taxlot(ticker, shares, securityToAdd.LastPrice, DateTime.Now);
-                var position = new Position(taxlot);
+            if (validOrder && terms == "Limit" && isAwayFromLimit)
+            {
+                //Order is OK but limit prevents execution
+                CreateLimitOrder(securityToAdd, ticker, shares, terms, limit, orderDuration);
+                return;
+            }
+            else if (validOrder && terms == "Market")
+            {
                 if (!_securityDatabaseList.Any(s => s.Ticker == ticker))
                     _securityDatabaseList.Add(securityToAdd);
 
@@ -141,6 +148,8 @@ namespace Asset_Management_Platform.Utility
                 if (securityToAdd is Stock && !DisplayStocks.Any(s => s.Ticker == ticker))
                 {
                     //Add position to portfolio database for online storage
+                    var taxlot = new Taxlot(ticker, shares, securityToAdd.LastPrice, DateTime.Now);
+                    var position = new Position(taxlot);
                     _portfolioDatabaseService.AddToPortfolio(position);
 
                     //Add new displaystock for UI
@@ -150,20 +159,48 @@ namespace Asset_Management_Platform.Utility
                 else if (securityToAdd is Stock && DisplayStocks.Any(s => s.Ticker == ticker))
                 {
                     //See if this affects the DisplayStock in the UI
+                    var taxlot = new Taxlot(ticker, shares, securityToAdd.LastPrice, DateTime.Now);
                     _portfolioDatabaseService.AddToPortfolio(taxlot);
                 }
                 //This ticker isn't already owned and it is a MutualFund
-                else if (securityToAdd is MutualFund && !DisplayMutualFunds.Any(s => s.Ticker == ticker)){  
-                    
+                else if (securityToAdd is MutualFund && !DisplayMutualFunds.Any(s => s.Ticker == ticker)){
+
+                    var taxlot = new Taxlot(ticker, shares, securityToAdd.LastPrice, DateTime.Now);
+                    var position = new Position(taxlot);
                     _portfolioDatabaseService.AddToPortfolio(position);
                     DisplayMutualFunds.Add(new DisplayMutualFund(position, (MutualFund)securityToAdd));
                 }
                 else if (securityToAdd is MutualFund && DisplayMutualFunds.Any(s => s.Ticker == ticker))
                 {
                     //Security is known and already held, so just add the new taxlot.
+                    var taxlot = new Taxlot(ticker, shares, securityToAdd.LastPrice, DateTime.Now);
                     _portfolioDatabaseService.AddToPortfolio(taxlot);
                 }
             }
+        }
+
+        private void CreateLimitOrder(Security securityToAdd, string ticker, int shares, string terms, double limit, string orderDuration)
+        {
+            throw new NotImplementedException();
+        }
+
+        private bool OrderTermsAreValid(Security securityToAdd, string ticker, int shares, string terms, double limit, string orderDuration)
+        {
+            if (securityToAdd != null && !string.IsNullOrEmpty(ticker) && shares > 0 && !string.IsNullOrEmpty(terms) && !string.IsNullOrEmpty(orderDuration))
+                return true;
+            return false;
+        }
+
+        private bool CheckBuyOrderLimit(Security securityToAdd, string terms, double limit)
+        {
+            if (terms == "Limit" && securityToAdd.LastPrice <= (decimal)limit)
+            {
+                return false;
+            }
+            else if (terms == "Limit" && securityToAdd.LastPrice >= (decimal)limit)
+                return true;
+
+            return false;
         }
 
         /// <summary>
