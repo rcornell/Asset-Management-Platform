@@ -270,12 +270,6 @@
                 <TextBlock Text="Shares:" Margin="3" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"/>
                 <TextBox Text="{Binding OrderShareQuantity, Mode=TwoWay}" Grid.Row="3" Grid.Column="1" Width="100" Height="20" Margin="3"  VerticalAlignment="Center"/>
 
-            
-
-
-
-
-
             <Button Content="Preview Order" Margin="3" Command="{Binding PreviewOrder}" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
             <Button Content="Execute" Command="{Binding ExecuteOrder}" Margin="40,3,3,3" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2" VerticalAlignment="Center" IsEnabled="{Binding ExecuteButtonEnabled}"/>
         </Grid>
@@ -356,5 +350,14 @@
                 </Border>
             </Grid>
         </Border>
+        <Grid Grid.Column="2" Grid.Row="4">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Grid.Row="1" Text="Limit order queue goes here"/>
+        </Grid>
     </Grid>
 </Window>

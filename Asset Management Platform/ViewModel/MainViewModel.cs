@@ -506,6 +506,7 @@ namespace Asset_Management_Platform
         private void GetAllocationChartPositions()
         {
             var displayStocks = _portfolioService.GetDisplayStocks();
+            var displayMutualFunds = _portfolioService.GetDisplayMutualFunds();
             decimal totalValue = 0;
 
             foreach (var stock in displayStocks)
@@ -513,14 +514,26 @@ namespace Asset_Management_Platform
                 totalValue += decimal.Parse(stock.MarketValue);
             }
 
+            foreach (var fund in displayMutualFunds)
+            {
+                totalValue += decimal.Parse(fund.MarketValue);
+            }
             TotalValue = totalValue;
 
             ObservableCollection<PositionByWeight> posByWeight = new ObservableCollection<PositionByWeight>();
+
             foreach (var stock in displayStocks)
             {
                 decimal weight = (decimal.Parse(stock.MarketValue) / totalValue) * 100;
-                posByWeight.Add(new PositionByWeight(stock.Ticker, System.Math.Round(weight,2)));
+                posByWeight.Add(new PositionByWeight(stock.Ticker, Math.Round(weight,2)));
             }
+
+            foreach (var fund in displayMutualFunds)
+            {
+                decimal weight = (decimal.Parse(fund.MarketValue) / totalValue) * 100;
+                posByWeight.Add(new PositionByWeight(fund.Ticker, Math.Round(weight, 2)));
+            }
+
             AllocationChartPositions = posByWeight;
         }
 
