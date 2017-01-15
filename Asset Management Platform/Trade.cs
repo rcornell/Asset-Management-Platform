@@ -9,6 +9,7 @@ namespace Asset_Management_Platform
 
     public class Trade
     {
+        public string BuyOrSell;
         public Security Security;
         public string Ticker;
         public int Shares;
@@ -17,8 +18,9 @@ namespace Asset_Management_Platform
         public string OrderDuration;
 
 
-        public Trade(Security securityToAdd, string ticker, int shares, string terms, double limit, string orderDuration)
+        public Trade(string buyOrSell, Security securityToAdd, string ticker, int shares, string terms, double limit, string orderDuration)
         {
+            BuyOrSell = buyOrSell;
             Security = securityToAdd;
             Ticker = ticker;
             Shares = shares;

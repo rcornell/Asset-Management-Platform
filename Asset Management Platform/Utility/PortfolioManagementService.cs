@@ -18,6 +18,15 @@ namespace Asset_Management_Platform.Utility
         private DispatcherTimer _timer;
         private List<Security> _securityDatabaseList; //Known securities, used for pricing
 
+        private List<LimitOrder> _limitOrderList;
+        public List<LimitOrder> LimitOrderList //used to display in MainViewModel
+        {
+            get
+            {
+                return _limitOrderList;
+            }
+        }
+
         private List<DisplayStock> _displayStocks;
         public List<DisplayStock> DisplayStocks //used to display in MainViewModel
         {
@@ -134,7 +143,7 @@ namespace Asset_Management_Platform.Utility
 
             if (validOrder && trade.Terms == "Limit" && isAwayFromLimit)
             {
-                //Order is OK but limit prevents execution
+                //Order is valid but limit prevents execution
                 CreateLimitOrder(trade);
                 return;
             }
@@ -181,9 +190,12 @@ namespace Asset_Management_Platform.Utility
 
         private void CreateLimitOrder(Trade trade)
         {
-            
+            var newLimitOrder = new LimitOrder(trade);
 
+            if (_limitOrderList == null)
+                _limitOrderList = new List<LimitOrder>();
 
+            _limitOrderList.Add(newLimitOrder);
         }
 
         private bool OrderTermsAreValid(Trade trade)
@@ -195,7 +207,8 @@ namespace Asset_Management_Platform.Utility
             var limit = trade.Limit;
             var orderDuration = trade.OrderDuration;
 
-            if (security != null && !string.IsNullOrEmpty(ticker) && shares > 0 && !string.IsNullOrEmpty(terms) && !string.IsNullOrEmpty(orderDuration))
+            if (security != null && !string.IsNullOrEmpty(ticker) && shares > 0 
+                && !string.IsNullOrEmpty(terms) && !string.IsNullOrEmpty(orderDuration))
                 return true;
             return false;
         }

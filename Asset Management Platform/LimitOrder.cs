@@ -22,9 +22,9 @@ namespace Asset_Management_Platform
 
         }
 
-        public LimitOrder(Trade trade, string tradeType)
+        public LimitOrder(Trade trade)
         {
-            TradeType = tradeType;
+            TradeType = trade.BuyOrSell;
             Ticker = trade.Ticker;
             Shares = trade.Shares;
             Limit = trade.Limit;
