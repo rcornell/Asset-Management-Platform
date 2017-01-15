@@ -324,6 +324,17 @@ namespace Asset_Management_Platform.Utility
             else return new Stock("", "XXX", "Unknown Stock", 0, 0.00);
         }
 
+        public void UploadAllToDatabase()
+        {
+            UploadPortfolio();
+            UploadLimitOrdersToDatabase();
+        }
+
+        public void UploadLimitOrdersToDatabase()
+        {
+            _portfolioDatabaseService.UploadLimitOrdersToDatabase(LimitOrderList);
+        }
+
         public void UploadPortfolio()
         {
             _portfolioDatabaseService.SavePortfolioToDatabase();

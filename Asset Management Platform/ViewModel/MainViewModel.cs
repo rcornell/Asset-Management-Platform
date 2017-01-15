@@ -411,7 +411,7 @@ namespace Asset_Management_Platform
             }
         }
 
-        private IPortfolioManagementService _portfolioService;
+        private IPortfolioManagementService _portfolioManagementService;
 
         private Security _previewSecurity;
         public Security PreviewSecurity {
@@ -446,7 +446,7 @@ namespace Asset_Management_Platform
             LimitPrice = 0;
             TotalValue = 0;
 
-            _portfolioService = portfolioService;
+            _portfolioManagementService = portfolioService;
             Messenger.Default.Register<PortfolioMessage>(this, RefreshCollection);
             Messenger.Default.Register<TradeMessage>(this, SetAlertMessage);
             //_portfolioService.StartUpdates(); //TURNED OFF FOR TESTING
@@ -465,10 +465,10 @@ namespace Asset_Management_Platform
         {
             //Get each List<T> for stocks and mutual funds, then 
             //create or update the corresponding ObservableCollection<T>
-            var displayStocksList = _portfolioService.GetDisplayStocks();
+            var displayStocksList = _portfolioManagementService.GetDisplayStocks();
             StockList = new ObservableCollection<DisplayStock>(displayStocksList);
 
-            var displayMutualFundList = _portfolioService.GetDisplayMutualFunds();
+            var displayMutualFundList = _portfolioManagementService.GetDisplayMutualFunds();
             MutualFundList = new ObservableCollection<DisplayMutualFund>(displayMutualFundList);
 
             //Instantiate list of all securities, then add all stock and MF items to it.
@@ -505,8 +505,8 @@ namespace Asset_Management_Platform
 
         private void GetAllocationChartPositions()
         {
-            var displayStocks = _portfolioService.GetDisplayStocks();
-            var displayMutualFunds = _portfolioService.GetDisplayMutualFunds();
+            var displayStocks = _portfolioManagementService.GetDisplayStocks();
+            var displayMutualFunds = _portfolioManagementService.GetDisplayMutualFunds();
             decimal totalValue = 0;
 
             foreach (var stock in displayStocks)
@@ -547,7 +547,7 @@ namespace Asset_Management_Platform
             var orderOk = CheckOrderTerms();     
             if (orderOk)
             {
-                PreviewSecurity = _portfolioService.GetOrderPreviewSecurity(_orderTickerText, SelectedSecurityType);
+                PreviewSecurity = _portfolioManagementService.GetOrderPreviewSecurity(_orderTickerText, SelectedSecurityType);
 
                 if (PreviewSecurity is Stock)
                 {
@@ -590,7 +590,7 @@ namespace Asset_Management_Platform
 
             if (!string.IsNullOrEmpty(screenerTicker))
             {
-                var resultStock = _portfolioService.GetOrderPreviewSecurity(screenerTicker);
+                var resultStock = _portfolioManagementService.GetOrderPreviewSecurity(screenerTicker);
                 ScreenerStock = resultStock;
             }
         }
@@ -599,9 +599,9 @@ namespace Asset_Management_Platform
         {
             var newTrade = new Trade(SelectedTradeType, _previewSecurity, _orderTickerText, _orderShareQuantity, _selectedTermType, _limitPrice, _selectedDurationType);
             if (SelectedTradeType == "Buy")
-                _portfolioService.AddPosition(newTrade);
+                _portfolioManagementService.AddPosition(newTrade);
             else if (SelectedTradeType == "Sell")
-                _portfolioService.SellPosition(_previewSecurity, _orderTickerText, _orderShareQuantity);
+                _portfolioManagementService.SellPosition(_previewSecurity, _orderTickerText, _orderShareQuantity);
             GetDisplaySecurities();
             GetAllocationChartPositions();
 
@@ -625,19 +625,19 @@ namespace Asset_Management_Platform
 
         public void ExecuteDeletePortfolio()
         {
-            _portfolioService.DeletePortfolio();
+            _portfolioManagementService.DeletePortfolio();
             GetDisplaySecurities();
             GetAllocationChartPositions();
         }
 
         public void ExecuteSavePortfolio()
         {
-            _portfolioService.UploadPortfolio();
+            _portfolioManagementService.UploadPortfolio();
         }
 
         private void ExecuteCloseApplication()
         {
-            _portfolioService.UploadPortfolio();
+            _portfolioManagementService.UploadAllToDatabase();
             System.Windows.Application.Current.Shutdown();
         }
 

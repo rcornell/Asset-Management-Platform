@@ -14,7 +14,10 @@ namespace Asset_Management_Platform.Utility
 
         void LoadPositionsFromDatabase();
         void SavePortfolioToDatabase();
-        
+
+        void UploadLimitOrdersToDatabase(List<LimitOrder> limitOrders);
+
+
         void BackupDatabase();
 
         void AddToPortfolio(Position positionToAdd);

@@ -22,7 +22,6 @@ namespace Asset_Management_Platform
         private List<string> _positionsToDelete;
         private SqlDataReader _reader;
         private List<Position> _databaseOriginalState;
-
         private List<Position> _myPositions;
 
 
@@ -293,6 +292,39 @@ namespace Asset_Management_Platform
                     command.CommandText = backup;
                     command.ExecuteNonQuery();
                 }
+            }
+        }
+
+        public void UploadLimitOrdersToDatabase(List<LimitOrder> limitOrders)
+        {
+            var insertString = @"INSERT INTO dbo.MyLimitOrders (Ticker, Shares, CostBasis, DatePurchased) VALUES ";
+            var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
+            foreach (var order in limitOrders)
+            {
+                var tradeType = order.TradeType;
+                var ticker = order.Ticker;
+                var shares = order.Shares;
+                var limit = order.Limit;
+                var securityType = order.SecurityType.ToString();
+
+                insertString += string.Format(@"('{0}', '{1}', {2}, {3}, '{4}') ", tradeType, ticker, shares, limit, securityType);
+            }
+            
+            //DO STUFF. Table is called "MyLimitOrders" ID, TradeType, Ticker, Shares, Limit, SecurityType, OrderDuration
+
+            using (var connection = new SqlConnection(storageString))
+            {
+                var truncateString = @"TRUNCATE TABLE [dbo.MyLimitOrders];";
+                using (var command = new SqlCommand(truncateString, connection))
+                {
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
+
+                using (var command = new SqlCommand(insertString, connection))
+                {
+                    command.ExecuteNonQuery();
+                }      
             }
         }
 
