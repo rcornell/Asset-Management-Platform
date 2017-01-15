@@ -119,6 +119,7 @@
     <Compile Include="DisplayMutualFund.cs" />
     <Compile Include="DisplaySecurity.cs" />
     <Compile Include="DisplayStock.cs" />
+    <Compile Include="LimitOrder.cs" />
     <Compile Include="Messages\TradeMessage.cs" />
     <Compile Include="PositionByWeight.cs" />
     <Compile Include="Taxlot.cs" />

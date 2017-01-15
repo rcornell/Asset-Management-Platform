@@ -181,7 +181,9 @@ namespace Asset_Management_Platform.Utility
 
         private void CreateLimitOrder(Trade trade)
         {
-            throw new NotImplementedException();
+            
+
+
         }
 
         private bool OrderTermsAreValid(Trade trade)
