@@ -19,7 +19,7 @@ namespace Asset_Management_Platform
             get { return ComputeDatePurchased(); }
         }
 
-        public int SharesOwned
+        public decimal SharesOwned
         {
             get { return ComputeSharesOwned(); }
 
@@ -76,12 +76,12 @@ namespace Asset_Management_Platform
                 return _taxlots[0].DatePurchased.ToShortDateString();
         }
 
-        private int ComputeSharesOwned()
+        private decimal ComputeSharesOwned()
         {
             if (_taxlots.Count == 1)
                 return _taxlots[0].Shares;
 
-            int shares = 0;
+            decimal shares = 0;
 
             foreach (var lot in _taxlots)
             {
@@ -133,7 +133,7 @@ namespace Asset_Management_Platform
             Taxlots.Add(taxlotToAdd);
         }
 
-        public void SellShares(int shares)
+        public void SellShares(decimal shares)
         {
             throw new NotImplementedException();
         }

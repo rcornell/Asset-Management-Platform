@@ -12,7 +12,7 @@ namespace Asset_Management_Platform.Messages
 
         public string Ticker;
 
-        public int Shares;
+        public decimal Shares;
 
         public TradeMessage()
         {

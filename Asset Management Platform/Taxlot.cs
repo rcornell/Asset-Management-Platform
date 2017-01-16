@@ -35,14 +35,14 @@ namespace Asset_Management_Platform
             set { _purchasePrice = value; }
         }
 
-        private int _shares;
-        public int Shares
+        private decimal _shares;
+        public decimal Shares
         {
             get { return _shares; }
             set { _shares = value; }
         }
 
-        public Taxlot(string ticker, int shares, decimal purchasePrice, DateTime datePurchased)
+        public Taxlot(string ticker, decimal shares, decimal purchasePrice, DateTime datePurchased)
         {
             Ticker = ticker;
             Shares = shares;

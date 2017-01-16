@@ -293,15 +293,29 @@ namespace Asset_Management_Platform.Utility
 
         private void CheckLimitOrdersForActive()
         {
-            var securitiesToCheck = new List<Security>();
+            //var securitiesToCheck = new List<Security>();
 
-            foreach (var order in LimitOrderList)
-            {
-                var newSecurity = new Security("", order.Ticker, "", 0, 0);
-                securitiesToCheck.Add(newSecurity);
-            }
+            //foreach (var order in LimitOrderList)
+            //{
+            //    var newSecurity = new Security("", order.Ticker, "", 0, 0);
+            //    securitiesToCheck.Add(newSecurity);
+            //}
 
-            var list = _stockDataService.GetSecurityInfo(securitiesToCheck);
+            //var updatedSecurities = _stockDataService.GetSecurityInfo(securitiesToCheck);
+
+            //foreach (var sec in updatedSecurities)
+            //{
+            //    var matches = LimitOrderList.Where(s => s.Ticker == sec.Ticker);
+            //    foreach (var match in matches)
+            //    {
+            //        var isActive = match.IsLimitOrderActive(sec.LastPrice);
+            //        if (isActive) {
+            //            var newSecurity = new Security("", sec.Ticker, sec.Description, sec.LastPrice, sec.Yield);
+            //            var newTrade = new Trade(match.TradeType, newSecurity, match.Ticker, match.Shares, "Limit", match.Limit, match.OrderDuration);
+            //            SellPosition();
+            //        }
+            //    }
+            //}
         }
 
         /// <summary>

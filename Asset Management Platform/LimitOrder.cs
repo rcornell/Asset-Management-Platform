@@ -9,7 +9,6 @@ namespace Asset_Management_Platform
 {
     public class LimitOrder : ObservableObject
     {
-
         private string _tradeType;
         public string TradeType {
             get { return _tradeType; }

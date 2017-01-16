@@ -441,7 +441,7 @@ namespace Asset_Management_Platform
         /// </summary>
         /// <param name="security"></param>
         /// <param name="shares"></param>
-        public void SellSharesFromPortfolio(Security security, int shares)
+        public void SellSharesFromPortfolio(Security security, decimal shares)
         {
             foreach (var p in _myPositions.Where(p => p.Ticker == security.Ticker))
             {

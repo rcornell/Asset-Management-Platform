@@ -20,7 +20,7 @@ namespace Asset_Management_Platform
             }
         }
 
-        public int Shares
+        public decimal Shares
         {
             get { return _position.SharesOwned; }
         }
@@ -104,7 +104,7 @@ namespace Asset_Management_Platform
             _fund = fund;
         }
 
-        public void ReduceShares(int shares)
+        public void ReduceShares(decimal shares)
         {
             _position.SellShares(shares);
         }
