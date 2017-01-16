@@ -311,19 +311,38 @@ namespace Asset_Management_Platform
                 insertString += string.Format(@"('{0}', '{1}', {2}, {3}, '{4}', '{5}') ", tradeType, ticker, shares, limit, securityType, orderDuration);
             }
 
-            using (var connection = new SqlConnection(storageString))
-            {
-                var truncateString = @"TRUNCATE TABLE [dbo.MyLimitOrders];";
-                using (var command = new SqlCommand(truncateString, connection))
+            try { 
+                using (var connection = new SqlConnection(storageString))
                 {
                     connection.Open();
-                    command.ExecuteNonQuery();
+                    var selectAllString = @"SELECT * FROM MyLimitOrders";
+
+                    using (var selectCommand = new SqlCommand(selectAllString, connection))
+                    {
+                        var reader = selectCommand.ExecuteReader();
+                        if (reader.HasRows) { 
+                            var truncateString = @"TRUNCATE Table MyLimitOrders;";
+                            using (var truncateCommand = new SqlCommand(truncateString, connection))
+                            {
+                                truncateCommand.ExecuteNonQuery();
+                            }
+                        }
+                    }    
                 }
 
-                using (var command = new SqlCommand(insertString, connection))
+                using (var connection = new SqlConnection(storageString))
                 {
-                    command.ExecuteNonQuery();
-                }      
+                    connection.Open();
+
+                    using (var insertCommand = new SqlCommand(insertString, connection))
+                    {
+                        insertCommand.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw new NotImplementedException();
             }
         }
 
