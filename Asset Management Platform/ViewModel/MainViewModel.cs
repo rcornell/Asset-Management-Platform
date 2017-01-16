@@ -612,7 +612,7 @@ namespace Asset_Management_Platform
             if (SelectedTradeType == "Buy")
                 _portfolioManagementService.AddPosition(newTrade);
             else if (SelectedTradeType == "Sell")
-                _portfolioManagementService.SellPosition(_previewSecurity, _orderTickerText, _orderShareQuantity);
+                _portfolioManagementService.SellPosition(newTrade);
             GetDisplaySecurities();
             GetLimitOrders();
             GetAllocationChartPositions();
@@ -620,7 +620,7 @@ namespace Asset_Management_Platform
             SelectedDurationType = "Day";
             OrderTickerText = "";
             OrderShareQuantity = 0;
-            SelectedTermType = "";
+            SelectedTermType = "Market";
             SelectedTradeType = " ";
             LimitPrice = 0;
             PreviewPrice = 0;

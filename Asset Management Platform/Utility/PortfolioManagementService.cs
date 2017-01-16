@@ -106,13 +106,11 @@ namespace Asset_Management_Platform.Utility
             _limitOrderList = _portfolioDatabaseService.LoadLimitOrdersFromDatabase();
         }
 
-        
-
         public void AddPosition(Trade trade)
         {
             //Check if any values are null or useless
             var validOrder = OrderTermsAreValid(trade);
-            var isAwayFromLimit = CheckBuyOrderLimit(trade);
+            var isAwayFromLimit = CheckOrderLimit(trade);
 
             if (validOrder && trade.Terms == "Limit" && isAwayFromLimit)
             {
@@ -186,17 +184,32 @@ namespace Asset_Management_Platform.Utility
             return false;
         }
 
-        private bool CheckBuyOrderLimit(Trade trade)
+        private bool CheckOrderLimit(Trade trade)
         {
+            var buyOrSell = trade.BuyOrSell;
             var terms = trade.Terms;
             var security = trade.Security;
-            var limit = (decimal)trade.Limit;
-            if (terms == "Limit" && security.LastPrice <= limit)
+            var limit = trade.Limit;
+
+            //Buy Order validation
+            if (buyOrSell == "Buy" && terms == "Limit" && security.LastPrice <= limit)
             {
                 return false;
             }
-            else if (terms == "Limit" && security.LastPrice >= limit)
+            else if (buyOrSell == "Buy" && terms == "Limit" && security.LastPrice >= limit)
+            { 
                 return true;
+            }
+
+            //Sell Order validation
+            if (buyOrSell == "Sell" && terms == "Limit" && security.LastPrice <= limit)
+            {
+                return false;
+            }
+            else if(buyOrSell == "Sell" && terms == "Limit" && security.LastPrice >= limit)
+            {
+                return true;
+            }
 
             return false;
         }
@@ -209,59 +222,67 @@ namespace Asset_Management_Platform.Utility
         /// <param name="security"></param>
         /// <param name="ticker"></param>
         /// <param name="shares"></param>
-        public void SellPosition(Security security, string ticker, int shares)
+        public void SellPosition(Trade trade)
         {
-            if (security is Stock)
-                SellStock(security, ticker, shares);
-            if (security is MutualFund)
-                SellMutualFund(security, ticker, shares);     
+            var validOrder = OrderTermsAreValid(trade);
+            var isAwayFromLimit = CheckOrderLimit(trade);
+
+            if (trade.Security is Stock)
+                SellStock(trade);
+            if (trade.Security is MutualFund)
+                SellMutualFund(trade);     
         }
 
-        private void SellMutualFund(Security security, string ticker, int shares)
+        private void SellMutualFund(Trade trade)
         {
-            if (security != null && !string.IsNullOrEmpty(ticker) && shares > 0){
-                var displayMutualFund = _displayMutualFunds.Find(s => s.Ticker == ticker);
+            var security = trade.Security;
+            var ticker = trade.Ticker;
+            var shares = trade.Shares;
 
-                if (shares == displayMutualFund.Shares)
-                {
-                    _portfolioDatabaseService.SellSharesFromPortfolio(security, shares);
-                    _displayMutualFunds.Remove(displayMutualFund);
-                }
-                else if (shares > displayMutualFund.Shares)
-                {
-                    var message = new TradeMessage() { Shares = shares, Ticker = ticker, Message = "Order quantity exceeds shares owned!" };
-                    Messenger.Default.Send(message);
-                }
-                else //selling partial position
-                {
-                    _portfolioDatabaseService.SellSharesFromPortfolio(security, shares);
-                    displayMutualFund.ReduceShares(shares);
-                }
-            }
-        }
+            var displayMutualFund = _displayMutualFunds.Find(s => s.Ticker == ticker);
 
-        private void SellStock(Security security, string ticker, int shares)
-        {
-            if (security != null && !string.IsNullOrEmpty(ticker) && shares > 0)
+            if (shares == displayMutualFund.Shares)
             {
-                var displayStock = _displayStocks.Find(s => s.Ticker == ticker);
-
-                if (shares == displayStock.Shares)
-                {
-                    _portfolioDatabaseService.SellSharesFromPortfolio(security, shares);
-                    _displayStocks.Remove(displayStock);
-                }
-                else if (shares > displayStock.Shares)
-                {
-                    var message = new TradeMessage() { Shares = shares, Ticker = ticker, Message = "Order quantity exceeds shares owned!" };
-                    Messenger.Default.Send(message);
-                }
-                else //selling partial position
-                {
-                    _portfolioDatabaseService.SellSharesFromPortfolio(security, shares);
-                    displayStock.ReduceShares(shares);
-                }
+                _portfolioDatabaseService.SellSharesFromPortfolio(security, shares);
+                _displayMutualFunds.Remove(displayMutualFund);
             }
+            else if (shares > displayMutualFund.Shares)
+            {
+                var message = new TradeMessage() { Shares = shares, Ticker = ticker, Message = "Order quantity exceeds shares owned!" };
+                Messenger.Default.Send(message);
+            }
+            else //selling partial position
+            {
+                _portfolioDatabaseService.SellSharesFromPortfolio(security, shares);
+                displayMutualFund.ReduceShares(shares);
+            }
+            
+        }
+
+        private void SellStock(Trade trade)
+        {
+            var security = trade.Security;
+            var ticker = trade.Ticker;
+            var shares = trade.Shares;
+
+            var displayStock = _displayStocks.Find(s => s.Ticker == ticker);
+
+            if (shares == displayStock.Shares)
+            {
+                _portfolioDatabaseService.SellSharesFromPortfolio(security, shares);
+                _displayStocks.Remove(displayStock);
+            }
+            else if (shares > displayStock.Shares)
+            {
+                var message = new TradeMessage() { Shares = shares, Ticker = ticker, Message = "Order quantity exceeds shares owned!" };
+                Messenger.Default.Send(message);
+            }
+            else //selling partial position
+            {
+                _portfolioDatabaseService.SellSharesFromPortfolio(security, shares);
+                displayStock.ReduceShares(shares);
+            }
+            
         }
 
         /// <summary>

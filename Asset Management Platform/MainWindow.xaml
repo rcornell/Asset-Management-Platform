@@ -350,15 +350,18 @@
                 </Border>
             </Grid>
         </Border>
-        <ListView Grid.Column="2" Grid.Row="4" Background="Azure" ItemsSource="{Binding LimitOrderList}">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Path=TradeType}" Width="Auto"/>
-                    <GridViewColumn Header="Shares" DisplayMemberBinding="{Binding Path=Shares}" Width="Auto"/>
-                    <GridViewColumn Header="Ticker" DisplayMemberBinding="{Binding Path=Ticker}" Width="Auto"/>
-                    <GridViewColumn Header="Limit" DisplayMemberBinding="{Binding Path=Limit}" Width="Auto"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
+        <StackPanel Grid.Column="2" Grid.Row="4" Background="Azure">
+            <TextBlock Text="Limit Orders" HorizontalAlignment="Center"/>
+            <ListView Background="Azure" ItemsSource="{Binding LimitOrderList}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Path=TradeType}" Width="Auto"/>
+                        <GridViewColumn Header="Shares" DisplayMemberBinding="{Binding Path=Shares}" Width="Auto"/>
+                        <GridViewColumn Header="Ticker" DisplayMemberBinding="{Binding Path=Ticker}" Width="Auto"/>
+                        <GridViewColumn Header="Limit" DisplayMemberBinding="{Binding Path=Limit}" Width="Auto"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </StackPanel>
     </Grid>
 </Window>

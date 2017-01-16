@@ -16,7 +16,7 @@ namespace Asset_Management_Platform.Utility
 
         void AddPosition(Trade trade);
 
-        void SellPosition(Security security, string ticker, int shares);
+        void SellPosition(Trade trade);
 
         Security GetOrderPreviewSecurity(string ticker);
 
