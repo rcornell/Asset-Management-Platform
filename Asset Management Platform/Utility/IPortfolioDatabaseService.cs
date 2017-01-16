@@ -17,6 +17,7 @@ namespace Asset_Management_Platform.Utility
 
         void UploadLimitOrdersToDatabase(List<LimitOrder> limitOrders);
 
+        List<LimitOrder> LoadLimitOrdersFromDatabase();
 
         void BackupDatabase();
 

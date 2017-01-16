@@ -49,8 +49,7 @@ namespace Asset_Management_Platform.Utility
         {
             _stockDataService = stockDataService;
             _portfolioDatabaseService = portfolioDatabaseService;
-
-            _stockDataService.Initialize();
+            _stockDataService.SeedDatabasesIfNeeded();
 
             //Load stock info from SQL DB
             _securityDatabaseList = _stockDataService.LoadSecurityDatabase();
@@ -58,12 +57,20 @@ namespace Asset_Management_Platform.Utility
             //Use yahooAPI to pull in updated info
             var updateSuccessful = _stockDataService.UpdateSecurityDatabase();
 
+            //Build list of DisplaySecurities
+            BuildDisplaySecurityLists();
+
+            //Download limit orders from DB
+            BuildLimitOrderList();
+
+
             _timer = new DispatcherTimer();
             _timer.Tick += _timer_Tick;
             _timer.Interval = new TimeSpan(0, 0, 10);
 
-            BuildDisplaySecurityLists();
+            
         }
+
 
 
         private void BuildDisplaySecurityLists()
@@ -90,6 +97,11 @@ namespace Asset_Management_Platform.Utility
                 else if (matchingSecurity != null && matchingSecurity is MutualFund)
                     _displayMutualFunds.Add(new DisplayMutualFund(pos, (MutualFund)matchingSecurity));
             } 
+        }
+
+        private void BuildLimitOrderList()
+        {
+            _limitOrderList = _portfolioDatabaseService.LoadLimitOrdersFromDatabase();
         }
 
 

@@ -30,7 +30,7 @@ namespace Asset_Management_Platform.Utility
         /// <summary>
         /// Checks the SQL database. If it is null, seeds it.
         /// </summary>
-        public void Initialize()
+        public void SeedDatabasesIfNeeded()
         {
             if (IsStockDatabaseNull())
             {

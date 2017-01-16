@@ -14,8 +14,7 @@ namespace Asset_Management_Platform
         public decimal Shares;
         public double Limit;
         public Security SecurityType;
-
-        //var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now)
+        public string OrderDuration;
 
         public LimitOrder()
         {
@@ -29,7 +28,7 @@ namespace Asset_Management_Platform
             Shares = trade.Shares;
             Limit = trade.Limit;
             SecurityType = trade.Security;
-
+            OrderDuration = trade.OrderDuration;
         }
 
         public override string ToString()
