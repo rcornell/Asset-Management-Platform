@@ -350,7 +350,7 @@
                 </Border>
             </Grid>
         </Border>
-        <ListView Grid.Column="2" Grid.Row="4" Background="Azure" ItemsSource="{Binding LimitOrderList, Mode=OneTime}">
+        <ListView Grid.Column="2" Grid.Row="4" Background="Azure" ItemsSource="{Binding LimitOrderList, Mode=OneWay}">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Type" DisplayMemberBinding="{Binding TradeType}" Width="Auto"/>

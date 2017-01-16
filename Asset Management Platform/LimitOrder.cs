@@ -12,7 +12,7 @@ namespace Asset_Management_Platform
         public string TradeType;
         public string Ticker;
         public decimal Shares;
-        public double Limit;
+        public decimal Limit;
         public Security SecurityType;
         public string OrderDuration;
 
@@ -36,7 +36,7 @@ namespace Asset_Management_Platform
             return string.Format(@"{0} {1} shares of {2} at LIMIT {3}.", TradeType, Shares, Ticker, Limit);
         }
 
-        public bool IsLimitOrderActive(double lastPrice)
+        public bool IsLimitOrderActive(decimal lastPrice)
         {
             if (TradeType == "Buy" && lastPrice < Limit)
                 return true;

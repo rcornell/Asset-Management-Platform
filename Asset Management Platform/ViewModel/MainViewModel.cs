@@ -238,8 +238,8 @@ namespace Asset_Management_Platform
         }
 
 
-        private double _limitPrice;
-        public double LimitPrice {
+        private decimal _limitPrice;
+        public decimal LimitPrice {
             get { return _limitPrice; }
             set { _limitPrice = value;
                 _executeButtonEnabled = false;
@@ -622,7 +622,7 @@ namespace Asset_Management_Platform
             OrderShareQuantity = 0;
             SelectedTermType = "";
             SelectedTradeType = " ";
-            LimitPrice = 0.00;
+            LimitPrice = 0;
             PreviewPrice = 0;
             PreviewBid = "";
             PreviewAsk = "";

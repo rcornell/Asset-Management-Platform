@@ -299,6 +299,8 @@ namespace Asset_Management_Platform
         {
             var insertString = @"INSERT INTO dbo.MyLimitOrders (TradeType, Ticker, Shares, Limit, SecurityType, OrderDuration) VALUES ";
             var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
+
+            var final = limitOrders.Last();
             foreach (var order in limitOrders)
             {
                 var tradeType = order.TradeType;
@@ -308,7 +310,9 @@ namespace Asset_Management_Platform
                 var securityType = order.SecurityType.ToString();
                 var orderDuration = order.OrderDuration;
 
-                insertString += string.Format(@"('{0}', '{1}', {2}, {3}, '{4}', '{5}') ", tradeType, ticker, shares, limit, securityType, orderDuration);
+                insertString += string.Format(@"('{0}', '{1}', {2}, {3}, '{4}', '{5}')", tradeType, ticker, shares, limit, securityType, orderDuration);
+                if (order != final)
+                    insertString += @", ";
             }
 
             try { 
@@ -320,12 +324,8 @@ namespace Asset_Management_Platform
                     using (var selectCommand = new SqlCommand(selectAllString, connection))
                     {
                         var reader = selectCommand.ExecuteReader();
-                        if (reader.HasRows) { 
-                            var truncateString = @"TRUNCATE Table MyLimitOrders;";
-                            using (var truncateCommand = new SqlCommand(truncateString, connection))
-                            {
-                                truncateCommand.ExecuteNonQuery();
-                            }
+                        if (reader.HasRows) {
+                            TruncateTable("LimitOrders");
                         }
                     }    
                 }
@@ -343,6 +343,31 @@ namespace Asset_Management_Platform
             catch (SqlException ex)
             {
                 throw new NotImplementedException();
+            }
+        }
+
+        private void TruncateTable(string tableToTruncate)
+        {
+            string truncateString = "";
+            switch (tableToTruncate)
+            {
+                case "LimitOrders":
+                    truncateString = @"TRUNCATE TABLE MyLimitOrders;";
+                    break;
+                case "MyPortfolio":
+                    truncateString = @"TRUNCATE TABLE MyPortfolio;";
+                    break;
+                default:
+                    break;
+            }
+
+            var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
+            using (var truncateConnection = new SqlConnection(storageString)) {
+                truncateConnection.Open();
+                using (var truncateCommand = new SqlCommand(truncateString, truncateConnection))
+                {
+                    truncateCommand.ExecuteNonQuery();
+                }
             }
         }
 
@@ -369,10 +394,13 @@ namespace Asset_Management_Platform
                     {
                         while (reader.Read())
                         {
+                            var type = reader.GetFieldType(3);
+                            var type1 = reader.GetFieldType(4);
+
                             var tradeType = reader.GetString(1);
                             var ticker = reader.GetString(2);
                             var shares = reader.GetInt32(3);
-                            var limit = reader.GetDouble(4);
+                            var limit = reader.GetDecimal(4);
                             var securityType = reader.GetString(5);
                             var orderDuration = reader.GetString(6);
 
