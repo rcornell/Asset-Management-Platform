@@ -66,13 +66,15 @@ namespace Asset_Management_Platform.Utility
 
             _timer = new DispatcherTimer();
             _timer.Tick += _timer_Tick;
-            _timer.Interval = new TimeSpan(0, 0, 10);
-
-            
+            _timer.Interval = new TimeSpan(0, 0, 10);    
         }
 
 
-
+        /// <summary>
+        /// Creates the lists of UI-bindable stocks and mutual funds.
+        /// Separate lists need to be maintained if the user switches
+        /// the selection criteria.
+        /// </summary>
         private void BuildDisplaySecurityLists()
         {
             var positions = _portfolioDatabaseService.GetPositions();
@@ -104,53 +106,7 @@ namespace Asset_Management_Platform.Utility
             _limitOrderList = _portfolioDatabaseService.LoadLimitOrdersFromDatabase();
         }
 
-
-        /// <summary>
-        /// When timer ticks, StockDataService uses YahooAPIService to update pricing 
-        /// information for all securities in the list, then updates the security list
-        /// in this class and sends out the PortfolioMessage
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void _timer_Tick(object sender, EventArgs e)
-        {
-            bool updateSuccessful = _stockDataService.UpdateSecurityDatabase();
-            if (updateSuccessful)
-            {
-                _securityDatabaseList = _stockDataService.GetUpdatedPrices();
-            }
-        }
-
-        /// <summary>
-        /// Starts the 10-second-interval update timer
-        /// </summary>
-        public void StartUpdates()
-        {
-            _timer.Start();
-        }
-
-        /// <summary>
-        /// Stops the 10-second-interval update timer
-        /// </summary>
-        public void StopUpdates()
-        {
-            _timer.Stop();
-        }
-
-        public List<DisplayStock> GetDisplayStocks()
-        {
-            return DisplayStocks;
-        }
-
-        public List<DisplayMutualFund> GetDisplayMutualFunds()
-        {
-            return DisplayMutualFunds;
-        }
-
-        public List<LimitOrder> GetLimitOrders()
-        {
-            return LimitOrderList;
-        }
+        
 
         public void AddPosition(Trade trade)
         {
@@ -339,6 +295,53 @@ namespace Asset_Management_Platform.Utility
             else if (securityToReturn is MutualFund)
                 return (MutualFund)securityToReturn;
             else return new Stock("", "XXX", "Unknown Stock", 0, 0.00);
+        }
+
+        /// <summary>
+        /// When timer ticks, StockDataService uses YahooAPIService to update pricing 
+        /// information for all securities in the list, then updates the security list
+        /// in this class and sends out the PortfolioMessage
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void _timer_Tick(object sender, EventArgs e)
+        {
+            bool updateSuccessful = _stockDataService.UpdateSecurityDatabase();
+            if (updateSuccessful)
+            {
+                _securityDatabaseList = _stockDataService.GetUpdatedPrices();
+            }
+        }
+
+        /// <summary>
+        /// Starts the 10-second-interval update timer
+        /// </summary>
+        public void StartUpdates()
+        {
+            _timer.Start();
+        }
+
+        /// <summary>
+        /// Stops the 10-second-interval update timer
+        /// </summary>
+        public void StopUpdates()
+        {
+            _timer.Stop();
+        }
+
+        public List<DisplayStock> GetDisplayStocks()
+        {
+            return DisplayStocks;
+        }
+
+        public List<DisplayMutualFund> GetDisplayMutualFunds()
+        {
+            return DisplayMutualFunds;
+        }
+
+        public List<LimitOrder> GetLimitOrders()
+        {
+            return LimitOrderList;
         }
 
         public void UploadAllToDatabase()

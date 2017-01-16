@@ -346,25 +346,25 @@ namespace Asset_Management_Platform
                 {
                     connection.Open();
                     reader = command.ExecuteReader();
+
+                    if (reader != null && reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            var tradeType = reader.GetString(1);
+                            var ticker = reader.GetString(2);
+                            var shares = reader.GetInt32(3);
+                            var limit = reader.GetDouble(4);
+                            var securityType = reader.GetString(5);
+                            var orderDuration = reader.GetString(6);
+
+                            var newSecurity = new Security("", ticker, "", 0, 0.00);
+                            var newTrade = new Trade(tradeType, newSecurity, ticker, shares, "Limit", limit, orderDuration);
+                            var newLimitOrder = new LimitOrder(newTrade);
+                            limitOrders.Add(newLimitOrder);
+                        }
+                    }
                 }
-            }
-
-            if (reader != null && reader.HasRows)
-            {
-                while (reader.Read()) {
-                    var tradeType = reader.GetString(1);
-                    var ticker = reader.GetString(2);
-                    var shares = reader.GetInt32(3);
-                    var limit = reader.GetDouble(4);
-                    var securityType = reader.GetString(5);
-                    var orderDuration = reader.GetString(6);
-
-                    var newSecurity = new Security("", ticker, "", 0, 0.00);
-                    var newTrade = new Trade(tradeType, newSecurity, ticker, shares, "Limit", limit, orderDuration);
-                    var newLimitOrder = new LimitOrder(newTrade);
-                    limitOrders.Add(newLimitOrder);
-                }
-
             }
 
             return limitOrders;
