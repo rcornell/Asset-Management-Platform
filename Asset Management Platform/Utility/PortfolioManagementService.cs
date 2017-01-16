@@ -291,31 +291,43 @@ namespace Asset_Management_Platform.Utility
             
         }
 
+        /// <summary>
+        /// Gets updated pricing for all tickers in the LimitOrderList,
+        /// then compares the limits to the prices & Buy or Sell terms.
+        /// If last price is valid vs. the limit, proceed with trade.
+        /// </summary>
         private void CheckLimitOrdersForActive()
         {
-            //var securitiesToCheck = new List<Security>();
+            var securitiesToCheck = new List<Security>();
 
-            //foreach (var order in LimitOrderList)
-            //{
-            //    var newSecurity = new Security("", order.Ticker, "", 0, 0);
-            //    securitiesToCheck.Add(newSecurity);
-            //}
+            foreach (var order in LimitOrderList)
+            {
+                var newSecurity = new Security("", order.Ticker, "", 0, 0);
+                securitiesToCheck.Add(newSecurity);
+            }
 
-            //var updatedSecurities = _stockDataService.GetSecurityInfo(securitiesToCheck);
+            var updatedSecurities = _stockDataService.GetSecurityInfo(securitiesToCheck);
 
-            //foreach (var sec in updatedSecurities)
-            //{
-            //    var matches = LimitOrderList.Where(s => s.Ticker == sec.Ticker);
-            //    foreach (var match in matches)
-            //    {
-            //        var isActive = match.IsLimitOrderActive(sec.LastPrice);
-            //        if (isActive) {
-            //            var newSecurity = new Security("", sec.Ticker, sec.Description, sec.LastPrice, sec.Yield);
-            //            var newTrade = new Trade(match.TradeType, newSecurity, match.Ticker, match.Shares, "Limit", match.Limit, match.OrderDuration);
-            //            SellPosition();
-            //        }
-            //    }
-            //}
+            foreach (var sec in updatedSecurities)
+            {
+                var matches = LimitOrderList.Where(s => s.Ticker == sec.Ticker);
+                foreach (var match in matches)
+                {
+                    var isActive = match.IsLimitOrderActive(sec.LastPrice);
+                    if (isActive && match.TradeType == "Sell")
+                    {
+                        var securityToTrade = new Security("", sec.Ticker, sec.Description, sec.LastPrice, sec.Yield);
+                        var newTrade = new Trade(match.TradeType, securityToTrade, match.Ticker, match.Shares, "Limit", match.Limit, match.OrderDuration);
+                        SellPosition(newTrade);
+                    }
+                    else if (isActive && match.TradeType == "Buy")
+                    {
+                        var securityToTrade = new Security("", sec.Ticker, sec.Description, sec.LastPrice, sec.Yield);
+                        var newTrade = new Trade(match.TradeType, securityToTrade, match.Ticker, match.Shares, "Limit", match.Limit, match.OrderDuration);
+                        AddPosition(newTrade);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -360,11 +372,38 @@ namespace Asset_Management_Platform.Utility
         /// <param name="e"></param>
         public void _timer_Tick(object sender, EventArgs e)
         {
-            bool updateSuccessful = _stockDataService.UpdateSecurityDatabase();
-            if (updateSuccessful)
+            UpdatePortfolioPrices();
+            CheckLimitOrdersForActive();
+        }
+
+        public void UpdatePortfolioPrices()
+        {
+            var listToUpdate = new List<Security>();            
+
+            foreach (var stock in DisplayStocks)
             {
-                _securityDatabaseList = _stockDataService.GetUpdatedPrices();
+                listToUpdate.Add(stock.Stock);
             }
+
+            foreach (var fund in DisplayMutualFunds)
+            {
+                listToUpdate.Add(fund.Fund);
+            }
+
+            var updatedSecurities = _stockDataService.GetSecurityInfo(listToUpdate);
+
+            //Update all prices for any displaysecurity
+            foreach (var security in updatedSecurities)
+            {
+                if (security is Stock) {
+                    DisplayStocks.FindAll(s => s.Ticker == security.Ticker).ForEach(p => p.Stock.LastPrice = security.LastPrice);
+                }
+                if (security is MutualFund)
+                {
+                    DisplayMutualFunds.FindAll(m => m.Ticker == security.Ticker).ForEach(p => p.Fund.LastPrice = security.LastPrice);
+                }
+            }
+            //Messenger.Default.Send(new PortfolioMessage());
         }
 
         /// <summary>

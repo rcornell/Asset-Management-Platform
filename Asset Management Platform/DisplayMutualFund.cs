@@ -11,6 +11,11 @@ namespace Asset_Management_Platform
 
         private Position _position;
         private MutualFund _fund;
+        public MutualFund Fund
+        {
+            get { return _fund; }
+            set { _fund = value; }
+        }
 
         public string Ticker
         {

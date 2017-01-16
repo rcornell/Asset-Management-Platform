@@ -372,6 +372,10 @@ namespace Asset_Management_Platform
             get { return new RelayCommand(ExecuteExecuteOrder); }
         }
 
+        public RelayCommand UpdatePrices
+        {
+            get { return new RelayCommand(ExecuteUpdatePrices); }
+        }
 
         public decimal _totalValue;
         public decimal TotalValue {
@@ -512,6 +516,12 @@ namespace Asset_Management_Platform
         private void ShowAllMutualFunds()
         {
 
+        }
+
+        private void ExecuteUpdatePrices()
+        {
+            _portfolioManagementService.UpdatePortfolioPrices();
+            GetDisplaySecurities();
         }
 
         private void GetAllocationChartPositions()

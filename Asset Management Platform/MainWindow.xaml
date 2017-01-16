@@ -138,7 +138,7 @@
             <Button Content="All Assets" Margin="5" Grid.Column="0"/>
             <Button Content="Equities" Margin="5" Grid.Column="1"/>
             <Button Content="Fixed Income" Margin="5" Grid.Column="2"/>
-            <Button Content="Funds and ETFs" Margin="5" Grid.Column="3"/>
+            <Button Content="Funds and ETFs" Margin="5" Grid.Column="3" Command="{Binding UpdatePrices}"/>
         </Grid>
         <!-- When you have to make a DataGrid that groups objects by type: http://wpftutorial.net/DataGrid.html-->
         <DataGrid ItemsSource="{Binding DisplaySecurityCollectionView, 

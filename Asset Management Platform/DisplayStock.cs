@@ -10,6 +10,11 @@ namespace Asset_Management_Platform
     {
         private Position _position;
         private Stock _stock;
+        public Stock Stock
+        {
+            get { return _stock; }
+            set { _stock = value; }
+        }
 
         public string Ticker {
             get {

@@ -28,6 +28,8 @@ namespace Asset_Management_Platform.Utility
 
         List<LimitOrder> GetLimitOrders();
 
+        void UpdatePortfolioPrices();
+
         void UploadPortfolio();
 
         void DeletePortfolio();
