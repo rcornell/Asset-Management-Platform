@@ -196,7 +196,9 @@ namespace Asset_Management_Platform.Utility
         /// <returns></returns>
         public bool InsertIntoDatabase(Security securityToInsert)
         {
-            if (_securityList.Any(s => s.Ticker == securityToInsert.Ticker))
+            var isInDatabase = _securityList.Any(s => s.Ticker == securityToInsert.Ticker);
+
+            if (isInDatabase || securityToInsert.Ticker == @"N/A")
                 return false;
             else if(securityToInsert.SecurityType == "Stock")
             {
@@ -204,6 +206,7 @@ namespace Asset_Management_Platform.Utility
                 var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
                 using (var connection = new SqlConnection(storageString))
                 {
+                    securityToInsert.Description = securityToInsert.Description.Replace(@"'", @"");
                     var securityInfo = string.Format(@"('{0}', '{1}', {2}, {3});", securityToInsert.Ticker, securityToInsert.Description,
                                                                                   securityToInsert.LastPrice, securityToInsert.Yield);
                     insertString += securityInfo;
@@ -235,6 +238,7 @@ namespace Asset_Management_Platform.Utility
                     
                 }
             }
+            _securityList.Add(securityToInsert);
             return true;
         }
 

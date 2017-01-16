@@ -297,7 +297,7 @@ namespace Asset_Management_Platform
 
         public void UploadLimitOrdersToDatabase(List<LimitOrder> limitOrders)
         {
-            var insertString = @"INSERT INTO dbo.MyLimitOrders (Ticker, Shares, CostBasis, DatePurchased) VALUES ";
+            var insertString = @"INSERT INTO dbo.MyLimitOrders (TradeType, Ticker, Shares, Limit, SecurityType, OrderDuration) VALUES ";
             var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             foreach (var order in limitOrders)
             {
@@ -306,11 +306,10 @@ namespace Asset_Management_Platform
                 var shares = order.Shares;
                 var limit = order.Limit;
                 var securityType = order.SecurityType.ToString();
+                var orderDuration = order.OrderDuration;
 
-                insertString += string.Format(@"('{0}', '{1}', {2}, {3}, '{4}') ", tradeType, ticker, shares, limit, securityType);
+                insertString += string.Format(@"('{0}', '{1}', {2}, {3}, '{4}', '{5}') ", tradeType, ticker, shares, limit, securityType, orderDuration);
             }
-            
-            //DO STUFF. Table is called "MyLimitOrders" ID, TradeType, Ticker, Shares, Limit, SecurityType, OrderDuration
 
             using (var connection = new SqlConnection(storageString))
             {

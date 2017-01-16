@@ -220,13 +220,15 @@ namespace Asset_Management_Platform.Utility
                     var newStock = new Stock(yahooResult);
                     return newStock;
                 }
-                else if(determinedType == "Mutual Fund")
+                else if (determinedType == "Mutual Fund")
                 {
                     var newFund = new MutualFund(yahooResult);
                     return newFund;
                 }
+                else if (determinedType == "Unknown")
+                    return new Security("", "N/A", "Unknown Ticker", 0, 0.00);
                 else
-                    throw new NotImplementedException();
+                    return new Security("", "N/A", "Unknown Ticker", 0, 0.00);
             }
         }
 
@@ -427,6 +429,9 @@ namespace Asset_Management_Platform.Utility
 
         private string DetermineIfStockOrFund(YahooAPIResult yahooResult)
         {
+            if (yahooResult.Description == @"N/A")
+                return "Unknown";
+
             if (yahooResult.MarketCapIsNA && yahooResult.PeRatioIsNA)
                 return "Mutual Fund";
             else
