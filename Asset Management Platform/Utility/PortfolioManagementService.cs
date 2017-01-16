@@ -90,7 +90,7 @@ namespace Asset_Management_Platform.Utility
 
                 //If no match within security list, look it up.
                 if (matchingSecurity == null) { 
-                    matchingSecurity = _stockDataService.GetSpecificSecurityInfo(pos.Ticker);
+                    matchingSecurity = _stockDataService.GetSecurityInfo(pos.Ticker);
                 }
 
                 //Create appropriate security type and add to lists for UI.
@@ -227,6 +227,12 @@ namespace Asset_Management_Platform.Utility
             var validOrder = OrderTermsAreValid(trade);
             var isAwayFromLimit = CheckOrderLimit(trade);
 
+            if (isAwayFromLimit)
+            {
+                CreateLimitOrder(trade);
+                return;
+            }
+
             if (trade.Security is Stock)
                 SellStock(trade);
             if (trade.Security is MutualFund)
@@ -285,6 +291,19 @@ namespace Asset_Management_Platform.Utility
             
         }
 
+        private void CheckLimitOrdersForActive()
+        {
+            var securitiesToCheck = new List<Security>();
+
+            foreach (var order in LimitOrderList)
+            {
+                var newSecurity = new Security("", order.Ticker, "", 0, 0);
+                securitiesToCheck.Add(newSecurity);
+            }
+
+            var list = _stockDataService.GetSecurityInfo(securitiesToCheck);
+        }
+
         /// <summary>
         /// Will be called by the security screener
         /// </summary>
@@ -292,7 +311,7 @@ namespace Asset_Management_Platform.Utility
         /// <returns></returns>
         public Security GetOrderPreviewSecurity(string ticker)
         {
-            var securityToReturn = _stockDataService.GetSpecificSecurityInfo(ticker);
+            var securityToReturn = _stockDataService.GetSecurityInfo(ticker);
             if (securityToReturn is Stock)
                 return (Stock)securityToReturn;
             else if (securityToReturn is MutualFund)
@@ -310,7 +329,7 @@ namespace Asset_Management_Platform.Utility
         /// <returns></returns>
         public Security GetOrderPreviewSecurity(string ticker, Security securityType)
         {
-            var securityToReturn = _stockDataService.GetSpecificSecurityInfo(ticker, securityType);
+            var securityToReturn = _stockDataService.GetSecurityInfo(ticker, securityType);
             if (securityToReturn is Stock)
                 return (Stock)securityToReturn;
             else if (securityToReturn is MutualFund)

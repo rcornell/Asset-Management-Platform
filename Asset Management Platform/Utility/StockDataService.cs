@@ -325,7 +325,7 @@ namespace Asset_Management_Platform.Utility
             return _securityList;
         }
 
-        public Security GetSpecificSecurityInfo(string ticker)
+        public Security GetSecurityInfo(string ticker)
         {
             if (!string.IsNullOrEmpty(ticker))
             {
@@ -339,7 +339,7 @@ namespace Asset_Management_Platform.Utility
             return new Stock("", "", "", 0, 0.00); //If you hit this, the ticker was null or empty
         }
 
-        public Security GetSpecificSecurityInfo(string ticker, Security securityType)
+        public Security GetSecurityInfo(string ticker, Security securityType)
         {
             if (!string.IsNullOrEmpty(ticker))
             {
@@ -351,6 +351,20 @@ namespace Asset_Management_Platform.Utility
                 }
             }
             return new Stock("", "", "", 0, 0.00); //If you hit this, the ticker was null or empty
+        }
+
+        public List<Security> GetSecurityInfo(List<Security> securities)
+        {
+            var resultList = new List<Security>();
+            if (securities != null)
+            {
+                using (var yahooAPI = new YahooAPIService())
+                {
+                    resultList = yahooAPI.GetMultipleSecurities(securities);
+                }
+            }
+
+            return resultList;
         }
 
         public void Dispose()
