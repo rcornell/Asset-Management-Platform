@@ -394,9 +394,6 @@ namespace Asset_Management_Platform
                     {
                         while (reader.Read())
                         {
-                            var type = reader.GetFieldType(3);
-                            var type1 = reader.GetFieldType(4);
-
                             var tradeType = reader.GetString(1);
                             var ticker = reader.GetString(2);
                             var shares = reader.GetInt32(3);

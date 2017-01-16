@@ -3,18 +3,65 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GalaSoft.MvvmLight;
 
 namespace Asset_Management_Platform
 {
-    public class LimitOrder
+    public class LimitOrder : ObservableObject
     {
 
-        public string TradeType;
-        public string Ticker;
-        public decimal Shares;
-        public decimal Limit;
-        public Security SecurityType;
-        public string OrderDuration;
+        private string _tradeType;
+        public string TradeType {
+            get { return _tradeType; }
+            set { _tradeType = value;
+                RaisePropertyChanged(() => TradeType);
+            }            
+        }
+
+        private string _ticker;
+        public string Ticker
+        {
+            get { return _ticker; }
+            set { _ticker = value;
+                RaisePropertyChanged(() => Ticker);
+            }
+        }
+
+        private decimal _shares;
+        public decimal Shares {
+            get { return _shares; }
+            set { _shares = value;
+                RaisePropertyChanged(() => Shares);
+            }
+        }
+
+
+        private decimal _limit;
+        public decimal Limit
+        {
+            get { return _limit; }
+            set { _limit = value;
+                RaisePropertyChanged(() => Limit);
+            }
+        }
+
+        private Security _securityType;
+        public Security SecurityType {
+            get { return _securityType; }
+            set { _securityType = value;
+                RaisePropertyChanged(() => SecurityType);
+            }
+        }
+
+
+        private string _orderDuration;
+        public string OrderDuration
+        {
+            get { return _orderDuration; }
+            set { _orderDuration = value;
+                RaisePropertyChanged(() => OrderDuration);
+            }
+        }
 
         public LimitOrder()
         {

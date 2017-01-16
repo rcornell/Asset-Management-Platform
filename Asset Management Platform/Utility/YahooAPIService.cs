@@ -506,9 +506,6 @@ namespace Asset_Management_Platform.Utility
 
 
                     }
-                    
-                    
-
                     return _securitiesWithMarketData;
                 }
 
@@ -518,7 +515,6 @@ namespace Asset_Management_Platform.Utility
                     return _securitiesWithMarketData; //probably null
                 }
             }
-
             return _securitiesWithMarketData; //probably null
         }
 
