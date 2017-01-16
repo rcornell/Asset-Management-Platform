@@ -135,6 +135,11 @@ namespace Asset_Management_Platform.Utility
             return DisplayMutualFunds;
         }
 
+        public List<LimitOrder> GetLimitOrders()
+        {
+            return LimitOrderList;
+        }
+
         public void AddPosition(Trade trade)
         {
             //Check if any values are null or useless

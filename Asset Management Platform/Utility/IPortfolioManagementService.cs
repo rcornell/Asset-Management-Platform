@@ -26,6 +26,8 @@ namespace Asset_Management_Platform.Utility
 
         List<DisplayMutualFund> GetDisplayMutualFunds();
 
+        List<LimitOrder> GetLimitOrders();
+
         void UploadPortfolio();
 
         void DeletePortfolio();

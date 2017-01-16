@@ -164,6 +164,17 @@ namespace Asset_Management_Platform
             }
         }
 
+        private ObservableCollection<LimitOrder> _limitOrderList;
+        public ObservableCollection<LimitOrder> LimitOrderList
+        {
+            get { return _limitOrderList; }
+            set
+            {
+                _limitOrderList = value;
+                RaisePropertyChanged(() => LimitOrderList);
+            }
+        }
+
         private string _previewDescription;
         public string PreviewDescription {
             get { return _previewDescription; }
@@ -603,6 +614,7 @@ namespace Asset_Management_Platform
             else if (SelectedTradeType == "Sell")
                 _portfolioManagementService.SellPosition(_previewSecurity, _orderTickerText, _orderShareQuantity);
             GetDisplaySecurities();
+            GetLimitOrders();
             GetAllocationChartPositions();
 
             SelectedDurationType = "Day";
@@ -621,6 +633,12 @@ namespace Asset_Management_Platform
             SelectedSecurityType = SecurityTypes[0];
            
             ExecuteButtonEnabled = false;
+        }
+
+        private void GetLimitOrders()
+        {
+            var limitOrders = _portfolioManagementService.GetLimitOrders();
+            LimitOrderList = new ObservableCollection<LimitOrder>(limitOrders);
         }
 
         public void ExecuteDeletePortfolio()
