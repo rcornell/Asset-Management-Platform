@@ -493,7 +493,7 @@ namespace Asset_Management_Platform
             
             GetDisplaySecurities();
             GetLimitOrders();
-            GetAllocationChartPositions();
+            ExecuteShowAllSecurities();
             DisplaySecurityCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Ticker"));
         }
 
@@ -532,104 +532,25 @@ namespace Asset_Management_Platform
         private void ExecuteShowAllSecurities()
         {
             ChartSubtitle = "All Positions";
-            GetAllocationChartPositions();
+            AllocationChartPositions = _portfolioManagementService.GetChartAllSecurities();
         }
 
         private void ExecuteShowStocksOnly()
         {
             ChartSubtitle = "Stocks only";
-            GetAllocationChartPositionsStocks();
+            AllocationChartPositions = _portfolioManagementService.GetChartStocksOnly();
         }
 
         private void ExecuteShowFundsOnly()
         {
             ChartSubtitle = "Mutual Funds only";
-            GetAllocationChartPositionsFunds();
+            AllocationChartPositions = _portfolioManagementService.GetChartFundsOnly();
         }
 
         private void ExecuteUpdatePrices()
         {
             _portfolioManagementService.UpdatePortfolioPrices();
             GetDisplaySecurities();
-        }
-
-        private void GetAllocationChartPositions()
-        {
-            var displayStocks = _portfolioManagementService.GetDisplayStocks();
-            var displayMutualFunds = _portfolioManagementService.GetDisplayMutualFunds();
-            decimal totalValue = 0;
-
-            foreach (var stock in displayStocks)
-            {
-                totalValue += decimal.Parse(stock.MarketValue);
-            }
-
-            foreach (var fund in displayMutualFunds)
-            {
-                totalValue += decimal.Parse(fund.MarketValue);
-            }
-            TotalValue = totalValue;
-
-            ObservableCollection<PositionByWeight> posByWeight = new ObservableCollection<PositionByWeight>();
-
-            foreach (var stock in displayStocks)
-            {
-                decimal weight = (decimal.Parse(stock.MarketValue) / totalValue) * 100;
-                posByWeight.Add(new PositionByWeight(stock.Ticker, Math.Round(weight,2)));
-            }
-
-            foreach (var fund in displayMutualFunds)
-            {
-                decimal weight = (decimal.Parse(fund.MarketValue) / totalValue) * 100;
-                posByWeight.Add(new PositionByWeight(fund.Ticker, Math.Round(weight, 2)));
-            }
-
-            AllocationChartPositions = posByWeight;
-        }
-
-        private void GetAllocationChartPositionsStocks()
-        {
-            var displayStocks = _portfolioManagementService.GetDisplayStocks();
-            decimal totalValue = 0;
-
-            foreach (var stock in displayStocks)
-            {
-                totalValue += decimal.Parse(stock.MarketValue);
-            }
-
-            TotalValue = totalValue;
-
-            ObservableCollection<PositionByWeight> posByWeight = new ObservableCollection<PositionByWeight>();
-
-            foreach (var stock in displayStocks)
-            {
-                decimal weight = (decimal.Parse(stock.MarketValue) / totalValue) * 100;
-                posByWeight.Add(new PositionByWeight(stock.Ticker, Math.Round(weight, 2)));
-            }
-
-            AllocationChartPositions = posByWeight;
-        }
-
-        private void GetAllocationChartPositionsFunds()
-        {
-            var displayMutualFunds = _portfolioManagementService.GetDisplayMutualFunds();
-            decimal totalValue = 0;
-
-            foreach (var fund in displayMutualFunds)
-            {
-                totalValue += decimal.Parse(fund.MarketValue);
-            }
-            TotalValue = totalValue;
-
-            ObservableCollection<PositionByWeight> posByWeight = new ObservableCollection<PositionByWeight>();
-
-            foreach (var fund in displayMutualFunds)
-            {
-                decimal weight = (decimal.Parse(fund.MarketValue) / totalValue) * 100;
-                posByWeight.Add(new PositionByWeight(fund.Ticker, Math.Round(weight, 2)));
-            }
-
-            AllocationChartPositions = posByWeight;
         }
 
         private void RefreshCollection(PortfolioMessage obj)
@@ -699,7 +620,7 @@ namespace Asset_Management_Platform
                 _portfolioManagementService.SellPosition(newTrade);
             GetDisplaySecurities();
             GetLimitOrders();
-            GetAllocationChartPositions();
+            ExecuteShowAllSecurities();
 
             SelectedDurationType = "Day";
             OrderTickerText = "";
@@ -729,7 +650,7 @@ namespace Asset_Management_Platform
         {
             _portfolioManagementService.DeletePortfolio();
             GetDisplaySecurities();
-            GetAllocationChartPositions();
+            ExecuteShowAllSecurities();
         }
 
         public void ExecuteSavePortfolio()

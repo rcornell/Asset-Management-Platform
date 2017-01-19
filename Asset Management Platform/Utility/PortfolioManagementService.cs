@@ -459,5 +459,81 @@ namespace Asset_Management_Platform.Utility
             _securityDatabaseList.Clear();
             _portfolioDatabaseService.DeletePortfolio();
         }
+
+
+
+
+
+
+
+
+
+        public ObservableCollection<PositionByWeight> GetChartAllSecurities()
+        {
+            decimal totalValue = 0;
+            var positionsByWeight = new ObservableCollection<PositionByWeight>();
+
+            foreach (var stock in _displayStocks)
+            {
+                totalValue += decimal.Parse(stock.MarketValue);
+            }
+
+            foreach (var fund in _displayMutualFunds)
+            {
+                totalValue += decimal.Parse(fund.MarketValue);
+            }
+
+            foreach (var stock in _displayStocks)
+            {
+                decimal weight = (decimal.Parse(stock.MarketValue) / totalValue) * 100;
+                positionsByWeight.Add(new PositionByWeight(stock.Ticker, Math.Round(weight, 2)));
+            }
+
+            foreach (var fund in _displayMutualFunds)
+            {
+                decimal weight = (decimal.Parse(fund.MarketValue) / totalValue) * 100;
+                positionsByWeight.Add(new PositionByWeight(fund.Ticker, Math.Round(weight, 2)));
+            }
+
+            return positionsByWeight;
+        }
+
+        public ObservableCollection<PositionByWeight> GetChartStocksOnly()
+        {
+            decimal totalValue = 0;
+            var positionsByWeight = new ObservableCollection<PositionByWeight>();
+
+            foreach (var stock in _displayStocks)
+            {
+                totalValue += decimal.Parse(stock.MarketValue);
+            }
+
+            foreach (var stock in _displayStocks)
+            {
+                decimal weight = (decimal.Parse(stock.MarketValue) / totalValue) * 100;
+                positionsByWeight.Add(new PositionByWeight(stock.Ticker, Math.Round(weight, 2)));
+            }
+
+            return positionsByWeight;
+        }
+
+        public ObservableCollection<PositionByWeight> GetChartFundsOnly()
+        {
+            decimal totalValue = 0;
+            var positionsByWeight = new ObservableCollection<PositionByWeight>();
+
+            foreach (var fund in _displayMutualFunds)
+            {
+                totalValue += decimal.Parse(fund.MarketValue);
+            }
+
+            foreach (var fund in _displayMutualFunds)
+            {
+                decimal weight = (decimal.Parse(fund.MarketValue) / totalValue) * 100;
+                positionsByWeight.Add(new PositionByWeight(fund.Ticker, Math.Round(weight, 2)));
+            }
+
+            return positionsByWeight;
+        }
     }
 }
