@@ -135,10 +135,10 @@
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <Button Content="All Assets" Margin="5" Grid.Column="0"/>
-            <Button Content="Equities" Margin="5" Grid.Column="1"/>
-            <Button Content="Fixed Income" Margin="5" Grid.Column="2"/>
-            <Button Content="Funds and ETFs" Margin="5" Grid.Column="3" Command="{Binding UpdatePrices}"/>
+            <Button Content="All Assets" Margin="5" Grid.Column="0" Command="{Binding ShowAllSecurities}"/>
+            <Button Content="Equities" Margin="5" Grid.Column="1" Command="{Binding ShowStocksOnly}"/>
+            <Button Content="Fixed Income" Margin="5" Grid.Column="3" Command="{Binding UpdatePrices}"/>
+            <Button Content="Funds and ETFs" Margin="5" Grid.Column="2" Command="{Binding ShowFundsOnly}"/>
         </Grid>
         <!-- When you have to make a DataGrid that groups objects by type: http://wpftutorial.net/DataGrid.html-->
         <DataGrid ItemsSource="{Binding DisplaySecurityCollectionView, 
@@ -156,7 +156,7 @@
                   CanUserAddRows="False"  
                   ColumnWidth="Auto"
                   Width="Auto"
-                  SelectedItem="{Binding SelectedDisplayStock, Mode=OneWay}">
+                  SelectedItem="{Binding SelectedDisplayStock, Mode=OneWayToSource}">
             <!--<DataGrid.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>
@@ -212,11 +212,15 @@
         <chart:PieChart
             Grid.Row="3" 
             Grid.Column="2"
+            Margin="0,3,0,3"
             Height="Auto"
             Width="Auto"
             Style="{StaticResource MinimalChartStyle}"
             ChartTitle="Asset Allocation"
-            ChartSubTitle="Sub title">
+            Background="Azure"          
+            IsTabStop="False"
+            IsManipulationEnabled="False"            
+            ChartSubTitle="{Binding ChartSubtitle}">
                 <chart:PieChart.Series>
                     <chart:ChartSeries                        
                         DisplayMember="Ticker"
@@ -351,8 +355,8 @@
             </Grid>
         </Border>
         <StackPanel Grid.Column="2" Grid.Row="4" Background="Azure">
-            <TextBlock Text="Limit Orders" HorizontalAlignment="Center"/>
-            <ListView Background="Azure" ItemsSource="{Binding LimitOrderList}">
+            <TextBlock Text="Active Limit Orders" HorizontalAlignment="Center"/>
+            <ListView ItemsSource="{Binding LimitOrderList}" HorizontalContentAlignment="Stretch">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Path=TradeType}" Width="Auto"/>
