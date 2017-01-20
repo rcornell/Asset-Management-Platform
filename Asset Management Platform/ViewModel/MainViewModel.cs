@@ -549,7 +549,7 @@ namespace Asset_Management_Platform
 
         private void ExecuteUpdatePrices()
         {
-            _portfolioManagementService.UpdatePortfolioPrices();
+            _portfolioManagementService.TestLimitOrderMethods();
             GetDisplaySecurities();
         }
 
@@ -615,9 +615,9 @@ namespace Asset_Management_Platform
         {
             var newTrade = new Trade(SelectedTradeType, _previewSecurity, _orderTickerText, _orderShareQuantity, _selectedTermType, _limitPrice, _selectedDurationType);
             if (SelectedTradeType == "Buy")
-                _portfolioManagementService.AddPosition(newTrade);
+                _portfolioManagementService.Buy(newTrade);
             else if (SelectedTradeType == "Sell")
-                _portfolioManagementService.SellPosition(newTrade);
+                _portfolioManagementService.Sell(newTrade);
             GetDisplaySecurities();
             GetLimitOrders();
             ExecuteShowAllSecurities();
@@ -669,5 +669,7 @@ namespace Asset_Management_Platform
             AlertBoxMessage = message.Message;
             AlertBoxVisible = true;
         }
+
+        
     }
 }

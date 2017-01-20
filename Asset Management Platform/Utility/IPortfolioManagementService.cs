@@ -15,9 +15,9 @@ namespace Asset_Management_Platform.Utility
 
         void StopUpdates();
 
-        void AddPosition(Trade trade);
+        void Buy(Trade trade);
 
-        void SellPosition(Trade trade);
+        void Sell(Trade trade);
 
         Security GetOrderPreviewSecurity(string ticker);
 
@@ -41,5 +41,7 @@ namespace Asset_Management_Platform.Utility
 
         void DeletePortfolio();
         void UploadAllToDatabase();
+
+        void TestLimitOrderMethods();
     }
 }

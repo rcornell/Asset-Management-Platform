@@ -84,13 +84,13 @@ namespace Asset_Management_Platform
 
         public bool IsLimitOrderActive(decimal lastPrice)
         {
-            if (TradeType == "Buy" && lastPrice < Limit)
+            if (TradeType == "Buy" && lastPrice <= Limit)
                 return true;
-            else if (TradeType == "Buy" && lastPrice > Limit)
+            else if (TradeType == "Buy" && lastPrice >= Limit)
                 return false;
-            else if (TradeType == "Sell" && lastPrice > Limit)
+            else if (TradeType == "Sell" && lastPrice >= Limit)
                 return true;
-            else if (TradeType == "Sell" && lastPrice < Limit)
+            else if (TradeType == "Sell" && lastPrice <= Limit)
                 return false;
 
             return false; //Why did you reach this?

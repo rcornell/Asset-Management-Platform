@@ -356,7 +356,7 @@
         </Border>
         <StackPanel Grid.Column="2" Grid.Row="4" Background="Azure">
             <TextBlock Text="Active Limit Orders" HorizontalAlignment="Center"/>
-            <ListView ItemsSource="{Binding LimitOrderList}" HorizontalContentAlignment="Stretch">
+            <ListView ItemsSource="{Binding LimitOrderList}" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Path=TradeType}" Width="Auto"/>

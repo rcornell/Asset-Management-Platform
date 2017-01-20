@@ -106,58 +106,76 @@ namespace Asset_Management_Platform.Utility
             _limitOrderList = _portfolioDatabaseService.LoadLimitOrdersFromDatabase();
         }
 
-        public void AddPosition(Trade trade)
+        public void Buy(Trade trade)
         {
+            var limitType = false;
+
             //Check if any values are null or useless
             var validOrder = OrderTermsAreValid(trade);
-            var isAwayFromLimit = CheckOrderLimit(trade);
+            var isActiveLimitOrder = CheckOrderLimit(trade);
+            if (trade.Terms == "Limit" || trade.Terms == "Stop Limit" || trade.Terms == "Stop")
+                limitType = true;
 
-            if (validOrder && trade.Terms == "Limit" && isAwayFromLimit)
+            if (validOrder && limitType && !isActiveLimitOrder)
             {
                 //Order is valid but limit prevents execution
                 CreateLimitOrder(trade);
                 return;
             }
+            else if(validOrder && limitType && isActiveLimitOrder)
+            {
+                //Order is valid and a limit-type and is active
+                AddPosition(trade);
+                return;
+            }
             else if (validOrder && trade.Terms == "Market")
             {
-                if (!_securityDatabaseList.Any(s => s.Ticker == trade.Ticker))
-                    _securityDatabaseList.Add(trade.Security);
-
-                //Check to confirm that shares of this security aren't in relevant
-                //Stock or MutualFund list
-                if (trade.Security is Stock && !DisplayStocks.Any(s => s.Ticker == trade.Ticker))
-                {
-                    //Add position to portfolio database for online storage
-                    var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now);
-                    var position = new Position(taxlot);
-                    _portfolioDatabaseService.AddToPortfolio(position);
-
-                    //Add new displaystock for UI
-                    DisplayStocks.Add(new DisplayStock(position, (Stock)trade.Security));
-                }
-                //Ticker exists in database and security is stock
-                else if (trade.Security is Stock && DisplayStocks.Any(s => s.Ticker == trade.Ticker))
-                {
-                    //See if this affects the DisplayStock in the UI
-                    var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now);
-                    _portfolioDatabaseService.AddToPortfolio(taxlot);
-                }
-                //This ticker isn't already owned and it is a MutualFund
-                else if (trade.Security is MutualFund && !DisplayMutualFunds.Any(s => s.Ticker == trade.Ticker)){
-
-                    var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now);
-                    var position = new Position(taxlot);
-                    _portfolioDatabaseService.AddToPortfolio(position);
-                    DisplayMutualFunds.Add(new DisplayMutualFund(position, (MutualFund)trade.Security));
-                }
-                else if (trade.Security is MutualFund && DisplayMutualFunds.Any(s => s.Ticker == trade.Ticker))
-                {
-                    //Security is known and already held, so just add the new taxlot.
-                    var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now);
-                    _portfolioDatabaseService.AddToPortfolio(taxlot);
-                }
+                //Order is valid and a market order
+                AddPosition(trade);
             }
         }
+
+        private void AddPosition(Trade trade)
+        {
+            if (!_securityDatabaseList.Any(s => s.Ticker == trade.Ticker))
+                _securityDatabaseList.Add(trade.Security);
+
+            //Check to confirm that shares of this security aren't in relevant
+            //Stock or MutualFund list
+            if (trade.Security is Stock && !DisplayStocks.Any(s => s.Ticker == trade.Ticker))
+            {
+                //Add position to portfolio database for online storage
+                var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now);
+                var position = new Position(taxlot);
+                _portfolioDatabaseService.AddToPortfolio(position);
+
+                //Add new displaystock for UI
+                DisplayStocks.Add(new DisplayStock(position, (Stock)trade.Security));
+            }
+            //Ticker exists in database and security is stock
+            else if (trade.Security is Stock && DisplayStocks.Any(s => s.Ticker == trade.Ticker))
+            {
+                //See if this affects the DisplayStock in the UI
+                var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now);
+                _portfolioDatabaseService.AddToPortfolio(taxlot);
+            }
+            //This ticker isn't already owned and it is a MutualFund
+            else if (trade.Security is MutualFund && !DisplayMutualFunds.Any(s => s.Ticker == trade.Ticker))
+            {
+
+                var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now);
+                var position = new Position(taxlot);
+                _portfolioDatabaseService.AddToPortfolio(position);
+                DisplayMutualFunds.Add(new DisplayMutualFund(position, (MutualFund)trade.Security));
+            }
+            else if (trade.Security is MutualFund && DisplayMutualFunds.Any(s => s.Ticker == trade.Ticker))
+            {
+                //Security is known and already held, so just add the new taxlot.
+                var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now);
+                _portfolioDatabaseService.AddToPortfolio(taxlot);
+            }
+        }
+
 
         private void CreateLimitOrder(Trade trade)
         {
@@ -184,35 +202,6 @@ namespace Asset_Management_Platform.Utility
             return false;
         }
 
-        private bool CheckOrderLimit(Trade trade)
-        {
-            var buyOrSell = trade.BuyOrSell;
-            var terms = trade.Terms;
-            var security = trade.Security;
-            var limit = trade.Limit;
-
-            //Buy Order validation
-            if (buyOrSell == "Buy" && terms == "Limit" && security.LastPrice <= limit)
-            {
-                return false;
-            }
-            else if (buyOrSell == "Buy" && terms == "Limit" && security.LastPrice >= limit)
-            { 
-                return true;
-            }
-
-            //Sell Order validation
-            if (buyOrSell == "Sell" && terms == "Limit" && security.LastPrice <= limit)
-            {
-                return false;
-            }
-            else if(buyOrSell == "Sell" && terms == "Limit" && security.LastPrice >= limit)
-            {
-                return true;
-            }
-
-            return false;
-        }
 
         /// <summary>
         /// Directs the executing code to the proper method for disposing
@@ -222,21 +211,37 @@ namespace Asset_Management_Platform.Utility
         /// <param name="security"></param>
         /// <param name="ticker"></param>
         /// <param name="shares"></param>
-        public void SellPosition(Trade trade)
+        public void Sell(Trade trade)
         {
+            var limitType = false;
+
+            //Check if any values are null or useless
             var validOrder = OrderTermsAreValid(trade);
-            var isAwayFromLimit = CheckOrderLimit(trade);
+            var isActiveLimitOrder = CheckOrderLimit(trade);
+            if (trade.Terms == "Limit" || trade.Terms == "Stop Limit" || trade.Terms == "Stop")
+                limitType = true;
 
-            if (isAwayFromLimit)
+            if (validOrder && limitType && !isActiveLimitOrder)
             {
+                //Order is valid but limit prevents execution
                 CreateLimitOrder(trade);
-                return;
             }
-
-            if (trade.Security is Stock)
-                SellStock(trade);
-            if (trade.Security is MutualFund)
-                SellMutualFund(trade);     
+            else if (validOrder && limitType && isActiveLimitOrder)
+            {
+                //Order is valid and a limit-type and is active
+                if (trade.Security is Stock)
+                    SellStock(trade);
+                if (trade.Security is MutualFund)
+                    SellMutualFund(trade);
+            }
+            else if (validOrder && trade.Terms == "Market")
+            {
+                //Order is valid and a market order
+                if (trade.Security is Stock)
+                    SellStock(trade);
+                if (trade.Security is MutualFund)
+                    SellMutualFund(trade);
+            }
         }
 
         private void SellMutualFund(Trade trade)
@@ -291,6 +296,44 @@ namespace Asset_Management_Platform.Utility
             
         }
 
+
+
+        /// <summary>
+        /// During trade execution, checks for a limit order and
+        /// whether it is active or not.
+        /// </summary>
+        /// <param name="trade"></param>
+        /// <returns></returns>
+        private bool CheckOrderLimit(Trade trade)
+        {
+            var buyOrSell = trade.BuyOrSell;
+            var terms = trade.Terms;
+            var security = trade.Security;
+            var limit = trade.Limit;
+
+            //Buy Order validation
+            if (buyOrSell == "Buy" && terms == "Limit" && security.LastPrice <= limit)
+            {
+                return true;
+            }
+            else if (buyOrSell == "Buy" && terms == "Limit" && security.LastPrice >= limit)
+            {
+                return false;
+            }
+
+            //Sell Order validation
+            if (buyOrSell == "Sell" && terms == "Limit" && security.LastPrice <= limit)
+            {
+                return true;
+            }
+            else if (buyOrSell == "Sell" && terms == "Limit" && security.LastPrice >= limit)
+            {
+                return false;
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// Gets updated pricing for all tickers in the LimitOrderList,
         /// then compares the limits to the prices & Buy or Sell terms.
@@ -302,8 +345,10 @@ namespace Asset_Management_Platform.Utility
 
             foreach (var order in LimitOrderList)
             {
-                var newSecurity = new Security("", order.Ticker, "", 0, 0);
-                securitiesToCheck.Add(newSecurity);
+                if(order.SecurityType is Stock)
+                    securitiesToCheck.Add(new Stock("", order.Ticker, "", 0, 0));
+                if (order.SecurityType is MutualFund)
+                    securitiesToCheck.Add(new MutualFund("", order.Ticker, "", 0, 0));
             }
 
             var updatedSecurities = _stockDataService.GetSecurityInfo(securitiesToCheck);
@@ -318,13 +363,13 @@ namespace Asset_Management_Platform.Utility
                     {
                         var securityToTrade = new Security("", sec.Ticker, sec.Description, sec.LastPrice, sec.Yield);
                         var newTrade = new Trade(match.TradeType, securityToTrade, match.Ticker, match.Shares, "Limit", match.Limit, match.OrderDuration);
-                        SellPosition(newTrade);
+                        AddPosition(newTrade);
                     }
                     else if (isActive && match.TradeType == "Buy")
                     {
                         var securityToTrade = new Security("", sec.Ticker, sec.Description, sec.LastPrice, sec.Yield);
                         var newTrade = new Trade(match.TradeType, securityToTrade, match.Ticker, match.Shares, "Limit", match.Limit, match.OrderDuration);
-                        AddPosition(newTrade);
+                        Sell(newTrade);
                     }
                 }
             }
@@ -361,6 +406,74 @@ namespace Asset_Management_Platform.Utility
             else if (securityToReturn is MutualFund)
                 return (MutualFund)securityToReturn;
             else return new Stock("", "XXX", "Unknown Stock", 0, 0.00);
+        }
+
+        public ObservableCollection<PositionByWeight> GetChartAllSecurities()
+        {
+            decimal totalValue = 0;
+            var positionsByWeight = new ObservableCollection<PositionByWeight>();
+
+            foreach (var stock in _displayStocks)
+            {
+                totalValue += decimal.Parse(stock.MarketValue);
+            }
+
+            foreach (var fund in _displayMutualFunds)
+            {
+                totalValue += decimal.Parse(fund.MarketValue);
+            }
+
+            foreach (var stock in _displayStocks)
+            {
+                decimal weight = (decimal.Parse(stock.MarketValue) / totalValue) * 100;
+                positionsByWeight.Add(new PositionByWeight(stock.Ticker, Math.Round(weight, 2)));
+            }
+
+            foreach (var fund in _displayMutualFunds)
+            {
+                decimal weight = (decimal.Parse(fund.MarketValue) / totalValue) * 100;
+                positionsByWeight.Add(new PositionByWeight(fund.Ticker, Math.Round(weight, 2)));
+            }
+
+            return positionsByWeight;
+        }
+
+        public ObservableCollection<PositionByWeight> GetChartStocksOnly()
+        {
+            decimal totalValue = 0;
+            var positionsByWeight = new ObservableCollection<PositionByWeight>();
+
+            foreach (var stock in _displayStocks)
+            {
+                totalValue += decimal.Parse(stock.MarketValue);
+            }
+
+            foreach (var stock in _displayStocks)
+            {
+                decimal weight = (decimal.Parse(stock.MarketValue) / totalValue) * 100;
+                positionsByWeight.Add(new PositionByWeight(stock.Ticker, Math.Round(weight, 2)));
+            }
+
+            return positionsByWeight;
+        }
+
+        public ObservableCollection<PositionByWeight> GetChartFundsOnly()
+        {
+            decimal totalValue = 0;
+            var positionsByWeight = new ObservableCollection<PositionByWeight>();
+
+            foreach (var fund in _displayMutualFunds)
+            {
+                totalValue += decimal.Parse(fund.MarketValue);
+            }
+
+            foreach (var fund in _displayMutualFunds)
+            {
+                decimal weight = (decimal.Parse(fund.MarketValue) / totalValue) * 100;
+                positionsByWeight.Add(new PositionByWeight(fund.Ticker, Math.Round(weight, 2)));
+            }
+
+            return positionsByWeight;
         }
 
         /// <summary>
@@ -460,80 +573,11 @@ namespace Asset_Management_Platform.Utility
             _portfolioDatabaseService.DeletePortfolio();
         }
 
-
-
-
-
-
-
-
-
-        public ObservableCollection<PositionByWeight> GetChartAllSecurities()
+        public void TestLimitOrderMethods()
         {
-            decimal totalValue = 0;
-            var positionsByWeight = new ObservableCollection<PositionByWeight>();
-
-            foreach (var stock in _displayStocks)
-            {
-                totalValue += decimal.Parse(stock.MarketValue);
-            }
-
-            foreach (var fund in _displayMutualFunds)
-            {
-                totalValue += decimal.Parse(fund.MarketValue);
-            }
-
-            foreach (var stock in _displayStocks)
-            {
-                decimal weight = (decimal.Parse(stock.MarketValue) / totalValue) * 100;
-                positionsByWeight.Add(new PositionByWeight(stock.Ticker, Math.Round(weight, 2)));
-            }
-
-            foreach (var fund in _displayMutualFunds)
-            {
-                decimal weight = (decimal.Parse(fund.MarketValue) / totalValue) * 100;
-                positionsByWeight.Add(new PositionByWeight(fund.Ticker, Math.Round(weight, 2)));
-            }
-
-            return positionsByWeight;
+            UpdatePortfolioPrices();
+            CheckLimitOrdersForActive();
         }
 
-        public ObservableCollection<PositionByWeight> GetChartStocksOnly()
-        {
-            decimal totalValue = 0;
-            var positionsByWeight = new ObservableCollection<PositionByWeight>();
-
-            foreach (var stock in _displayStocks)
-            {
-                totalValue += decimal.Parse(stock.MarketValue);
-            }
-
-            foreach (var stock in _displayStocks)
-            {
-                decimal weight = (decimal.Parse(stock.MarketValue) / totalValue) * 100;
-                positionsByWeight.Add(new PositionByWeight(stock.Ticker, Math.Round(weight, 2)));
-            }
-
-            return positionsByWeight;
-        }
-
-        public ObservableCollection<PositionByWeight> GetChartFundsOnly()
-        {
-            decimal totalValue = 0;
-            var positionsByWeight = new ObservableCollection<PositionByWeight>();
-
-            foreach (var fund in _displayMutualFunds)
-            {
-                totalValue += decimal.Parse(fund.MarketValue);
-            }
-
-            foreach (var fund in _displayMutualFunds)
-            {
-                decimal weight = (decimal.Parse(fund.MarketValue) / totalValue) * 100;
-                positionsByWeight.Add(new PositionByWeight(fund.Ticker, Math.Round(weight, 2)));
-            }
-
-            return positionsByWeight;
-        }
     }
 }

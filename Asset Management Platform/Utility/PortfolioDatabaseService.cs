@@ -382,6 +382,7 @@ namespace Asset_Management_Platform
             var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             var downloadString = @"SELECT * FROM dbo.MyLimitOrders;";
             SqlDataReader reader;
+            var dbResults = new List<LimitOrderDBResult>();
 
             using (var connection = new SqlConnection(storageString))
             {
@@ -401,16 +402,51 @@ namespace Asset_Management_Platform
                             var securityType = reader.GetString(5);
                             var orderDuration = reader.GetString(6);
 
-                            var newSecurity = new Security("", ticker, "", 0, 0.00);
-                            var newTrade = new Trade(tradeType, newSecurity, ticker, shares, "Limit", limit, orderDuration);
-                            var newLimitOrder = new LimitOrder(newTrade);
-                            limitOrders.Add(newLimitOrder);
+                            var newResult = new LimitOrderDBResult(tradeType, ticker, shares, limit, securityType, orderDuration);
+                            dbResults.Add(newResult);
                         }
                     }
                 }
             }
 
+            foreach (var result in dbResults)
+            {
+                var newSecurity = new Security();
+
+                if (result.SecurityType == null)
+                {
+                    var security = DetermineSecurityType(result.Ticker);
+                    result.SecurityType = security.SecurityType;
+                }
+                else if (result.SecurityType == "Stock")
+                {
+                    newSecurity = new Stock("", result.Ticker, "", 0, 0);
+
+                }
+                else if (result.SecurityType == "Mutual Fund")
+                {
+                    newSecurity = new MutualFund("", result.Ticker, "", 0, 0);
+                }
+
+                var newTrade = new Trade(result.TradeType, newSecurity, result.Ticker, result.Shares, "Limit", result.Limit, result.OrderDuration);
+                var newLimitOrder = new LimitOrder(newTrade);
+                limitOrders.Add(newLimitOrder);
+            }
+
             return limitOrders;
+        }
+
+        private Security DetermineSecurityType(string ticker)
+        {
+            Security securityType;
+
+            using (var stockData = new StockDataService())
+            {
+                securityType = stockData.GetSecurityInfo(ticker);
+                
+            }
+
+            return securityType;
         }
 
         /// <summary>

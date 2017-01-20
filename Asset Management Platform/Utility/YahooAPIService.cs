@@ -473,9 +473,11 @@ namespace Asset_Management_Platform.Utility
                     //Create an array of the results
                     var yahooResults = CreateYahooAPIResultList(result);
 
-                    //logic for looping through results
+
+                        //logic for looping through results
                     foreach (var yahooResult in yahooResults)
                     {
+                        
                         var securityType = securities.Find(s => s.Ticker == yahooResult.Ticker).SecurityType;
 
                         if (securityType == "Stock")
