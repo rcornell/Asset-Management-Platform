@@ -47,7 +47,7 @@ namespace Asset_Management_Platform
         {
             get
             {
-                var value =_stock.LastPrice * _position.SharesOwned;
+                var value = _stock.LastPrice * _position.SharesOwned;
                 var valueString = value.ToString("#,##0");
                 return valueString;
             }

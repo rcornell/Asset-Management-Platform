@@ -16,7 +16,7 @@ namespace Asset_Management_Platform.Utility
         private IStockDataService _stockDataService;
         private IPortfolioDatabaseService _portfolioDatabaseService;
         private DispatcherTimer _timer;
-        private List<Security> _securityDatabaseList; //Known securities, used for pricing
+        private List<Security> _securityDatabaseList; //Known securities. Not currently used for anything.
 
         private List<LimitOrder> _limitOrderList;
         public List<LimitOrder> LimitOrderList //used to display in MainViewModel
@@ -73,7 +73,9 @@ namespace Asset_Management_Platform.Utility
         }
 
 
-        //Creates the list of Securities owned
+        /// <summary>
+        /// Creates the list of taxlots, positions, and securities owned.
+        /// </summary>
         private void BuildPortfolioSecurities()
         {
             _portfolioTaxlots = _portfolioDatabaseService.GetTaxlotsFromDatabase();
@@ -95,7 +97,7 @@ namespace Asset_Management_Platform.Utility
         /// <summary>
         /// Creates the lists of UI-bindable stocks and mutual funds.
         /// Separate lists need to be maintained if the user switches
-        /// the selection criteria.
+        /// the UI display criteria.
         /// </summary>
         private void BuildDisplaySecurityLists()
         {
@@ -104,8 +106,8 @@ namespace Asset_Management_Platform.Utility
 
             foreach (var pos in _portfolioPositions)
             {
-                //Search the known securities list for a match
-                var matchingSecurity = _securityDatabaseList.Find(s => s.Ticker == pos.Ticker);
+                //Search the list of OWNED securities for a match
+                var matchingSecurity = _portfolioSecurities.Find(s => s.Ticker == pos.Ticker);
 
                 //If no match within security list, look it up.
                 if (matchingSecurity == null)
