@@ -48,8 +48,7 @@ namespace Asset_Management_Platform
                 _taxlots = new List<Taxlot>();
 
             if (taxlots != null)
-                Ticker = taxlots[0].Ticker;
-        
+                Ticker = taxlots[0].Ticker;        
 
             foreach (var lot in taxlots)
             {
@@ -136,6 +135,11 @@ namespace Asset_Management_Platform
         public void SellShares(decimal shares)
         {
             throw new NotImplementedException();
+        }
+
+        public Security GetSecurityType()
+        {
+            return Taxlots[0].SecurityType;
         }
     }
 }

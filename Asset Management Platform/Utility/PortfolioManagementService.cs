@@ -79,10 +79,12 @@ namespace Asset_Management_Platform.Utility
         private void BuildPortfolioSecurities()
         {
             _portfolioTaxlots = _portfolioDatabaseService.GetTaxlotsFromDatabase();
-            if(_portfolioTaxlots.Count > 0)
+            if (_portfolioTaxlots.Count > 0)
                 _portfolioPositions = _portfolioDatabaseService.GetPositionsFromTaxlots(_portfolioTaxlots);
-            var tickers = new List<string>();
+            else
+                _portfolioPositions = new List<Position>();
 
+            var tickers = new List<string>();
             foreach (var position in _portfolioPositions)
             {
                 tickers.Add(position.Ticker);
@@ -167,7 +169,7 @@ namespace Asset_Management_Platform.Utility
             if (trade.Security is Stock && !DisplayStocks.Any(s => s.Ticker == trade.Ticker))
             {
                 //Add position to portfolio database for online storage
-                var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now);
+                var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security);
                 var position = new Position(taxlot);
                 _portfolioDatabaseService.AddToPortfolioDatabase(position);
 
@@ -178,14 +180,13 @@ namespace Asset_Management_Platform.Utility
             else if (trade.Security is Stock && DisplayStocks.Any(s => s.Ticker == trade.Ticker))
             {
                 //See if this affects the DisplayStock in the UI
-                var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now);
+                var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security);
                 _portfolioDatabaseService.AddToPortfolioDatabase(taxlot);
             }
             //This ticker isn't already owned and it is a MutualFund
             else if (trade.Security is MutualFund && !DisplayMutualFunds.Any(s => s.Ticker == trade.Ticker))
             {
-
-                var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now);
+                var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security);
                 var position = new Position(taxlot);
                 _portfolioDatabaseService.AddToPortfolioDatabase(position);
                 DisplayMutualFunds.Add(new DisplayMutualFund(position, (MutualFund)trade.Security));
@@ -193,7 +194,7 @@ namespace Asset_Management_Platform.Utility
             else if (trade.Security is MutualFund && DisplayMutualFunds.Any(s => s.Ticker == trade.Ticker))
             {
                 //Security is known and already held, so just add the new taxlot.
-                var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now);
+                var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security);
                 _portfolioDatabaseService.AddToPortfolioDatabase(taxlot);
             }
         }
@@ -251,19 +252,11 @@ namespace Asset_Management_Platform.Utility
             else if (validOrder && limitType && isActiveLimitOrder)
             {
                 //Order is valid and a limit-type and is active
-                //if (trade.Security is Stock)
-                //    SellStock(trade);
-                //if (trade.Security is MutualFund)
-                //    SellMutualFund(trade);
                 SellPosition(trade);
             }
             else if (validOrder && trade.Terms == "Market")
             {
                 //Order is valid and a market order
-                //if (trade.Security is Stock)
-                //    SellStock(trade);
-                //if (trade.Security is MutualFund)
-                //    SellMutualFund(trade);
                 SellPosition(trade);
             }
         }
@@ -272,16 +265,18 @@ namespace Asset_Management_Platform.Utility
         private void SellPosition(Trade trade)
         {
             var securityBeingSold = trade.Security;
-            var securityType = _portfolioSecurities.Find(s => s.Ticker == securityBeingSold.Ticker).GetType();
+            var securityType = _portfolioSecurities.Find(s => s.Ticker == securityBeingSold.Ticker).SecurityType;
             var ticker = trade.Ticker;
-            var shares = trade.Shares; 
+            var shares = trade.Shares;
 
+            var position = _portfolioPositions.Find(p => p.Ticker == trade.Ticker);
 
-            //if (trade.Security is Stock && displayStock != null)
-            //{
-                
+            if(securityBeingSold is Stock)//AND?
+            {
 
-            //}
+            }
+
+            
         }
 
 

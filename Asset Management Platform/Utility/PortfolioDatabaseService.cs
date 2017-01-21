@@ -157,6 +157,8 @@ namespace Asset_Management_Platform
                     var reader = command.ExecuteReader();
                     while (reader.Read())
                     {
+                        Security secType;
+
                         var ticker = reader.GetString(1);
                         var quantity = int.Parse(reader.GetString(2));
                         var purchasePrice = decimal.Parse(reader.GetString(3));
@@ -165,8 +167,13 @@ namespace Asset_Management_Platform
                             datePurchased = new DateTime(2000, 12, 31);
                         else if (!string.IsNullOrEmpty(reader.GetString(4)))
                             datePurchased = DateTime.Parse(reader.GetString(4));
+                        var securityTypeResult = reader.GetString(5);
+                        if (securityTypeResult == "Stock")
+                            secType = new Stock();
+                        else
+                            secType = new MutualFund();
 
-                        var taxLot = new Taxlot(ticker, quantity, purchasePrice, datePurchased);
+                        var taxLot = new Taxlot(ticker, quantity, purchasePrice, datePurchased, secType);
                         taxlotsFromDatabase.Add(taxLot);
                     }
                 }
@@ -259,7 +266,6 @@ namespace Asset_Management_Platform
                     {
                         command.Connection = connection;
                         //UPDATE POSITIONS IF NECESSARY
-                        //May be unstable if it pushes too many commands too quickly
                         if (positionsToUpdate.Any()) { 
                             foreach (var pos in positionsToUpdate)
                             {
@@ -267,19 +273,23 @@ namespace Asset_Management_Platform
                                 string deleteString = string.Format(@"DELETE FROM MyPortfolio WHERE Ticker='{0}';", pos.Ticker);     
                                 command.CommandText = deleteString;
                                 command.ExecuteNonQuery();
-                            
+
+                                var insertString = @"INSERT INTO dbo.MyPortfolio (Ticker, Shares, CostBasis, DatePurchased, SecurityType) VALUES ";
+
                                 //Re-adds all current taxlots
                                 foreach (var lot in pos.Taxlots) {                                   
-                                    command.CommandText = string.Format(@"INSERT INTO dbo.MyPortfolio (Ticker, Shares, CostBasis, DatePurchased) VALUES ('{0}' ,'{1}' ,'{2}' , '{3}');", lot.Ticker, lot.Shares, lot.PurchasePrice, lot.DatePurchased);
-                                    command.ExecuteNonQuery();
+                                    insertString += string.Format(@"('{0}' ,'{1}' ,'{2}' , '{3}', '{4}'), ", lot.Ticker, lot.Shares, lot.PurchasePrice, lot.DatePurchased, lot.SecurityType);
                                 }
+                                insertString.Substring(insertString.Length - 2);
+                                command.CommandText = insertString;
+                                command.ExecuteNonQuery();
                             }
                         }
 
                         //INSERT POSITIONS IF NECESSARY
                         if (positionsToInsert.Any())
                         {
-                            string insertString = @"INSERT INTO dbo.MyPortfolio (Ticker, Shares, CostBasis, DatePurchased) VALUES ";
+                            string insertString = @"INSERT INTO dbo.MyPortfolio (Ticker, Shares, CostBasis, DatePurchased, SecurityType) VALUES ";
 
                             var finalPosition = positionsToInsert.Last();
                             var finalTaxlot = positionsToInsert.Last().Taxlots.Last();
@@ -289,11 +299,11 @@ namespace Asset_Management_Platform
                                     //If the position being iterated is the last one, add the terminating SQL clause instead
                                     if (pos != finalPosition && lot != finalTaxlot)
                                     {
-                                        insertString += string.Format("('{0}', '{1}', '{2}', '{3}'), ", lot.Ticker, lot.Shares, lot.PurchasePrice, lot.DatePurchased);
+                                        insertString += string.Format("('{0}', '{1}', '{2}', '{3}', '{4}'), ", lot.Ticker, lot.Shares, lot.PurchasePrice, lot.DatePurchased, lot.SecurityType);
                                     }
                                     else
                                     {
-                                        insertString += string.Format("('{0}', '{1}', '{2}', '{3}');", lot.Ticker, lot.Shares, lot.PurchasePrice, lot.DatePurchased);
+                                        insertString += string.Format("('{0}', '{1}', '{2}', '{3}', '{4}');", lot.Ticker, lot.Shares, lot.PurchasePrice, lot.DatePurchased, lot.SecurityType);
                                     }
                                 }
                             }
