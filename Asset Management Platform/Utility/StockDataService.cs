@@ -372,8 +372,22 @@ namespace Asset_Management_Platform.Utility
 
         public List<Security> GetMutualFundExtraData(List<Security> rawSecurities)
         {
-            var updatedSecurities = new List<Security>(rawSecurities);
+            var updatedSecurities = new List<Security>();
+            var funds = (List<MutualFund>)rawSecurities.Where(s => s is MutualFund);
 
+            foreach (var fund in funds)
+            {
+                if (_securityDatabaseList.Any(f => f.Ticker == fund.Ticker)) {
+                    var fundFromDB = (MutualFund)_securityDatabaseList.Find(m => m.Ticker == fund.Ticker);
+
+                    fund.AssetClass = fundFromDB.AssetClass;
+                    fund.Category = fundFromDB.Category;
+                    fund.Subcategory = fundFromDB.Subcategory;
+                }
+            }
+
+            updatedSecurities.AddRange(rawSecurities.Where(p => p is Stock));
+            updatedSecurities.AddRange(funds);
 
             return updatedSecurities;
         }

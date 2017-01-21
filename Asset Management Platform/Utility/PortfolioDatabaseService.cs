@@ -170,7 +170,7 @@ namespace Asset_Management_Platform
             return taxlotsFromDatabase;
         }
 
-        public List<Position> CreatePositionsFromTaxlots(List<Taxlot> taxlots)
+        public List<Position> GetPositionsFromTaxlots(List<Taxlot> taxlots)
         {
             foreach (var lot in taxlots)
             {
@@ -491,27 +491,14 @@ namespace Asset_Management_Platform
             }
 
             return limitOrders;
-        }
-
-        //private Security DetermineSecurityType(string ticker)
-        //{
-        //    Security securityType;
-
-        //    using (var stockData = new StockDataService())
-        //    {
-        //        securityType = stockData.GetSecurityInfo(ticker);
-                
-        //    }
-
-        //    return securityType;
-        //}
+        }      
 
         /// <summary>
         /// Adds a new security to a portfolio as a new Position
         /// with one taxlot
         /// </summary>
         /// <param name="positionToAdd"></param>
-        public void AddToPortfolio(Position positionToAdd)
+        public void AddToPortfolioDatabase(Position positionToAdd)
         {
             _myPositions.Add(positionToAdd);   
         }
@@ -520,7 +507,7 @@ namespace Asset_Management_Platform
         /// Adds a taxlot to an existing position in some security
         /// </summary>
         /// <param name="taxlotToAdd"></param>
-        public void AddToPortfolio(Taxlot taxlotToAdd)
+        public void AddToPortfolioDatabase(Taxlot taxlotToAdd)
         {
             foreach(var pos in _myPositions.Where(s => s.Ticker == taxlotToAdd.Ticker)){
                 pos.Taxlots.Add(taxlotToAdd);
@@ -534,7 +521,7 @@ namespace Asset_Management_Platform
         /// </summary>
         /// <param name="security"></param>
         /// <param name="shares"></param>
-        public void SellSharesFromPortfolio(Security security, decimal shares)
+        public void SellSharesFromPortfolioDatabase(Security security, decimal shares)
         {
             foreach (var p in _myPositions.Where(p => p.Ticker == security.Ticker))
             {

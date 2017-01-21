@@ -12,7 +12,7 @@ namespace Asset_Management_Platform.Utility
 
         List<Taxlot> GetTaxlotsFromDatabase();
 
-        List<Position> CreatePositionsFromTaxlots(List<Taxlot> taxlots);
+        List<Position> GetPositionsFromTaxlots(List<Taxlot> taxlots);
 
         void SavePortfolioToDatabase();
 
@@ -22,11 +22,11 @@ namespace Asset_Management_Platform.Utility
 
         void BackupDatabase();
 
-        void AddToPortfolio(Position positionToAdd);
+        void AddToPortfolioDatabase(Position positionToAdd);
 
-        void AddToPortfolio(Taxlot taxlotToAdd);
+        void AddToPortfolioDatabase(Taxlot taxlotToAdd);
       
-        void SellSharesFromPortfolio(Security security, decimal shares);
+        void SellSharesFromPortfolioDatabase(Security security, decimal shares);
 
         void DeletePortfolio();
 

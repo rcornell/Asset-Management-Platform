@@ -45,6 +45,8 @@ namespace Asset_Management_Platform.Utility
             }
         }
 
+        private List<Taxlot> _portfolioTaxlots;
+        private List<Position> _portfolioPositions;
         private List<Security> _portfolioSecurities;
 
 
@@ -54,9 +56,10 @@ namespace Asset_Management_Platform.Utility
             _portfolioDatabaseService = portfolioDatabaseService;
             _stockDataService.SeedDatabasesIfNeeded();
 
-            //Load stock info from SQL DB
+            //Load known security info from SQL DB
             _securityDatabaseList = _stockDataService.LoadSecurityDatabase();
 
+            //IS THIS NECESSARY 
             //Use yahooAPI to pull in updated info
             var updateSuccessful = _stockDataService.UpdateSecurityDatabase();
 
@@ -81,17 +84,19 @@ namespace Asset_Management_Platform.Utility
         //Creates the list of Securities owned
         private void BuildPortfolioSecurities()
         {
-            var taxlots = _portfolioDatabaseService.GetTaxlotsFromDatabase();
-            var positions = _portfolioDatabaseService.CreatePositionsFromTaxlots(taxlots);
+            _portfolioTaxlots = _portfolioDatabaseService.GetTaxlotsFromDatabase();
+            if(_portfolioTaxlots.Count > 0)
+                _portfolioPositions = _portfolioDatabaseService.GetPositionsFromTaxlots(_portfolioTaxlots);
             var tickers = new List<string>();
 
-            foreach (var position in positions)
+            foreach (var position in _portfolioPositions)
             {
                 tickers.Add(position.Ticker);
             }
 
+            //Could combine these into a startup GetAllInfo method in StockDataService
             var rawSecurities = _stockDataService.GetSecurityInfo(tickers);
-            List<Security> fullSecurities = _stockDataService.GetMutualFundExtraData(rawSecurities);
+            _portfolioSecurities = _stockDataService.GetMutualFundExtraData(rawSecurities);
         }
 
 
@@ -102,57 +107,31 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         private void BuildDisplaySecurityLists()
         {
-            //var positions = _portfolioDatabaseService.GetPositions();
-
-            //_portfolioSecurities = GetPortfolioSecurities(positions);
-
-            //var securities = _stockDataService.GetSecurityList();
-
-
-
-
-
-
-
             _displayStocks = new List<DisplayStock>();
             _displayMutualFunds = new List<DisplayMutualFund>();
 
-            //foreach (var pos in positions) //needs to be fed the list of positions now
-            //{
-            //    //Search the known securities list for a match
-            //    var matchingSecurity = securities.Find(s => s.Ticker == pos.Ticker);
+            foreach (var pos in _portfolioPositions)
+            {
+                //Search the known securities list for a match
+                var matchingSecurity = _securityDatabaseList.Find(s => s.Ticker == pos.Ticker);
 
-            //    //If no match within security list, look it up.
-            //    if (matchingSecurity == null) { 
-            //        matchingSecurity = _stockDataService.GetSecurityInfo(pos.Ticker);
-            //    }
+                //If no match within security list, look it up.
+                if (matchingSecurity == null)
+                {
+                    matchingSecurity = _stockDataService.GetSecurityInfo(pos.Ticker);
+                }
 
-            //    //Create appropriate security type and add to lists for UI.
-            //    if (matchingSecurity != null && matchingSecurity is Stock)
-            //        _displayStocks.Add(new DisplayStock(pos, (Stock)matchingSecurity));
-            //    else if (matchingSecurity != null && matchingSecurity is MutualFund)
-            //        _displayMutualFunds.Add(new DisplayMutualFund(pos, (MutualFund)matchingSecurity));
-            //} 
+                //Create appropriate security type and add to lists for UI.
+                if (matchingSecurity != null && matchingSecurity is Stock)
+                    _displayStocks.Add(new DisplayStock(pos, (Stock)matchingSecurity));
+                else if (matchingSecurity != null && matchingSecurity is MutualFund)
+                    _displayMutualFunds.Add(new DisplayMutualFund(pos, (MutualFund)matchingSecurity));
+            }
         }
 
         private List<Security> GetPortfolioSecurities(List<Position> positions)
         {
-
-            var portfolioSecurities = new List<Security>();
-            var tickers = new List<string>();
-            foreach (var position in positions)
-            {
-                tickers.Add(position.Ticker);
-            }
-
-            var updatedSecurities = _stockDataService.GetSecurityInfo(tickers);
-
-
-
-
-
-
-            return portfolioSecurities;
+            return _portfolioSecurities;
         }
 
         private void BuildLimitOrderList()
@@ -201,7 +180,7 @@ namespace Asset_Management_Platform.Utility
                 //Add position to portfolio database for online storage
                 var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now);
                 var position = new Position(taxlot);
-                _portfolioDatabaseService.AddToPortfolio(position);
+                _portfolioDatabaseService.AddToPortfolioDatabase(position);
 
                 //Add new displaystock for UI
                 DisplayStocks.Add(new DisplayStock(position, (Stock)trade.Security));
@@ -211,7 +190,7 @@ namespace Asset_Management_Platform.Utility
             {
                 //See if this affects the DisplayStock in the UI
                 var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now);
-                _portfolioDatabaseService.AddToPortfolio(taxlot);
+                _portfolioDatabaseService.AddToPortfolioDatabase(taxlot);
             }
             //This ticker isn't already owned and it is a MutualFund
             else if (trade.Security is MutualFund && !DisplayMutualFunds.Any(s => s.Ticker == trade.Ticker))
@@ -219,14 +198,14 @@ namespace Asset_Management_Platform.Utility
 
                 var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now);
                 var position = new Position(taxlot);
-                _portfolioDatabaseService.AddToPortfolio(position);
+                _portfolioDatabaseService.AddToPortfolioDatabase(position);
                 DisplayMutualFunds.Add(new DisplayMutualFund(position, (MutualFund)trade.Security));
             }
             else if (trade.Security is MutualFund && DisplayMutualFunds.Any(s => s.Ticker == trade.Ticker))
             {
                 //Security is known and already held, so just add the new taxlot.
                 var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now);
-                _portfolioDatabaseService.AddToPortfolio(taxlot);
+                _portfolioDatabaseService.AddToPortfolioDatabase(taxlot);
             }
         }
 
@@ -327,7 +306,7 @@ namespace Asset_Management_Platform.Utility
 
             if (shares == displayMutualFund.Shares)
             {
-                _portfolioDatabaseService.SellSharesFromPortfolio(security, shares);
+                _portfolioDatabaseService.SellSharesFromPortfolioDatabase(security, shares);
                 _displayMutualFunds.Remove(displayMutualFund);
             }
             else if (shares > displayMutualFund.Shares)
@@ -337,7 +316,7 @@ namespace Asset_Management_Platform.Utility
             }
             else //selling partial position
             {
-                _portfolioDatabaseService.SellSharesFromPortfolio(security, shares);
+                _portfolioDatabaseService.SellSharesFromPortfolioDatabase(security, shares);
                 displayMutualFund.ReduceShares(shares);
             }
             
@@ -353,7 +332,7 @@ namespace Asset_Management_Platform.Utility
 
             if (shares == displayStock.Shares)
             {
-                _portfolioDatabaseService.SellSharesFromPortfolio(security, shares);
+                _portfolioDatabaseService.SellSharesFromPortfolioDatabase(security, shares);
                 _displayStocks.Remove(displayStock);
             }
             else if (shares > displayStock.Shares)
@@ -363,7 +342,7 @@ namespace Asset_Management_Platform.Utility
             }
             else //selling partial position
             {
-                _portfolioDatabaseService.SellSharesFromPortfolio(security, shares);
+                _portfolioDatabaseService.SellSharesFromPortfolioDatabase(security, shares);
                 displayStock.ReduceShares(shares);
             }
             
