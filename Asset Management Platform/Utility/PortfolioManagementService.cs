@@ -265,48 +265,71 @@ namespace Asset_Management_Platform.Utility
         private void SellPosition(Trade trade)
         {
             var securityBeingSold = trade.Security;
-            var securityType = _portfolioSecurities.Find(s => s.Ticker == securityBeingSold.Ticker).SecurityType;
             var ticker = trade.Ticker;
             var shares = trade.Shares;
 
+            //Search owned positions for a match with the trade's ticker
             var position = _portfolioPositions.Find(p => p.Ticker == trade.Ticker);
+            var securityType = position.GetSecurityType();
 
-            if(securityBeingSold is Stock)//AND?
+            //Use security type to direct execution to correct sale method
+            if(securityType is Stock)
             {
-
+                SellStock(trade, position);
             }
-
-            
+            else if (securityType is MutualFund)
+            {
+                SellMutualFund(trade, position);
+            }  
         }
 
 
-        private void SellMutualFund(Trade trade)
+        private void SellMutualFund(Trade trade, Position position)
         {
             var security = trade.Security;
             var ticker = trade.Ticker;
             var shares = trade.Shares;
 
-            var displayMutualFund = _displayMutualFunds.Find(s => s.Ticker == ticker);
-
-            if (shares == displayMutualFund.Shares)
+            if (shares == position.SharesOwned)
             {
+                //Tell PortfolioDatabaseService to remove shares from DB
                 _portfolioDatabaseService.SellSharesFromPortfolioDatabase(security, shares);
-                _displayMutualFunds.Remove(displayMutualFund);
+
+                //Find and remove the security from portfolio
+                var securityToRemove = _portfolioSecurities.Find(s => s.Ticker == ticker);
+                _portfolioSecurities.Remove(securityToRemove);
+
+                //Find and remove all taxlots
+                var taxlotsToRemove = _portfolioTaxlots.Where(t => t.Ticker == ticker);
+                foreach (var lot in taxlotsToRemove)
+                {
+                    _portfolioTaxlots.Remove(lot);
+                }
+
+                //Remove the position that was passed in to this method
+                _portfolioPositions.Remove(position);
+
+                //Remove the DisplayMutualFund
+                var displayFundToRemove = _displayMutualFunds.Find(f => f.Ticker == ticker);
+                _displayMutualFunds.Remove(displayFundToRemove);
             }
-            else if (shares > displayMutualFund.Shares)
+            else if (shares > position.SharesOwned)
             {
                 var message = new TradeMessage() { Shares = shares, Ticker = ticker, Message = "Order quantity exceeds shares owned!" };
                 Messenger.Default.Send(message);
             }
             else //selling partial position
             {
+                //Tell PortfolioDatabaseService to sell shares from the position
                 _portfolioDatabaseService.SellSharesFromPortfolioDatabase(security, shares);
-                displayMutualFund.ReduceShares(shares);
+
+                //The position reduces its shares
+                //Does this flow to UI?
+                position.SellShares(shares);
             }
-            
         }
 
-        private void SellStock(Trade trade)
+        private void SellStock(Trade trade, Position position)
         {
             var security = trade.Security;
             var ticker = trade.Ticker;
@@ -405,7 +428,7 @@ namespace Asset_Management_Platform.Utility
                     {
                         var securityToTrade = new Security("", sec.Ticker, sec.Description, sec.LastPrice, sec.Yield);
                         var newTrade = new Trade(match.TradeType, securityToTrade, match.Ticker, match.Shares, "Limit", match.Limit, match.OrderDuration);
-                        Sell(newTrade);
+                        SellPosition(newTrade);
                     }
                 }
             }
