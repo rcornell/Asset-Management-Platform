@@ -27,11 +27,15 @@ namespace Asset_Management_Platform
 
 
         public PortfolioDatabaseService(IStockDataService stockDatabaseService)
-        {
+        {            
             _stockDatabaseService = stockDatabaseService;
+
             _positionsToDelete = new List<string>();
-            if (!CheckDBForPositions())
-                _myPositions = new List<Position>();
+            _portfolioOriginalState = new List<Position>();
+            _myPositions = new List<Position>();
+
+            //if (!CheckDBForPositions())
+            //    _myPositions = new List<Position>();
         }
 
         public List<Position> GetPositions()

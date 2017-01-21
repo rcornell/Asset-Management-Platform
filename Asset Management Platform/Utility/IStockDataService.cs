@@ -15,8 +15,6 @@ namespace Asset_Management_Platform.Utility
 
         bool IsStockDatabaseNull();
 
-        bool UpdateSecurityDatabase();
-
         bool InsertIntoDatabase(Security securitiesToInsert);
 
         void UploadSecuritiesToDatabase();

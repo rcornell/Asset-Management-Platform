@@ -54,16 +54,9 @@ namespace Asset_Management_Platform.Utility
         {
             _stockDataService = stockDataService;
             _portfolioDatabaseService = portfolioDatabaseService;
-            _stockDataService.SeedDatabasesIfNeeded();
 
             //Load known security info from SQL DB
             _securityDatabaseList = _stockDataService.LoadSecurityDatabase();
-
-            //IS THIS NECESSARY 
-            //Use yahooAPI to pull in updated info
-            var updateSuccessful = _stockDataService.UpdateSecurityDatabase();
-
-
 
             //Create a list of owned securities
             BuildPortfolioSecurities();
@@ -72,8 +65,7 @@ namespace Asset_Management_Platform.Utility
             BuildDisplaySecurityLists();
 
             //Download limit orders from DB
-            BuildLimitOrderList();
-
+            GetLimitOrderList();
 
             _timer = new DispatcherTimer();
             _timer.Tick += _timer_Tick;
@@ -129,12 +121,7 @@ namespace Asset_Management_Platform.Utility
             }
         }
 
-        private List<Security> GetPortfolioSecurities(List<Position> positions)
-        {
-            return _portfolioSecurities;
-        }
-
-        private void BuildLimitOrderList()
+        private void GetLimitOrderList()
         {
             _limitOrderList = _portfolioDatabaseService.LoadLimitOrdersFromDatabase();
         }
@@ -283,16 +270,16 @@ namespace Asset_Management_Platform.Utility
         private void SellPosition(Trade trade)
         {
             var securityBeingSold = trade.Security;
+            var securityType = _portfolioSecurities.Find(s => s.Ticker == securityBeingSold.Ticker).GetType();
             var ticker = trade.Ticker;
-            var shares = trade.Shares;
-            var displayFund = _displayMutualFunds.Find(m => m.Ticker == ticker);
-            var displayStock = _displayStocks.Find(s => s.Ticker == ticker);
+            var shares = trade.Shares; 
 
-            if (trade.Security is Stock && displayStock != null)
-            {
+
+            //if (trade.Security is Stock && displayStock != null)
+            //{
                 
 
-            }
+            //}
         }
 
 

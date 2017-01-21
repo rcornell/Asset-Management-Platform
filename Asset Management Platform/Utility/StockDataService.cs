@@ -21,6 +21,7 @@ namespace Asset_Management_Platform.Utility
         public StockDataService()
         {
             _securityDatabaseList = new List<Security>();
+            SeedDatabasesIfNeeded();
         }
 
         /// <summary>
@@ -162,21 +163,6 @@ namespace Asset_Management_Platform.Utility
                 return false; //Database IS NOT empty
             else
                 return true; //Database IS empty
-        }
-
-        public bool UpdateSecurityDatabase()
-        {
-            if (_securityDatabaseList.Count > 0)
-            {
-                using (var yahooAPI = new YahooAPIService())
-                {
-                    _securityDatabaseList = yahooAPI.GetMultipleSecurities(_securityDatabaseList);
-                }
-            }
-            else
-                return false; //_securityList has no members
-
-            return true;
         }
 
         /// <summary>
@@ -373,9 +359,9 @@ namespace Asset_Management_Platform.Utility
         public List<Security> GetMutualFundExtraData(List<Security> rawSecurities)
         {
             var updatedSecurities = new List<Security>();
-            var funds = (List<MutualFund>)rawSecurities.Where(s => s is MutualFund);
+            var funds = rawSecurities.Where(s => s is MutualFund);
 
-            foreach (var fund in funds)
+            foreach (var fund in funds.Cast<MutualFund>())
             {
                 if (_securityDatabaseList.Any(f => f.Ticker == fund.Ticker)) {
                     var fundFromDB = (MutualFund)_securityDatabaseList.Find(m => m.Ticker == fund.Ticker);
