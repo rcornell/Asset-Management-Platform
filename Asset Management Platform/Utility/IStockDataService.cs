@@ -25,13 +25,14 @@ namespace Asset_Management_Platform.Utility
 
         List<Security> GetSecurityList();
 
-        void Dispose();
-        List<Security> GetUpdatedPrices();
-
         Security GetSecurityInfo(string ticker);
 
         Security GetSecurityInfo(string ticker, Security securityType);
 
         List<Security> GetSecurityInfo(List<Security> securities);
+
+        List<Security> GetSecurityInfo(List<string> tickers);
+
+        List<Security> GetMutualFundExtraData(List<Security> rawSecurities);
     }
 }

@@ -105,7 +105,6 @@ namespace Asset_Management_Platform.Utility
         //y     Dividend Yield
         /// </summary>
 
-        private List<Security> _securitiesWithMarketData;
 
         public YahooAPIService()
         {
@@ -117,20 +116,34 @@ namespace Asset_Management_Platform.Utility
             // Make a WebClient.
             WebClient web_client = new WebClient();
 
-            // Get the indicated URL.
-            Stream response = web_client.OpenRead(url);
+            try { 
+                // Get the indicated URL.
+                Stream response = web_client.OpenRead(url);
 
-            // Read the result.
-            using (StreamReader stream_reader = new StreamReader(response))
+                // Read the result.
+                using (StreamReader stream_reader = new StreamReader(response))
+                {
+                    // Get the results.
+                    string result = stream_reader.ReadToEnd();
+
+                    // Close the stream reader and its underlying stream.
+                    stream_reader.Close();
+
+                    // Return the result.
+                    return result;
+                }
+            }
+            catch (WebException ex)
             {
-                // Get the results.
-                string result = stream_reader.ReadToEnd();
-
-                // Close the stream reader and its underlying stream.
-                stream_reader.Close();
-
-                // Return the result.
-                return result;
+                throw new NotImplementedException();
+            }
+            catch (IOException ex)
+            {
+                throw new NotImplementedException();
+            }
+            catch (ArgumentException ex)
+            {
+                throw new NotImplementedException();
             }
         }
 
@@ -156,7 +169,7 @@ namespace Asset_Management_Platform.Utility
 
                 if (securityType == "Stock")
                 {
-                    var stockIsUnknown = IsStockUnknown(yahooResult);
+                    var stockIsUnknown = IsSecurityUnknown(yahooResult);
 
                     if (stockIsUnknown)
                     {
@@ -260,7 +273,7 @@ namespace Asset_Management_Platform.Utility
 
                 if (securityType is Stock)
                 {
-                    var stockIsUnknown = IsStockUnknown(yahooResult);
+                    var stockIsUnknown = IsSecurityUnknown(yahooResult);
 
                     if (stockIsUnknown)
                     {
@@ -427,20 +440,10 @@ namespace Asset_Management_Platform.Utility
             return yahooResultList;
         }
 
-        private string DetermineIfStockOrFund(YahooAPIResult yahooResult)
-        {
-            if (yahooResult.Description == @"N/A")
-                return "Unknown";
-
-            if (yahooResult.MarketCapIsNA && yahooResult.PeRatioIsNA)
-                return "Mutual Fund";
-            else
-                return "Stock";
-        }
-
         public List<Security> GetMultipleSecurities(List<Security> securities)
         {           
             const string baseUrl = "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=sl1yj1barvb6a5n";
+            var securitiesToReturn = new List<Security>();
 
             // Build the URL.
             string tickerString = "";            
@@ -464,7 +467,7 @@ namespace Asset_Management_Platform.Utility
                 //Get the response.
                 try
                 {
-                    _securitiesWithMarketData = new List<Security>(); //Instantiate the list to return
+                    securitiesToReturn = new List<Security>(); //Instantiate the list to return
 
                     //Get the web response and clean it up
                     string response = GetWebResponse(tickerString);
@@ -482,11 +485,11 @@ namespace Asset_Management_Platform.Utility
 
                         if (securityType == "Stock")
                         {
-                            if (IsStockUnknown(yahooResult))
+                            if (IsSecurityUnknown(yahooResult))
                             {
                                 continue; //do not add stock
                             }
-                            _securitiesWithMarketData.Add(new Stock(yahooResult));
+                            securitiesToReturn.Add(new Stock(yahooResult));
                         }
                         else if (securityType == "Mutual Fund")
                         {
@@ -496,7 +499,7 @@ namespace Asset_Management_Platform.Utility
                             string category = mutualFund.Category;
                             string subcategory = mutualFund.Subcategory;
 
-                            _securitiesWithMarketData.Add(new MutualFund(yahooResult, assetClass, category, subcategory));
+                            securitiesToReturn.Add(new MutualFund(yahooResult, assetClass, category, subcategory));
 
                         }
                         else
@@ -508,16 +511,105 @@ namespace Asset_Management_Platform.Utility
 
 
                     }
-                    return _securitiesWithMarketData;
+                    return securitiesToReturn;
                 }
 
                 catch (Exception ex) //Error in parsing Yahoo API results.
                 {
                     Console.WriteLine(ex.Message);
-                    return _securitiesWithMarketData; //probably null
+                    return securitiesToReturn; //probably null
                 }
             }
-            return _securitiesWithMarketData; //probably null
+            return securitiesToReturn; //probably null
+        }
+
+        /// <summary>
+        /// Returns a list of securities based on List of tickers parameter,
+        /// but mutual funds will not have asset class, category, or subcategory 
+        /// defined.
+        /// </summary>
+        /// <param name="tickers"></param>
+        /// <returns></returns>
+        public List<Security> GetMultipleSecurities(List<string> tickers)
+        {
+            const string baseUrl = "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=sl1yj1barvb6a5n";
+            var securitiesToReturn = new List<Security>(); //Instantiate the list to return
+
+            // Build the URL.
+            string tickerString = "";
+            foreach (var ticker in tickers)
+            {
+                tickerString += ticker + "+";
+            }
+
+            if (tickerString != "")
+            {
+                //Remove the trailing plus sign. Faster than comparing
+                //for the last item in the foreach loop above and not
+                //adding the + at the end
+                tickerString = tickerString.Substring(0, tickerString.Length - 1);
+
+                //Prepend the base URL.
+                //s (symbol) n (name) l1 (last price) y (yield) j1 (market cap) 
+                //b (bid) a (ask) r (peRatio) a5 (ask size) b6 (bid size)
+                tickerString = baseUrl.Replace("@", tickerString); //Add my tickers to the middle of the url
+
+                //Get the response.
+                try
+                {
+
+                    //Get the web response and clean it up
+                    string response = GetWebResponse(tickerString);
+                    string result = Regex.Replace(response, "\\r\\n", "\r\n");
+
+                    //Create an array of the results
+                    var yahooResults = CreateYahooAPIResultList(result);
+
+
+                    //logic for looping through results
+                    foreach (var yahooResult in yahooResults)
+                    {
+                        if (IsSecurityUnknown(yahooResult))
+                            continue; //do not add stock
+                        
+
+                        var securityType = DetermineIfStockOrFund(yahooResult);
+                        if (securityType == "Stock")
+                        {                            
+                            securitiesToReturn.Add(new Stock(yahooResult));
+                        }
+                        else if (securityType == "Mutual Fund")
+                        {
+                            securitiesToReturn.Add(new MutualFund(yahooResult));
+                        }
+                        else
+                        {
+                            //Unknown security type & determination error
+                            throw new NotImplementedException();
+                        }
+                    }
+                    return securitiesToReturn;
+                }
+                catch (ArgumentNullException ex) //Error in parsing Yahoo API results.
+                {
+                    Console.WriteLine(ex.Message);
+                    return securitiesToReturn; //probably null
+                }
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    return securitiesToReturn;
+                }
+            }
+            return securitiesToReturn; //probably null
+        }
+
+        private string DetermineIfStockOrFund(YahooAPIResult yahooResult)
+        {
+            if (yahooResult.MarketCapIsNA && yahooResult.PeRatioIsNA && yahooResult.Ticker.Length == 5)
+                return "Mutual Fund";
+            else
+                return "Stock";
         }
 
         /// <summary>
@@ -527,17 +619,19 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         /// <param name="yahooResult"></param>
         /// <returns></returns>
-        private bool IsStockUnknown(YahooAPIResult yahooResult)
+        private bool IsSecurityUnknown(YahooAPIResult yahooResult)
         {
-            int numberOfNA = 0;
+            //int numberOfNA = 0;
 
-            if (yahooResult.LastPriceIsNA) numberOfNA++;
-            if (yahooResult.YieldIsNA) numberOfNA++;
-            if (yahooResult.MarketCapIsNA) numberOfNA++;
-            if (yahooResult.PeRatioIsNA) numberOfNA++;
-            if (yahooResult.VolumeIsNA) numberOfNA++;
+            //if (yahooResult.LastPriceIsNA) numberOfNA++;
+            //if (yahooResult.YieldIsNA) numberOfNA++;
+            //if (yahooResult.MarketCapIsNA) numberOfNA++;
+            //if (yahooResult.PeRatioIsNA) numberOfNA++;
+            //if (yahooResult.VolumeIsNA) numberOfNA++;
 
-            if (numberOfNA > 2)
+            //if (numberOfNA > 2)
+            //    return true;
+            if (yahooResult.Description == @"N/A")
                 return true;
 
             return false;
@@ -545,7 +639,6 @@ namespace Asset_Management_Platform.Utility
 
         public void Dispose()
         {
-            _securitiesWithMarketData = null;
         }
     }
 }

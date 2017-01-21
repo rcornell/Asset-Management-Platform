@@ -10,9 +10,10 @@ namespace Asset_Management_Platform.Utility
     {
         bool CheckDBForPositions();
 
-        List<Position> GetPositions();
+        List<Taxlot> GetTaxlotsFromDatabase();
 
-        void LoadPositionsFromDatabase();
+        List<Position> CreatePositionsFromTaxlots(List<Taxlot> taxlots);
+
         void SavePortfolioToDatabase();
 
         void UploadLimitOrdersToDatabase(List<LimitOrder> limitOrders);

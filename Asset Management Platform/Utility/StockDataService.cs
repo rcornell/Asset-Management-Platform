@@ -14,17 +14,13 @@ namespace Asset_Management_Platform.Utility
     /// containing basic data for all the positions covered by
     /// this application.
     /// </summary>
-    public class StockDataService : IStockDataService, IDisposable
+    public class StockDataService : IStockDataService
     {
-        private List<Security> _securityList;
-        public List<Security> SecurityList {
-            get { return _securityList; }
-            set { _securityList = value; }
-        }
+        private List<Security> _securityDatabaseList;
 
         public StockDataService()
         {
-            _securityList = new List<Security>();
+            _securityDatabaseList = new List<Security>();
         }
 
         /// <summary>
@@ -79,7 +75,7 @@ namespace Asset_Management_Platform.Utility
                             lastPrice = decimal.Parse(reader.GetString(3)); //if paused here, it's because you're not sure if Float will work.
                         if (!reader.IsDBNull(4))
                             yield = double.Parse(reader.GetString(4));
-                        _securityList.Add(new Stock(cusip, ticker, description, lastPrice, yield));
+                        _securityDatabaseList.Add(new Stock(cusip, ticker, description, lastPrice, yield));
                     }
                     reader.Close();
                 }
@@ -116,11 +112,11 @@ namespace Asset_Management_Platform.Utility
                             category = string.IsNullOrEmpty(reader.GetString(6)) ? "" : reader.GetString(6);
                         if (!reader.IsDBNull(7))
                             subCategory = string.IsNullOrEmpty(reader.GetString(7)) ? "" : reader.GetString(7);
-                        _securityList.Add(new MutualFund(cusip, ticker, description, lastPrice, yield, assetClass, category, subCategory));
+                        _securityDatabaseList.Add(new MutualFund(cusip, ticker, description, lastPrice, yield, assetClass, category, subCategory));
                     }
                 }
             }
-            return _securityList;
+            return _securityDatabaseList;
         }
 
         /// <summary>
@@ -170,11 +166,11 @@ namespace Asset_Management_Platform.Utility
 
         public bool UpdateSecurityDatabase()
         {
-            if (_securityList.Count > 0)
+            if (_securityDatabaseList.Count > 0)
             {
                 using (var yahooAPI = new YahooAPIService())
                 {
-                    _securityList = yahooAPI.GetMultipleSecurities(_securityList);
+                    _securityDatabaseList = yahooAPI.GetMultipleSecurities(_securityDatabaseList);
                 }
             }
             else
@@ -183,12 +179,6 @@ namespace Asset_Management_Platform.Utility
             return true;
         }
 
-        public List<Security> GetUpdatedPrices()
-        {
-            throw new NotImplementedException();
-        }
-
-
         /// <summary>
         /// Insert position(s) into the database and returns true if successful
         /// </summary>
@@ -196,7 +186,7 @@ namespace Asset_Management_Platform.Utility
         /// <returns></returns>
         public bool InsertIntoDatabase(Security securityToInsert)
         {
-            var isInDatabase = _securityList.Any(s => s.Ticker == securityToInsert.Ticker);
+            var isInDatabase = _securityDatabaseList.Any(s => s.Ticker == securityToInsert.Ticker);
 
             if (isInDatabase || securityToInsert.Ticker == @"N/A")
                 return false;
@@ -238,7 +228,7 @@ namespace Asset_Management_Platform.Utility
                     
                 }
             }
-            _securityList.Add(securityToInsert);
+            _securityDatabaseList.Add(securityToInsert);
             return true;
         }
 
@@ -248,7 +238,7 @@ namespace Asset_Management_Platform.Utility
         /// <returns></returns>
         public void UploadSecuritiesToDatabase()
         {
-            if (_securityList != null)
+            if (_securityDatabaseList != null)
             {
                 var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
                 using (var connection = new SqlConnection(storageString))
@@ -260,7 +250,7 @@ namespace Asset_Management_Platform.Utility
                         command.ExecuteNonQuery();
 
                         var insertString = @"INSERT INTO Stocks (Cusip, Ticker, Description, LastPrice, Yield) VALUES ";
-                        foreach (var sec in _securityList)
+                        foreach (var sec in _securityDatabaseList)
                         {
                             if (sec is Stock) { 
                                 var newValue = string.Format("('{0}', '{1}', '{2}', {3}, {4}) ", sec.Cusip, sec.Ticker, sec.Description, sec.LastPrice, sec.Yield);
@@ -279,7 +269,7 @@ namespace Asset_Management_Platform.Utility
                         command.ExecuteNonQuery();
 
                         var insertString = @"INSERT INTO MutualFunds (Ticker, Description, LastPrice, Yield, AssetClass, Category, Subcategory) VALUES ";
-                        foreach(var sec in _securityList)
+                        foreach(var sec in _securityDatabaseList)
                         {
                             if(sec is MutualFund)
                             {
@@ -322,7 +312,7 @@ namespace Asset_Management_Platform.Utility
 
         public List<Security> GetSecurityList()
         {
-            return _securityList;
+            return _securityDatabaseList;
         }
 
         public Security GetSecurityInfo(string ticker)
@@ -331,7 +321,7 @@ namespace Asset_Management_Platform.Utility
             {
                 using (var yahooAPI = new YahooAPIService())
                 {
-                    var result = yahooAPI.GetSingleSecurity(ticker, _securityList);
+                    var result = yahooAPI.GetSingleSecurity(ticker, _securityDatabaseList);
                     var insertedOrNot = InsertIntoDatabase(result);
                     return result;
                 }
@@ -345,7 +335,7 @@ namespace Asset_Management_Platform.Utility
             {
                 using (var yahooAPI = new YahooAPIService())
                 {
-                    var result = yahooAPI.GetSingleSecurity(ticker, _securityList, securityType);
+                    var result = yahooAPI.GetSingleSecurity(ticker, _securityDatabaseList, securityType);
                     var insertedOrNot = InsertIntoDatabase(result);
                     return result;
                 }
@@ -356,7 +346,7 @@ namespace Asset_Management_Platform.Utility
         public List<Security> GetSecurityInfo(List<Security> securities)
         {
             var resultList = new List<Security>();
-            if (securities != null)
+            if (securities != null && securities.Count > 0)
             {
                 using (var yahooAPI = new YahooAPIService())
                 {
@@ -367,10 +357,25 @@ namespace Asset_Management_Platform.Utility
             return resultList;
         }
 
-        public void Dispose()
+        public List<Security> GetSecurityInfo(List<string> tickers)
         {
-            UploadSecuritiesToDatabase();
-            _securityList = null;
+            var resultList = new List<Security>();
+            if (tickers != null && tickers.Count > 0)
+            {
+                using (var yahooAPI = new YahooAPIService())
+                {
+                    resultList = yahooAPI.GetMultipleSecurities(tickers);
+                }
+            }
+            return resultList;
+        }
+
+        public List<Security> GetMutualFundExtraData(List<Security> rawSecurities)
+        {
+            var updatedSecurities = new List<Security>(rawSecurities);
+
+
+            return updatedSecurities;
         }
     }
 }

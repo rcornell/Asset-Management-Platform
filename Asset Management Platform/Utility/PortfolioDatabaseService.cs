@@ -21,20 +21,17 @@ namespace Asset_Management_Platform
     {
         private List<string> _positionsToDelete;
         private SqlDataReader _reader;
-        private List<Position> _databaseOriginalState;
+        private List<Position> _portfolioOriginalState;
         private List<Position> _myPositions;
+        private IStockDataService _stockDatabaseService;
 
 
-        public PortfolioDatabaseService()
+        public PortfolioDatabaseService(IStockDataService stockDatabaseService)
         {
-            _databaseOriginalState = new List<Position>();
-             _positionsToDelete = new List<string>();
-            _myPositions = new List<Position>();
-            if (CheckDBForPositions())
-                LoadPositionsFromDatabase();
-            else
+            _stockDatabaseService = stockDatabaseService;
+            _positionsToDelete = new List<string>();
+            if (!CheckDBForPositions())
                 _myPositions = new List<Position>();
-
         }
 
         public List<Position> GetPositions()
@@ -88,9 +85,63 @@ namespace Asset_Management_Platform
         /// using the SQL Database's
         /// MyPortfolio table.
         /// </summary>
-        public void LoadPositionsFromDatabase()
+        //public void LoadPositionsFromDatabase()
+        //{
+        //    List<Taxlot> taxlotsFromDatabase = new List<Taxlot>();
+        //    var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
+        //    using (var connection = new SqlConnection(storageString))
+        //    {
+        //        connection.Open();
+        //        using (var command = new SqlCommand())
+        //        {
+        //            command.Connection = connection;
+        //            command.CommandText = @"SELECT * FROM MyPortfolio;";
+        //            var reader = command.ExecuteReader();
+        //            while (reader.Read())
+        //            {
+        //                var ticker = reader.GetString(1);
+        //                var quantity = int.Parse(reader.GetString(2));
+        //                var purchasePrice = decimal.Parse(reader.GetString(3));
+        //                DateTime datePurchased = new DateTime();
+        //                if(reader.IsDBNull(4))
+        //                    datePurchased = new DateTime(2000,12,31);
+        //                else if (!string.IsNullOrEmpty(reader.GetString(4)))
+        //                    datePurchased = DateTime.Parse(reader.GetString(4));
+
+        //                var taxLot = new Taxlot(ticker, quantity, purchasePrice, datePurchased);
+        //                taxlotsFromDatabase.Add(taxLot);
+        //            }
+        //        }
+        //    }
+        //    foreach (var lot in taxlotsFromDatabase)
+        //    {
+        //        if (!_myPositions.Any(s => s.Ticker == lot.Ticker))
+        //        {
+        //            _myPositions.Add(new Position(lot));
+        //        }
+        //        else if (_myPositions.Any(s => s.Ticker == lot.Ticker && s.SharesOwned != lot.Shares))
+        //        {
+        //            _myPositions.Find(s => s.Ticker == lot.Ticker).AddTaxlot(lot);
+        //        }
+        //        else if (_myPositions.Any(s => s.Ticker == lot.Ticker && s.SharesOwned == lot.Shares))
+        //        {
+        //            var pos = _myPositions.Find(s => s.Ticker == lot.Ticker);
+        //            if (pos.Taxlots.Any(d => d.DatePurchased == lot.DatePurchased))
+        //                continue;
+        //            else
+        //                pos.AddTaxlot(lot);
+        //        }
+        //    }
+
+        //    foreach (var pos in _myPositions)
+        //    {
+        //        _databaseOriginalState.Add(new Position(pos.Taxlots));
+        //    }
+        //}
+
+        public List<Taxlot> GetTaxlotsFromDatabase()
         {
-            List<Taxlot> taxlotsFromDatabase = new List<Taxlot>();
+            var taxlotsFromDatabase = new List<Taxlot>();
             var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             using (var connection = new SqlConnection(storageString))
             {
@@ -106,8 +157,8 @@ namespace Asset_Management_Platform
                         var quantity = int.Parse(reader.GetString(2));
                         var purchasePrice = decimal.Parse(reader.GetString(3));
                         DateTime datePurchased = new DateTime();
-                        if(reader.IsDBNull(4))
-                            datePurchased = new DateTime(2000,12,31);
+                        if (reader.IsDBNull(4))
+                            datePurchased = new DateTime(2000, 12, 31);
                         else if (!string.IsNullOrEmpty(reader.GetString(4)))
                             datePurchased = DateTime.Parse(reader.GetString(4));
 
@@ -116,7 +167,12 @@ namespace Asset_Management_Platform
                     }
                 }
             }
-            foreach (var lot in taxlotsFromDatabase)
+            return taxlotsFromDatabase;
+        }
+
+        public List<Position> CreatePositionsFromTaxlots(List<Taxlot> taxlots)
+        {
+            foreach (var lot in taxlots)
             {
                 if (!_myPositions.Any(s => s.Ticker == lot.Ticker))
                 {
@@ -136,13 +192,16 @@ namespace Asset_Management_Platform
                 }
             }
 
+
             foreach (var pos in _myPositions)
             {
-                _databaseOriginalState.Add(new Position(pos.Taxlots));
+                _portfolioOriginalState.Add(new Position(pos.Taxlots));
             }
+
+            return _myPositions;
+
         }
 
-     
         /// <summary>
         /// Compares _myPortfolio to the _databaseOriginalState from launch
         /// and creates lists of securities to update, insert, or delete.
@@ -158,25 +217,25 @@ namespace Asset_Management_Platform
             {
                 
    
-                if (_databaseOriginalState.Any(pos => pos.Ticker == p.Ticker && pos.SharesOwned == p.SharesOwned))
+                if (_portfolioOriginalState.Any(pos => pos.Ticker == p.Ticker && pos.SharesOwned == p.SharesOwned))
                 {
                     continue;
                 }
 
                 //Is the current position's ticker in the original state but the quantity is different?
-                if (_databaseOriginalState.Any(pos => pos.Ticker == p.Ticker && pos.SharesOwned != p.SharesOwned))
+                if (_portfolioOriginalState.Any(pos => pos.Ticker == p.Ticker && pos.SharesOwned != p.SharesOwned))
                 {
                     positionsToUpdate.Add(p);
                 }
 
                 //Is the ticker not present in the original database?
-                if (!_databaseOriginalState.Any(pos => pos.Ticker == p.Ticker))
+                if (!_portfolioOriginalState.Any(pos => pos.Ticker == p.Ticker))
                 {
                     positionsToInsert.Add(p);
                 }
 
                 //Is the quantity zero'd out from a sale?
-                if (_databaseOriginalState.Any(pos => pos.Ticker == p.Ticker && pos.SharesOwned == 0))
+                if (_portfolioOriginalState.Any(pos => pos.Ticker == p.Ticker && pos.SharesOwned == 0))
                 {
                     _positionsToDelete.Add(p.Ticker);
                 }
@@ -382,7 +441,7 @@ namespace Asset_Management_Platform
             var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             var downloadString = @"SELECT * FROM dbo.MyLimitOrders;";
             SqlDataReader reader;
-            var dbResults = new List<LimitOrderDBResult>();
+            var limitDBResults = new List<LimitOrderDBResult>();
 
             using (var connection = new SqlConnection(storageString))
             {
@@ -403,20 +462,18 @@ namespace Asset_Management_Platform
                             var orderDuration = reader.GetString(6);
 
                             var newResult = new LimitOrderDBResult(tradeType, ticker, shares, limit, securityType, orderDuration);
-                            dbResults.Add(newResult);
+                            limitDBResults.Add(newResult);
                         }
                     }
                 }
             }
-
-            foreach (var result in dbResults)
+            foreach (var result in limitDBResults)
             {
                 var newSecurity = new Security();
 
                 if (result.SecurityType == null)
                 {
-                    var security = DetermineSecurityType(result.Ticker);
-                    result.SecurityType = security.SecurityType;
+                    throw new NotImplementedException();
                 }
                 else if (result.SecurityType == "Stock")
                 {
@@ -436,18 +493,18 @@ namespace Asset_Management_Platform
             return limitOrders;
         }
 
-        private Security DetermineSecurityType(string ticker)
-        {
-            Security securityType;
+        //private Security DetermineSecurityType(string ticker)
+        //{
+        //    Security securityType;
 
-            using (var stockData = new StockDataService())
-            {
-                securityType = stockData.GetSecurityInfo(ticker);
+        //    using (var stockData = new StockDataService())
+        //    {
+        //        securityType = stockData.GetSecurityInfo(ticker);
                 
-            }
+        //    }
 
-            return securityType;
-        }
+        //    return securityType;
+        //}
 
         /// <summary>
         /// Adds a new security to a portfolio as a new Position

@@ -45,6 +45,9 @@ namespace Asset_Management_Platform.Utility
             }
         }
 
+        private List<Security> _portfolioSecurities;
+
+
         public PortfolioManagementService(IStockDataService stockDataService, IPortfolioDatabaseService portfolioDatabaseService)
         {
             _stockDataService = stockDataService;
@@ -56,6 +59,11 @@ namespace Asset_Management_Platform.Utility
 
             //Use yahooAPI to pull in updated info
             var updateSuccessful = _stockDataService.UpdateSecurityDatabase();
+
+
+
+            //Create a list of owned securities
+            BuildPortfolioSecurities();
 
             //Build list of DisplaySecurities
             BuildDisplaySecurityLists();
@@ -70,6 +78,23 @@ namespace Asset_Management_Platform.Utility
         }
 
 
+        //Creates the list of Securities owned
+        private void BuildPortfolioSecurities()
+        {
+            var taxlots = _portfolioDatabaseService.GetTaxlotsFromDatabase();
+            var positions = _portfolioDatabaseService.CreatePositionsFromTaxlots(taxlots);
+            var tickers = new List<string>();
+
+            foreach (var position in positions)
+            {
+                tickers.Add(position.Ticker);
+            }
+
+            var rawSecurities = _stockDataService.GetSecurityInfo(tickers);
+            List<Security> fullSecurities = _stockDataService.GetMutualFundExtraData(rawSecurities);
+        }
+
+
         /// <summary>
         /// Creates the lists of UI-bindable stocks and mutual funds.
         /// Separate lists need to be maintained if the user switches
@@ -77,28 +102,57 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         private void BuildDisplaySecurityLists()
         {
-            var positions = _portfolioDatabaseService.GetPositions();
-            var securities = _stockDataService.GetSecurityList();
+            //var positions = _portfolioDatabaseService.GetPositions();
+
+            //_portfolioSecurities = GetPortfolioSecurities(positions);
+
+            //var securities = _stockDataService.GetSecurityList();
+
+
+
+
+
+
 
             _displayStocks = new List<DisplayStock>();
             _displayMutualFunds = new List<DisplayMutualFund>();
 
-            foreach (var pos in positions)
+            //foreach (var pos in positions) //needs to be fed the list of positions now
+            //{
+            //    //Search the known securities list for a match
+            //    var matchingSecurity = securities.Find(s => s.Ticker == pos.Ticker);
+
+            //    //If no match within security list, look it up.
+            //    if (matchingSecurity == null) { 
+            //        matchingSecurity = _stockDataService.GetSecurityInfo(pos.Ticker);
+            //    }
+
+            //    //Create appropriate security type and add to lists for UI.
+            //    if (matchingSecurity != null && matchingSecurity is Stock)
+            //        _displayStocks.Add(new DisplayStock(pos, (Stock)matchingSecurity));
+            //    else if (matchingSecurity != null && matchingSecurity is MutualFund)
+            //        _displayMutualFunds.Add(new DisplayMutualFund(pos, (MutualFund)matchingSecurity));
+            //} 
+        }
+
+        private List<Security> GetPortfolioSecurities(List<Position> positions)
+        {
+
+            var portfolioSecurities = new List<Security>();
+            var tickers = new List<string>();
+            foreach (var position in positions)
             {
-                //Search the known securities list for a match
-                var matchingSecurity = securities.Find(s => s.Ticker == pos.Ticker);
+                tickers.Add(position.Ticker);
+            }
 
-                //If no match within security list, look it up.
-                if (matchingSecurity == null) { 
-                    matchingSecurity = _stockDataService.GetSecurityInfo(pos.Ticker);
-                }
+            var updatedSecurities = _stockDataService.GetSecurityInfo(tickers);
 
-                //Create appropriate security type and add to lists for UI.
-                if (matchingSecurity != null && matchingSecurity is Stock)
-                    _displayStocks.Add(new DisplayStock(pos, (Stock)matchingSecurity));
-                else if (matchingSecurity != null && matchingSecurity is MutualFund)
-                    _displayMutualFunds.Add(new DisplayMutualFund(pos, (MutualFund)matchingSecurity));
-            } 
+
+
+
+
+
+            return portfolioSecurities;
         }
 
         private void BuildLimitOrderList()
@@ -229,20 +283,39 @@ namespace Asset_Management_Platform.Utility
             else if (validOrder && limitType && isActiveLimitOrder)
             {
                 //Order is valid and a limit-type and is active
-                if (trade.Security is Stock)
-                    SellStock(trade);
-                if (trade.Security is MutualFund)
-                    SellMutualFund(trade);
+                //if (trade.Security is Stock)
+                //    SellStock(trade);
+                //if (trade.Security is MutualFund)
+                //    SellMutualFund(trade);
+                SellPosition(trade);
             }
             else if (validOrder && trade.Terms == "Market")
             {
                 //Order is valid and a market order
-                if (trade.Security is Stock)
-                    SellStock(trade);
-                if (trade.Security is MutualFund)
-                    SellMutualFund(trade);
+                //if (trade.Security is Stock)
+                //    SellStock(trade);
+                //if (trade.Security is MutualFund)
+                //    SellMutualFund(trade);
+                SellPosition(trade);
             }
         }
+
+
+        private void SellPosition(Trade trade)
+        {
+            var securityBeingSold = trade.Security;
+            var ticker = trade.Ticker;
+            var shares = trade.Shares;
+            var displayFund = _displayMutualFunds.Find(m => m.Ticker == ticker);
+            var displayStock = _displayStocks.Find(s => s.Ticker == ticker);
+
+            if (trade.Security is Stock && displayStock != null)
+            {
+                
+
+            }
+        }
+
 
         private void SellMutualFund(Trade trade)
         {
