@@ -19,7 +19,6 @@ namespace Asset_Management_Platform
     /// </summary>
     public class PortfolioDatabaseService : IPortfolioDatabaseService
     {
-        private List<string> _positionsToDelete;
         private SqlDataReader _reader;
         private List<Position> _portfolioOriginalState;
         private List<Position> _myPositions;
@@ -30,7 +29,6 @@ namespace Asset_Management_Platform
         {            
             _stockDatabaseService = stockDatabaseService;
 
-            _positionsToDelete = new List<string>();
             _portfolioOriginalState = new List<Position>();
             _myPositions = new List<Position>();
 
@@ -221,6 +219,7 @@ namespace Asset_Management_Platform
 
             var positionsToInsert = new List<Position>();
             var positionsToUpdate = new List<Position>();
+            var positionsToDelete = new List<Position>();
 
             foreach (var p in _myPositions)
             {
@@ -244,87 +243,31 @@ namespace Asset_Management_Platform
                 //Is the quantity zero'd out from a sale?
                 if (_portfolioOriginalState.Any(pos => pos.Ticker == p.Ticker && pos.SharesOwned == 0))
                 {
-                    _positionsToDelete.Add(p.Ticker);
+                    positionsToDelete.Add(p);
                 }
             }
 
             //If no inserts, updates, or deletes, exit method.
-            if (positionsToInsert.Count == 0 && positionsToUpdate.Count == 0 && _positionsToDelete.Count == 0)
+            if (positionsToInsert.Count == 0 && positionsToUpdate.Count == 0 && positionsToDelete.Count == 0)
                 return;
 
+            if (positionsToUpdate.Any())
+            {
+                UpdatePositions(positionsToUpdate);
+            }
+
+            if (positionsToInsert.Any())
+            {
+                InsertPositions(positionsToInsert);
+            }
+
+            if (positionsToDelete.Any())
+            {
+                DeletePositions(positionsToDelete);
+            }
+
+
             try {
-
-                var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
-                using (var connection = new SqlConnection(storageString))
-                {
-                    connection.Open();
-                    using (var command = new SqlCommand())
-                    {
-                        command.Connection = connection;
-                        //UPDATE POSITIONS IF NECESSARY
-                        if (positionsToUpdate.Any()) { 
-                            foreach (var pos in positionsToUpdate)
-                            {
-                                //Deletes all taxlots for position being updated
-                                string deleteString = string.Format(@"DELETE FROM MyPortfolio WHERE Ticker='{0}';", pos.Ticker);     
-                                command.CommandText = deleteString;
-                                command.ExecuteNonQuery();
-
-                                var insertString = @"INSERT INTO dbo.MyPortfolio (Ticker, Shares, CostBasis, DatePurchased, SecurityType) VALUES ";
-
-                                //Re-adds all current taxlots
-                                foreach (var lot in pos.Taxlots) {                                   
-                                    insertString += string.Format(@"('{0}' ,'{1}' ,'{2}' , '{3}', '{4}'), ", lot.Ticker, lot.Shares, lot.PurchasePrice, lot.DatePurchased, lot.SecurityType);
-                                }
-                                insertString.Substring(insertString.Length - 2);
-                                command.CommandText = insertString;
-                                command.ExecuteNonQuery();
-                            }
-                        }
-
-                        //INSERT POSITIONS IF NECESSARY
-                        if (positionsToInsert.Any())
-                        {
-                            string insertString = @"INSERT INTO dbo.MyPortfolio (Ticker, Shares, CostBasis, DatePurchased, SecurityType) VALUES ";
-
-                            var finalPosition = positionsToInsert.Last();
-                            var finalTaxlot = positionsToInsert.Last().Taxlots.Last();
-                            foreach (var pos in positionsToInsert)
-                            {
-                                foreach (var lot in pos.Taxlots) { 
-                                    //If the position being iterated is the last one, add the terminating SQL clause instead
-                                    if (pos != finalPosition && lot != finalTaxlot)
-                                    {
-                                        insertString += string.Format("('{0}', '{1}', '{2}', '{3}', '{4}'), ", lot.Ticker, lot.Shares, lot.PurchasePrice, lot.DatePurchased, lot.SecurityType);
-                                    }
-                                    else
-                                    {
-                                        insertString += string.Format("('{0}', '{1}', '{2}', '{3}', '{4}');", lot.Ticker, lot.Shares, lot.PurchasePrice, lot.DatePurchased, lot.SecurityType);
-                                    }
-                                }
-                            }
-                            command.CommandText = insertString;
-                            command.ExecuteNonQuery();
-                        }
-
-                        //DELETE POSITIONS IF NECESSARY
-                        if (_positionsToDelete.Any())
-                        {
-                            string deleteString = @"DELETE FROM MyPortfolio WHERE Ticker =";
-
-                            foreach (var pos in _positionsToDelete)
-                            {
-                                var deleteCommand = deleteString += string.Format(@" '{0}';", pos);
-                                command.CommandText = deleteCommand;
-                                command.ExecuteNonQuery();
-                                //This will crash if more than one security is being deleted
-                                //at a time.
-                            }
-
-                        }
-                    }
-                }
-
             }
             catch (SqlException ex)
             {
@@ -336,6 +279,93 @@ namespace Asset_Management_Platform
             {
                 var msg = new DatabaseMessage(ex.Message, false);
                 Messenger.Default.Send(msg);
+            }
+        }
+
+
+        private void InsertPositions(List<Position> positions)
+        {
+            string storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
+            string insertString = @"INSERT INTO dbo.MyPortfolio (Ticker, Shares, CostBasis, DatePurchased, SecurityType) VALUES ";
+
+            var finalPosition = positions.Last();
+            var finalTaxlot = positions.Last().Taxlots.Last();
+            foreach (var pos in positions)
+            {
+                foreach (var lot in pos.Taxlots)
+                {
+                    //If the position being iterated is the last one, add the terminating SQL clause instead
+                    if (pos != finalPosition && lot != finalTaxlot)
+                    {
+                        insertString += string.Format("('{0}', '{1}', '{2}', '{3}', '{4}'), ", lot.Ticker, lot.Shares, lot.PurchasePrice, lot.DatePurchased, lot.SecurityType);
+                    }
+                    else
+                    {
+                        insertString += string.Format("('{0}', '{1}', '{2}', '{3}', '{4}');", lot.Ticker, lot.Shares, lot.PurchasePrice, lot.DatePurchased, lot.SecurityType);
+                    }
+                }
+            }
+
+            using (var connection = new SqlConnection(storageString))
+            {
+                using (var command = new SqlCommand(insertString))
+                {
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private void UpdatePositions(List<Position> positions)
+        {
+            //Delete the taxlots/positions so they can be re-added
+            DeletePositions(positions);
+
+            var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
+            string insertString = @"INSERT INTO dbo.MyPortfolio 
+                                    (Ticker, Shares, CostBasis, DatePurchased, SecurityType) VALUES ";
+
+            foreach (var pos in positions)
+            {
+                //Re-adds all current taxlots
+                foreach (var lot in pos.Taxlots)
+                {
+                    insertString += string.Format(@"('{0}' ,'{1}' ,'{2}' , '{3}', '{4}'), ", lot.Ticker, lot.Shares, lot.PurchasePrice, lot.DatePurchased, lot.SecurityType);
+                }
+            }
+            insertString = insertString.Substring(insertString.Length - 2) + @";";
+
+            using (var connection = new SqlConnection(storageString))
+            {
+                using (var command = new SqlCommand(insertString))
+                {
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private void DeletePositions(List<Position> positions)
+        {
+            var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
+            string deleteString = @"Delete From dbo.MyPortfolio 
+                                   Where Ticker in ("; //value1, value2, ...);
+
+            foreach (var pos in positions)
+            {
+                //Deletes all taxlots for position being updated
+                //string deleteString = string.Format(@"DELETE FROM MyPortfolio WHERE Ticker='{0}';", pos.Ticker);
+                deleteString += string.Format(@"'{0}', ", pos.Ticker);
+
+            }
+            deleteString = deleteString.Substring(deleteString.Length - 2);
+            deleteString += @");";
+
+            using (var connection = new SqlConnection(storageString))
+            {
+                connection.Open();
+                using (var command = new SqlCommand(deleteString))
+                {
+                    command.ExecuteNonQuery();
+                }
             }
         }
 
@@ -533,19 +563,24 @@ namespace Asset_Management_Platform
         /// <param name="shares"></param>
         public void SellSharesFromPortfolioDatabase(Security security, decimal shares)
         {
-            foreach (var p in _myPositions.Where(p => p.Ticker == security.Ticker))
-            {
-                if (p.SharesOwned == shares)
-                {
-                    //var deleteThis = new Position(security.Ticker, shares);
-                    _positionsToDelete.Add(p.Ticker);
-                    break;
-                }
-                else
-                {
-                    p.SellShares(shares);
-                }
-            }
+            //How did you get here?
+            throw new NotImplementedException();
+
+
+
+            //foreach (var p in _myPositions.Where(p => p.Ticker == security.Ticker))
+            //{
+            //    if (p.SharesOwned == shares)
+            //    {
+            //        //var deleteThis = new Position(security.Ticker, shares);
+            //        _positionsToDelete.Add(p.Ticker);
+            //        break;
+            //    }
+            //    else
+            //    {
+            //        p.SellShares(shares);
+            //    }
+            //}
             //PROBABLY NEED TO SEND A MESSAGE TO UPDATE UI
         }
 
@@ -554,14 +589,10 @@ namespace Asset_Management_Platform
         /// positions to be deleted from the database
         /// upon exit.
         /// </summary>
-        public void DeletePortfolio()
+        public void DeletePortfolio(List<Position> positions)
         {
-            foreach (var position in _myPositions)
-            {
-                _positionsToDelete.Add(position.Ticker);
-            }
+            DeletePositions(positions);
         }
-
     }
 
 }

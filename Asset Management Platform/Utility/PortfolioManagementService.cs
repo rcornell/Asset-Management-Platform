@@ -668,8 +668,10 @@ namespace Asset_Management_Platform.Utility
         public void DeletePortfolio()
         {
             _displayStocks.Clear();
-            _securityDatabaseList.Clear();
-            _portfolioDatabaseService.DeletePortfolio();
+            _displayMutualFunds.Clear();
+            _portfolioSecurities.Clear();
+            _portfolioTaxlots.Clear();
+            _portfolioDatabaseService.DeletePortfolio(_portfolioPositions);
         }
 
         public void TestLimitOrderMethods()
