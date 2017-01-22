@@ -461,19 +461,6 @@ namespace Asset_Management_Platform
         }
         public MainViewModel(IPortfolioManagementService portfolioService)
         {
-            //if (IsInDesignMode)
-            //{
-            //    DisplayStockCollectionView = new ListCollectionView(new ObservableCollection<DisplayStock>()
-            //    {
-            //        new DisplayStock(new Position("AAPL", 1000), new Stock("", "AAPL", "Apple Inc.", 5, 1.00)),
-            //        new DisplayStock(new Position("IBM", 500), new Stock("", "IBM", "Intl Business Machines.", 10, 3.00)),
-            //    });
-
-            //    TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
-            //    TradeTermStrings = new ObservableCollection<string>() { "Market", "Limit", "Stop", "Stop Limit" };
-            //    TradeDurationStrings = new ObservableCollection<string> { "Day", "GTC", "Market Close", "Market Open", "Overnight" };
-            //}
-
             SelectedDisplayStock = null;
             TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
             TradeTermStrings = new ObservableCollection<string>() { "Market", "Limit", "Stop", "Stop Limit" };
@@ -587,7 +574,13 @@ namespace Asset_Management_Platform
                     PreviewBidSize = "-";
                 }
 
+                AlertBoxVisible = false;
                 ExecuteButtonEnabled = true;
+            }
+            else
+            {
+                SetAlertMessage(new TradeMessage(_orderTickerText, _orderShareQuantity));
+                AlertBoxVisible = true;
             }
         }
 
@@ -596,9 +589,16 @@ namespace Asset_Management_Platform
             var tickerNotEmpty = !string.IsNullOrEmpty(_orderTickerText);
             var shareQuantityValid = (_orderShareQuantity > 0);
             var securityTypeValid = (_selectedSecurityType is Stock || _selectedSecurityType is MutualFund);
-            if (tickerNotEmpty && shareQuantityValid && securityTypeValid)
+            var secTypeMatch = _selectedSecurityType == _portfolioManagementService.GetSecurityType(_orderTickerText, _selectedTradeType);
+
+
+            if (tickerNotEmpty && shareQuantityValid && securityTypeValid && secTypeMatch)
                 return true;
-            return false;
+            else
+            {
+                return false;
+            }
+            
         }
 
         private void ExecuteScreenerPreview(string screenerTicker)

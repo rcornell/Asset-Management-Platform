@@ -42,6 +42,8 @@ namespace Asset_Management_Platform.Utility
         void DeletePortfolio();
         void UploadAllToDatabase();
 
+        Security GetSecurityType(string ticker, string tradeType);
+
         void TestLimitOrderMethods();
     }
 }

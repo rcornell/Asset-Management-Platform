@@ -312,12 +312,6 @@ namespace Asset_Management_Platform.Utility
             }
         }
 
-        private void SellMutualFund(Trade trade, Position position)
-        {
-            
-        }
-
-
         /// <summary>
         /// During trade execution, checks for a limit order and
         /// whether it is active or not.
@@ -594,6 +588,28 @@ namespace Asset_Management_Platform.Utility
         public List<LimitOrder> GetLimitOrders()
         {
             return LimitOrderList;
+        }
+
+
+        /// <summary>
+        /// For a Sale, checks with list of user positions to make sure security types match
+        /// For a buy, pulls the security info from StockDataService
+        /// </summary>
+        /// <param name="ticker"></param>
+        /// <param name="tradeType"></param>
+        /// <returns></returns>
+        public Security GetSecurityType(string ticker, string tradeType)
+        {
+            Security secType;
+
+            if (tradeType == "Sell")
+                secType = _portfolioPositions.Find(s => s.Ticker == ticker).GetSecurityType();
+            else
+            {
+                secType = _stockDataService.GetSecurityInfo(ticker);
+            }
+
+            return secType;
         }
 
         public void UploadAllToDatabase()
