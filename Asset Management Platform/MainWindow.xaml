@@ -137,7 +137,7 @@
             </Grid.ColumnDefinitions>
             <Button Content="All Assets" Margin="5" Grid.Column="0" Command="{Binding ShowAllSecurities}"/>
             <Button Content="Equities" Margin="5" Grid.Column="1" Command="{Binding ShowStocksOnly}"/>
-            <Button Content="Fixed Income" Margin="5" Grid.Column="3" Command="{Binding UpdatePrices}"/>
+            <Button Content="TEST: Update Prices" Margin="5" Grid.Column="3" Command="{Binding UpdatePrices}"/>
             <Button Content="Funds and ETFs" Margin="5" Grid.Column="2" Command="{Binding ShowFundsOnly}"/>
         </Grid>
         <!-- When you have to make a DataGrid that groups objects by type: http://wpftutorial.net/DataGrid.html-->
@@ -205,10 +205,6 @@
                 <DataGridTextColumn Width="Auto" Header="Volume" Binding="{Binding Volume}"/>
             </DataGrid.Columns>
         </DataGrid>
-        
-
-        
-        
         <chart:PieChart
             Grid.Row="3" 
             Grid.Column="2"
@@ -221,18 +217,15 @@
             IsTabStop="False"
             IsManipulationEnabled="False"            
             ChartSubTitle="{Binding ChartSubtitle}">
-                <chart:PieChart.Series>
-                    <chart:ChartSeries                        
+            <chart:PieChart.Series>
+                <chart:ChartSeries                        
                         DisplayMember="Ticker"
                         ValueMember="Weight"
                         ItemsSource="{Binding AllocationChartPositions, 
                                 NotifyOnSourceUpdated=True, 
                                 UpdateSourceTrigger=PropertyChanged}" />
-                </chart:PieChart.Series>
+            </chart:PieChart.Series>
         </chart:PieChart>
-
-        
-        
         <Grid Grid.Row="4" Grid.Column="0"  Background="Azure">
             <Grid.Style>
                 <Style/>

@@ -474,7 +474,7 @@ namespace Asset_Management_Platform
             _portfolioManagementService = portfolioService;
             Messenger.Default.Register<PortfolioMessage>(this, RefreshCollection);
             Messenger.Default.Register<TradeMessage>(this, SetAlertMessage);
-            //_portfolioService.StartUpdates(); //TURNED OFF FOR TESTING
+            //_portfolioManagementService.StartUpdates(); //TURNED OFF FOR TESTING
 
             
             GetDisplaySecurities();
@@ -541,7 +541,7 @@ namespace Asset_Management_Platform
 
         private void RefreshCollection(PortfolioMessage obj)
         {
-            //_portfolio = _portfolioService.GetPortfolio();
+            //_portfolio = _portfolioManagementService.GetPortfolio();
         }
 
         private void ExecutePreviewOrder()
@@ -610,7 +610,6 @@ namespace Asset_Management_Platform
 
         private void ExecuteScreenerPreview(string screenerTicker)
         {
-
             if (!string.IsNullOrEmpty(screenerTicker))
             {
                 var resultStock = _portfolioManagementService.GetOrderPreviewSecurity(screenerTicker);
@@ -629,10 +628,10 @@ namespace Asset_Management_Platform
             GetLimitOrders();
             ExecuteShowAllSecurities();
 
-            SelectedDurationType = "Day";
+            SelectedDurationType = " ";
             OrderTickerText = "";
             OrderShareQuantity = 0;
-            SelectedTermType = "Market";
+            SelectedTermType = " ";
             SelectedTradeType = " ";
             LimitPrice = 0;
             PreviewPrice = 0;
