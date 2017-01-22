@@ -84,7 +84,6 @@ namespace Asset_Management_Platform
             }
         }
 
-
         private bool _alertBoxVisible;
         public bool AlertBoxVisible {
             get { return _alertBoxVisible; }
@@ -586,19 +585,27 @@ namespace Asset_Management_Platform
 
         private bool CheckOrderTerms()
         {
+            //Check ticker, share, and secType to see if they are valid
             var tickerNotEmpty = !string.IsNullOrEmpty(_orderTickerText);
             var shareQuantityValid = (_orderShareQuantity > 0);
             var securityTypeValid = (_selectedSecurityType is Stock || _selectedSecurityType is MutualFund);
-            var secTypeMatch = _selectedSecurityType == _portfolioManagementService.GetSecurityType(_orderTickerText, _selectedTradeType);
 
+            //Check to see that selected security type matches the ticker
+            bool secTypeMatch;
+            var tickerSecType = _portfolioManagementService.GetSecurityType(_orderTickerText, _selectedTradeType);
+            if (_selectedSecurityType is Stock && tickerSecType is Stock)
+                secTypeMatch = true;
+            else if (_selectedSecurityType is MutualFund && tickerSecType is MutualFund)
+                secTypeMatch = true;
+            else
+                secTypeMatch = false;
 
             if (tickerNotEmpty && shareQuantityValid && securityTypeValid && secTypeMatch)
                 return true;
             else
             {
                 return false;
-            }
-            
+            }            
         }
 
         private void ExecuteScreenerPreview(string screenerTicker)
