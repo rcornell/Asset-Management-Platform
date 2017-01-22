@@ -223,8 +223,10 @@ namespace Asset_Management_Platform
 
             foreach (var p in _myPositions)
             {
-                if (_portfolioOriginalState.Any(pos => pos.Taxlots == p.Taxlots))
+                //Is the quantity zero'd out from a sale?
+                if (_portfolioOriginalState.Any(pos => pos.Ticker == p.Ticker && pos.SharesOwned == 0))
                 {
+                    positionsToDelete.Add(p);
                     continue;
                 }
 
@@ -232,19 +234,34 @@ namespace Asset_Management_Platform
                 if (_portfolioOriginalState.Any(pos => pos.Ticker == p.Ticker && pos.SharesOwned != p.SharesOwned))
                 {
                     positionsToUpdate.Add(p);
+                    continue;
                 }
 
                 //Is the ticker not present in the original database?
                 if (!_portfolioOriginalState.Any(pos => pos.Ticker == p.Ticker))
                 {
                     positionsToInsert.Add(p);
+                    continue;
                 }
 
-                //Is the quantity zero'd out from a sale?
-                if (_portfolioOriginalState.Any(pos => pos.Ticker == p.Ticker && pos.SharesOwned == 0))
+                //For a ticker match with the same share quantity, check to make sure
+                //There isn't actually a different set of taxlots with the same share total
+                if (_portfolioOriginalState.Any(pos => pos.Ticker == p.Ticker && pos.SharesOwned == p.SharesOwned))
                 {
-                    positionsToDelete.Add(p);
+                    var equal = false;
+                    var originalPosition = _portfolioOriginalState.Find(s => s.Ticker == p.Ticker);
+
+                    var experimentalEqual = originalPosition.Taxlots.SequenceEqual(p.Taxlots);
+
+                    if (originalPosition != null)
+                        equal = TaxLotsAreEqual(originalPosition, p);
+
+                    if (!equal)
+                    {
+                        positionsToUpdate.Add(p);
+                    }
                 }
+
             }
 
             //If no inserts, updates, or deletes, exit method.
@@ -288,27 +305,42 @@ namespace Asset_Management_Platform
             string storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             string insertString = @"INSERT INTO dbo.MyPortfolio (Ticker, Shares, CostBasis, DatePurchased, SecurityType) VALUES ";
 
-            var finalPosition = positions.Last();
-            var finalTaxlot = positions.Last().Taxlots.Last();
             foreach (var pos in positions)
             {
                 foreach (var lot in pos.Taxlots)
                 {
-                    //If the position being iterated is the last one, add the terminating SQL clause instead
-                    if (pos != finalPosition && lot != finalTaxlot)
-                    {
-                        insertString += string.Format("('{0}', '{1}', '{2}', '{3}', '{4}'), ", lot.Ticker, lot.Shares, lot.PurchasePrice, lot.DatePurchased, lot.SecurityType);
-                    }
-                    else
-                    {
-                        insertString += string.Format("('{0}', '{1}', '{2}', '{3}', '{4}');", lot.Ticker, lot.Shares, lot.PurchasePrice, lot.DatePurchased, lot.SecurityType);
-                    }
+                    insertString += string.Format("('{0}', '{1}', '{2}', '{3}', '{4}'), ", 
+                                                    lot.Ticker, lot.Shares, lot.PurchasePrice, 
+                                                    lot.DatePurchased, lot.SecurityType);
                 }
             }
 
+            insertString = insertString.Substring(0, insertString.Length - 2) + @";";
+
+
+            //var finalPosition = positions.Last();
+            //var finalTaxlot = positions.Last().Taxlots.Last();
+            //foreach (var pos in positions)
+            //{
+
+            //    foreach (var lot in pos.Taxlots)
+            //    {
+            //        //If the position being iterated is the last one, add the terminating SQL clause instead
+            //        if (pos != finalPosition && lot != finalTaxlot)
+            //        {
+            //            insertString += string.Format("('{0}', '{1}', '{2}', '{3}', '{4}'), ", lot.Ticker, lot.Shares, lot.PurchasePrice, lot.DatePurchased, lot.SecurityType);
+            //        }
+            //        else
+            //        {
+            //            insertString += string.Format("('{0}', '{1}', '{2}', '{3}', '{4}');", lot.Ticker, lot.Shares, lot.PurchasePrice, lot.DatePurchased, lot.SecurityType);
+            //        }
+            //    }
+            //}
+
             using (var connection = new SqlConnection(storageString))
             {
-                using (var command = new SqlCommand(insertString))
+                connection.Open();
+                using (var command = new SqlCommand(insertString, connection))
                 {
                     command.ExecuteNonQuery();
                 }
@@ -332,11 +364,12 @@ namespace Asset_Management_Platform
                     insertString += string.Format(@"('{0}' ,'{1}' ,'{2}' , '{3}', '{4}'), ", lot.Ticker, lot.Shares, lot.PurchasePrice, lot.DatePurchased, lot.SecurityType);
                 }
             }
-            insertString = insertString.Substring(insertString.Length - 2) + @";";
+            insertString = insertString.Substring(0, insertString.Length - 2) + @";";
 
             using (var connection = new SqlConnection(storageString))
             {
-                using (var command = new SqlCommand(insertString))
+                connection.Open();
+                using (var command = new SqlCommand(insertString, connection))
                 {
                     command.ExecuteNonQuery();
                 }
@@ -356,17 +389,42 @@ namespace Asset_Management_Platform
                 deleteString += string.Format(@"'{0}', ", pos.Ticker);
 
             }
-            deleteString = deleteString.Substring(deleteString.Length - 2);
+            deleteString = deleteString.Substring(0, deleteString.Length - 2);
             deleteString += @");";
 
             using (var connection = new SqlConnection(storageString))
             {
                 connection.Open();
-                using (var command = new SqlCommand(deleteString))
+                using (var command = new SqlCommand(deleteString, connection))
                 {
                     command.ExecuteNonQuery();
                 }
             }
+        }
+
+        /// <summary>
+        /// Compares properties of two positions to see if they are the same
+        /// </summary>
+        /// <param name="originalPosition"></param>
+        /// <param name="portfolioPosition"></param>
+        /// <returns></returns>
+        private bool TaxLotsAreEqual(Position originalPosition, Position portfolioPosition)
+        {
+            if (originalPosition.Taxlots.Count != portfolioPosition.Taxlots.Count)
+                return false;
+            if (originalPosition.PurchasePrice != portfolioPosition.PurchasePrice)
+                return false;
+
+            for (int i = 0; i < portfolioPosition.Taxlots.Count; i++)
+            {
+                var originalTaxlotDateTime = originalPosition.Taxlots[i].DatePurchased;
+                var portfolioTaxlotDateTime = portfolioPosition.Taxlots[i].DatePurchased;
+
+                if (originalTaxlotDateTime.CompareTo(portfolioTaxlotDateTime) != 0)
+                    return false;
+            }
+
+            return true;
         }
 
         /// <summary>
