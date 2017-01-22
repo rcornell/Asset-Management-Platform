@@ -276,29 +276,27 @@ namespace Asset_Management_Platform
             if (positionsToInsert.Count == 0 && positionsToUpdate.Count == 0 && positionsToDelete.Count == 0)
                 return;
 
-            if (positionsToUpdate.Any())
+            try
             {
-                UpdatePositions(positionsToUpdate);
-            }
+                if (positionsToUpdate.Any())
+                {
+                    UpdatePositions(positionsToUpdate);
+                }
 
-            if (positionsToInsert.Any())
-            {
-                InsertPositions(positionsToInsert);
-            }
+                if (positionsToInsert.Any())
+                {
+                    InsertPositions(positionsToInsert);
+                }
 
-            if (positionsToDelete.Any())
-            {
-                DeletePositions(positionsToDelete);
-            }
-
-
-            try {
+                if (positionsToDelete.Any())
+                {
+                    DeletePositions(positionsToDelete);
+                }
             }
             catch (SqlException ex)
             {
                 var msg = new DatabaseMessage(ex.Message, false);
                 Messenger.Default.Send(msg);
-
             }
             catch (InvalidOperationException ex)
             {
@@ -322,7 +320,6 @@ namespace Asset_Management_Platform
                                                     lot.DatePurchased, lot.SecurityType);
                 }
             }
-
             insertString = insertString.Substring(0, insertString.Length - 2) + @";";
 
             using (var connection = new SqlConnection(storageString))
@@ -550,6 +547,7 @@ namespace Asset_Management_Platform
                     }
                 }
             }
+
             foreach (var result in limitDBResults)
             {
                 var newSecurity = new Security();
