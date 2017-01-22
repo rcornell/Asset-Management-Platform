@@ -34,8 +34,6 @@ namespace Asset_Management_Platform
             _portfolioOriginalState = new List<Position>();
             _myPositions = new List<Position>();
 
-            //if (!CheckDBForPositions())
-            //    _myPositions = new List<Position>();
         }
 
         public List<Position> GetPositions()
@@ -226,9 +224,7 @@ namespace Asset_Management_Platform
 
             foreach (var p in _myPositions)
             {
-                
-   
-                if (_portfolioOriginalState.Any(pos => pos.Ticker == p.Ticker && pos.SharesOwned == p.SharesOwned))
+                if (_portfolioOriginalState.Any(pos => pos.Taxlots == p.Taxlots))
                 {
                     continue;
                 }

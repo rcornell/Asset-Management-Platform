@@ -132,9 +132,30 @@ namespace Asset_Management_Platform
             Taxlots.Add(taxlotToAdd);
         }
 
-        public void SellShares(decimal shares)
+        public void SellShares(decimal sharesToSell)
         {
-            throw new NotImplementedException();
+            var newTaxlots = new List<Taxlot>();
+
+            foreach (var lot in Taxlots)
+            {
+                if(sharesToSell > lot.Shares)
+                {
+                    sharesToSell -= lot.Shares;
+                    continue;
+                }
+                else if (sharesToSell == lot.Shares)
+                {
+                    sharesToSell = 0;
+                    continue;
+                }
+                else if (sharesToSell < lot.Shares)
+                {
+                    var newShareQuantity = lot.Shares - sharesToSell;
+                    var newTaxlot = new Taxlot(lot.Ticker, newShareQuantity, lot.PurchasePrice, lot.DatePurchased, lot.SecurityType);
+                    newTaxlots.Add(newTaxlot);
+                }
+            }
+            Taxlots = newTaxlots;
         }
 
         public Security GetSecurityType()

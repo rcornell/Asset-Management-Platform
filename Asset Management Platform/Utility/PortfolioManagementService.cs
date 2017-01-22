@@ -293,14 +293,34 @@ namespace Asset_Management_Platform.Utility
             if (shares == position.SharesOwned)
             {
                 //Tell PortfolioDatabaseService to remove shares from DB
-                _portfolioDatabaseService.SellSharesFromPortfolioDatabase(security, shares);
+
+
+
+
+
+
+
+                //This is the question now
+                //_portfolioDatabaseService.SellSharesFromPortfolioDatabase(security, shares);
+
+
+
+
+
+
+
+
+
+
+
 
                 //Find and remove the security from portfolio
                 var securityToRemove = _portfolioSecurities.Find(s => s.Ticker == ticker);
                 _portfolioSecurities.Remove(securityToRemove);
 
                 //Find and remove all taxlots
-                var taxlotsToRemove = _portfolioTaxlots.Where(t => t.Ticker == ticker);
+                var originalTaxLots = new List<Taxlot>(_portfolioTaxlots);
+                var taxlotsToRemove = originalTaxLots.Where(t => t.Ticker == ticker);
                 foreach (var lot in taxlotsToRemove)
                 {
                     _portfolioTaxlots.Remove(lot);
@@ -321,7 +341,7 @@ namespace Asset_Management_Platform.Utility
             else //selling partial position
             {
                 //Tell PortfolioDatabaseService to sell shares from the position
-                _portfolioDatabaseService.SellSharesFromPortfolioDatabase(security, shares);
+                //_portfolioDatabaseService.SellSharesFromPortfolioDatabase(security, shares);
 
                 //The position reduces its shares
                 //Does this flow to UI?
@@ -335,24 +355,44 @@ namespace Asset_Management_Platform.Utility
             var ticker = trade.Ticker;
             var shares = trade.Shares;
 
-            var displayStock = _displayStocks.Find(s => s.Ticker == ticker);
-
-            if (shares == displayStock.Shares)
+            if (shares == position.SharesOwned)
             {
-                _portfolioDatabaseService.SellSharesFromPortfolioDatabase(security, shares);
-                _displayStocks.Remove(displayStock);
+                //Tell PortfolioDatabaseService to remove shares from DB
+                //_portfolioDatabaseService.SellSharesFromPortfolioDatabase(security, shares);
+
+                //Find and remove the security from portfolio
+                var securityToRemove = _portfolioSecurities.Find(s => s.Ticker == ticker);
+                _portfolioSecurities.Remove(securityToRemove);
+
+                //Find and remove all taxlots
+                var originalTaxLots = new List<Taxlot>(_portfolioTaxlots);
+                var taxlotsToRemove = originalTaxLots.Where(t => t.Ticker == ticker);
+                foreach (var lot in taxlotsToRemove)
+                {
+                    _portfolioTaxlots.Remove(lot);
+                }
+
+                //Remove the position that was passed in to this method
+                _portfolioPositions.Remove(position);
+
+                //Remove the DisplayMutualFund
+                var displayFundToRemove = _displayStocks.Find(f => f.Ticker == ticker);
+                _displayStocks.Remove(displayFundToRemove);
             }
-            else if (shares > displayStock.Shares)
+            else if (shares > position.SharesOwned)
             {
                 var message = new TradeMessage() { Shares = shares, Ticker = ticker, Message = "Order quantity exceeds shares owned!" };
                 Messenger.Default.Send(message);
             }
             else //selling partial position
             {
-                _portfolioDatabaseService.SellSharesFromPortfolioDatabase(security, shares);
-                displayStock.ReduceShares(shares);
+                //Tell PortfolioDatabaseService to sell shares from the position
+                //_portfolioDatabaseService.SellSharesFromPortfolioDatabase(security, shares);
+
+                //The position reduces its shares
+                //Does this flow to UI?
+                position.SellShares(shares);
             }
-            
         }
 
 
