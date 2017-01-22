@@ -221,14 +221,22 @@ namespace Asset_Management_Platform
             var positionsToUpdate = new List<Position>();
             var positionsToDelete = new List<Position>();
 
+            foreach (var op in _portfolioOriginalState)
+            {
+                if (!_myPositions.Any(s => s.Ticker == op.Ticker))
+                    positionsToDelete.Add(op);
+            }
+
+
             foreach (var p in _myPositions)
             {
-                //Is the quantity zero'd out from a sale?
-                if (_portfolioOriginalState.Any(pos => pos.Ticker == p.Ticker && pos.SharesOwned == 0))
-                {
-                    positionsToDelete.Add(p);
-                    continue;
-                }
+                ////Is the quantity zero'd out from a sale?
+                ////if (_portfolioOriginalState.Any(pos => pos.Ticker == p.Ticker && pos.SharesOwned == 0))
+                //if(!_portfolioOriginalState.Any(s => s.Ticker == p.Ticker))
+                //{
+                //    positionsToDelete.Add(p);
+                //    continue;
+                //}
 
                 //Is the current position's ticker in the original state but the quantity is different?
                 if (_portfolioOriginalState.Any(pos => pos.Ticker == p.Ticker && pos.SharesOwned != p.SharesOwned))
@@ -317,26 +325,6 @@ namespace Asset_Management_Platform
 
             insertString = insertString.Substring(0, insertString.Length - 2) + @";";
 
-
-            //var finalPosition = positions.Last();
-            //var finalTaxlot = positions.Last().Taxlots.Last();
-            //foreach (var pos in positions)
-            //{
-
-            //    foreach (var lot in pos.Taxlots)
-            //    {
-            //        //If the position being iterated is the last one, add the terminating SQL clause instead
-            //        if (pos != finalPosition && lot != finalTaxlot)
-            //        {
-            //            insertString += string.Format("('{0}', '{1}', '{2}', '{3}', '{4}'), ", lot.Ticker, lot.Shares, lot.PurchasePrice, lot.DatePurchased, lot.SecurityType);
-            //        }
-            //        else
-            //        {
-            //            insertString += string.Format("('{0}', '{1}', '{2}', '{3}', '{4}');", lot.Ticker, lot.Shares, lot.PurchasePrice, lot.DatePurchased, lot.SecurityType);
-            //        }
-            //    }
-            //}
-
             using (var connection = new SqlConnection(storageString))
             {
                 connection.Open();
@@ -353,8 +341,7 @@ namespace Asset_Management_Platform
             DeletePositions(positions);
 
             var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
-            string insertString = @"INSERT INTO dbo.MyPortfolio 
-                                    (Ticker, Shares, CostBasis, DatePurchased, SecurityType) VALUES ";
+            string insertString = @"INSERT INTO dbo.MyPortfolio (Ticker, Shares, CostBasis, DatePurchased, SecurityType) VALUES ";
 
             foreach (var pos in positions)
             {
@@ -379,13 +366,11 @@ namespace Asset_Management_Platform
         private void DeletePositions(List<Position> positions)
         {
             var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
-            string deleteString = @"Delete From dbo.MyPortfolio 
-                                   Where Ticker in ("; //value1, value2, ...);
+            string deleteString = @"Delete From dbo.MyPortfolio Where Ticker in ("; //value1, value2, ...);
 
             foreach (var pos in positions)
             {
                 //Deletes all taxlots for position being updated
-                //string deleteString = string.Format(@"DELETE FROM MyPortfolio WHERE Ticker='{0}';", pos.Ticker);
                 deleteString += string.Format(@"'{0}', ", pos.Ticker);
 
             }

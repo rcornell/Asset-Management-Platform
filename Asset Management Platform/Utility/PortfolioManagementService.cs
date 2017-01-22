@@ -166,7 +166,7 @@ namespace Asset_Management_Platform.Utility
 
             //Check to confirm that shares of this security aren't in relevant
             //Stock or MutualFund list
-            if (trade.Security is Stock && !DisplayStocks.Any(s => s.Ticker == trade.Ticker))
+            if (trade.Security is Stock && !_portfolioPositions.Any(s => s.Ticker == trade.Ticker))
             {
                 //Add position to portfolio database for online storage
                 var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security);
@@ -177,21 +177,21 @@ namespace Asset_Management_Platform.Utility
                 DisplayStocks.Add(new DisplayStock(position, (Stock)trade.Security));
             }
             //Ticker exists in database and security is stock
-            else if (trade.Security is Stock && DisplayStocks.Any(s => s.Ticker == trade.Ticker))
+            else if (trade.Security is Stock && _portfolioPositions.Any(s => s.Ticker == trade.Ticker))
             {
                 //See if this affects the DisplayStock in the UI
                 var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security);
                 _portfolioDatabaseService.AddToPortfolioDatabase(taxlot);
             }
             //This ticker isn't already owned and it is a MutualFund
-            else if (trade.Security is MutualFund && !DisplayMutualFunds.Any(s => s.Ticker == trade.Ticker))
+            else if (trade.Security is MutualFund && !_portfolioPositions.Any(s => s.Ticker == trade.Ticker))
             {
                 var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security);
                 var position = new Position(taxlot);
                 _portfolioDatabaseService.AddToPortfolioDatabase(position);
                 DisplayMutualFunds.Add(new DisplayMutualFund(position, (MutualFund)trade.Security));
             }
-            else if (trade.Security is MutualFund && DisplayMutualFunds.Any(s => s.Ticker == trade.Ticker))
+            else if (trade.Security is MutualFund && _portfolioPositions.Any(s => s.Ticker == trade.Ticker))
             {
                 //Security is known and already held, so just add the new taxlot.
                 var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security);
