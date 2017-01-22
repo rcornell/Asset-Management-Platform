@@ -151,6 +151,7 @@ namespace Asset_Management_Platform
                 else if (sharesToSell < lot.Shares)
                 {
                     var newShareQuantity = lot.Shares - sharesToSell;
+                    sharesToSell = 0;
                     var newTaxlot = new Taxlot(lot.Ticker, newShareQuantity, lot.PurchasePrice, lot.DatePurchased, lot.SecurityType);
                     newTaxlots.Add(newTaxlot);
                 }

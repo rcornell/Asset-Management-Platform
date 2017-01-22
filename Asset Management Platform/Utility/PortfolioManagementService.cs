@@ -292,28 +292,6 @@ namespace Asset_Management_Platform.Utility
 
             if (shares == position.SharesOwned)
             {
-                //Tell PortfolioDatabaseService to remove shares from DB
-
-
-
-
-
-
-
-                //This is the question now
-                //_portfolioDatabaseService.SellSharesFromPortfolioDatabase(security, shares);
-
-
-
-
-
-
-
-
-
-
-
-
                 //Find and remove the security from portfolio
                 var securityToRemove = _portfolioSecurities.Find(s => s.Ticker == ticker);
                 _portfolioSecurities.Remove(securityToRemove);
@@ -340,11 +318,7 @@ namespace Asset_Management_Platform.Utility
             }
             else //selling partial position
             {
-                //Tell PortfolioDatabaseService to sell shares from the position
-                //_portfolioDatabaseService.SellSharesFromPortfolioDatabase(security, shares);
-
-                //The position reduces its shares
-                //Does this flow to UI?
+                //The position reduces its shares  
                 position.SellShares(shares);
             }
         }
@@ -357,9 +331,6 @@ namespace Asset_Management_Platform.Utility
 
             if (shares == position.SharesOwned)
             {
-                //Tell PortfolioDatabaseService to remove shares from DB
-                //_portfolioDatabaseService.SellSharesFromPortfolioDatabase(security, shares);
-
                 //Find and remove the security from portfolio
                 var securityToRemove = _portfolioSecurities.Find(s => s.Ticker == ticker);
                 _portfolioSecurities.Remove(securityToRemove);
@@ -386,11 +357,7 @@ namespace Asset_Management_Platform.Utility
             }
             else //selling partial position
             {
-                //Tell PortfolioDatabaseService to sell shares from the position
-                //_portfolioDatabaseService.SellSharesFromPortfolioDatabase(security, shares);
-
                 //The position reduces its shares
-                //Does this flow to UI?
                 position.SellShares(shares);
             }
         }
@@ -441,12 +408,13 @@ namespace Asset_Management_Platform.Utility
         private void CheckLimitOrdersForActive()
         {
             var securitiesToCheck = new List<Security>();
+            var completedLimitOrders = new List<LimitOrder>();
 
             foreach (var order in LimitOrderList)
             {
                 if(order.SecurityType is Stock)
                     securitiesToCheck.Add(new Stock("", order.Ticker, "", 0, 0));
-                if (order.SecurityType is MutualFund)
+                else if (order.SecurityType is MutualFund)
                     securitiesToCheck.Add(new MutualFund("", order.Ticker, "", 0, 0));
             }
 
@@ -454,23 +422,48 @@ namespace Asset_Management_Platform.Utility
 
             foreach (var sec in updatedSecurities)
             {
+                //Get all limit orders for the security being iterated
                 var matches = LimitOrderList.Where(s => s.Ticker == sec.Ticker);
+                
                 foreach (var match in matches)
                 {
+                    var securityType = match.SecurityType;
                     var isActive = match.IsLimitOrderActive(sec.LastPrice);
-                    if (isActive && match.TradeType == "Sell")
+
+                    if (isActive && match.TradeType == "Sell" && securityType is Stock)
                     {
-                        var securityToTrade = new Security("", sec.Ticker, sec.Description, sec.LastPrice, sec.Yield);
-                        var newTrade = new Trade(match.TradeType, securityToTrade, match.Ticker, match.Shares, "Limit", match.Limit, match.OrderDuration);
-                        AddPosition(newTrade);
-                    }
-                    else if (isActive && match.TradeType == "Buy")
-                    {
-                        var securityToTrade = new Security("", sec.Ticker, sec.Description, sec.LastPrice, sec.Yield);
+                        var securityToTrade = new Stock("", sec.Ticker, sec.Description, sec.LastPrice, sec.Yield);
                         var newTrade = new Trade(match.TradeType, securityToTrade, match.Ticker, match.Shares, "Limit", match.Limit, match.OrderDuration);
                         SellPosition(newTrade);
+                        completedLimitOrders.Add(match);
+                    }
+                    else if (isActive && match.TradeType == "Buy" && securityType is Stock)
+                    {
+                        var securityToTrade = new Stock("", sec.Ticker, sec.Description, sec.LastPrice, sec.Yield);
+                        var newTrade = new Trade(match.TradeType, securityToTrade, match.Ticker, match.Shares, "Limit", match.Limit, match.OrderDuration);                        
+                        AddPosition(newTrade);
+                        completedLimitOrders.Add(match);
+                    }
+                    else if (isActive && match.TradeType == "Sell" && securityType is MutualFund)
+                    {
+                        var securityToTrade = new MutualFund("", sec.Ticker, sec.Description, sec.LastPrice, sec.Yield);
+                        var newTrade = new Trade(match.TradeType, securityToTrade, match.Ticker, match.Shares, "Limit", match.Limit, match.OrderDuration);
+                        SellPosition(newTrade);
+                        completedLimitOrders.Add(match);
+                    }
+                    else if (isActive && match.TradeType == "Buy" && securityType is MutualFund)
+                    {
+                        var securityToTrade = new MutualFund("", sec.Ticker, sec.Description, sec.LastPrice, sec.Yield);
+                        var newTrade = new Trade(match.TradeType, securityToTrade, match.Ticker, match.Shares, "Limit", match.Limit, match.OrderDuration);
+                        AddPosition(newTrade);
+                        completedLimitOrders.Add(match);
                     }
                 }
+            }
+
+            foreach (var order in completedLimitOrders)
+            {
+                LimitOrderList.Remove(order);
             }
         }
 
