@@ -366,9 +366,9 @@ namespace Asset_Management_Platform.Utility
                     securitiesToCheck.Add(new MutualFund("", order.Ticker, "", 0, 0));
             }
 
-            var updatedSecurities = _stockDataService.GetSecurityInfo(securitiesToCheck);
+            _stockDataService.GetUpdatedPricing(securitiesToCheck);
 
-            foreach (var sec in updatedSecurities)
+            foreach (var sec in securitiesToCheck)
             {
                 //Get all limit orders for the security being iterated
                 var matches = LimitOrderList.Where(s => s.Ticker == sec.Ticker);
@@ -543,10 +543,10 @@ namespace Asset_Management_Platform.Utility
                 listToUpdate.Add(fund.Fund);
             }
 
-            var updatedSecurities = _stockDataService.GetSecurityInfo(listToUpdate);
+            _stockDataService.GetUpdatedPricing(listToUpdate);
 
             //Update all prices for any displaysecurity
-            foreach (var security in updatedSecurities)
+            foreach (var security in listToUpdate)
             {
                 if (security is Stock) {
                     DisplayStocks.FindAll(s => s.Ticker == security.Ticker).ForEach(p => p.Stock.LastPrice = security.LastPrice);
