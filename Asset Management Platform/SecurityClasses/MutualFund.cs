@@ -86,6 +86,13 @@ namespace Asset_Management_Platform
 
         }
 
+        public void UpdateData(YahooAPIResult updatedInfo)
+        {
+            LastPrice = updatedInfo.LastPrice;
+            Description = updatedInfo.Description;
+            Yield = updatedInfo.Yield;
+        }
+
         public override string ToString()
         {
             return "Mutual Fund";

@@ -288,7 +288,6 @@ namespace Asset_Management_Platform.Utility
                     {
                         if (yahooResult.PeRatioIsNA) yahooResult.PeRatio = 0;
                         if (yahooResult.YieldIsNA) yahooResult.Yield = 0;
-                        if (yahooResult.DescriptionIsNA) yahooResult.Description = "Unknown Ticker";
                         if (yahooResult.LastPriceIsNA) yahooResult.LastPrice = 0;
 
                         yahooResult.MarketCap = yahooResult.MarketCap.Substring(0, yahooResult.MarketCap.Length - 1);
@@ -303,9 +302,7 @@ namespace Asset_Management_Platform.Utility
                 {
                     var mutualFund = (MutualFund)securityDatabaseList.Find(s => s.Ticker == yahooResult.Ticker);
 
-                    mutualFund.LastPrice = yahooResult.LastPrice;
-                    mutualFund.Description = yahooResult.Description;
-                    mutualFund.Yield = yahooResult.Yield;
+                    
                     return mutualFund;
                 }
                 else
