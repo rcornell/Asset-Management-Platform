@@ -250,26 +250,23 @@ namespace Asset_Management_Platform.Utility
         /// buy a stock or mutual fund through the order entry screen
         /// </summary>
         /// <param name="tickerToLookUp"></param>
-        /// <param name="securityList"></param>
+        /// <param name="securityDatabaseList"></param>
         /// <param name="securityType"></param>
         /// <returns></returns>
-        public Security GetSingleSecurity(string tickerToLookUp, List<Security> securityList, Security securityType)
+        public Security GetSingleSecurity(string tickerToLookUp, List<Security> securityDatabaseList, Security securityType)
         {
 
-            const string base_url = "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=sl1yj1barvb6a5n";
+            const string base_url = "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=sl1yj1barvb6a5ncp2";
             Security result;
             Security securityBeingUpdated;
 
             var url = base_url.Replace("@", tickerToLookUp);
             var response = GetWebResponse(url);
-            var yahooResult = CreateYahooAPIResult(response);
+            var yahooResult = new YahooAPIResult(response);
 
-
-
-
-            if (securityList.Any(s => s.Ticker == yahooResult.Ticker))
+            if (securityDatabaseList.Any(s => s.Ticker == yahooResult.Ticker))
             {
-                securityBeingUpdated = securityList.Find(s => s.Ticker == yahooResult.Ticker);
+                securityBeingUpdated = securityDatabaseList.Find(s => s.Ticker == yahooResult.Ticker);
 
                 if (securityType is Stock)
                 {
@@ -297,24 +294,14 @@ namespace Asset_Management_Platform.Utility
                         yahooResult.MarketCap = yahooResult.MarketCap.Substring(0, yahooResult.MarketCap.Length - 1);
 
                         var stockBeingUpdated = (Stock)securityBeingUpdated;
-                        stockBeingUpdated.LastPrice = yahooResult.LastPrice;
-                        stockBeingUpdated.PeRatio = yahooResult.PeRatio;
-                        stockBeingUpdated.Yield = yahooResult.Yield;
-                        stockBeingUpdated.Volume = yahooResult.Volume;
-                        stockBeingUpdated.Bid = yahooResult.Bid;
-                        stockBeingUpdated.Ask = yahooResult.Ask;
-                        stockBeingUpdated.AskSize = yahooResult.AskSize;
-                        stockBeingUpdated.BidSize = yahooResult.BidSize;
-                        stockBeingUpdated.MarketCap = double.Parse(yahooResult.MarketCap);
-                        stockBeingUpdated.Description = yahooResult.Description;
-                        stockBeingUpdated.Ticker = yahooResult.Ticker; //Match?
+                        stockBeingUpdated.UpdateData(yahooResult);
 
                         return stockBeingUpdated;
                     }
                 }
                 else if (securityType is MutualFund)
                 {
-                    var mutualFund = (MutualFund)securityList.Find(s => s.Ticker == yahooResult.Ticker);
+                    var mutualFund = (MutualFund)securityDatabaseList.Find(s => s.Ticker == yahooResult.Ticker);
 
                     mutualFund.LastPrice = yahooResult.LastPrice;
                     mutualFund.Description = yahooResult.Description;
@@ -627,16 +614,6 @@ namespace Asset_Management_Platform.Utility
         /// <returns></returns>
         private bool IsSecurityUnknown(YahooAPIResult yahooResult)
         {
-            //int numberOfNA = 0;
-
-            //if (yahooResult.LastPriceIsNA) numberOfNA++;
-            //if (yahooResult.YieldIsNA) numberOfNA++;
-            //if (yahooResult.MarketCapIsNA) numberOfNA++;
-            //if (yahooResult.PeRatioIsNA) numberOfNA++;
-            //if (yahooResult.VolumeIsNA) numberOfNA++;
-
-            //if (numberOfNA > 2)
-            //    return true;
             if (yahooResult.Description == @"N/A")
                 return true;
 

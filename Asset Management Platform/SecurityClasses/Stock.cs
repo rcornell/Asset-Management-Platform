@@ -122,6 +122,20 @@ namespace Asset_Management_Platform
 
         }
 
+        public void UpdateData(YahooAPIResult updatedInfo)
+        {
+            LastPrice = updatedInfo.LastPrice;
+            PeRatio = updatedInfo.PeRatio;
+            Yield = updatedInfo.Yield;
+            Volume = updatedInfo.Volume;
+            Bid = updatedInfo.Bid;
+            Ask = updatedInfo.Ask;
+            AskSize = updatedInfo.AskSize;
+            BidSize = updatedInfo.BidSize;
+            MarketCap = double.Parse(updatedInfo.MarketCap);
+            Description = updatedInfo.Description;
+        }
+
         public override string ToString()
         {
             return "Stock";
