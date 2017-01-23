@@ -324,8 +324,6 @@ namespace Asset_Management_Platform.Utility
                 tickerString = tickerString.Substring(0, tickerString.Length - 1);
 
                 //Prepend the base URL.
-                //s (symbol) n (name) l1 (last price) y (yield) j1 (market cap) 
-                //b (bid) a (ask) r (peRatio) a5 (ask size) b6 (bid size)
                 tickerString = baseUrl.Replace("@", tickerString); //Add my tickers to the middle of the url
 
                 //Get the response.
@@ -458,82 +456,7 @@ namespace Asset_Management_Platform.Utility
                 }
             }
             return securitiesToReturn; //probably null
-        }
-
-        private YahooAPIResult CreateYahooAPIResult(string result)
-        {
-            string fixedResponse = Regex.Replace(result, @"\r\n?|\n", string.Empty);
-
-            string ticker = "";
-            string description = "";
-            decimal lastPrice;
-            decimal change = 0;
-            decimal percentChange = 0;
-            double yield = 0;
-            double bid = 0;
-            double ask = 0;
-            string marketCap = "0";
-            double peRatio = 0;
-            int volume = 0;
-            int bidSize = 0;
-            int askSize = 0;
-
-            bool descriptionIsNA = false;
-            bool lastPriceIsNA = false;
-            bool yieldIsNA = false;
-            bool bidIsNA = false;
-            bool askIsNA = false;
-            bool marketCapIsNA = false;
-            bool peRatioIsNA = false;
-            bool volumeIsNA = false;
-            bool bidSizeIsNA = false;
-            bool askSizeIsNA = false;
-            bool changeIsNA = false;
-            bool percentChangeIsNA = false;
-
-            if (string.IsNullOrEmpty(fixedResponse.Split(',')[0]))
-                ticker = ""; //Why are you here?
-            else
-                ticker = fixedResponse.Split(',')[0].Replace("\"", "");
-
-            lastPriceIsNA = !decimal.TryParse(fixedResponse.Split(',')[1], out lastPrice);
-            yieldIsNA = !double.TryParse(fixedResponse.Split(',')[2], out yield);
-            if (fixedResponse.Split(',')[3] == "N/A")
-            {
-                marketCapIsNA = true;
-                marketCap = "0.0B";
-            }
-            else
-            {
-                marketCapIsNA = false;
-                marketCap = fixedResponse.Split(',')[3];
-            }
-            bidIsNA = !double.TryParse(fixedResponse.Split(',')[4], out bid);
-            askIsNA = !double.TryParse(fixedResponse.Split(',')[5], out ask);
-            peRatioIsNA = !double.TryParse(fixedResponse.Split(',')[6], out peRatio);
-            volumeIsNA = !int.TryParse(fixedResponse.Split(',')[7], out volume);
-            bidSizeIsNA = !int.TryParse(fixedResponse.Split(',')[8], out bidSize);
-            askSizeIsNA = !int.TryParse(fixedResponse.Split(',')[9], out askSize);
-            changeIsNA = !decimal.TryParse(fixedResponse.Split(',')[10], out change);
-            percentChangeIsNA = !decimal.TryParse(fixedResponse.Split(',')[11], out percentChange);
-
-            //Index out of bounds?
-            //Some Descriptions are split by a comma, e.g. ",Inc."
-            //So the method searches for an extra item and appends it
-            if (string.IsNullOrEmpty(fixedResponse.Split(',')[10]))
-                descriptionIsNA = true;
-            else
-                description = fixedResponse.Split(',')[10].Replace("\"", "");
-            if (fixedResponse.Split(',').Length == 12)
-                description += fixedResponse.Split(',')[11].Replace("\"", "");
-
-
-
-            return new YahooAPIResult(ticker, description, lastPrice, change, percentChange, yield, bid, ask, marketCap,
-                                      peRatio, volume, bidSize, askSize, descriptionIsNA, lastPriceIsNA, 
-                                      yieldIsNA, bidIsNA, askIsNA,marketCapIsNA, peRatioIsNA, volumeIsNA,
-                                      bidSizeIsNA, askSizeIsNA);
-        }
+        }    
 
         private List<YahooAPIResult> CreateYahooAPIResultList(string result)
         {
@@ -546,7 +469,7 @@ namespace Asset_Management_Platform.Utility
 
             foreach (var line in lines)
             {
-                var yahooResult = CreateYahooAPIResult(line);
+                var yahooResult = new YahooAPIResult(line);
 
                 if (yahooResult.PeRatioIsNA) yahooResult.PeRatio = 0;
                 if (yahooResult.YieldIsNA) yahooResult.Yield = 0;
