@@ -80,7 +80,7 @@ namespace Asset_Management_Platform.Utility
         //p1    Price Paid
         //p2    Change in Percent
         //p5    Price/Sales
-        //p6    Price/Book                              l1yj1bara5b6
+        //p6    Price/Book                         
         //q     Ex-Dividend Date
         //r     P/E Ratio
         //r1    Dividend Pay Date
@@ -353,6 +353,8 @@ namespace Asset_Management_Platform.Utility
             string ticker = "";
             string description = "";
             decimal lastPrice;
+            decimal change = 0;
+            decimal percentChange = 0;
             double yield = 0;
             double bid = 0;
             double ask = 0;
@@ -372,6 +374,8 @@ namespace Asset_Management_Platform.Utility
             bool volumeIsNA = false;
             bool bidSizeIsNA = false;
             bool askSizeIsNA = false;
+            bool changeIsNA = false;
+            bool percentChangeIsNA = false;
 
             if (string.IsNullOrEmpty(fixedResponse.Split(',')[0]))
                 ticker = ""; //Why are you here?
@@ -396,6 +400,8 @@ namespace Asset_Management_Platform.Utility
             volumeIsNA = !int.TryParse(fixedResponse.Split(',')[7], out volume);
             bidSizeIsNA = !int.TryParse(fixedResponse.Split(',')[8], out bidSize);
             askSizeIsNA = !int.TryParse(fixedResponse.Split(',')[9], out askSize);
+            changeIsNA = !decimal.TryParse(fixedResponse.Split(',')[10], out change);
+            percentChangeIsNA = !decimal.TryParse(fixedResponse.Split(',')[11], out percentChange);
 
             //Index out of bounds?
             //Some Descriptions are split by a comma, e.g. ",Inc."
@@ -409,7 +415,7 @@ namespace Asset_Management_Platform.Utility
 
 
 
-            return new YahooAPIResult(ticker, description, lastPrice, yield, bid, ask, marketCap,
+            return new YahooAPIResult(ticker, description, lastPrice, change, percentChange, yield, bid, ask, marketCap,
                                       peRatio, volume, bidSize, askSize, descriptionIsNA, lastPriceIsNA, 
                                       yieldIsNA, bidIsNA, askIsNA,marketCapIsNA, peRatioIsNA, volumeIsNA,
                                       bidSizeIsNA, askSizeIsNA);
