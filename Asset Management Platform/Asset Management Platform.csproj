@@ -141,6 +141,7 @@
     <Compile Include="Utility\IPortfolioManagementService.cs" />
     <Compile Include="Utility\IStockDataService.cs" />
     <Compile Include="Utility\MarkitAPIService.cs" />
+    <Compile Include="Utility\MarkitJsonResult.cs" />
     <Compile Include="Utility\SecurityTableSeederDataService.cs" />
     <Compile Include="Utility\TradeExecutionService.cs" />
     <Compile Include="Utility\PortfolioManagementService.cs" />

@@ -1,101 +1,125 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Asset_Management_Platform.Utility
 {
-    public class MarkitAPIService
+    public class MarkitAPIService : IDisposable
     {
+        const string baseUri = @"http://dev.markitondemand.com/MODApis/Api/v2/Quote/json?symbol=";
 
-        //private List<Security> _securitiesWithMarketData;
+        private MarkitJsonResult GetWebResponse(string ticker)
+        {
+            var requestUri = baseUri + ticker;
+            MarkitJsonResult markitAPIResult = new MarkitJsonResult();
+            try
+            {
+                using (var webClient = new WebClient())
+                {
+                    var jsonResult = webClient.DownloadString(requestUri);
+                    markitAPIResult = JsonConvert.DeserializeObject<MarkitJsonResult>(jsonResult);
+                }  
+            }
+            catch (WebException ex)
+            {
+                throw new NotImplementedException();
+            }
+            catch (ArgumentNullException ex)
+            {
+                throw new NotImplementedException();
+            }
+            return markitAPIResult;
+        }
 
-        ////public List<string> Tickers
-        ////{
-        ////    get { return _tickers; }
-        ////    set { _tickers = value; }
-        ////}
 
-        //public MarkitAPIService()
-        //{
+        private string DetermineSecurityType(MarkitJsonResult markitJsonResult)
+        {
+            if (markitJsonResult.Description != null)
+                return "Stock";
+            else
+                return "Mutual Fund";
+        }
 
-        //}       
+        private Security CreateSecurity(MarkitJsonResult markitJsonResult)
+        {
+            var newSec = new Security();
 
-        //public Security GetSingleSecurity(string ticker)
-        //{
+            if(markitJsonResult.Description != null)
+            {
+                newSec = new Stock(markitJsonResult);
+            }
 
-        //    return new Security("","","",0,0.00);
-        //}
-
-        //public List<Security> GetMultipleStocks(List<Security> securities)
-        //{
-
+            return newSec;
+        }
 
 
-              
-                
-        //            _securitiesWithMarketData = new List<Security>(); //Instantiate the list to return
+        public Security GetSingleSecurity(string tickerToLookUp, List<Security> securityList)
+        {
+            var securityToReturn = new Security();
 
-       
-        //            //Should find a way to determine at runtime whether each item is a stock, mutual fund, or ETF.
-        //            //Compare tickers to list of tickers that determine which ticker is which type of security
-        //            //Use LINQ?
+            return securityToReturn;
+        }
 
-        //                string description = "";
-        //                string cusip = "";
-        //                decimal lastPrice;
-        //                double yield = 0;
-        //                double bid = 0;
-        //                double ask = 0;
-        //                string marketCap = "0";
-        //                double peRatio = 0;
-        //                int volume = 0;
-        //                int bidSize = 0;
-        //                int askSize = 0;
+        /// <summary>
+        /// This is called when the user specifically selects that they want to
+        /// buy a stock or mutual fund through the order entry screen
+        /// </summary>
+        /// <param name="tickerToLookUp"></param>
+        /// <param name="securityList"></param>
+        /// <param name="securityType"></param>
+        /// <returns></returns>
+        public Security GetSingleSecurity(string tickerToLookUp, List<Security> securityList, Security securityType)
+        {
+            var securityToReturn = new Security();
 
-        //                bool descriptionIsNA = false;
-        //                bool lastPriceIsNA = false;
-        //                bool yieldIsNA = false;
-        //                bool bidIsNA = false;
-        //                bool askIsNA = false;
-        //                bool marketCapIsNA = false;
-        //                bool peRatioIsNA = false;
-        //                bool volumeIsNA = false;
-        //                bool bidSizeIsNA = false;
-        //                bool askSizeIsNA = false;
-                        
+            return securityToReturn;
+        }
 
-        //                //_securitiesWithMarketData.Add(new Stock(cusip, securities[j].Ticker, description, lastPrice, yield, bid, ask, floatMarketCap, peRatio, volume, bidSize, askSize));
-        //            return _securitiesWithMarketData;
-                
+        public List<Security> GetMultipleSecurities(List<Security> securities)
+        {
+            var listToReturn = new List<Security>();
 
-            
-        //}
+            return listToReturn;
+        }
 
-        //private bool IsSecurityUnavailable(bool lastPriceIsNA, bool yieldIsNA, bool marketCapIsNA, bool bidIsNA, bool askIsNA, bool peRatioIsNA, bool volumeIsNA, bool bidSizeIsNA, bool askSizeIsNA, bool descriptionIsNA)
-        //{
-        //    int numberOfNA = 0;
+        /// <summary>
+        /// Returns a list of securities based on List of tickers parameter,
+        /// but mutual funds will not have asset class, category, or subcategory 
+        /// defined.
+        /// </summary>
+        /// <param name="tickers"></param>
+        /// <returns></returns>
+        public List<Security> GetMultipleSecurities(List<string> tickers)
+        {
+            var listToReturn = new List<Security>();
 
-        //    if (lastPriceIsNA) numberOfNA++;
-        //    if (yieldIsNA) numberOfNA++;
-        //    if (marketCapIsNA) numberOfNA++;
-        //    //if (bidIsNA) numberOfNA++; these can be N/A after market hours
-        //    //if (askIsNA) numberOfNA++;
-        //    if (peRatioIsNA) numberOfNA++;
-        //    if (volumeIsNA) numberOfNA++;
-        //    //if (bidSizeIsNA) numberOfNA++; these can be N/A after market hours
-        //    //if (askSizeIsNA) numberOfNA++;
+            return listToReturn;
+        }
 
-        //    if (numberOfNA > 2)
-        //        return true;
+        /// <summary>
+        /// Determine based on N/A results if a yahoo result is not known
+        /// Bid/Ask and BidSize/AskSize can be N/A after market hours
+        /// so they are not used in this determination.
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        private bool IsSecurityUnknown(MarkitJsonResult result)
+        {
+            if (result.Description == null)
+                return true;
 
-        //    return false;
-        //}
+            return false;
+        }
 
-        //public void Dispose()
-        //{
-        //    _securitiesWithMarketData = null;
-        //}
+        public void Dispose()
+        {
+        }
+
     }
 }

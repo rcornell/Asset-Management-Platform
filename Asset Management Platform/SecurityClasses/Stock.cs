@@ -75,6 +75,20 @@ namespace Asset_Management_Platform
             AskSize = yahooResult.AskSize;
         }
 
+        public Stock(MarkitJsonResult result)
+            : base("", result.Ticker, result.Description, result.LastPrice, 0)
+        {
+            SecurityType = "Stock";
+
+            Bid = 0;
+            Ask = 0;
+            MarketCap = double.Parse(result.Marketcap.ToString());
+            PeRatio = 0;
+            Volume = int.Parse(result.Volume.ToString());
+            BidSize = 0;
+            AskSize = 0;
+        }
+
         public Stock(
             string cusip,
             string ticker, 
