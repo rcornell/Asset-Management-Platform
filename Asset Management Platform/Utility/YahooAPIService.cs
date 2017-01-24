@@ -105,6 +105,7 @@ namespace Asset_Management_Platform.Utility
         //y     Dividend Yield
         /// </summary>
 
+        const string _baseUrl = "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=sl1yj1barvb6a5ncp2";
 
         public YahooAPIService()
         {
@@ -155,13 +156,10 @@ namespace Asset_Management_Platform.Utility
         /// <returns></returns>
         public Security GetSingleSecurity(string tickerToLookUp, List<Security> securityDBList)
         {
-            
-            const string base_url = "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=sl1yj1barvb6a5ncp2";
-            Security result;
             Security securityBeingUpdated;
             string securityType = "";
 
-            var url = base_url.Replace("@", tickerToLookUp);
+            var url = _baseUrl.Replace("@", tickerToLookUp);
             var response = GetWebResponse(url);
             var yahooResult = new YahooAPIResult(response);
             var isUnknown = IsSecurityUnknown(yahooResult);
@@ -174,8 +172,6 @@ namespace Asset_Management_Platform.Utility
             {
                 Security newSecurity = CreateNewSecurity(yahooResult);
             }
-
-
 
             securityType = securityDBList.Find(s => s.Ticker == yahooResult.Ticker).SecurityType;
 
@@ -241,10 +237,8 @@ namespace Asset_Management_Platform.Utility
         /// <param name="securityType"></param>
         /// <returns></returns>
         public Security GetSingleSecurity(string tickerToLookUp, List<Security> securityDBList, Security securityType)
-        {
-            const string base_url = "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=sl1yj1barvb6a5ncp2";            
-
-            var url = base_url.Replace("@", tickerToLookUp);
+        {           
+            var url = _baseUrl.Replace("@", tickerToLookUp);
             var response = GetWebResponse(url);
             var yahooResult = new YahooAPIResult(response);
             
@@ -299,7 +293,6 @@ namespace Asset_Management_Platform.Utility
             }
         }
 
-
         /// <summary>
         /// Called when updating portfolio prices or checking limits
         /// </summary>
@@ -307,8 +300,6 @@ namespace Asset_Management_Platform.Utility
         /// <returns></returns>
         public void GetUpdatedPricing(List<Security> securities)
         {
-            const string baseUrl = "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=sl1yj1barvb6a5ncp2";
-
             // Build the URL.
             string tickerString = "";
             foreach (var s in securities)
@@ -318,13 +309,11 @@ namespace Asset_Management_Platform.Utility
 
             if (tickerString != "")
             {
-                //Remove the trailing plus sign. Faster than comparing
-                //for the last item in the foreach loop above and not
-                //adding the + at the end
+                //Remove the trailing plus sign.
                 tickerString = tickerString.Substring(0, tickerString.Length - 1);
 
                 //Prepend the base URL.
-                tickerString = baseUrl.Replace("@", tickerString); //Add my tickers to the middle of the url
+                tickerString = _baseUrl.Replace("@", tickerString); //Add my tickers to the middle of the url
 
                 //Get the response.
                 try
@@ -350,21 +339,14 @@ namespace Asset_Management_Platform.Utility
                         {
                             var stock = (Stock)securities.Find(s => s.Ticker == yahooResult.Ticker);
                             stock.UpdateData(yahooResult);
-                            //securitiesToReturn.Add(new Stock(yahooResult));
                         }
                         else if (securityType == "Mutual Fund")
                         {
                             var mutualFund = (MutualFund)securities.Find(s => s.Ticker == yahooResult.Ticker);
                             mutualFund.UpdateData(yahooResult);
-
-                            //string assetClass = mutualFund.AssetClass;
-                            //string category = mutualFund.Category;
-                            //string subcategory = mutualFund.Subcategory;
-                            //securitiesToReturn.Add(new MutualFund(yahooResult, assetClass, category, subcategory));
                         }
                         else
                         {
-                            //Unknown security type
                             throw new NotImplementedException();
                         }
                     }
@@ -398,17 +380,12 @@ namespace Asset_Management_Platform.Utility
 
             if (tickerString != "")
             {
-                //Remove the trailing plus sign. Faster than comparing
-                //for the last item in the foreach loop above and not
-                //adding the + at the end
+                //Remove the trailing plus sign.
                 tickerString = tickerString.Substring(0, tickerString.Length - 1);
 
                 //Prepend the base URL.
-                //s (symbol) n (name) l1 (last price) y (yield) j1 (market cap) 
-                //b (bid) a (ask) r (peRatio) a5 (ask size) b6 (bid size)
                 tickerString = baseUrl.Replace("@", tickerString); //Add my tickers to the middle of the url
 
-                //Get the response.
                 try
                 {
 
@@ -416,11 +393,9 @@ namespace Asset_Management_Platform.Utility
                     string response = GetWebResponse(tickerString);
                     string result = Regex.Replace(response, "\\r\\n", "\r\n");
 
-                    //Create an array of the results
+                    //Create a List<T> of the results
                     var yahooResults = CreateYahooAPIResultList(result);
 
-
-                    //logic for looping through results
                     foreach (var yahooResult in yahooResults)
                     {
                         if (IsSecurityUnknown(yahooResult))
