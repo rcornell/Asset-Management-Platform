@@ -441,7 +441,7 @@ namespace Asset_Management_Platform.Utility
         /// <returns></returns>
         public Security GetOrderPreviewSecurity(string ticker, Security securityType)
         {
-            var securityToReturn = _stockDataService.GetSecurityInfo(ticker, securityType);
+            var securityToReturn = _stockDataService.GetSecurityInfo(ticker);
             if (securityToReturn is Stock)
                 return (Stock)securityToReturn;
             else if (securityToReturn is MutualFund)

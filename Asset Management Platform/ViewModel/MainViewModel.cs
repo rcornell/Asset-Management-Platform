@@ -593,6 +593,12 @@ namespace Asset_Management_Platform
             //Check to see that selected security type matches the ticker
             bool secTypeMatch;
             var tickerSecType = _portfolioManagementService.GetSecurityType(_orderTickerText, _selectedTradeType);
+
+            //ADD NULL HANDLING FOR TICKERSECTYPE
+            //NEED TO CHECK TICKER VS SEC TYPE WHEN TRADING
+            //NO YOU DONT THE OTHER GETSINGLE METHOD IS ULTIMATELY REDUNDANT
+
+
             if (_selectedSecurityType is Stock && tickerSecType is Stock)
                 secTypeMatch = true;
             else if (_selectedSecurityType is MutualFund && tickerSecType is MutualFund)

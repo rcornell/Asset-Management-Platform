@@ -130,24 +130,25 @@ namespace Asset_Management_Platform.Utility
             if (IsSecurityUnknown(yahooResult))
                 return new Security("", @"N/A", @"Unknown Ticker", 0, 0);
 
-            //If security database doesn't know the ticker, add it.
+            //If security database doesn't know the ticker, add it, then return.
             if (!securityDBList.Any(s => s.Ticker == tickerToLookUp))
             {
                 Security newSecurity = CreateNewSecurity(yahooResult);
                 securityDBList.Add(newSecurity);
+                return newSecurity;
             }
 
             //Find the security, then update.
             var resultSecurity = securityDBList.Find(s => s.Ticker == yahooResult.Ticker);
 
-            if (resultSecurity.SecurityType == "Stock")
+            if (resultSecurity is Stock)
                 securityBeingUpdated = (Stock)securityDBList.Find(s => s.Ticker == yahooResult.Ticker);
             else
                 securityBeingUpdated = (MutualFund)securityDBList.Find(s => s.Ticker == yahooResult.Ticker);
 
             //If securityBeingUpdated is not null then it is known to the DB
             //and its info should be updated.
-            if (securityBeingUpdated != null && resultSecurity.SecurityType == "Stock" )
+            if (securityBeingUpdated != null && resultSecurity is Stock)
             {
                 //Fix properties is they came back as NA
                 if (yahooResult.PeRatioIsNA) yahooResult.PeRatio = 0;
@@ -160,7 +161,7 @@ namespace Asset_Management_Platform.Utility
 
                 return stockBeingUpdated;
             }
-            else if (securityBeingUpdated != null && resultSecurity.SecurityType == "Mutual Fund")
+            else if (securityBeingUpdated != null && resultSecurity is MutualFund)
             {
                 var updatedFund = (MutualFund)securityDBList.Find(s => s.Ticker == yahooResult.Ticker);
                 updatedFund.UpdateData(yahooResult);
@@ -170,61 +171,6 @@ namespace Asset_Management_Platform.Utility
             {
                 throw new NotImplementedException();
             }   
-        }
-
-        /// <summary>
-        /// This is called when the user specifically selects that they want to
-        /// buy a stock or mutual fund through the order entry screen
-        /// </summary>
-        /// <param name="tickerToLookUp"></param>
-        /// <param name="securityDBList"></param>
-        /// <param name="securityType"></param>
-        /// <returns></returns>
-        public Security GetSingleSecurity(string tickerToLookUp, List<Security> securityDBList, Security securityType)
-        {
-            var yahooRequestUrl = _baseUrl.Replace("@", tickerToLookUp);
-            var response = GetWebResponse(yahooRequestUrl);
-            var yahooResult = new YahooAPIResult(response);
-
-            //Ticker is unknown, return blank security.
-            if (IsSecurityUnknown(yahooResult))
-                return new Security("", @"N/A", @"Unknown Ticker", 0, 0);
-
-            //If security database doesn't know the ticker, add it, then return.
-            if (!securityDBList.Any(s => s.Ticker == tickerToLookUp))
-            {
-                Security newSecurity = CreateNewSecurity(yahooResult);
-                securityDBList.Add(newSecurity);
-                return newSecurity;
-            }
-
-            var securityBeingUpdated = securityDBList.Find(s => s.Ticker == yahooResult.Ticker);
-
-            //If securityBeingUpdated is not null then it is known to the DB
-            //and its info should be updated.
-            if (securityBeingUpdated != null && securityType is Stock)
-            {
-                //Fix properties is they came back as NA
-                if (yahooResult.PeRatioIsNA) yahooResult.PeRatio = 0;
-                if (yahooResult.YieldIsNA) yahooResult.Yield = 0;
-                if (yahooResult.LastPriceIsNA) yahooResult.LastPrice = 0;
-                yahooResult.MarketCap = yahooResult.MarketCap.Substring(0, yahooResult.MarketCap.Length - 1);
-
-                var stockBeingUpdated = (Stock)securityBeingUpdated;
-                stockBeingUpdated.UpdateData(yahooResult);
-
-                return stockBeingUpdated;
-            }
-            else if (securityBeingUpdated != null && securityType is MutualFund)
-            {
-                var mutualFund = (MutualFund)securityDBList.Find(s => s.Ticker == yahooResult.Ticker);
-                mutualFund.UpdateData(yahooResult);
-                return mutualFund;
-            }
-            else 
-            {
-                    throw new NotImplementedException();
-            }
         }
 
         /// <summary>
