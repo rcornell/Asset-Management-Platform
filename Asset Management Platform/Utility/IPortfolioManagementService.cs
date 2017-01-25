@@ -40,7 +40,7 @@ namespace Asset_Management_Platform.Utility
         void UploadPortfolio();
 
         void DeletePortfolio();
-        void UploadAllToDatabase();
+        void UploadAllDatabases();
 
         Security GetSecurityType(string ticker, string tradeType);
 

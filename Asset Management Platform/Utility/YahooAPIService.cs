@@ -109,43 +109,7 @@ namespace Asset_Management_Platform.Utility
 
         public YahooAPIService()
         {
-        }
 
-
-        private string GetWebResponse(string url)
-        {
-            // Make a WebClient.
-            WebClient web_client = new WebClient();
-
-            try { 
-                // Get the indicated URL.
-                Stream response = web_client.OpenRead(url);
-
-                // Read the result.
-                using (StreamReader stream_reader = new StreamReader(response))
-                {
-                    // Get the results.
-                    string result = stream_reader.ReadToEnd();
-
-                    // Close the stream reader and its underlying stream.
-                    stream_reader.Close();
-
-                    // Return the result.
-                    return result;
-                }
-            }
-            catch (WebException ex)
-            {
-                throw new NotImplementedException();
-            }
-            catch (IOException ex)
-            {
-                throw new NotImplementedException();
-            }
-            catch (ArgumentException ex)
-            {
-                throw new NotImplementedException();
-            }
         }
 
         /// <summary>
@@ -157,32 +121,33 @@ namespace Asset_Management_Platform.Utility
         public Security GetSingleSecurity(string tickerToLookUp, List<Security> securityDBList)
         {
             Security securityBeingUpdated;
-            string securityType = "";
 
-            var url = _baseUrl.Replace("@", tickerToLookUp);
-            var response = GetWebResponse(url);
+            var yahooRequestUrl = _baseUrl.Replace("@", tickerToLookUp);
+            var response = GetWebResponse(yahooRequestUrl);
             var yahooResult = new YahooAPIResult(response);
-            var isUnknown = IsSecurityUnknown(yahooResult);
 
             //Ticker is unknown, return blank security.
-            if (isUnknown)
+            if (IsSecurityUnknown(yahooResult))
                 return new Security("", @"N/A", @"Unknown Ticker", 0, 0);
 
+            //If security database doesn't know the ticker, add it.
             if (!securityDBList.Any(s => s.Ticker == tickerToLookUp))
             {
                 Security newSecurity = CreateNewSecurity(yahooResult);
+                securityDBList.Add(newSecurity);
             }
 
-            securityType = securityDBList.Find(s => s.Ticker == yahooResult.Ticker).SecurityType;
+            //Find the security, then update.
+            var resultSecurity = securityDBList.Find(s => s.Ticker == yahooResult.Ticker);
 
-            if (securityType == "Stock")
+            if (resultSecurity.SecurityType == "Stock")
                 securityBeingUpdated = (Stock)securityDBList.Find(s => s.Ticker == yahooResult.Ticker);
             else
                 securityBeingUpdated = (MutualFund)securityDBList.Find(s => s.Ticker == yahooResult.Ticker);
 
             //If securityBeingUpdated is not null then it is known to the DB
             //and its info should be updated.
-            if (securityBeingUpdated != null && securityType == "Stock")
+            if (securityBeingUpdated != null && resultSecurity.SecurityType == "Stock" )
             {
                 //Fix properties is they came back as NA
                 if (yahooResult.PeRatioIsNA) yahooResult.PeRatio = 0;
@@ -195,7 +160,7 @@ namespace Asset_Management_Platform.Utility
 
                 return stockBeingUpdated;
             }
-            else if (securityBeingUpdated != null && securityType == "Mutual Fund")
+            else if (securityBeingUpdated != null && resultSecurity.SecurityType == "Mutual Fund")
             {
                 var updatedFund = (MutualFund)securityDBList.Find(s => s.Ticker == yahooResult.Ticker);
                 updatedFund.UpdateData(yahooResult);
@@ -207,27 +172,6 @@ namespace Asset_Management_Platform.Utility
             }   
         }
 
-        private Security CreateNewSecurity(YahooAPIResult yahooResult)
-        {
-            var determinedType = DetermineIfStockOrFund(yahooResult);
-
-            if (determinedType == "Stock")
-            {
-                yahooResult.MarketCap = yahooResult.MarketCap.Substring(0, yahooResult.MarketCap.Length - 1);
-                var newStock = new Stock(yahooResult);
-                return newStock;
-            }
-            else if (determinedType == "Mutual Fund")
-            {
-                var newFund = new MutualFund(yahooResult);
-                return newFund;
-            }
-            else if (determinedType == "Unknown")
-                return new Security("", "N/A", "Unknown Ticker", 0, 0.00);
-            else
-                return new Security("", "N/A", "Unknown Ticker", 0, 0.00);
-        }
-
         /// <summary>
         /// This is called when the user specifically selects that they want to
         /// buy a stock or mutual fund through the order entry screen
@@ -237,30 +181,20 @@ namespace Asset_Management_Platform.Utility
         /// <param name="securityType"></param>
         /// <returns></returns>
         public Security GetSingleSecurity(string tickerToLookUp, List<Security> securityDBList, Security securityType)
-        {           
-            var url = _baseUrl.Replace("@", tickerToLookUp);
-            var response = GetWebResponse(url);
+        {
+            var yahooRequestUrl = _baseUrl.Replace("@", tickerToLookUp);
+            var response = GetWebResponse(yahooRequestUrl);
             var yahooResult = new YahooAPIResult(response);
-            
-            //If the security is undefined, blank the UI properties and return
-            //An unknown stock
-            var securityIsUnknown = IsSecurityUnknown(yahooResult);
-            if (securityIsUnknown)
-            {
-                yahooResult.PeRatio = 0;
-                yahooResult.Yield = 0;
-                yahooResult.Description = "Unknown Ticker";
-                yahooResult.LastPrice = 0;
-                yahooResult.MarketCap = "0";
 
-                var result = new Stock(yahooResult);
-                return result;
-            }
+            //Ticker is unknown, return blank security.
+            if (IsSecurityUnknown(yahooResult))
+                return new Security("", @"N/A", @"Unknown Ticker", 0, 0);
 
-            //If ticker is unknown to security DB list, create and return a new one
+            //If security database doesn't know the ticker, add it, then return.
             if (!securityDBList.Any(s => s.Ticker == tickerToLookUp))
             {
                 Security newSecurity = CreateNewSecurity(yahooResult);
+                securityDBList.Add(newSecurity);
                 return newSecurity;
             }
 
@@ -290,72 +224,6 @@ namespace Asset_Management_Platform.Utility
             else 
             {
                     throw new NotImplementedException();
-            }
-        }
-
-        /// <summary>
-        /// Called when updating portfolio prices or checking limits
-        /// </summary>
-        /// <param name="securities"></param>
-        /// <returns></returns>
-        public void GetUpdatedPricing(List<Security> securities)
-        {
-            // Build the URL.
-            string tickerString = "";
-            foreach (var s in securities)
-            {
-                tickerString += s.Ticker + "+";
-            }
-
-            if (tickerString != "")
-            {
-                //Remove the trailing plus sign.
-                tickerString = tickerString.Substring(0, tickerString.Length - 1);
-
-                //Prepend the base URL.
-                tickerString = _baseUrl.Replace("@", tickerString); //Add my tickers to the middle of the url
-
-                //Get the response.
-                try
-                {
-                    //Get the web response and clean it up
-                    string response = GetWebResponse(tickerString);
-                    string result = Regex.Replace(response, "\\r\\n", "\r\n");
-
-                    //Create an array of the results
-                    var yahooResults = CreateYahooAPIResultList(result);
-
-
-                    //logic for looping through results
-                    foreach (var yahooResult in yahooResults)
-                    {
-                        var securityType = securities.Find(s => s.Ticker == yahooResult.Ticker).SecurityType;
-                        if (IsSecurityUnknown(yahooResult))
-                        {
-                            continue; //do not update security
-                        }
-
-                        if (securityType == "Stock")
-                        {
-                            var stock = (Stock)securities.Find(s => s.Ticker == yahooResult.Ticker);
-                            stock.UpdateData(yahooResult);
-                        }
-                        else if (securityType == "Mutual Fund")
-                        {
-                            var mutualFund = (MutualFund)securities.Find(s => s.Ticker == yahooResult.Ticker);
-                            mutualFund.UpdateData(yahooResult);
-                        }
-                        else
-                        {
-                            throw new NotImplementedException();
-                        }
-                    }
-                }
-
-                catch (Exception ex) //Error in parsing Yahoo API results.
-                {
-                    Console.WriteLine(ex.Message);
-                }
             }
         }
 
@@ -431,14 +299,128 @@ namespace Asset_Management_Platform.Utility
                 }
             }
             return securitiesToReturn; //probably null
-        }    
+        }
 
-        private List<YahooAPIResult> CreateYahooAPIResultList(string result)
+        /// <summary>
+        /// Called when updating portfolio prices or checking limits
+        /// </summary>
+        /// <param name="securities"></param>
+        /// <returns></returns>
+        public void GetUpdatedPricing(List<Security> securities)
+        {
+            // Build the URL.
+            string tickerString = "";
+            foreach (var s in securities)
+            {
+                tickerString += s.Ticker + "+";
+            }
+
+            if (tickerString != "")
+            {
+                //Remove the trailing plus sign.
+                tickerString = tickerString.Substring(0, tickerString.Length - 1);
+
+                //Prepend the base URL.
+                tickerString = _baseUrl.Replace("@", tickerString); //Add my tickers to the middle of the url
+
+                //Get the response.
+                try
+                {
+                    //Get the web response and clean it up
+                    string response = GetWebResponse(tickerString);
+                    string result = Regex.Replace(response, "\\r\\n", "\r\n");
+
+                    //Create an array of the results
+                    var yahooResults = CreateYahooAPIResultList(result);
+
+
+                    //logic for looping through results
+                    foreach (var yahooResult in yahooResults)
+                    {
+                        var securityType = securities.Find(s => s.Ticker == yahooResult.Ticker).SecurityType;
+                        if (IsSecurityUnknown(yahooResult))
+                        {
+                            continue; //do not update security
+                        }
+
+                        if (securityType == "Stock")
+                        {
+                            var stock = (Stock)securities.Find(s => s.Ticker == yahooResult.Ticker);
+                            stock.UpdateData(yahooResult);
+                        }
+                        else if (securityType == "Mutual Fund")
+                        {
+                            var mutualFund = (MutualFund)securities.Find(s => s.Ticker == yahooResult.Ticker);
+                            mutualFund.UpdateData(yahooResult);
+                        }
+                        else
+                        {
+                            throw new NotImplementedException();
+                        }
+                    }
+                }
+
+                catch (Exception ex) //Error in parsing Yahoo API results.
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+        }
+
+        private string GetWebResponse(string url)
+        {
+            var web_client = new WebClient();
+
+            try
+            {
+                Stream response = web_client.OpenRead(url);
+
+                using (StreamReader stream_reader = new StreamReader(response))
+                {
+                    string result = stream_reader.ReadToEnd();
+
+                    return result;
+                }
+            }
+            catch (WebException ex)
+            {
+                throw new NotImplementedException();
+            }
+            catch (IOException ex)
+            {
+                throw new NotImplementedException();
+            }
+            catch (ArgumentException ex)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        private Security CreateNewSecurity(YahooAPIResult yahooResult)
+        {
+            var determinedType = DetermineIfStockOrFund(yahooResult);
+
+            if (determinedType == "Stock")
+            {
+                yahooResult.MarketCap = yahooResult.MarketCap.Substring(0, yahooResult.MarketCap.Length - 1);
+                var newStock = new Stock(yahooResult);
+                return newStock;
+            }
+            else if (determinedType == "Mutual Fund")
+            {
+                var newFund = new MutualFund(yahooResult);
+                return newFund;
+            }
+            else
+                return new Security("", "N/A", "Unknown Ticker", 0, 0.00);
+        }
+
+        private List<YahooAPIResult> CreateYahooAPIResultList(string webResult)
         {
             var yahooResultList = new List<YahooAPIResult>();
 
-            string fixedResponse = Regex.Replace(result, @"\r\n?|\n", string.Empty);
-            string[] lines = result.Split(
+            string fixedResponse = Regex.Replace(webResult, @"\r\n?|\n", string.Empty);
+            string[] lines = webResult.Split(
                         new char[] { '\r', '\n' },
                         StringSplitOptions.RemoveEmptyEntries);
 

@@ -79,6 +79,7 @@ namespace Asset_Management_Platform.Utility
         private void BuildPortfolioSecurities()
         {
             _portfolioTaxlots = _portfolioDatabaseService.GetTaxlotsFromDatabase();
+
             if (_portfolioTaxlots.Count > 0)
                 _portfolioPositions = _portfolioDatabaseService.GetPositionsFromTaxlots(_portfolioTaxlots);
             else
@@ -612,10 +613,16 @@ namespace Asset_Management_Platform.Utility
             return secType;
         }
 
-        public void UploadAllToDatabase()
+        public void UploadAllDatabases()
         {
+            UploadSecurityDatabase();
             UploadPortfolio();
             UploadLimitOrdersToDatabase();
+        }
+
+        private void UploadSecurityDatabase()
+        {
+            _stockDataService.UploadSecuritiesToDatabase();
         }
 
         public void UploadLimitOrdersToDatabase()

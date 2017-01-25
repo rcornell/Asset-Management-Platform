@@ -666,7 +666,7 @@ namespace Asset_Management_Platform
 
         private void ExecuteCloseApplication()
         {
-            _portfolioManagementService.UploadAllToDatabase();
+            _portfolioManagementService.UploadAllDatabases();
             System.Windows.Application.Current.Shutdown();
         }
 
