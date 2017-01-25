@@ -69,6 +69,8 @@ namespace Asset_Management_Platform
             AssetClass = "-";
             Category = "-";
             Subcategory = "-";
+            Change = yahooResult.Change;
+            PercentChange = yahooResult.PercentChange;
         }
 
         public MutualFund(YahooAPIResult yahooResult, string assetClass, string category, string subcategory)
@@ -78,6 +80,8 @@ namespace Asset_Management_Platform
             AssetClass = assetClass;
             Category = category;
             Subcategory = subcategory;
+            Change = yahooResult.Change;
+            PercentChange = yahooResult.PercentChange;
         }
 
 

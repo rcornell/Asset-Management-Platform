@@ -193,8 +193,8 @@
                 <DataGridTextColumn Width="Auto" Header="Description" Binding="{Binding Description}"/>
                 <DataGridTextColumn Width="Auto" Header="Shares" Binding="{Binding Shares}"/>
                 <DataGridTextColumn Width="*" Header="Price" Binding="{Binding Price}"/>
-                <DataGridTextColumn Width="*" Header="Change ($)" Binding="{Binding Price}"/>
-                <DataGridTextColumn Width="*" Header="Change (%)" Binding="{Binding Price}"/>
+                <DataGridTextColumn Width="*" Header="Change ($)" Binding="{Binding Change}"/>
+                <DataGridTextColumn Width="*" Header="Change (%)" Binding="{Binding PercentChange}"/>
                 <DataGridTextColumn Width="Auto" Header="Market Value" Binding="{Binding MarketValue}"/>
                 <DataGridTextColumn Width="Auto" Header="Cost Basis" Binding="{Binding CostBasis}"/>
                 <DataGridTextColumn Width="Auto" Header="Gain/Loss" Binding="{Binding GainLoss}"/>

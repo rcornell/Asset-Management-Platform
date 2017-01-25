@@ -137,9 +137,12 @@ namespace Asset_Management_Platform
             get { return _stock.Change; }
         }
 
-        public decimal PercentChange
+        public string PercentChange
         {
-            get { return _stock.PercentChange; }
+            get
+            {
+                return string.Format(@"{0:0.0%}", _stock.PercentChange);
+            }
         }
 
         public DisplayStock(Position position, Stock stock)

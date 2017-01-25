@@ -105,7 +105,7 @@ namespace Asset_Management_Platform.Utility
         //y     Dividend Yield
         /// </summary>
 
-        const string _baseUrl = "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=sl1yj1barvb6a5ncp2";
+        const string _baseUrl = "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=sl1yj1barvb6a5c1p2n";
 
         public YahooAPIService()
         {
@@ -182,6 +182,9 @@ namespace Asset_Management_Platform.Utility
         /// <returns></returns>
         public List<Security> GetMultipleSecurities(List<string> tickers)
         {
+
+            //"\"AAPL\",119.97,1.90,639.72B,119.97,120.00,14.44,23211038,500,900,\"Apple Inc.\",\"-0.11 - -0.09%\",\"-0.09%\""
+            //string.Format("Percentage is {0:0.0%}", ratio)
             var securitiesToReturn = new List<Security>(); //Instantiate the list to return
 
             // Build the URL.

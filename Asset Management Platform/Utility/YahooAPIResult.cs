@@ -38,7 +38,8 @@ namespace Asset_Management_Platform.Utility
 
         public YahooAPIResult(string result)
         {
-            string fixedResponse = Regex.Replace(result, @"\r\n?|\n", string.Empty);
+            string response = Regex.Replace(result, @"\r\n?|\n", string.Empty);
+            string fixedResponse = Regex.Replace(response,@"%", string.Empty);
 
             if (string.IsNullOrEmpty(fixedResponse.Split(',')[0]))
                 Ticker = ""; //Why are you here?
@@ -64,17 +65,17 @@ namespace Asset_Management_Platform.Utility
             BidSizeIsNA = !int.TryParse(fixedResponse.Split(',')[8], out BidSize);
             AskSizeIsNA = !int.TryParse(fixedResponse.Split(',')[9], out AskSize);
             ChangeIsNA = !decimal.TryParse(fixedResponse.Split(',')[10], out Change);
-            PercentChangeIsNA = !decimal.TryParse(fixedResponse.Split(',')[11], out PercentChange);
+            PercentChangeIsNA = !decimal.TryParse(fixedResponse.Split(',')[11].Replace("\"", ""), out PercentChange);
 
             //Index out of bounds?
             //Some Descriptions are split by a comma, e.g. ",Inc."
             //So the method searches for an extra item and appends it
-            if (string.IsNullOrEmpty(fixedResponse.Split(',')[10]))
+            if (string.IsNullOrEmpty(fixedResponse.Split(',')[12]))
                 DescriptionIsNA = true;
             else
-                Description = fixedResponse.Split(',')[10].Replace("\"", "");
+                Description = fixedResponse.Split(',')[12].Replace("\"", "");
             if (fixedResponse.Split(',').Length == 12)
-                Description += fixedResponse.Split(',')[11].Replace("\"", "");
+                Description += fixedResponse.Split(',')[13].Replace("\"", "");
         }
 
         public YahooAPIResult()

@@ -109,9 +109,10 @@ namespace Asset_Management_Platform.Utility
                 using (var connection = new SqlConnection(storageString))
                 {
                     connection.Open();
-                    using (var command = new SqlCommand())
+                    var deleteStockCommand = @"TRUNCATE TABLE dbo.Stocks;";
+
+                    using (var command = new SqlCommand(deleteStockCommand, connection))
                     {
-                        command.CommandText = @"DELETE * FROM dbo.Stocks;";
                         command.ExecuteNonQuery();
 
                         var insertString = @"INSERT INTO Stocks (Cusip, Ticker, Description, LastPrice, Yield) VALUES ";
@@ -128,9 +129,10 @@ namespace Asset_Management_Platform.Utility
                         command.ExecuteNonQuery();
                     }
 
-                    using (var command = new SqlCommand())
+                    var deleteMFCommand = @"TRUNCATE TABLE dbo.MutualFunds;";
+                    using (var command = new SqlCommand(deleteMFCommand, connection))
                     {
-                        command.CommandText = @"DELETE * FROM dbo.MutualFunds;";
+                        
                         command.ExecuteNonQuery();
 
                         var insertString = @"INSERT INTO MutualFunds (Ticker, Description, LastPrice, Yield, AssetClass, Category, Subcategory) VALUES ";

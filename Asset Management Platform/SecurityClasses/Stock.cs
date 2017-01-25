@@ -75,6 +75,8 @@ namespace Asset_Management_Platform
             Volume = yahooResult.Volume;
             BidSize = yahooResult.BidSize;
             AskSize = yahooResult.AskSize;
+            Change = yahooResult.Change;
+            PercentChange = yahooResult.PercentChange;
         }
 
         public Stock(MarkitJsonResult result)
