@@ -132,6 +132,16 @@ namespace Asset_Management_Platform
             get {  return (((_stock.LastPrice - _position.PurchasePrice) * _position.SharesOwned)).ToString("#,##0"); }
         }
 
+        public decimal Change
+        {
+            get { return _stock.Change; }
+        }
+
+        public decimal PercentChange
+        {
+            get { return _stock.PercentChange; }
+        }
+
         public DisplayStock(Position position, Stock stock)
         {
             _position = position;

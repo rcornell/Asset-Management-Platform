@@ -91,6 +91,8 @@ namespace Asset_Management_Platform
             LastPrice = updatedInfo.LastPrice;
             Description = updatedInfo.Description;
             Yield = updatedInfo.Yield;
+            Change = updatedInfo.Change;
+            PercentChange = updatedInfo.PercentChange;
         }
 
         public override string ToString()

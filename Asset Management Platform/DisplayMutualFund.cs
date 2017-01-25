@@ -103,6 +103,16 @@ namespace Asset_Management_Platform
             get { return (((_fund.LastPrice - _position.PurchasePrice) * _position.SharesOwned)).ToString("#,##0"); }
         }
 
+        public decimal Change
+        {
+            get { return _fund.Change; }
+        }
+
+        public decimal PercentChange
+        {
+            get { return _fund.PercentChange; }
+        }
+
         public DisplayMutualFund(Position position, MutualFund fund)
         {
             _position = position;

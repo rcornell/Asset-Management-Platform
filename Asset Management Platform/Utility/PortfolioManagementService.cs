@@ -200,7 +200,6 @@ namespace Asset_Management_Platform.Utility
             }
         }
 
-
         private void CreateLimitOrder(Trade trade)
         {
             var newLimitOrder = new LimitOrder(trade);
@@ -225,7 +224,6 @@ namespace Asset_Management_Platform.Utility
                 return true;
             return false;
         }
-
 
         /// <summary>
         /// Directs the executing code to the proper method for disposing
@@ -261,7 +259,6 @@ namespace Asset_Management_Platform.Utility
                 SellPosition(trade);
             }
         }
-
 
         private void SellPosition(Trade trade)
         {

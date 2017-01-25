@@ -56,6 +56,20 @@ namespace Asset_Management_Platform
             }
         }
 
+        private decimal _change;
+        public decimal Change
+        {
+            get { return _change; }
+            set { _change = value; }
+        }
+
+        private decimal _percentChange;
+        public decimal PercentChange
+        {
+            get { return _percentChange; }
+            set { _percentChange = value; }
+        }
+
         public Security(string cusip, string ticker, string description, decimal lastPrice, double yield)
         {
             _cusip = cusip;

@@ -55,6 +55,8 @@ namespace Asset_Management_Platform
             set { _askSize = value; }
         }
 
+
+
         public Stock(string cusip, string ticker, string description, decimal lastPrice, double yield)
             : base (cusip, ticker, description, lastPrice, yield)
         {
@@ -134,6 +136,8 @@ namespace Asset_Management_Platform
             BidSize = updatedInfo.BidSize;
             MarketCap = double.Parse(updatedInfo.MarketCap);
             Description = updatedInfo.Description;
+            Change = updatedInfo.Change;
+            PercentChange = updatedInfo.PercentChange;
         }
 
         public override string ToString()
