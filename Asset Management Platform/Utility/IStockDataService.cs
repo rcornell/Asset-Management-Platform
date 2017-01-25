@@ -9,17 +9,11 @@ namespace Asset_Management_Platform.Utility
     public interface IStockDataService
     {
 
-        void SeedDatabasesIfNeeded();
-
         List<Security> LoadSecurityDatabase();
-
-        bool IsStockDatabaseNull();
 
         bool InsertIntoDatabase(Security securitiesToInsert);
 
         void UploadSecuritiesToDatabase();
-
-        void SeedStockDatabase();
 
         List<Security> GetSecurityList();
 
