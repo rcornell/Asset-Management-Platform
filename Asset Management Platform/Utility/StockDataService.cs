@@ -50,74 +50,89 @@ namespace Asset_Management_Platform.Utility
             
             using (var connection = new SqlConnection(storageString))
             {
+                connection.Open();
+                var stocks = LoadStocksFromDB(connection);
+                var funds = LoadMutualFundsFromDB(connection);
 
-                using (var command = new SqlCommand())
-                {
-                    connection.Open();
-
-                    command.Connection = connection;
-                    command.CommandText = @"SELECT * FROM STOCKS";
-                    string cusip = "";
-                    string ticker = "";
-                    string description = "";
-                    decimal lastPrice = 0;
-                    double yield = 0;
-
-                    var reader = command.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        if (!reader.IsDBNull(0))
-                            cusip = string.IsNullOrEmpty(reader.GetString(0)) ? "" : reader.GetString(0);
-                        if (!reader.IsDBNull(1))
-                            ticker = string.IsNullOrEmpty(reader.GetString(1)) ? "" : reader.GetString(1);
-                        if (!reader.IsDBNull(2))
-                            description = string.IsNullOrEmpty(reader.GetString(2)) ? "" : reader.GetString(2);
-                        if (!reader.IsDBNull(3))
-                            lastPrice = decimal.Parse(reader.GetString(3)); //if paused here, it's because you're not sure if Float will work.
-                        if (!reader.IsDBNull(4))
-                            yield = double.Parse(reader.GetString(4));
-                        _securityDatabaseList.Add(new Stock(cusip, ticker, description, lastPrice, yield));
-                    }
-                    reader.Close();
-                }
-
-                using (var command = new SqlCommand())
-                {
-                    command.Connection = connection;
-                    command.CommandText = @"SELECT * FROM MUTUALFUNDS";
-                    string cusip = "";
-                    string ticker = "";
-                    string description = "";
-                    decimal lastPrice = 0;
-                    double yield = 0;
-                    string assetClass = "";
-                    string category = "";
-                    string subCategory = "";
-
-                    var reader = command.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        if (!reader.IsDBNull(0))
-                            cusip = string.IsNullOrEmpty(reader.GetString(0)) ? "" : reader.GetString(0);
-                        if (!reader.IsDBNull(1))
-                            ticker = string.IsNullOrEmpty(reader.GetString(1)) ? "" : reader.GetString(1);
-                        if (!reader.IsDBNull(2))
-                            description = string.IsNullOrEmpty(reader.GetString(2)) ? "" : reader.GetString(2);
-                        if (!reader.IsDBNull(3))
-                            lastPrice = decimal.Parse(reader.GetString(3)); //if paused here, it's because you're not sure if Float will work.
-                        if (!reader.IsDBNull(4))
-                            yield = double.Parse(reader.GetString(4));
-                        if (!reader.IsDBNull(5))
-                            assetClass = string.IsNullOrEmpty(reader.GetString(5)) ? "" : reader.GetString(5);
-                        if (!reader.IsDBNull(6))
-                            category = string.IsNullOrEmpty(reader.GetString(6)) ? "" : reader.GetString(6);
-                        if (!reader.IsDBNull(7))
-                            subCategory = string.IsNullOrEmpty(reader.GetString(7)) ? "" : reader.GetString(7);
-                        _securityDatabaseList.Add(new MutualFund(cusip, ticker, description, lastPrice, yield, assetClass, category, subCategory));
-                    }
-                }
+                _securityDatabaseList.AddRange(stocks);
+                _securityDatabaseList.AddRange(funds);
             }
             return _securityDatabaseList;
+        }
+
+        private List<Security> LoadMutualFundsFromDB(SqlConnection connection)
+        {
+            var securityList = new List<Security>();
+            var commandText = @"SELECT * FROM MUTUALFUNDS";
+
+            using (var command = new SqlCommand(commandText, connection))
+            {
+                string cusip = "";
+                string ticker = "";
+                string description = "";
+                decimal lastPrice = 0;
+                double yield = 0;
+                string assetClass = "";
+                string category = "";
+                string subCategory = "";
+
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    if (!reader.IsDBNull(0))
+                        cusip = string.IsNullOrEmpty(reader.GetString(0)) ? "" : reader.GetString(0);
+                    if (!reader.IsDBNull(1))
+                        ticker = string.IsNullOrEmpty(reader.GetString(1)) ? "" : reader.GetString(1);
+                    if (!reader.IsDBNull(2))
+                        description = string.IsNullOrEmpty(reader.GetString(2)) ? "" : reader.GetString(2);
+                    if (!reader.IsDBNull(3))
+                        lastPrice = decimal.Parse(reader.GetString(3)); //if paused here, it's because you're not sure if Float will work.
+                    if (!reader.IsDBNull(4))
+                        yield = double.Parse(reader.GetString(4));
+                    if (!reader.IsDBNull(5))
+                        assetClass = string.IsNullOrEmpty(reader.GetString(5)) ? "" : reader.GetString(5);
+                    if (!reader.IsDBNull(6))
+                        category = string.IsNullOrEmpty(reader.GetString(6)) ? "" : reader.GetString(6);
+                    if (!reader.IsDBNull(7))
+                        subCategory = string.IsNullOrEmpty(reader.GetString(7)) ? "" : reader.GetString(7);
+                    securityList.Add(new MutualFund(cusip, ticker, description, lastPrice, yield, assetClass, category, subCategory));
+                }
+                reader.Close();
+            }
+            return securityList;
+        }
+
+        private List<Security> LoadStocksFromDB(SqlConnection connection)
+        {
+            var securityList = new List<Security>();
+            var commandText = @"SELECT * FROM STOCKS";
+
+            using (var command = new SqlCommand(commandText, connection))
+            {             
+                string cusip = "";
+                string ticker = "";
+                string description = "";
+                decimal lastPrice = 0;
+                double yield = 0;
+
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    if (!reader.IsDBNull(0))
+                        cusip = string.IsNullOrEmpty(reader.GetString(0)) ? "" : reader.GetString(0);
+                    if (!reader.IsDBNull(1))
+                        ticker = string.IsNullOrEmpty(reader.GetString(1)) ? "" : reader.GetString(1);
+                    if (!reader.IsDBNull(2))
+                        description = string.IsNullOrEmpty(reader.GetString(2)) ? "" : reader.GetString(2);
+                    if (!reader.IsDBNull(3))
+                        lastPrice = decimal.Parse(reader.GetString(3)); //if paused here, it's because you're not sure if Float will work.
+                    if (!reader.IsDBNull(4))
+                        yield = double.Parse(reader.GetString(4));
+                    securityList.Add(new Stock(cusip, ticker, description, lastPrice, yield));
+                }
+                reader.Close();
+            }
+            return securityList;
         }
 
         /// <summary>

@@ -138,7 +138,7 @@ namespace Asset_Management_Platform.Utility
                 return newSecurity;
             }
 
-            //Find the security, then update.
+            //If security is known, update its pricing.
             var resultSecurity = securityDBList.Find(s => s.Ticker == yahooResult.Ticker);
 
             if (resultSecurity is Stock)
@@ -182,7 +182,6 @@ namespace Asset_Management_Platform.Utility
         /// <returns></returns>
         public List<Security> GetMultipleSecurities(List<string> tickers)
         {
-            const string baseUrl = "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=sl1yj1barvb6a5ncp2";
             var securitiesToReturn = new List<Security>(); //Instantiate the list to return
 
             // Build the URL.
@@ -194,27 +193,23 @@ namespace Asset_Management_Platform.Utility
 
             if (tickerString != "")
             {
-                //Remove the trailing plus sign.
                 tickerString = tickerString.Substring(0, tickerString.Length - 1);
 
-                //Prepend the base URL.
-                tickerString = baseUrl.Replace("@", tickerString); //Add my tickers to the middle of the url
+                //Add my tickers to the middle of the url
+                tickerString = _baseUrl.Replace("@", tickerString); 
 
                 try
                 {
-
-                    //Get the web response and clean it up
                     string response = GetWebResponse(tickerString);
                     string result = Regex.Replace(response, "\\r\\n", "\r\n");
 
-                    //Create a List<T> of the results
+                    //Create a List<YahooAPIResult> of the results
                     var yahooResults = CreateYahooAPIResultList(result);
 
                     foreach (var yahooResult in yahooResults)
                     {
                         if (IsSecurityUnknown(yahooResult))
                             continue; //do not add stock
-
 
                         var securityType = DetermineIfStockOrFund(yahooResult);
                         if (securityType == "Stock")
@@ -244,7 +239,7 @@ namespace Asset_Management_Platform.Utility
                     return securitiesToReturn;
                 }
             }
-            return securitiesToReturn; //probably null
+            return securitiesToReturn; //returns an empty list.
         }
 
         /// <summary>
@@ -254,7 +249,6 @@ namespace Asset_Management_Platform.Utility
         /// <returns></returns>
         public void GetUpdatedPricing(List<Security> securities)
         {
-            // Build the URL.
             string tickerString = "";
             foreach (var s in securities)
             {
@@ -263,13 +257,11 @@ namespace Asset_Management_Platform.Utility
 
             if (tickerString != "")
             {
-                //Remove the trailing plus sign.
                 tickerString = tickerString.Substring(0, tickerString.Length - 1);
 
-                //Prepend the base URL.
-                tickerString = _baseUrl.Replace("@", tickerString); //Add my tickers to the middle of the url
+                //Add my tickers to the middle of the url
+                tickerString = _baseUrl.Replace("@", tickerString); 
 
-                //Get the response.
                 try
                 {
                     //Get the web response and clean it up
@@ -278,7 +270,6 @@ namespace Asset_Management_Platform.Utility
 
                     //Create an array of the results
                     var yahooResults = CreateYahooAPIResultList(result);
-
 
                     //logic for looping through results
                     foreach (var yahooResult in yahooResults)
@@ -305,10 +296,13 @@ namespace Asset_Management_Platform.Utility
                         }
                     }
                 }
-
-                catch (Exception ex) //Error in parsing Yahoo API results.
+                catch (ArgumentNullException ex) //Error in parsing Yahoo API results.
                 {
-                    Console.WriteLine(ex.Message);
+                    throw new NotImplementedException();
+                }
+                catch (ArgumentException ex)
+                {
+                    throw new NotImplementedException();
                 }
             }
         }
@@ -409,6 +403,7 @@ namespace Asset_Management_Platform.Utility
             return false;
         }
 
+        //Reminder: Fully implement IDisposable
         public void Dispose()
         {
         }
