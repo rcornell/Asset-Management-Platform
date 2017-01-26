@@ -10,11 +10,43 @@
     
   <Application.Resources>
     <ResourceDictionary>
-            <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True" xmlns:vm="clr-namespace:Asset_Management_Platform.ViewModel" />
-            <Style x:Key="MinimalChartStyle" TargetType="chart:ChartBase">
-                <Setter Property="Width" Value="500"/>
-                <Setter Property="Height" Value="500"/>
-            </Style>
-        </ResourceDictionary>
+        <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True" xmlns:vm="clr-namespace:Asset_Management_Platform.ViewModel" />
+        <Color x:Key="Border.BackgroundTop">#FFF0FFF0</Color>
+        <Color x:Key="Border.BackgroundBottom">#FF98FB98</Color>
+        <Color x:Key="Border.Border">#FFF5FFFA</Color>
+        <Style x:Key="MinimalChartStyle" TargetType="chart:ChartBase">
+            <Setter Property="Width" Value="500"/>
+            <Setter Property="Height" Value="500"/>
+        </Style>
+        <Style TargetType="{x:Type DataGridColumnHeader}">
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Height" Value="35" />
+            <Setter Property="SeparatorBrush" Value="DarkRed" />
+            <Setter Property="FontWeight" Value="Black" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGridColumnHeader}">
+                        <Grid>
+                            <Border x:Name="headerBorder"
+                                    BorderThickness="1">
+                                <Border.Background>
+                                    <LinearGradientBrush>
+                                        <GradientStop Color="{StaticResource Border.BackgroundTop}"/>
+                                        <GradientStop Color="{StaticResource Border.BackgroundBottom}"/>
+                                        </LinearGradientBrush>
+                                </Border.Background>
+                                <Border.BorderBrush>
+                                        <SolidColorBrush Color="{StaticResource Border.Border}"/>
+                                </Border.BorderBrush>
+                                <ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" 
+                                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </ResourceDictionary>
   </Application.Resources>
 </Application>

@@ -157,53 +157,18 @@
                   ColumnWidth="Auto"
                   Width="Auto"
                   SelectedItem="{Binding SelectedDisplayStock, Mode=OneWayToSource}">
-            <!--<DataGrid.GroupStyle>
-                <GroupStyle>
-                    <GroupStyle.HeaderTemplate>
-                        <DataTemplate>
-                            <StackPanel>
-                                <TextBlock Text="{Binding Path=Ticker}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </GroupStyle.HeaderTemplate>
-                    <GroupStyle.ContainerStyle>
-                        <Style TargetType="{x:Type GroupItem}">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type GroupItem}">
-                                        <Expander>
-                                            <Expander.Header>
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="{Binding Path=Ticker}" />
-                                                    <TextBlock Text="{Binding Path=ItemCount}"/>
-                                                    <TextBlock Text="Items"/>
-                                                </StackPanel>
-                                            </Expander.Header>
-                                            <ItemsPresenter />
-                                        </Expander>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </GroupStyle.ContainerStyle>
-                </GroupStyle>
-            </DataGrid.GroupStyle>-->
             <DataGrid.Columns>
                 <DataGridTextColumn Width="Auto" Header="Ticker"  Binding="{Binding Ticker}"  TextOptions.TextFormattingMode="Display"/>
                 <DataGridTextColumn Width="Auto" Header="Description" Binding="{Binding Description}"/>
                 <DataGridTextColumn Width="Auto" Header="Shares" Binding="{Binding Shares}"/>
                 <DataGridTextColumn Width="*" Header="Price" Binding="{Binding Price}"/>
-                <DataGridTextColumn Width="*" Header="Change ($)" Binding="{Binding Change}"/>
-                <DataGridTextColumn Width="*" Header="Change (%)" Binding="{Binding PercentChange}"/>
+                <DataGridTextColumn Width="*" Header="Today's Change ($)" Binding="{Binding Change}"/>
+                <DataGridTextColumn Width="*" Header="Today's Change (%)" Binding="{Binding PercentChange}"/>
                 <DataGridTextColumn Width="Auto" Header="Market Value" Binding="{Binding MarketValue}"/>
                 <DataGridTextColumn Width="Auto" Header="Cost Basis" Binding="{Binding CostBasis}"/>
                 <DataGridTextColumn Width="Auto" Header="Gain/Loss" Binding="{Binding GainLoss}"/>
                 <DataGridTextColumn Width="*" Header="Yield" Binding="{Binding Yield}"/>
                 <DataGridTextColumn Width="Auto" Header="P/E Ratio" Binding="{Binding PeRatio}"/>
-                <DataGridTextColumn Width="*" Header="Ask" Binding="{Binding Ask}"/>
-                <DataGridTextColumn Width="*" Header="Ask Size" Binding="{Binding AskSize}"/>
-                <DataGridTextColumn Width="*" Header="Bid" Binding="{Binding Bid}"/>
-                <DataGridTextColumn Width="*" Header="Bid Size" Binding="{Binding BidSize}"/>
                 <DataGridTextColumn Width="Auto" Header="Volume" Binding="{Binding Volume}"/>
             </DataGrid.Columns>
         </DataGrid>
