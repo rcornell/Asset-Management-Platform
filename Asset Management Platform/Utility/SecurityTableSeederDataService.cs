@@ -82,13 +82,6 @@ namespace Asset_Management_Platform.Utility
 
         public void LoadStockJsonDataIntoSqlServer(string connectionString)
         {
-
-            //var jsonFi = new FileInfo(@"Assets\Games.json");
-            //return jsonFi.Exists
-            //    ?
-            //    JsonConvert.DeserializeObject<ObservableCollection<Game>>(File.ReadAllText(jsonFi.FullName))
-            //    : null;
-
             //Can I find a better way that deserializing to the StockTicker class with one property?
             var fileInfo = new FileInfo(@"SeedJson\SeedTickers.json");
             var tickerJson = File.ReadAllText(fileInfo.FullName);
