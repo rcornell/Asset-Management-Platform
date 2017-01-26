@@ -110,7 +110,7 @@ namespace Asset_Management_Platform
 
         public string PercentChange
         {
-            get { return string.Format(@"{0:0.0%}", _fund.PercentChange); }
+            get { return string.Format(@"{0:0.0%}", (_fund.PercentChange / 100)); }
         }
 
         public DisplayMutualFund(Position position, MutualFund fund)

@@ -103,55 +103,79 @@ namespace Asset_Management_Platform.Utility
         /// <returns></returns>
         public void UploadSecuritiesToDatabase()
         {
-            if (_securityDatabaseList != null)
+            if (_securityDatabaseList == null)
+                return;
+
+            var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
+
+            using (var connection = new SqlConnection(storageString))
             {
-                var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
-                using (var connection = new SqlConnection(storageString))
+                connection.Open();
+
+                //Clear the table of stocks
+                var deleteStockCommand = @"TRUNCATE TABLE dbo.Stocks;";
+                using (var command = new SqlCommand(deleteStockCommand, connection))
                 {
-                    connection.Open();
-                    var deleteStockCommand = @"TRUNCATE TABLE dbo.Stocks;";
+                    command.ExecuteNonQuery();                
+                }
 
-                    using (var command = new SqlCommand(deleteStockCommand, connection))
+                //Create the VALUES for the SQL Insert
+                var stockInsertBase = @"INSERT INTO Stocks (Cusip, Ticker, Description, LastPrice, Yield) VALUES ";
+                string stockValues = "";
+                foreach (var sec in _securityDatabaseList)
+                {
+                    if (sec is Stock)
                     {
-                        command.ExecuteNonQuery();
+                        var newValue = string.Format("('{0}', '{1}', '{2}', {3}, {4}), ", sec.Cusip, sec.Ticker, sec.Description.Replace("'", ""), sec.LastPrice, sec.Yield);
+                        stockValues += newValue;
+                    }
+                }
+                    
+                //Insert stocks into DB
+                if (!string.IsNullOrEmpty(stockValues)) { 
+                    stockValues = stockValues.Substring(0, stockValues.Length - 2) + @";";
+                    stockInsertBase += stockValues;
 
-                        var insertString = @"INSERT INTO Stocks (Cusip, Ticker, Description, LastPrice, Yield) VALUES ";
-                        foreach (var sec in _securityDatabaseList)
-                        {
-                            if (sec is Stock) { 
-                                var newValue = string.Format("('{0}', '{1}', '{2}', {3}, {4}) ", sec.Cusip, sec.Ticker, sec.Description, sec.LastPrice, sec.Yield);
-                                insertString += newValue;
-                            }
-                        }
-
-                        insertString += @";";
-                        command.CommandText = insertString;
+                    using (var command = new SqlCommand(stockInsertBase, connection))
+                    {
                         command.ExecuteNonQuery();
                     }
-
-                    var deleteMFCommand = @"TRUNCATE TABLE dbo.MutualFunds;";
-                    using (var command = new SqlCommand(deleteMFCommand, connection))
-                    {
-                        
-                        command.ExecuteNonQuery();
-
-                        var insertString = @"INSERT INTO MutualFunds (Ticker, Description, LastPrice, Yield, AssetClass, Category, Subcategory) VALUES ";
-                        foreach(var sec in _securityDatabaseList)
-                        {
-                            if(sec is MutualFund)
-                            {
-                                var fund = (MutualFund)sec;
-                                var newValue = string.Format(@"('{0}', {1}, {2}, '{3}', '{4}', '{5}', '{6}')", fund.Ticker, fund.Description,
-                                    fund.LastPrice, fund.Yield, fund.AssetClass, fund.Category, fund.Subcategory);
-                                insertString += newValue;
-                            }
-                            insertString += @";";
-                            command.CommandText = insertString;
-                            command.ExecuteNonQuery();
-                        }
-                    }  
                 }
-            }
+
+                //Truncate MF table
+                var deleteMFCommand = @"TRUNCATE TABLE dbo.MutualFunds;";
+                using (var command = new SqlCommand(deleteMFCommand, connection))
+                {                        
+                    command.ExecuteNonQuery();
+                }
+
+                //Create the VALUES portion of the SQL Insert
+                var fundInsertBase = @"INSERT INTO MutualFunds (Ticker, Description, LastPrice, Yield, AssetClass, Category, Subcategory) VALUES ";
+                string fundValues = "";
+                foreach (var sec in _securityDatabaseList)
+                {
+                    if (sec is MutualFund)
+                    {
+                        var fund = (MutualFund)sec;
+                        var newValue = string.Format(@"('{0}', {1}, {2}, '{3}', '{4}', '{5}', '{6}'), ", fund.Ticker, fund.Description.Replace("'", ""),
+                            fund.LastPrice, fund.Yield, fund.AssetClass, fund.Category, fund.Subcategory);
+                        fundValues += newValue;
+                    }
+                    
+                    
+                }
+
+                //Insert the funds to the table
+                if (!string.IsNullOrEmpty(fundValues))
+                {
+                    fundValues = fundValues.Substring(0, fundValues.Length - 2) + @";";
+                    fundInsertBase += fundValues;
+                    using (var command = new SqlCommand(fundInsertBase, connection))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }            
         }
 
         public List<Security> GetSecurityList()

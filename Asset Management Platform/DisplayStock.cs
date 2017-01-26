@@ -141,7 +141,7 @@ namespace Asset_Management_Platform
         {
             get
             {
-                return string.Format(@"{0:0.0%}", _stock.PercentChange);
+                return string.Format(@"{0:0.0%}", (_stock.PercentChange / 100));
             }
         }
 
