@@ -156,6 +156,7 @@
                   CanUserAddRows="False"  
                   ColumnWidth="Auto"
                   Width="Auto"
+
                   SelectedItem="{Binding SelectedDisplayStock, Mode=OneWayToSource}">
             <DataGrid.Columns>
                 <DataGridTextColumn Width="Auto" Header="Ticker"  Binding="{Binding Ticker}"  TextOptions.TextFormattingMode="Display"/>
