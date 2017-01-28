@@ -16,13 +16,15 @@
                 <Setter Property="Width" Value="500" />
                 <Setter Property="Height" Value="500" />
             </Style>
-          
+
+            <!--DataGridColumnHeader colors and brushes-->
             <Color x:Key="Border.BackgroundTop">#FFF0FFF0</Color>
           <Color x:Key="Border.BackgroundBottom">#B7FFB7</Color>
           <Color x:Key="Border.Border">#262538</Color>
             <Color x:Key="Border.HeaderClickedColor">#A4A9F4</Color>
-          
-          <Color x:Key="Row.BackgroundTop">#DAF1FF</Color>
+
+            <!--DataGridRow colors and brushes-->
+            <Color x:Key="Row.BackgroundTop">#DAF1FF</Color>
             <Color x:Key="Row.BackgroundBottom">#74ED7D</Color>
             <Color x:Key="Row.MouseOver">#A3FFEB</Color>
             <Color x:Key="Row.Pressed">#F1618D</Color>
@@ -36,6 +38,7 @@
                 <GradientStop Offset="1" Color="{StaticResource Row.AlternatingRowColor}"/>
             </LinearGradientBrush>
 
+            <!--BUTTON colors and brushes-->
             <Color x:Key="Button.BackgroundTop">#F9FED6</Color>
             <Color x:Key="Button.BackgroundBottom">#EFFE88</Color>
             <Color x:Key="Button.BorderColor">#040000</Color>
@@ -46,26 +49,95 @@
             <SolidColorBrush x:Key="Button.BorderBrush" Opacity="1" Color="{StaticResource Button.BorderColor}"/>
 
 
-            <Style x:Key="ButtonStyle" TargetType="{x:Type Button}">
-                <Setter Property="VerticalContentAlignment" Value="Center"/>
-                <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                <Setter Property="SnapsToDevicePixels" Value="True"/>
-                <Setter Property="BorderThickness" Value="1"/>
-                <Setter Property="BorderBrush" Value="{StaticResource Button.BorderBrush}"/>
+          <Style x:Key="ButtonStyle" TargetType="{x:Type Button}">
+              <Setter Property="VerticalContentAlignment" Value="Center" />
+              <Setter Property="HorizontalContentAlignment" Value="Center" />
+              <Setter Property="SnapsToDevicePixels" Value="True" />
+              <Setter Property="BorderThickness" Value="1" />
+              <Setter Property="BorderBrush" Value="{StaticResource Button.BorderBrush}" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type Button}">
-                            <Border Background="{StaticResource Button.BackgroundBrush}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    Padding="5,2,5,2"
-                                    CornerRadius="2">
-                                <ContentPresenter/>
+                            <Border x:Name="Button_Border"
+                                  Background="{StaticResource Button.BackgroundBrush}"
+                                  BorderBrush="{TemplateBinding BorderBrush}"
+                                  BorderThickness="{TemplateBinding BorderThickness}"
+                                  Padding="5,2,5,2"
+                                  CornerRadius="2"
+                                  RenderTransformOrigin="0.5,0.5">
+                                <Border.RenderTransform>
+                                    <ScaleTransform x:Name="Button_ScaleTransform"/>
+                                </Border.RenderTransform>
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup>
+                                        <VisualState x:Name="Normal" />
+                                        <VisualState x:Name="MouseOver">
+                                            <Storyboard Storyboard.TargetName="Button_Border"
+                                                        Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+                                                <ColorAnimationUsingKeyFrames>
+                                                    <EasingColorKeyFrame KeyTime="0:0:1.0" Value="Purple">
+                                                        <EasingColorKeyFrame.EasingFunction>
+                                                            <BounceEase Bounces="2" Bounciness="2"/>
+                                                        </EasingColorKeyFrame.EasingFunction>
+                                                    </EasingColorKeyFrame>
+                                                </ColorAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                                <ContentPresenter />
                             </Border>
+                            <ControlTemplate.Triggers>
+                                <!--<EventTrigger RoutedEvent="Button.MouseDown">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Button_Border"
+                                                     Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                                     To="0.9"
+                                                     Duration="0"/>
+                                            <DoubleAnimation Storyboard.TargetName="Button_Border"
+                                                     Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                     To="0.9"
+                                                     Duration="0"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>-->
+                                <!--<Trigger Property="IsMouseOver" Value="False">
+                        <Trigger.EnterActions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetName="Button_Border"
+                                                     Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                                     To="1"
+                                                     Duration="0"/>
+                                                <DoubleAnimation Storyboard.TargetName="Button_Border"
+                                                     Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                     To="1"
+                                                     Duration="0"/>
+                                            </Storyboard>
+                            </BeginStoryboard>
+                        </Trigger.EnterActions>
+                    </Trigger>
+                    <Trigger Property="IsPressed" Value="False">
+                        <Trigger.EnterActions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetName="Button_Border"
+                                                     Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                                     To="1"
+                                                     Duration="0"/>
+                                                <DoubleAnimation Storyboard.TargetName="Button_Border"
+                                                     Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                     To="1"
+                                                     Duration="0"/>
+                                            </Storyboard>
+                            </BeginStoryboard>
+                        </Trigger.EnterActions>
+                    </Trigger>-->
+                            </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
-                
             </Style>
 
           <Style TargetType="{x:Type DataGridColumnHeader}">
@@ -239,6 +311,19 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+
+
+
+
+
+
+
+
+
+
+
+
+            
         </ResourceDictionary>
   </Application.Resources>
 </Application>
