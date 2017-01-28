@@ -353,6 +353,8 @@ namespace Asset_Management_Platform
             get { return _selectedDisplayStock; }
             set { _selectedDisplayStock = value;
                 RaisePropertyChanged(() => SelectedDisplayStock);
+                if(_selectedDisplayStock != null)
+                    ExecuteScreenerPreview(_selectedDisplayStock.Ticker);
             }
         }
 
