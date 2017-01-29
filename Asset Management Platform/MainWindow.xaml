@@ -143,13 +143,12 @@
         <DataGrid x:Name="SecurityDataGrid" 
                   ItemsSource="{Binding DisplaySecurityCollectionView, 
                                 NotifyOnSourceUpdated=True, 
-                                UpdateSourceTrigger=PropertyChanged}"
-                  
+                                UpdateSourceTrigger=PropertyChanged}"                 
                   Grid.Row="3"
                   Grid.Column="0"
                   Grid.ColumnSpan="2"
                   HorizontalAlignment="Center" 
-                  Margin="3,3,3,3" 
+                  Margin="3" 
                   AutoGenerateColumns="False"
                   CanUserDeleteRows="False"
                   VerticalScrollBarVisibility="Visible"
@@ -159,19 +158,20 @@
                   SelectedItem="{Binding SelectedDisplaySecurity, Mode=TwoWay}"
                   RowStyle="{StaticResource RowStyle}"
                   CellStyle="{StaticResource CellStyle}"
+                  ColumnHeaderStyle="{StaticResource HeaderStyle}"
                   AlternationCount="2"
                   Background="Transparent">
             <DataGrid.Columns>
                 <DataGridTextColumn Width="Auto" Header="Ticker"  Binding="{Binding Ticker, Mode=OneWay}"  TextOptions.TextFormattingMode="Display"/>
-                <DataGridTextColumn Width="Auto" Header="Description" Binding="{Binding Description, Mode=OneWay}"/>
+                <DataGridTextColumn Width="*" Header="Description" Binding="{Binding Description, Mode=OneWay}"/>
                 <DataGridTextColumn Width="Auto" Header="Shares" Binding="{Binding Shares, Mode=OneWay}"/>
-                <DataGridTextColumn Width="*" Header="Price" Binding="{Binding Price, Mode=OneWay}"/>
-                <DataGridTextColumn Width="*" Header="Today's Change ($)" Binding="{Binding Change, Mode=OneWay}"/>
-                <DataGridTextColumn Width="*" Header="Today's Change (%)" Binding="{Binding PercentChange, Mode=OneWay}"/>
+                <DataGridTextColumn Width="Auto" Header="Price" Binding="{Binding Price, Mode=OneWay}"/>
+                <DataGridTextColumn Width="Auto" Header="Today's Change ($)" Binding="{Binding Change, Mode=OneWay}"/>
+                <DataGridTextColumn Width="Auto" Header="Today's Change (%)" Binding="{Binding PercentChange, Mode=OneWay}"/>
                 <DataGridTextColumn Width="Auto" Header="Market Value" Binding="{Binding MarketValue, Mode=OneWay}"/>
                 <DataGridTextColumn Width="Auto" Header="Cost Basis" Binding="{Binding CostBasis, Mode=OneWay}"/>
                 <DataGridTextColumn Width="Auto" Header="Gain/Loss" Binding="{Binding GainLoss, Mode=OneWay}"/>
-                <DataGridTextColumn Width="*" Header="Yield" Binding="{Binding Yield, Mode=OneWay}"/>
+                <DataGridTextColumn Width="Auto" Header="Yield" Binding="{Binding Yield, Mode=OneWay}"/>
                 <DataGridTextColumn Width="Auto" Header="P/E Ratio" Binding="{Binding PeRatio, Mode=OneWay}"/>
                 <DataGridTextColumn Width="Auto" Header="Volume" Binding="{Binding Volume, Mode=OneWay}"/>
             </DataGrid.Columns>
