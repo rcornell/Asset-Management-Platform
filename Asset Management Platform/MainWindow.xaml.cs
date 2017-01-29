@@ -23,6 +23,10 @@ namespace Asset_Management_Platform
         public MainWindow()
         {
             InitializeComponent();
+            
+            //Unfortunate code behind. Unselects the default
+            //first row selected at runtime.
+            SecurityDataGrid.SelectedItem = null;
         }
     }
 }

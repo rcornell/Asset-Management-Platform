@@ -124,7 +124,10 @@
                 <TextBlock />
             </StackPanel>
         </Grid>
-        <Grid HorizontalAlignment="Stretch" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+        <Grid HorizontalAlignment="Stretch" 
+              Grid.Row="2" 
+              Grid.Column="0" 
+              Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
@@ -137,21 +140,23 @@
             <Button Content="Funds and ETFs" Margin="5" Grid.Column="2" Command="{Binding ShowFundsOnly}"/>
         </Grid>
         <!-- When you have to make a DataGrid that groups objects by type: http://wpftutorial.net/DataGrid.html-->
-        <DataGrid ItemsSource="{Binding DisplaySecurityCollectionView, 
+        <DataGrid x:Name="SecurityDataGrid" 
+                  ItemsSource="{Binding DisplaySecurityCollectionView, 
                                 NotifyOnSourceUpdated=True, 
-                                UpdateSourceTrigger=PropertyChanged}" 
+                                UpdateSourceTrigger=PropertyChanged}"
+                  
                   Grid.Row="3"
                   Grid.Column="0"
                   Grid.ColumnSpan="2"
                   HorizontalAlignment="Center" 
-                  Margin="0,3,0,3" 
+                  Margin="3,3,3,3" 
                   AutoGenerateColumns="False"
                   CanUserDeleteRows="False"
                   VerticalScrollBarVisibility="Visible"
                   CanUserAddRows="False"  
                   ColumnWidth="Auto"
                   Width="Auto"
-                  SelectedItem="{Binding SelectedDisplaySecurity, Mode=OneWayToSource}"
+                  SelectedItem="{Binding SelectedDisplaySecurity, Mode=TwoWay}"
                   RowStyle="{StaticResource RowStyle}"
                   CellStyle="{StaticResource CellStyle}"
                   AlternationCount="2"

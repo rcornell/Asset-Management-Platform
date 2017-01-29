@@ -17,8 +17,6 @@
             </Style>
 
             <!--DataGridColumnHeader colors and brushes-->
-            <!--<Color x:Key="Border.BackgroundTop">#FFF0FFF0</Color>
-            <Color x:Key="Border.BackgroundBottom">#B7FFB7</Color>-->
             <Color x:Key="ColumnHeader.BackgroundTop">#B6F7FF</Color>
             <Color x:Key="ColumnHeader.BackgroundBottom">#8FF8FF</Color>
             <Color x:Key="ColumnHeader.BorderColor">#BA000000</Color>
@@ -27,9 +25,6 @@
             <SolidColorBrush x:Key="ColumnHeader.BorderBrush" Color="{StaticResource ColumnHeader.BorderColor}"/>
 
             <!--DataGridRow colors and brushes-->
-            <!--<Color x:Key="Row.BackgroundTop">#DAF1FF</Color>
-            <Color x:Key="Row.BackgroundBottom">#74ED7D</Color>
-            <Color x:Key="Row.AlternatingRowColor">#6CFDCC</Color>-->
             <Color x:Key="Row.BackgroundTop">#DAF1FF</Color>
             <Color x:Key="Row.BackgroundBottom">#DAF1FF</Color>
             <Color x:Key="Row.AlternatingRowTop">Transparent</Color>
@@ -53,7 +48,6 @@
             </LinearGradientBrush>
 
             <!--BUTTON colors and brushes-->
-            <!--<Color x:Key="Button.BackgroundTop">#C7FFFC</Color>-->
             <Color x:Key="Button.BackgroundTop">#88F1FE</Color>
             <Color x:Key="Button.BackgroundBottom">#88F1FE</Color>
             <Color x:Key="Button.BorderColor">#55040000</Color>
@@ -191,21 +185,32 @@
 
             <Style TargetType="{x:Type DataGridColumnHeader}">
                 <Setter Property="VerticalContentAlignment" Value="Center" />
-                <Setter Property="Height" Value="25" />
-                <Setter Property="SeparatorBrush" Value="DarkRed" />
-                <Setter Property="SeparatorVisibility" Value="Hidden"/>
+                <Setter Property="Height" Value="30" />
                 <Setter Property="FontWeight" Value="Light" />
-                <Setter Property="ContentTemplate">
+                <Setter Property="SnapsToDevicePixels" Value="True"/>
+                <!--<Setter Property="ContentTemplate">
                     <Setter.Value>
                         <DataTemplate>
                             <TextBlock TextWrapping="WrapWithOverflow" Text="{Binding}" />
                         </DataTemplate>
                     </Setter.Value>
-                </Setter>
+                </Setter>-->
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type DataGridColumnHeader}">
-                            <Grid>
+                            <Border x:Name="headerBorder"
+                                        BorderThickness="0.5"
+                                        BorderBrush="{StaticResource ColumnHeader.BorderBrush}"
+                                        Padding="3,0,3,0">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                        <GradientStop Offset="0" Color="{StaticResource ColumnHeader.BackgroundTop}" />
+                                        <GradientStop Offset="1" Color="{StaticResource ColumnHeader.BackgroundBottom}" />
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                                 <VisualStateManager.VisualStateGroups>
                                     <VisualStateGroup x:Name="CommonStates">
                                         <VisualState Name="Normal" />
@@ -228,21 +233,7 @@
                                         </VisualState>
                                     </VisualStateGroup>
                                 </VisualStateManager.VisualStateGroups>
-                                <Border x:Name="headerBorder"
-                                        BorderThickness="0.5"
-                                        BorderBrush="{StaticResource ColumnHeader.BorderBrush}"
-                                        Padding="3,0,3,0">
-                                    <Border.Background>
-                                        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                                            <GradientStop Offset="0" Color="{StaticResource ColumnHeader.BackgroundTop}" />
-                                            <GradientStop Offset="1" Color="{StaticResource ColumnHeader.BackgroundBottom}" />
-                                        </LinearGradientBrush>
-                                    </Border.Background>
-                                    <ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                </Border>
-                            </Grid>
+                            </Border>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
@@ -259,11 +250,6 @@
                             <Border Name="CellBorder"
                                     Background="Transparent"
                                     BorderBrush="Transparent">
-                                <!--<DataGridCellsPresenter VerticalContentAlignment="Center"
-                                                        FontFamily="{TemplateBinding FontFamily}"
-                                                        FontSize="{TemplateBinding FontSize}"
-                                                        FontWeight="{TemplateBinding FontWeight}"
-                                                        FontStyle="Normal"/>-->
                                 <ContentPresenter VerticalAlignment="Center" />
                             </Border>
                         </ControlTemplate>

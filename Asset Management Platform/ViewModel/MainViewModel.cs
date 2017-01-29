@@ -462,7 +462,6 @@ namespace Asset_Management_Platform
         }
         public MainViewModel(IPortfolioManagementService portfolioService)
         {
-            SelectedDisplaySecurity = null;
             TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
             TradeTermStrings = new ObservableCollection<string>() { "Market", "Limit", "Stop", "Stop Limit" };
             TradeDurationStrings = new ObservableCollection<string> { "Day", "GTC", "Market Close", "Market Open", "Overnight" };
