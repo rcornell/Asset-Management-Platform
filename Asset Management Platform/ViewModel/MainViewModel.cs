@@ -347,14 +347,14 @@ namespace Asset_Management_Platform
 
         
 
-        private DisplayStock _selectedDisplayStock;
-        public DisplayStock SelectedDisplayStock
+        private DisplaySecurity _selectedDisplaySecurity;
+        public DisplaySecurity SelectedDisplaySecurity
         {
-            get { return _selectedDisplayStock; }
-            set { _selectedDisplayStock = value;
-                RaisePropertyChanged(() => SelectedDisplayStock);
-                if(_selectedDisplayStock != null)
-                    ExecuteScreenerPreview(_selectedDisplayStock.Ticker);
+            get { return _selectedDisplaySecurity; }
+            set { _selectedDisplaySecurity = value;
+                RaisePropertyChanged(() => SelectedDisplaySecurity);
+                if(_selectedDisplaySecurity != null)
+                    ExecuteScreenerPreview(_selectedDisplaySecurity.Ticker);
             }
         }
 
@@ -462,7 +462,7 @@ namespace Asset_Management_Platform
         }
         public MainViewModel(IPortfolioManagementService portfolioService)
         {
-            SelectedDisplayStock = null;
+            SelectedDisplaySecurity = null;
             TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
             TradeTermStrings = new ObservableCollection<string>() { "Market", "Limit", "Stop", "Stop Limit" };
             TradeDurationStrings = new ObservableCollection<string> { "Day", "GTC", "Market Close", "Market Open", "Overnight" };
@@ -618,8 +618,8 @@ namespace Asset_Management_Platform
         {
             if (!string.IsNullOrEmpty(screenerTicker))
             {
-                var resultStock = _portfolioManagementService.GetOrderPreviewSecurity(screenerTicker);
-                ScreenerStock = resultStock;
+                var resultSecurity = _portfolioManagementService.GetOrderPreviewSecurity(screenerTicker);
+                ScreenerStock = resultSecurity;
             }
         }
 

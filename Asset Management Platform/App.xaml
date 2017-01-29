@@ -30,8 +30,8 @@
             <Color x:Key="Row.MouseOver">#A3FFEB</Color>
             <Color x:Key="Row.SelectedFocusedTop">#F8A3FF</Color>
             <Color x:Key="Row.SelectedFocusedBottom">#F582FF</Color>
-            <Color x:Key="Row.SelectedUnfocusedTop">#F8A3FF</Color>
-            <Color x:Key="Row.SelectedUnfocusedBottom">#F582FF</Color>
+            <Color x:Key="Row.SelectedUnfocusedTop">#FBCCFF</Color>
+            <Color x:Key="Row.SelectedUnfocusedBottom">#F8A3FF</Color>
 
             <LinearGradientBrush x:Key="Row.NormalRowBrush" StartPoint="0.5,0" EndPoint="0.5,1">
                 <GradientStop Offset="0" Color="{StaticResource Row.BackgroundTop}"/>
@@ -105,7 +105,7 @@
                                                 <ColorAnimationUsingKeyFrames >
                                                     <EasingColorKeyFrame KeyTime="0:0:1.0" Value="#EDA6FF2F">
                                                         <EasingColorKeyFrame.EasingFunction>
-                                                            <BackEase/>
+                                                            <PowerEase Power="2"/>
                                                         </EasingColorKeyFrame.EasingFunction>
                                                     </EasingColorKeyFrame>
                                                 </ColorAnimationUsingKeyFrames>
@@ -337,6 +337,20 @@
                                                                               Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
                                                     <EasingColorKeyFrame KeyTime="0:0:0.0"
                                                                          Value="{StaticResource Row.SelectedFocusedBottom}"/>
+                                                </ColorAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="Normal_Selected">
+                                            <Storyboard >
+                                                <ColorAnimationUsingKeyFrames Storyboard.TargetName="DGR_Border"
+                                                                              Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[0].(GradientStop.Color)">
+                                                    <EasingColorKeyFrame KeyTime="0:0:0.0"
+                                                                         Value="{StaticResource Row.SelectedUnfocusedTop}"/>
+                                                </ColorAnimationUsingKeyFrames>
+                                                <ColorAnimationUsingKeyFrames Storyboard.TargetName="DGR_Border"
+                                                                              Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+                                                    <EasingColorKeyFrame KeyTime="0:0:0.0"
+                                                                         Value="{StaticResource Row.SelectedUnfocusedBottom}"/>
                                                 </ColorAnimationUsingKeyFrames>
                                             </Storyboard>
                                         </VisualState>

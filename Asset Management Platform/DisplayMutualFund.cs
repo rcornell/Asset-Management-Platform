@@ -17,14 +17,6 @@ namespace Asset_Management_Platform
             set { _fund = value; }
         }
 
-        public string Ticker
-        {
-            get
-            {
-                return _position.Ticker;
-            }
-        }
-
         public decimal Shares
         {
             get { return _position.SharesOwned; }
@@ -32,18 +24,12 @@ namespace Asset_Management_Platform
 
         public string Description
         {
-            get
-            {
-                return _fund.Description;
-            }
+            get { return _fund.Description; }
         }
 
         public decimal Price
         {
-            get
-            {
-                return _fund.LastPrice;
-            }
+            get { return _fund.LastPrice; }
         }
 
         public string MarketValue
@@ -58,34 +44,22 @@ namespace Asset_Management_Platform
 
         public string Yield
         {
-            get
-            {
-                return string.Format(_fund.Yield + "%");
-            }
+            get { return string.Format(_fund.Yield + "%"); }
         }
-        
+
         public string AssetClass
         {
-            get
-            {
-                return _fund.AssetClass;
-            }
-        }   
+            get { return _fund.AssetClass; }
+        }
 
         public string Category
         {
-            get
-            {
-                return _fund.Category;
-            }
+            get { return _fund.Category; }
         }
 
         public string Subcategory
         {
-            get
-            {
-                return _fund.Subcategory;
-            }
+            get { return _fund.Subcategory; }
         }
 
         public string CostBasis
@@ -114,6 +88,7 @@ namespace Asset_Management_Platform
         }
 
         public DisplayMutualFund(Position position, MutualFund fund)
+            : base(position.Ticker)
         {
             _position = position;
             _fund = fund;

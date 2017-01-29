@@ -151,7 +151,7 @@
                   CanUserAddRows="False"  
                   ColumnWidth="Auto"
                   Width="Auto"
-                  SelectedItem="{Binding SelectedDisplayStock, Mode=OneWayToSource}"
+                  SelectedItem="{Binding SelectedDisplaySecurity, Mode=OneWayToSource}"
                   RowStyle="{StaticResource RowStyle}"
                   AlternationCount="2"
                   Background="Transparent">

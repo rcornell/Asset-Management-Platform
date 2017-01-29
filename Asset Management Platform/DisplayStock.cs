@@ -9,18 +9,7 @@ namespace Asset_Management_Platform
     public class DisplayStock : DisplaySecurity
     {
         private Position _position;
-        private Stock _stock;
-        public Stock Stock
-        {
-            get { return _stock; }
-            set { _stock = value; }
-        }
-
-        public string Ticker {
-            get {
-                return _position.Ticker;
-            }
-        }
+        public Stock Stock { get; set; }
 
         public decimal Shares
         {
@@ -29,25 +18,19 @@ namespace Asset_Management_Platform
 
         public string Description
         {
-            get
-            {
-                return _stock.Description;
-            }
+            get { return Stock.Description; }
         }
 
         public decimal Price
         {
-            get
-            {
-                return _stock.LastPrice;
-            }
+            get { return Stock.LastPrice; }
         }
 
         public string MarketValue
         {
             get
             {
-                var value = _stock.LastPrice * _position.SharesOwned;
+                var value = Stock.LastPrice * _position.SharesOwned;
                 var valueString = value.ToString("#,##0");
                 return valueString;
             }
@@ -55,32 +38,24 @@ namespace Asset_Management_Platform
 
         public string Yield
         {
-            get {
-                return string.Format(_stock.Yield + "%");
-            }
+            get { return string.Format(Stock.Yield + "%"); }
         }
 
         public double Bid
         {
-            get
-            {
-                return _stock.Bid;
-            }
+            get { return Stock.Bid; }
         }
 
         public double Ask
         {
-            get
-            {
-                return _stock.Ask;
-            }
+            get { return Stock.Ask; }
         }
 
         public string MarketCap
         {
             get
             {
-                var stringChars = _stock.MarketCap.ToString().Split('.');
+                var stringChars = Stock.MarketCap.ToString().Split('.');
                 var newString = stringChars[0] + " Billion";
                 return newString;
             }
@@ -88,33 +63,22 @@ namespace Asset_Management_Platform
 
         public double PeRatio
         {
-            get
-            {
-                return _stock.PeRatio;
-            }
+            get { return Stock.PeRatio; }
         }
 
         public double AskSize
         {
-            get
-            {
-                return _stock.AskSize;
-            }
+            get { return Stock.AskSize; }
         }
 
         public double BidSize
         {
-            get
-            {
-                return _stock.BidSize;
-            }
+            get { return Stock.BidSize; }
         }
 
         public string Volume
         {
-            get {
-                return _stock.Volume.ToString("#,##0");
-            }
+            get { return Stock.Volume.ToString("#,##0"); }
         }
 
         public string CostBasis
@@ -129,26 +93,24 @@ namespace Asset_Management_Platform
 
         public string GainLoss
         {
-            get {  return (((_stock.LastPrice - _position.PurchasePrice) * _position.SharesOwned)).ToString("#,##0"); }
+            get { return ((Stock.LastPrice - _position.PurchasePrice) * _position.SharesOwned).ToString("#,##0"); }
         }
 
         public decimal Change
         {
-            get { return _stock.Change; }
+            get { return Stock.Change; }
         }
 
         public string PercentChange
         {
-            get
-            {
-                return string.Format(@"{0:0.0%}", (_stock.PercentChange / 100));
-            }
+            get { return string.Format(@"{0:0.0%}", Stock.PercentChange / 100); }
         }
 
         public DisplayStock(Position position, Stock stock)
+            : base(position.Ticker)
         {
             _position = position;
-            _stock = stock;
+            Stock = stock;
         }
 
         public void ReduceShares(decimal shares)
