@@ -153,6 +153,7 @@
                   Width="Auto"
                   SelectedItem="{Binding SelectedDisplaySecurity, Mode=OneWayToSource}"
                   RowStyle="{StaticResource RowStyle}"
+                  CellStyle="{StaticResource CellStyle}"
                   AlternationCount="2"
                   Background="Transparent">
             <DataGrid.Columns>
