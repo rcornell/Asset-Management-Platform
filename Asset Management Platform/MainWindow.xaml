@@ -9,16 +9,13 @@
         mc:Ignorable="d"
         Title="Portfolio Management Test Utility" 
         DataContext="{Binding Main, Source={StaticResource Locator}}">
-    <Window.Resources>
-        <Style x:Key="DataGridCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
-            <Setter Property="HorizontalContentAlignment" Value="Right"/>
-            <Setter Property="Background" Value="DarkSlateGray"/>
-        </Style>
-        <Style x:Key="ScreenerStyle" TargetType="TextBox">
-            <Setter Property="FontSize" Value="30"/>
-        </Style>
-    </Window.Resources>
-    <Grid Background="Azure">
+    <Grid >
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0.5,0.5" EndPoint="0.5,1">
+                <GradientStop Offset="0" Color="Honeydew"/>
+                <GradientStop Offset="1" Color="Aquamarine"/>
+            </LinearGradientBrush>  
+        </Grid.Background>
         <Grid.ColumnDefinitions>
             <ColumnDefinition ></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
@@ -31,7 +28,7 @@
             <RowDefinition ></RowDefinition>
             <RowDefinition Height="Auto" MinHeight="175"></RowDefinition>
         </Grid.RowDefinitions>
-        <DockPanel Grid.Row="0" Grid.Column="0">
+        <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="_File">
                     <MenuItem Header="_New Portfolio" Command="{Binding DeletePortfolio}"/>
@@ -127,14 +124,14 @@
                 <TextBlock />
             </StackPanel>
         </Grid>
-        <Grid HorizontalAlignment="Stretch" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Background="Azure">
+        <Grid HorizontalAlignment="Stretch" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <Button Style="{StaticResource ButtonStyle}" Content="All Assets" Margin="5" Grid.Column="0" Command="{Binding ShowAllSecurities}"/>
+            <Button Content="All Assets" Margin="5" Grid.Column="0" Command="{Binding ShowAllSecurities}"/>
             <Button Content="Equities" Margin="5" Grid.Column="1" Command="{Binding ShowStocksOnly}"/>
             <Button Content="TEST: Update Prices" Margin="5" Grid.Column="3" Command="{Binding UpdatePrices}"/>
             <Button Content="Funds and ETFs" Margin="5" Grid.Column="2" Command="{Binding ShowFundsOnly}"/>
@@ -149,7 +146,6 @@
                   HorizontalAlignment="Center" 
                   Margin="0,3,0,3" 
                   AutoGenerateColumns="False"
-                  
                   CanUserDeleteRows="False"
                   VerticalScrollBarVisibility="Visible"
                   CanUserAddRows="False"  
@@ -157,20 +153,21 @@
                   Width="Auto"
                   SelectedItem="{Binding SelectedDisplayStock, Mode=OneWayToSource}"
                   RowStyle="{StaticResource RowStyle}"
-                  AlternationCount="2">
+                  AlternationCount="2"
+                  Background="Transparent">
             <DataGrid.Columns>
-                <DataGridTextColumn Width="Auto" Header="Ticker"  Binding="{Binding Ticker}"  TextOptions.TextFormattingMode="Display"/>
-                <DataGridTextColumn Width="Auto" Header="Description" Binding="{Binding Description}"/>
-                <DataGridTextColumn Width="Auto" Header="Shares" Binding="{Binding Shares}"/>
-                <DataGridTextColumn Width="*" Header="Price" Binding="{Binding Price}"/>
-                <DataGridTextColumn Width="*" Header="Today's Change ($)" Binding="{Binding Change}"/>
-                <DataGridTextColumn Width="*" Header="Today's Change (%)" Binding="{Binding PercentChange}"/>
-                <DataGridTextColumn Width="Auto" Header="Market Value" Binding="{Binding MarketValue}"/>
-                <DataGridTextColumn Width="Auto" Header="Cost Basis" Binding="{Binding CostBasis}"/>
-                <DataGridTextColumn Width="Auto" Header="Gain/Loss" Binding="{Binding GainLoss}"/>
-                <DataGridTextColumn Width="*" Header="Yield" Binding="{Binding Yield}"/>
-                <DataGridTextColumn Width="Auto" Header="P/E Ratio" Binding="{Binding PeRatio}"/>
-                <DataGridTextColumn Width="Auto" Header="Volume" Binding="{Binding Volume}"/>
+                <DataGridTextColumn Width="Auto" Header="Ticker"  Binding="{Binding Ticker, Mode=OneWay}"  TextOptions.TextFormattingMode="Display"/>
+                <DataGridTextColumn Width="Auto" Header="Description" Binding="{Binding Description, Mode=OneWay}"/>
+                <DataGridTextColumn Width="Auto" Header="Shares" Binding="{Binding Shares, Mode=OneWay}"/>
+                <DataGridTextColumn Width="*" Header="Price" Binding="{Binding Price, Mode=OneWay}"/>
+                <DataGridTextColumn Width="*" Header="Today's Change ($)" Binding="{Binding Change, Mode=OneWay}"/>
+                <DataGridTextColumn Width="*" Header="Today's Change (%)" Binding="{Binding PercentChange, Mode=OneWay}"/>
+                <DataGridTextColumn Width="Auto" Header="Market Value" Binding="{Binding MarketValue, Mode=OneWay}"/>
+                <DataGridTextColumn Width="Auto" Header="Cost Basis" Binding="{Binding CostBasis, Mode=OneWay}"/>
+                <DataGridTextColumn Width="Auto" Header="Gain/Loss" Binding="{Binding GainLoss, Mode=OneWay}"/>
+                <DataGridTextColumn Width="*" Header="Yield" Binding="{Binding Yield, Mode=OneWay}"/>
+                <DataGridTextColumn Width="Auto" Header="P/E Ratio" Binding="{Binding PeRatio, Mode=OneWay}"/>
+                <DataGridTextColumn Width="Auto" Header="Volume" Binding="{Binding Volume, Mode=OneWay}"/>
             </DataGrid.Columns>
         </DataGrid>
         <chart:PieChart
@@ -181,7 +178,6 @@
             Width="Auto"
             Style="{StaticResource MinimalChartStyle}"
             ChartTitle="Asset Allocation"
-            Background="Azure"          
             IsTabStop="False"
             IsManipulationEnabled="False"            
             ChartSubTitle="{Binding ChartSubtitle}">
@@ -194,7 +190,7 @@
                                 UpdateSourceTrigger=PropertyChanged}" />
             </chart:PieChart.Series>
         </chart:PieChart>
-        <Grid Grid.Row="4" Grid.Column="0"  Background="Azure">
+        <Grid Grid.Row="4" Grid.Column="0">
             <Grid.Style>
                 <Style/>
             </Grid.Style>
@@ -241,9 +237,8 @@
         <Border Grid.Column="1" 
                 Grid.Row="4" 
                 CornerRadius="10,10,10,10" 
-                BorderBrush="Azure"
-                Background="Aqua">
-            <Grid Background="Azure">
+                BorderBrush="Azure">
+            <Grid >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
@@ -321,7 +316,7 @@
                 </Border>
             </Grid>
         </Border>
-        <StackPanel Grid.Column="2" Grid.Row="4" Background="Azure">
+        <StackPanel Grid.Column="2" Grid.Row="4">
             <TextBlock Text="Active Limit Orders" HorizontalAlignment="Center"/>
             <ListView ItemsSource="{Binding LimitOrderList}" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch">
                 <ListView.View>
