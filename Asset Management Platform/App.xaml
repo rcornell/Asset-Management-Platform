@@ -169,6 +169,63 @@
                 </Setter>
             </Style>
 
+            <!--EXPERIMENTAL BUTTON STYLE-->
+            <Style x:Key="ButtonStyleExperimental" TargetType="{x:Type Button}">
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="SnapsToDevicePixels" Value="True" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="BorderBrush" Value="{StaticResource Button.BorderBrush}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border x:Name="Button_Borders"
+                                    Padding="5,2,5,2"
+                                    RenderTransformOrigin="0.5,0.5">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                        <GradientStop x:Name="OffsetOne" Offset="0" Color="#56ECFF" />
+                                        <GradientStop x:Name="OffsetTwo" Offset="0" Color="{StaticResource Button.BackgroundBottom}" />
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <Border.RenderTransform>
+                                    <ScaleTransform x:Name="Button_ScaleTransform" />
+                                </Border.RenderTransform>
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup>
+                                        <VisualState x:Name="Normal" />
+                                        <VisualState x:Name="MouseOver">
+                                            <Storyboard>
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OffsetOne"
+                                                                 Storyboard.TargetProperty="Offset"
+                                                                 Duration="0:0:1.0">
+                                                    <EasingDoubleKeyFrame Value="1">
+                                                        <EasingDoubleKeyFrame.EasingFunction>
+                                                            <PowerEase Power="2"/>
+                                                        </EasingDoubleKeyFrame.EasingFunction>
+                                                    </EasingDoubleKeyFrame>
+                                                </DoubleAnimationUsingKeyFrames>
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OffsetTwo"
+                                                                 Storyboard.TargetProperty="Offset"
+                                                                 Duration="0:0:1.0">
+                                                    <EasingDoubleKeyFrame Value="1">
+                                                        <EasingDoubleKeyFrame.EasingFunction>
+                                                            <PowerEase Power="2"/>
+                                                        </EasingDoubleKeyFrame.EasingFunction>
+                                                    </EasingDoubleKeyFrame>
+                                                </DoubleAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                                <ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+                
             <Style x:Key="HeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
                 <Setter Property="VerticalContentAlignment" Value="Center" />
                 <Setter Property="Height" Value="30" />
@@ -436,6 +493,16 @@
                 </Setter>
             </Style>
 
+
+            <Style x:Key="DataGridGroupStyle" TargetType="{x:Type GroupItem}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type GroupItem}">
+                            
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
             <!--<Style x:Key="MyDataGridStyle" 
                    TargetType="{x:Type DataGrid}">
                 <Setter Property="AlternatingRowBackground"

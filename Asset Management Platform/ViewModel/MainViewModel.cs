@@ -481,7 +481,7 @@ namespace Asset_Management_Platform
             GetDisplaySecurities();
             GetLimitOrders();
             ExecuteShowAllSecurities();
-            DisplaySecurityCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Ticker"));
+            DisplaySecurityCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("SecurityType"));
         }
 
         /// <summary>
@@ -514,6 +514,7 @@ namespace Asset_Management_Platform
 
             //Create or update the ListCollectionViews
             DisplaySecurityCollectionView = new ListCollectionView(SecurityList);
+            DisplaySecurityCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("SecurityType"));
         }
 
         private void ExecuteShowAllSecurities()

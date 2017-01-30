@@ -9,6 +9,17 @@ namespace Asset_Management_Platform
 {
     public class DisplaySecurity : ObservableObject
     {
+        private string _securityType;
+        public string SecurityType
+        {
+            get { return _securityType; }
+            set
+            {
+                _securityType = value;
+                RaisePropertyChanged(() => SecurityType);
+            }
+        }
+
         private string _ticker;
         public string Ticker
         {
@@ -20,7 +31,7 @@ namespace Asset_Management_Platform
             }
         }
 
-        public DisplaySecurity(string ticker)
+        public DisplaySecurity(string ticker, string securityType)
         {
             Ticker = ticker;
         }

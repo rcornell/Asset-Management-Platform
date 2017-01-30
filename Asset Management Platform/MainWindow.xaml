@@ -136,7 +136,7 @@
             </Grid.ColumnDefinitions>
             <Button Content="All Assets" Margin="5" Grid.Column="0" Command="{Binding ShowAllSecurities}"/>
             <Button Content="Equities" Margin="5" Grid.Column="1" Command="{Binding ShowStocksOnly}"/>
-            <Button Content="TEST: Update Prices" Margin="5" Grid.Column="3" Command="{Binding UpdatePrices}"/>
+            <Button Style="{StaticResource ButtonStyleExperimental}" Content="TEST: Update Prices" Margin="5" Grid.Column="3" Command="{Binding UpdatePrices}"/>
             <Button Content="Funds and ETFs" Margin="5" Grid.Column="2" Command="{Binding ShowFundsOnly}"/>
         </Grid>
         <!-- When you have to make a DataGrid that groups objects by type: http://wpftutorial.net/DataGrid.html-->
@@ -238,7 +238,7 @@
             <TextBox Text="{Binding OrderShareQuantity, Mode=TwoWay}" Grid.Row="3" Grid.Column="1" Width="100" Height="20" Margin="3"  VerticalAlignment="Center"/>
 
             <Button Content="Preview Order" Margin="3" Command="{Binding PreviewOrder}" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
-            <Button Content="Execute" Command="{Binding ExecuteOrder}" Margin="40,3,3,3" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2" VerticalAlignment="Center" IsEnabled="{Binding ExecuteButtonEnabled}"/>
+            <Button Content="Execute" Command="{Binding ExecuteOrder}" Margin="40,3,3,3" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2" VerticalAlignment="Center" IsHitTestVisible="{Binding ExecuteButtonEnabled}"/>
         </Grid>
         <Border Grid.Column="1" 
                 Grid.Row="4" 

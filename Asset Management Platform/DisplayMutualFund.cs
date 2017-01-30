@@ -88,7 +88,7 @@ namespace Asset_Management_Platform
         }
 
         public DisplayMutualFund(Position position, MutualFund fund)
-            : base(position.Ticker)
+            : base(position.Ticker, fund.SecurityType)
         {
             _position = position;
             _fund = fund;

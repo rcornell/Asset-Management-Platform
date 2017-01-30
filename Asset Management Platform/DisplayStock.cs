@@ -107,7 +107,7 @@ namespace Asset_Management_Platform
         }
 
         public DisplayStock(Position position, Stock stock)
-            : base(position.Ticker)
+            : base(position.Ticker, stock.SecurityType)
         {
             _position = position;
             Stock = stock;
