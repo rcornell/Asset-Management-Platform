@@ -16,6 +16,10 @@
                 <Setter Property="Height" Value="500" />
             </Style>
 
+            <!--Screener Colors-->
+            <Color x:Key="ScreenerColor">#D6FCFF</Color>
+            <SolidColorBrush x:Key="Screener.Background" Color="{StaticResource ScreenerColor}"/>
+            
             <!--DataGridColumnHeader colors and brushes-->
             <Color x:Key="ColumnHeader.BackgroundTop">#8FF8FF</Color>
             <Color x:Key="ColumnHeader.BackgroundBottom">#8FF8FF</Color>
@@ -28,8 +32,8 @@
             
             
             <!--DataGridRow colors and brushes-->
-            <Color x:Key="Row.BackgroundTop">#DAF1FF</Color>
-            <Color x:Key="Row.BackgroundBottom">#DAF1FF</Color>
+            <Color x:Key="Row.BackgroundTop">#D6FCFF</Color>
+            <Color x:Key="Row.BackgroundBottom">#D6FCFF</Color>
             <Color x:Key="Row.AlternatingRowTop">Transparent</Color>
             <Color x:Key="Row.AlternatingRowBottom">Transparent</Color>
             <Color x:Key="Row.MouseOver">#A8D9FF</Color>
@@ -56,9 +60,15 @@
             <Color x:Key="Button.BorderColor">#55040000</Color>
             <Color x:Key="Button.MouseOverTopColor">#59EDFF</Color>
             <Color x:Key="Button.MouseOverBottomColor">#2DE8FF</Color>
+            <Color x:Key="Button.DisabledTopColor">#C7F8FE</Color>
+            <Color x:Key="Button.DisabledBottomColor">#C7F8FE</Color>
             <LinearGradientBrush x:Key="Button.BackgroundBrush" StartPoint="0.5,0" EndPoint="0.5,1">
                 <GradientStop Offset="0" Color="{StaticResource Button.BackgroundTop}" />
                 <GradientStop Offset="1" Color="{StaticResource Button.BackgroundBottom}" />
+            </LinearGradientBrush>
+            <LinearGradientBrush x:Key="Button.DisabledBrush" StartPoint="0.5,0" EndPoint="0.5,1">
+                <GradientStop Offset="0" Color="{StaticResource Button.DisabledTopColor}"/>
+                <GradientStop Offset="0" Color="{StaticResource Button.DisabledBottomColor}"/>
             </LinearGradientBrush>
             <SolidColorBrush x:Key="Button.BorderBrush" Opacity="1" Color="{StaticResource Button.BorderColor}" />
 
@@ -111,6 +121,28 @@
                                             </Storyboard>
                                         </VisualState>
                                         <VisualState Name="Pressed" />
+                                        <VisualState Name="Disabled">
+                                            <Storyboard>
+                                                <ColorAnimationUsingKeyFrames Storyboard.TargetName="Button_Border"
+                                                                              Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[0].(GradientStop.Color)">
+                                                    <EasingColorKeyFrame KeyTime="0:0:0.1"
+                                                                         Value="{StaticResource Button.DisabledTopColor}">
+                                                        <EasingColorKeyFrame.EasingFunction>
+                                                            <PowerEase Power="2" />
+                                                        </EasingColorKeyFrame.EasingFunction>
+                                                    </EasingColorKeyFrame>
+                                                </ColorAnimationUsingKeyFrames>
+                                                <ColorAnimationUsingKeyFrames Storyboard.TargetName="Button_Border"
+                                                                              Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+                                                    <EasingColorKeyFrame KeyTime="0:0:0.1"
+                                                                         Value="{StaticResource Button.DisabledTopColor}">
+                                                        <EasingColorKeyFrame.EasingFunction>
+                                                            <PowerEase Power="2" />
+                                                        </EasingColorKeyFrame.EasingFunction>
+                                                    </EasingColorKeyFrame>
+                                                </ColorAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
                                     </VisualStateGroup>
                                 </VisualStateManager.VisualStateGroups>
                                 <ContentPresenter HorizontalAlignment="Center"
@@ -170,6 +202,13 @@
             </Style>
 
             <!--EXPERIMENTAL BUTTON STYLE-->
+            <Color x:Key="ExperimentalTop" >Aqua</Color>
+            <Color x:Key="ExperimentalBottom">Aquamarine</Color>
+            <LinearGradientBrush x:Key="ExperimentBrush" StartPoint="0,0.5" EndPoint="1,0.5">
+                <GradientStop Offset="0" Color="{StaticResource ExperimentalTop}"/>
+                <GradientStop Offset="0" Color="{StaticResource ExperimentalBottom}"/>
+            </LinearGradientBrush>
+            
             <Style x:Key="ButtonStyleExperimental" TargetType="{x:Type Button}">
                 <Setter Property="VerticalContentAlignment" Value="Center" />
                 <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -179,13 +218,14 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type Button}">
-                            <Border x:Name="Button_Borders"
+                            <Border x:Name="ThisButton"
                                     Padding="5,2,5,2"
                                     RenderTransformOrigin="0.5,0.5">
                                 <Border.Background>
-                                    <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
-                                        <GradientStop x:Name="OffsetOne" Offset="0" Color="#56ECFF" />
-                                        <GradientStop x:Name="OffsetTwo" Offset="0" Color="{StaticResource Button.BackgroundBottom}" />
+                                    <LinearGradientBrush x:Name="ThisButtonBrush" StartPoint="0,0.5" EndPoint="1,0.5">
+                                        <GradientStop x:Name="OffsetOne" Offset="0" Color="Black"/>
+                                        <GradientStop x:Name="OffsetTwo" Offset="0" Color="{StaticResource ExperimentalTop}" />
+                                        <GradientStop x:Name="OffsetThree" Offset="0" Color="{StaticResource ExperimentalBottom}" />
                                     </LinearGradientBrush>
                                 </Border.Background>
                                 <Border.RenderTransform>
@@ -196,15 +236,6 @@
                                         <VisualState x:Name="Normal" />
                                         <VisualState x:Name="MouseOver">
                                             <Storyboard>
-                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OffsetOne"
-                                                                 Storyboard.TargetProperty="Offset"
-                                                                 Duration="0:0:1.0">
-                                                    <EasingDoubleKeyFrame Value="1">
-                                                        <EasingDoubleKeyFrame.EasingFunction>
-                                                            <PowerEase Power="2"/>
-                                                        </EasingDoubleKeyFrame.EasingFunction>
-                                                    </EasingDoubleKeyFrame>
-                                                </DoubleAnimationUsingKeyFrames>
                                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OffsetTwo"
                                                                  Storyboard.TargetProperty="Offset"
                                                                  Duration="0:0:1.0">
@@ -214,6 +245,64 @@
                                                         </EasingDoubleKeyFrame.EasingFunction>
                                                     </EasingDoubleKeyFrame>
                                                 </DoubleAnimationUsingKeyFrames>
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OffsetThree"
+                                                                 Storyboard.TargetProperty="Offset"
+                                                                 Duration="0:0:1.0">
+                                                    <EasingDoubleKeyFrame Value="1">
+                                                        <EasingDoubleKeyFrame.EasingFunction>
+                                                            <PowerEase Power="2"/>
+                                                        </EasingDoubleKeyFrame.EasingFunction>
+                                                    </EasingDoubleKeyFrame>
+                                                </DoubleAnimationUsingKeyFrames>
+
+                                                
+                                                
+                                                
+                                                <ColorAnimationUsingKeyFrames Storyboard.TargetName="ThisButton"
+                                                                              Storyboard.TargetProperty="Background.GradientStops[1].(GradientStop.Color)"
+                                                                              BeginTime="0:0:1.01"
+                                                                              Duration="0">
+                                                    <EasingColorKeyFrame Value="{StaticResource ExperimentalBottom}">
+                                                        <EasingColorKeyFrame.EasingFunction>
+                                                            <PowerEase Power="2"/>
+                                                        </EasingColorKeyFrame.EasingFunction>
+                                                    </EasingColorKeyFrame>
+                                                </ColorAnimationUsingKeyFrames>
+                                                <ColorAnimationUsingKeyFrames Storyboard.TargetName="ThisButton"
+                                                                              Storyboard.TargetProperty="Background.GradientStops[2].(GradientStop.Color)"
+                                                                              BeginTime="0:0:1.01"
+                                                                              Duration="0">
+                                                    <EasingColorKeyFrame Value="{StaticResource ExperimentalTop}">
+                                                        <EasingColorKeyFrame.EasingFunction>
+                                                            <PowerEase Power="2"/>
+                                                        </EasingColorKeyFrame.EasingFunction>
+                                                    </EasingColorKeyFrame>
+                                                </ColorAnimationUsingKeyFrames>
+                                                
+                                                
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OffsetTwo"
+                                                                 Storyboard.TargetProperty="Offset"
+                                                                               BeginTime="0:0:1.0"
+                                                                 Duration="0:0:1.0">
+                                                    <EasingDoubleKeyFrame Value="0">
+                                                        <EasingDoubleKeyFrame.EasingFunction>
+                                                            <PowerEase Power="2"/>
+                                                        </EasingDoubleKeyFrame.EasingFunction>
+                                                    </EasingDoubleKeyFrame>
+                                                </DoubleAnimationUsingKeyFrames>
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OffsetThree"
+                                                                 Storyboard.TargetProperty="Offset"
+                                                                 Duration="0:0:1.0"
+                                                                               BeginTime="0:0:1.0">
+                                                    <EasingDoubleKeyFrame Value="0">
+                                                        <EasingDoubleKeyFrame.EasingFunction>
+                                                            <PowerEase Power="2"/>
+                                                        </EasingDoubleKeyFrame.EasingFunction>
+                                                    </EasingDoubleKeyFrame>
+                                                </DoubleAnimationUsingKeyFrames>
+                                                
+                                                
+
                                             </Storyboard>
                                         </VisualState>
                                     </VisualStateGroup>
@@ -229,7 +318,7 @@
             <Style x:Key="HeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
                 <Setter Property="VerticalContentAlignment" Value="Center" />
                 <Setter Property="Height" Value="30" />
-                <Setter Property="FontWeight" Value="Light" />
+                <Setter Property="FontWeight" Value="Regular" />
                 <Setter Property="FontSize" Value="13" />
                 <Setter Property="SnapsToDevicePixels" Value="True"/>
                 <Setter Property="ContentTemplate">

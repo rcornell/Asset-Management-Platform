@@ -12,7 +12,7 @@
     <Grid >
         <Grid.Background>
             <LinearGradientBrush StartPoint="0.5,0.5" EndPoint="0.5,1">
-                <GradientStop Offset="0" Color="White"/>
+                <GradientStop Offset="0" Color="#F9F9F9"/>
                 <GradientStop Offset="1" Color="#F9F9F9"/>
             </LinearGradientBrush>  
         </Grid.Background>
@@ -44,7 +44,7 @@
                 </MenuItem>
             </Menu>
         </DockPanel>
-        <Grid Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Background="Black">
+        <Grid Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Background="{StaticResource Screener.Background}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto" MinHeight="20"></RowDefinition>
@@ -58,11 +58,11 @@
             </Grid.ColumnDefinitions>
             <Grid.Resources>
                 <Style TargetType="TextBox">
-                    <Setter Property="Foreground" Value="Red"/>
+                    <Setter Property="Foreground" Value="Black"/>
                     <Setter Property="FontSize" Value="13"/>
                 </Style>
                 <Style TargetType="TextBlock">
-                    <Setter Property="Foreground" Value="Red"/>
+                    <Setter Property="Foreground" Value="Black"/>
                     <Setter Property="FontSize" Value="13"/>
                 </Style>
             </Grid.Resources>
@@ -71,15 +71,16 @@
                        HorizontalAlignment="Left" 
                        Text="Stock Screener"
                        FontSize="16"
-                       FontWeight="Bold"/>
+                       FontWeight="DemiBold"/>
             <StackPanel Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Bottom">
-                <TextBlock Text="Enter Ticker:" Foreground="Red"/>
+                <TextBlock Text="Enter Ticker:"/>
                 <TextBox Text="{Binding StockScreenerTicker, Mode=TwoWay}" 
-                             MinWidth="45" 
-                             Background="Black" 
-                             CaretBrush="Red"
-                             BorderBrush="Black"
-                             IsTabStop="True"/>
+                         MinWidth="45" 
+                         CaretBrush="Gray"
+                         BorderThickness="0,0,0,1"
+                         Background="Transparent"
+                         BorderBrush="Gray"
+                         IsTabStop="True"/>
 
             </StackPanel>
             <StackPanel Orientation="Horizontal" Grid.Row="2">
@@ -238,7 +239,7 @@
             <TextBox Text="{Binding OrderShareQuantity, Mode=TwoWay}" Grid.Row="3" Grid.Column="1" Width="100" Height="20" Margin="3"  VerticalAlignment="Center"/>
 
             <Button Content="Preview Order" Margin="3" Command="{Binding PreviewOrder}" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
-            <Button Content="Execute" Command="{Binding ExecuteOrder}" Margin="40,3,3,3" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2" VerticalAlignment="Center" IsHitTestVisible="{Binding ExecuteButtonEnabled}"/>
+            <Button Content="Execute" Command="{Binding ExecuteOrder}" Margin="40,3,3,3" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2" VerticalAlignment="Center" IsEnabled="{Binding ExecuteButtonEnabled}"/>
         </Grid>
         <Border Grid.Column="1" 
                 Grid.Row="4" 
