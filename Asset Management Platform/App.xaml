@@ -53,6 +53,10 @@
                 <GradientStop Offset="0" Color="{StaticResource Row.SelectedFocusedTop}" />
                 <GradientStop Offset="1" Color="{StaticResource Row.SelectedFocusedBottom}" />
             </LinearGradientBrush>
+            <LinearGradientBrush x:Key="GridView.ColumnHeaderBrush"  StartPoint="0.5,0" EndPoint="0.5,1">
+                <GradientStop Offset="0" Color="{StaticResource ColumnHeader.BackgroundTop}" />
+                <GradientStop Offset="1" Color="{StaticResource ColumnHeader.BackgroundBottom}" />
+            </LinearGradientBrush>
 
             <!--BUTTON colors and brushes-->
             <Color x:Key="Button.BackgroundTop">#88F1FE</Color>
@@ -71,7 +75,11 @@
                 <GradientStop Offset="0" Color="{StaticResource Button.DisabledBottomColor}"/>
             </LinearGradientBrush>
             <SolidColorBrush x:Key="Button.BorderBrush" Opacity="1" Color="{StaticResource Button.BorderColor}" />
-
+            
+            <!--LimitBox ListView Colors and Brushes-->
+            <Color x:Key="LimitBoxBackground">#C5F8FE</Color>
+            <SolidColorBrush x:Key="LimitBoxBackgroundBrush" Color="{StaticResource LimitBoxBackground}"/>
+ 
             <!--Override system colors-->
             <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
             <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent" />
@@ -208,6 +216,11 @@
                 <GradientStop Offset="0" Color="{StaticResource ExperimentalTop}"/>
                 <GradientStop Offset="0" Color="{StaticResource ExperimentalBottom}"/>
             </LinearGradientBrush>
+
+            <Style x:Key="TextBlockStyle" TargetType="{x:Type TextBlock}">
+                <Setter Property="FontWeight" Value="Light"/>
+                <Setter Property="FontSize" Value="12"/>
+            </Style>
             
             <Style x:Key="ButtonStyleExperimental" TargetType="{x:Type Button}">
                 <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -334,13 +347,8 @@
                             <Border x:Name="headerBorder"
                                         BorderThickness="0,1,0,1"
                                         BorderBrush="{StaticResource ColumnHeader.BorderBrush}"
-                                        Padding="3,0,3,0">
-                                <Border.Background>
-                                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                                        <GradientStop Offset="0" Color="{StaticResource ColumnHeader.BackgroundTop}" />
-                                        <GradientStop Offset="1" Color="{StaticResource ColumnHeader.BackgroundBottom}" />
-                                    </LinearGradientBrush>
-                                </Border.Background>
+                                        Padding="3,0,3,0"
+                                    Background="{StaticResource GridView.ColumnHeaderBrush}">
                                 <ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                                       HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                       SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
@@ -607,6 +615,53 @@
                 </Style.Triggers>-->
             <!--
             </Style>-->
+
+            <Style x:Key="ListViewHeaderStyle" 
+                   TargetType="{x:Type GridViewColumnHeader}">
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Height" Value="20" />
+                <Setter Property="FontWeight" Value="Regular" />
+                <Setter Property="FontSize" Value="11" />
+                <Setter Property="SnapsToDevicePixels" Value="True"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
+                            <Grid Background="{StaticResource GridView.ColumnHeaderBrush}"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Center">
+                                <ContentPresenter/>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="MyContainerStyle" 
+                   TargetType="{x:Type ListViewItem}">
+                <Setter Property="FontSize" Value="13"/>
+                <Setter Property="FontWeight" Value="Light"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ListViewItem}">
+                            <Border Background="{StaticResource LimitBoxBackgroundBrush}"
+                                    BorderBrush="Transparent"
+                                    BorderThickness="0">
+                                <GridViewRowPresenter Content="{TemplateBinding Content}"
+                                                      Columns="{TemplateBinding GridView.ColumnCollection}"
+                                                      Height="15"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <DataTemplate x:Key="GridCellTemplate">
+                <Grid Background="Pink"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Center">
+                    <TextBlock Text="{Binding}"/>
+                </Grid>
+            </DataTemplate>
 
         </ResourceDictionary>
     </Application.Resources>

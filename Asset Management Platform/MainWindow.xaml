@@ -44,7 +44,11 @@
                 </MenuItem>
             </Menu>
         </DockPanel>
-        <Grid Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Background="{StaticResource Screener.Background}">
+        <Grid Grid.Column="0" 
+              Grid.ColumnSpan="3" 
+              Grid.Row="1" 
+              Margin="5,0,5,0"
+              Background="{StaticResource Screener.Background}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto" MinHeight="20"></RowDefinition>
@@ -323,15 +327,18 @@
                 </Border>
             </Grid>
         </Border>
-        <StackPanel Grid.Column="2" Grid.Row="4">
+        <StackPanel Grid.Column="2" 
+                    Grid.Row="4">
             <TextBlock Text="Active Limit Orders" HorizontalAlignment="Center"/>
-            <ListView ItemsSource="{Binding LimitOrderList}" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch">
+            <ListView ItemsSource="{Binding LimitOrderList}"
+                      HorizontalContentAlignment="Stretch"
+                      ItemContainerStyle="{StaticResource MyContainerStyle}">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Path=TradeType}" Width="Auto"/>
-                        <GridViewColumn Header="Shares" DisplayMemberBinding="{Binding Path=Shares}" Width="Auto"/>
-                        <GridViewColumn Header="Ticker" DisplayMemberBinding="{Binding Path=Ticker}" Width="Auto"/>
-                        <GridViewColumn Header="Limit" DisplayMemberBinding="{Binding Path=Limit}" Width="Auto"/>
+                        <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Path=TradeType}" Width="40"/>
+                        <GridViewColumn Header="Shares" DisplayMemberBinding="{Binding Path=Shares}" Width="40"/>
+                        <GridViewColumn Header="Ticker" DisplayMemberBinding="{Binding Path=Ticker}" Width="40"/>
+                        <GridViewColumn Header="Limit" DisplayMemberBinding="{Binding Path=Limit}" Width="40"/>
                     </GridView>
                 </ListView.View>
             </ListView>
