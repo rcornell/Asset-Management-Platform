@@ -230,7 +230,7 @@
             <TextBlock Text="Trade Type:" Margin="3" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" />
             <ComboBox ItemsSource="{Binding TradeTypeStrings}" SelectedItem="{Binding SelectedTradeType, Mode=TwoWay}"
                       Height="Auto" Width="100" Margin="3" Grid.Row="0" Grid.Column="1"
-                      VerticalContentAlignment="Center" VerticalAlignment="Center" />
+                      VerticalContentAlignment="Center" VerticalAlignment="Center"/>
 
             <TextBlock Text="Security Type:" Margin="40,3,3,3" Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" />
             <ComboBox ItemsSource="{Binding SecurityTypes}" SelectedItem="{Binding SelectedSecurityType}" Height="Auto"
@@ -381,20 +381,7 @@
                     <DataGridTextColumn Header="Ticker" Width="*" Binding="{Binding Ticker, Mode=OneWay}" />
                     <DataGridTextColumn Header="Limit" Width="*" Binding="{Binding Limit, Mode=OneWay}" />
                 </DataGrid.Columns>
-
             </DataGrid>
-            <!--<ListView ItemsSource="{Binding LimitOrderList}"
-                      HorizontalContentAlignment="Stretch"
-                      ItemContainerStyle="{StaticResource MyContainerStyle}">
-                <ListView.View>
-                    <GridView ColumnHeaderContainerStyle="{StaticResource ListViewHeaderStyle}">
-                        <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Path=TradeType}" Width="40"/>
-                        <GridViewColumn Header="Shares" DisplayMemberBinding="{Binding Path=Shares}" Width="40"/>
-                        <GridViewColumn Header="Ticker" DisplayMemberBinding="{Binding Path=Ticker}" Width="40"/>
-                        <GridViewColumn Header="Limit" DisplayMemberBinding="{Binding Path=Limit}" Width="40"/>
-                    </GridView>
-                </ListView.View>
-            </ListView>-->
         </StackPanel>
     </Grid>
 </Window>
