@@ -30,6 +30,17 @@ namespace Asset_Management_Platform
         /// </summary>
         /// 
 
+        private ListCollectionView _limitOrderCollectionView;
+        public ListCollectionView LimitOrderCollectionView
+        {
+            get { return _limitOrderCollectionView; }
+            set
+            {
+                _limitOrderCollectionView = value;
+                RaisePropertyChanged(() => LimitOrderCollectionView);
+            }
+        }
+
         private ListCollectionView _displayStockCollectionView;
         public ListCollectionView DisplayStockCollectionView
         {
@@ -655,6 +666,7 @@ namespace Asset_Management_Platform
         private void GetLimitOrders()
         {
             var limitOrders = _portfolioManagementService.GetLimitOrders();
+            LimitOrderCollectionView = new ListCollectionView(limitOrders);
             LimitOrderList = new ObservableCollection<LimitOrder>(limitOrders);
         }
 
