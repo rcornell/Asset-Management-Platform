@@ -8,7 +8,7 @@
         xmlns:local="clr-namespace:Asset_Management_Platform.ViewModel"
         mc:Ignorable="d"
         Title="Portfolio Management Test Utility"
-        DataContext="{Binding Main, Source={StaticResource Locator}}">
+        DataContext="{Binding Main, Source={StaticResource Locator}}" SizeToContent="WidthAndHeight">
     <Grid>
         <Grid.Background>
             <LinearGradientBrush StartPoint="0.5,0.5" EndPoint="0.5,1">
@@ -17,19 +17,21 @@
             </LinearGradientBrush>
         </Grid.Background>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-            <ColumnDefinition />
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition />
-            <RowDefinition Height="Auto" MinHeight="175" />
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
-            <Menu DockPanel.Dock="Top">
+        
+        <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4">
+            <Menu DockPanel.Dock="Top"
+                  Background="LightGray">
                 <MenuItem Header="_File">
                     <MenuItem Header="_New Portfolio" Command="{Binding DeletePortfolio}" />
                     <MenuItem Header="_Load Portfolio" />
@@ -44,247 +46,82 @@
                 </MenuItem>
             </Menu>
         </DockPanel>
-        <Grid Grid.Column="0"
-              Grid.ColumnSpan="3"
-              Grid.Row="1"
-              Margin="5,0,5,0"
-              Background="{StaticResource Screener.Background}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" MinHeight="20" />
-                <RowDefinition Height="Auto" MinHeight="20" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <Grid.Resources>
-                <Style TargetType="TextBox">
-                    <Setter Property="Foreground" Value="Black" />
-                    <Setter Property="FontSize" Value="13" />
-                </Style>
-                <Style TargetType="TextBlock">
-                    <Setter Property="Foreground" Value="Black" />
-                    <Setter Property="FontSize" Value="13" />
-                </Style>
-            </Grid.Resources>
-            <TextBlock Grid.Row="0"
-                       Grid.Column="0"
-                       HorizontalAlignment="Left"
-                       Text="Stock Screener"
-                       FontSize="16"
-                       FontWeight="DemiBold" />
-            <StackPanel Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Bottom">
-                <TextBlock Text="Enter Ticker:" />
-                <TextBox Text="{Binding StockScreenerTicker, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=1000}"
-                         MinWidth="45"
-                         CaretBrush="Gray"
-                         BorderThickness="0,0,0,1"
-                         Background="Transparent"
-                         BorderBrush="Gray"
-                         IsTabStop="True" />
 
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Row="2">
-                <TextBlock Text="{Binding ScreenerStock.Description, Mode=OneWay}" />
-            </StackPanel>
+        <StackPanel Name="TradingTerms" 
+                    Orientation="Vertical"
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="2,0"
+                    MinWidth="250">
+            <Border BorderBrush="{StaticResource Button.BackgroundBrush}"
+                    BorderThickness="0,0,0,1">
+                <TextBlock Text="Trade Instructions" 
+                       HorizontalAlignment="Center"
+                       FontSize="18"/>
+            </Border>
+            <Grid Name="TradeTermsStackPanel">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0">
-                <TextBlock Text="Bid:  " />
-                <TextBlock Text="{Binding ScreenerStock.Bid, Mode=OneWay}" Width="Auto" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
-                <TextBlock Text="Last: " />
-                <TextBlock Text="{Binding ScreenerStock.LastPrice}"
-                           Width="Auto" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="2">
-                <TextBlock Text="Yield:  " />
-                <TextBlock Text="{Binding ScreenerStock.Yield}"
-                           Width="Auto" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="0">
-                <TextBlock Text="Ask: " />
-                <TextBlock Text="{Binding ScreenerStock.Ask, Mode=OneWay}" Width="Auto" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="1">
-                <TextBlock Text="P/E Ratio: " />
-                <TextBlock Text="{Binding ScreenerStock.PeRatio, Mode=OneWay}" Width="Auto" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="2">
-                <TextBlock Text="Market Cap: " />
-                <TextBlock Text="{Binding ScreenerStock.MarketCap, Mode=OneWay}" Width="Auto" />
-            </StackPanel>
-
-            <StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="0">
-                <TextBlock Text="Volume:  " />
-                <TextBlock Text="{Binding ScreenerStock.Volume, Mode=OneWay}" Width="Auto" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="1">
-                <TextBlock />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="2">
-                <TextBlock />
-            </StackPanel>
-        </Grid>
-        <Grid HorizontalAlignment="Stretch"
-              Grid.Row="2"
-              Grid.Column="0"
-              Grid.ColumnSpan="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <Button Content="All Assets" Margin="5" Grid.Column="0" Command="{Binding ShowAllSecurities}" />
-            <Button Content="Equities" Margin="5" Grid.Column="1" Command="{Binding ShowStocksOnly}" />
-            <Button Style="{StaticResource ButtonStyleExperimental}" Content="TEST: Update Prices" Margin="5"
-                    Grid.Column="3" Command="{Binding UpdatePrices}" />
-            <Button Content="Funds and ETFs" Margin="5" Grid.Column="2" Command="{Binding ShowFundsOnly}" />
-        </Grid>
-        <!-- When you have to make a DataGrid that groups objects by type: http://wpftutorial.net/DataGrid.html-->
-        <DataGrid x:Name="SecurityDataGrid"
-                  ItemsSource="{Binding DisplaySecurityCollectionView, 
-                                NotifyOnSourceUpdated=True, 
-                                UpdateSourceTrigger=PropertyChanged}"
-                  Grid.Row="3"
-                  Grid.Column="0"
-                  Grid.ColumnSpan="2"
-                  BorderThickness="0"
-                  HorizontalAlignment="Center"
-                  Margin="3"
-                  AutoGenerateColumns="False"
-                  CanUserDeleteRows="False"
-                  VerticalScrollBarVisibility="Visible"
-                  CanUserAddRows="False"
-                  ColumnWidth="Auto"
-                  Width="Auto"
-                  SelectedItem="{Binding SelectedDisplaySecurity, Mode=TwoWay}"
-                  RowStyle="{StaticResource RowStyle}"
-                  CellStyle="{StaticResource CellStyle}"
-                  ColumnHeaderStyle="{StaticResource HeaderStyle}"
-                  AlternationCount="2"
-                  Background="{StaticResource StockGridBackground}">
-            <DataGrid.Columns>
-                <DataGridTextColumn Width="Auto" Header="Ticker" Binding="{Binding Ticker, Mode=OneWay}"
-                                    TextOptions.TextFormattingMode="Display" />
-                <DataGridTextColumn Width="*" Header="Description" Binding="{Binding Description, Mode=OneWay}" 
-                                    TextOptions.TextFormattingMode="Ideal"/>
-                <DataGridTextColumn Width="Auto" Header="Shares" Binding="{Binding Shares, Mode=OneWay}"
-                                    CellStyle="{StaticResource CellStyleRight}"/>
-                <DataGridTextColumn Width="Auto" Header="Price" Binding="{Binding Price, Mode=OneWay}"
-                                    CellStyle="{StaticResource CellStyleRight}"/>
-                <DataGridTextColumn Width="Auto" Header="Today's Change ($)" Binding="{Binding Change, Mode=OneWay}"
-                                    CellStyle="{StaticResource CellStyleRight}"/>
-                <DataGridTextColumn Width="Auto" Header="Today's Change (%)"
-                                    Binding="{Binding PercentChange, Mode=OneWay}"
-                                    CellStyle="{StaticResource CellStyleCentered}"/>
-                <DataGridTextColumn Width="Auto" Header="Market Value" Binding="{Binding MarketValue, Mode=OneWay}"
-                                    CellStyle="{StaticResource CellStyleRight}"/>
-
-                <DataGridTextColumn Width="Auto" Header="Cost Basis" Binding="{Binding CostBasis, Mode=OneWay}"
-                                    CellStyle="{StaticResource CellStyleRight}"/>
-                <DataGridTextColumn Width="Auto" Header="Gain/Loss" Binding="{Binding GainLoss, Mode=OneWay}"
-                                    CellStyle="{StaticResource CellStyleRight}"/>
-                <DataGridTextColumn Width="Auto" Header="Yield" Binding="{Binding Yield, Mode=OneWay}"
-                                    CellStyle="{StaticResource CellStyleCentered}"/>
-                <DataGridTextColumn Width="Auto" Header="P/E Ratio" Binding="{Binding PeRatio, Mode=OneWay}"
-                                    CellStyle="{StaticResource CellStyleCentered}"/>
-                <DataGridTextColumn Width="Auto" Header="Volume" Binding="{Binding Volume, Mode=OneWay}"
-                                    CellStyle="{StaticResource CellStyleRight}"/>
-            </DataGrid.Columns>
-        </DataGrid>
-        <chart:PieChart
-            Grid.Row="3"
-            Grid.Column="2"
-            Margin="0,3,0,3"
-            Height="Auto"
-            Width="Auto"
-            Style="{StaticResource MinimalChartStyle}"
-            ChartTitle="Asset Allocation"
-            IsTabStop="False"
-            IsManipulationEnabled="False"
-            ChartSubTitle="{Binding ChartSubtitle}"
-            Background="Transparent">
-            <chart:PieChart.Series>
-                <chart:ChartSeries
-                    DisplayMember="Ticker"
-                    ValueMember="Weight"
-                    ItemsSource="{Binding AllocationChartPositions, 
-                                NotifyOnSourceUpdated=True, 
-                                UpdateSourceTrigger=PropertyChanged}" />
-            </chart:PieChart.Series>
-        </chart:PieChart>
-        <Grid Grid.Row="4" 
-              Grid.Column="0"
-              Name="TradeTermsGrid">
-            <Grid.Style>
-                <Style />
-            </Grid.Style>
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            
-            <TextBlock Text="Trade Type:" Margin="3" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" />
-            <ComboBox ItemsSource="{Binding TradeTypeStrings}" SelectedItem="{Binding SelectedTradeType, Mode=TwoWay}"
+                <TextBlock Text="Trade Type:" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" />
+                <ComboBox ItemsSource="{Binding TradeTypeStrings}" SelectedItem="{Binding SelectedTradeType, Mode=TwoWay}"
                       Height="Auto" Width="100" Margin="3" Grid.Row="0" Grid.Column="1"
                       VerticalContentAlignment="Center" VerticalAlignment="Center"/>
 
-            <TextBlock Text="Security Type:" Margin="40,3,3,3" Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" />
-            <ComboBox ItemsSource="{Binding SecurityTypes}" SelectedItem="{Binding SelectedSecurityType}" Height="Auto"
-                      Width="100" Margin="3" Grid.Row="0" Grid.Column="3" VerticalContentAlignment="Center"
+                <TextBlock Text="Security Type:" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" />
+                <ComboBox ItemsSource="{Binding SecurityTypes}" SelectedItem="{Binding SelectedSecurityType}" Height="Auto"
+                      Width="100" Margin="3" Grid.Row="1" Grid.Column="1" VerticalContentAlignment="Center"
                       VerticalAlignment="Center" />
 
-            <TextBlock Text="Trade Terms:" Margin="40,3,3,3" Grid.Column="2" Grid.Row="1" VerticalAlignment="Center" />
-            <ComboBox ItemsSource="{Binding TradeTermStrings}" SelectedItem="{Binding SelectedTermType}" Height="Auto"
-                      Width="100" Margin="3" Grid.Row="1" Grid.Column="3" VerticalContentAlignment="Center"
+                <TextBlock Text="Trade Terms:" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" />
+                <ComboBox ItemsSource="{Binding TradeTermStrings}" SelectedItem="{Binding SelectedTermType}" Height="Auto"
+                      Width="100" Margin="3" Grid.Row="2" Grid.Column="1" VerticalContentAlignment="Center"
                       VerticalAlignment="Center" />
 
-            <TextBlock Text="Duration:" Margin="3" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" />
-            <ComboBox ItemsSource="{Binding TradeDurationStrings}" SelectedItem="{Binding SelectedDurationType}"
-                      Height="Auto" Width="100" Margin="3" Grid.Row="1" Grid.Column="1"
+                <TextBlock Text="Duration:" Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" />
+                <ComboBox ItemsSource="{Binding TradeDurationStrings}" SelectedItem="{Binding SelectedDurationType}"
+                      Height="Auto" Width="100" Margin="3" Grid.Row="3" Grid.Column="1"
                       VerticalContentAlignment="Center" VerticalAlignment="Center" />
 
-            <TextBlock Text="Limit/Stop:" Margin="40,3,3,3" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" />
-            <TextBox Text="{Binding LimitPrice, Mode=TwoWay}" Grid.Row="2" Grid.Column="3" Width="100" Height="20"
+                <TextBlock Text="Limit/Stop:" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" />
+                <TextBox Text="{Binding LimitPrice, Mode=TwoWay}" Grid.Row="4" Grid.Column="1" Width="100" Height="20"
                      Margin="3" VerticalAlignment="Center" IsEnabled="{Binding LimitBoxActive}" />
 
-            <TextBlock Text="Ticker:" Margin="3" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" />
-            <TextBox Text="{Binding OrderTickerText, Mode=TwoWay}" Grid.Row="2" Grid.Column="1" Width="100" Height="20"
+                <TextBlock Text="Ticker:"  Grid.Column="0" Grid.Row="5" VerticalAlignment="Center" />
+                <TextBox Text="{Binding OrderTickerText, Mode=TwoWay}" Grid.Row="5" Grid.Column="1" Width="100" Height="20"
                      Margin="3" VerticalAlignment="Center" />
 
-            <TextBlock Text="Shares:" Margin="3" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" />
-            <TextBox Text="{Binding OrderShareQuantity, Mode=TwoWay}" Grid.Row="3" Grid.Column="1" Width="100"
+                <TextBlock Text="Shares:" Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" />
+                <TextBox Text="{Binding OrderShareQuantity, Mode=TwoWay}" Grid.Row="6" Grid.Column="1" Width="100"
                      Height="20" Margin="3" VerticalAlignment="Center" />
 
-            <Button Content="Preview Order" Margin="3" Command="{Binding PreviewOrder}" Grid.Row="4" Grid.Column="0"
-                    Grid.ColumnSpan="2" VerticalAlignment="Center" />
-            <Button Content="Execute" Command="{Binding ExecuteOrder}" Margin="40,3,3,3" Grid.Row="4" Grid.Column="2"
-                    Grid.ColumnSpan="2" VerticalAlignment="Center" IsEnabled="{Binding ExecuteButtonEnabled}" />
-        </Grid>
-        <Border Grid.Column="1"
-                Grid.Row="4"
-                Name="TradePreviewBorder">
+                <Button Content="Preview Order" Margin="3" Command="{Binding PreviewOrder}" Grid.Row="7" Grid.Column="0"
+                        VerticalAlignment="Center" 
+                        Grid.ColumnSpan="2"/>
+
+            </Grid>
+        </StackPanel>
+
+        <Grid Grid.Column="0"
+              Grid.Row="2"
+              Grid.RowSpan="2"
+              Margin="2,0"
+              Name="TradePreviewGrid"
+              MinWidth="250">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
                     <ColumnDefinition />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
@@ -294,39 +131,111 @@
                     <RowDefinition />
                     <RowDefinition />
                     <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
 
-                <TextBox Text="{Binding PreviewDescription, Mode=OneWay}" Grid.Row="0" Grid.Column="1"
-                         Grid.ColumnSpan="3" Width="Auto" Height="20" Margin="3" VerticalAlignment="Center"
+                <Border Grid.Row="0"
+                        Grid.Column="0" 
+                        Grid.ColumnSpan="2"
+                        BorderThickness="0,0,0,1"
+                        BorderBrush="{StaticResource Button.BackgroundBrush}"
+                        VerticalAlignment="Bottom">
+                    <TextBlock Text="Trade Preview" 
+                               HorizontalAlignment="Center"
+                               FontSize="18"/>
+                </Border>
+
+                <StackPanel Orientation="Vertical" 
+                            Grid.Row="1" 
+                            Grid.Column="0" 
+                            Grid.ColumnSpan="2">
+                    <TextBlock Text="Description:" 
+                               Margin="3,3,3,3" 
+                               HorizontalAlignment="Center" />
+                    <TextBox Text="{Binding PreviewDescription, Mode=OneWay}"
+                             Width="Auto" 
+                             Height="20" 
+                             Margin="3" 
+                             VerticalAlignment="Center"
+                             IsTabStop="False" />
+                </StackPanel>
+
+                <TextBlock Text="Ask:" 
+                           Grid.Row="2" 
+                           Grid.Column="0" 
+                           VerticalAlignment="Center" />
+                <TextBox Text="{Binding PreviewAsk, Mode=OneWay}" 
+                         Grid.Row="2" 
+                         Grid.Column="1"
+                         Margin="3" 
+                         VerticalAlignment="Center" 
                          IsTabStop="False" />
-                <TextBlock Text="Description:" Margin="3,3,3,3" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" />
 
-                <TextBox Text="{Binding PreviewAsk, Mode=OneWay}" Grid.Row="1" Grid.Column="3" Width="100" Height="20"
-                         Margin="3" VerticalAlignment="Center" IsTabStop="False" />
-                <TextBlock Text="Ask:" Margin="40,3,3,3" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" />
-
-                <TextBox Text="{Binding PreviewBid, Mode=OneWay}" Grid.Row="1" Grid.Column="1" Width="100" Height="20"
-                         Margin="3" VerticalAlignment="Center" IsTabStop="False" />
-                <TextBlock Text="Bid:" Margin="3,3,3,3" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" />
-
-                <TextBox Text="{Binding PreviewAskSize, Mode=OneWay}" Grid.Row="2" Grid.Column="3" Width="100"
-                         Height="20" Margin="3" VerticalAlignment="Center" IsTabStop="False" />
-                <TextBlock Text="Ask Size:" Margin="40,3,3,3" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" />
-
-                <TextBox Text="{Binding PreviewBidSize, Mode=OneWay}" Grid.Row="2" Grid.Column="1" Width="100"
-                         Height="20" Margin="3" VerticalAlignment="Center" IsTabStop="False" />
-                <TextBlock Text="Bid Size:" Margin="3,3,3,3" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" />
-
-                <TextBlock Text="Mkt Price:" Margin="3" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" />
-                <TextBox Text="{Binding PreviewPrice, Mode=OneWay}" Width="100" Height="20" Margin="3" Grid.Row="3"
-                         Grid.Column="1" VerticalAlignment="Center" IsManipulationEnabled="False" IsReadOnly="True"
+                <TextBlock Text="Bid:" 
+                           Grid.Row="3" 
+                           Grid.Column="0" 
+                           VerticalAlignment="Center" />
+                <TextBox Text="{Binding PreviewBid, Mode=OneWay}" 
+                         Grid.Row="3" 
+                         Grid.Column="1" 
+                         Margin="3" 
+                         VerticalAlignment="Center" 
                          IsTabStop="False" />
 
-                <TextBox Text="{Binding PreviewValue, Mode=OneWay}" Grid.Row="3" Grid.Column="3" Width="100"
-                         Height="20" Margin="3" VerticalAlignment="Center" IsTabStop="False" />
-                <TextBlock Text="Order Value:" Margin="3,3,3,3" Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" />
 
-                <Border Grid.Row="4"
+                <TextBlock Text="Ask Size:" 
+                           Grid.Row="4" 
+                           Grid.Column="0" 
+                           VerticalAlignment="Center" />
+                <TextBox Text="{Binding PreviewAskSize, Mode=OneWay}" 
+                         Grid.Row="4" 
+                         Grid.Column="1"
+                         Margin="3" 
+                         VerticalAlignment="Center" 
+                         IsTabStop="False" />
+
+
+                <TextBlock Text="Bid Size:" 
+                           Grid.Row="5" 
+                           Grid.Column="0" 
+                           VerticalAlignment="Center" />
+                <TextBox Text="{Binding PreviewBidSize, Mode=OneWay}" 
+                         Grid.Row="5" 
+                         Grid.Column="1" 
+                         Margin="3" 
+                         VerticalAlignment="Center" 
+                         IsTabStop="False" />
+                
+
+                <TextBlock Text="Mkt Price:" 
+                           Grid.Row="6" 
+                           Grid.Column="0" 
+                           VerticalAlignment="Center" />
+                <TextBox Text="{Binding PreviewPrice, Mode=OneWay}" Margin="3" Grid.Row="6"
+                         Grid.Column="1" 
+                         VerticalAlignment="Center" 
+                         IsManipulationEnabled="False" 
+                         IsReadOnly="True"
+                         IsTabStop="False" />
+
+                <TextBlock Text="Order Value:"
+                           Grid.Row="7" 
+                           Grid.Column="0" 
+                           VerticalAlignment="Center" />
+                <TextBox Text="{Binding PreviewValue, Mode=OneWay}" 
+                         Grid.Row="7" 
+                         Grid.Column="1"
+                         Margin="3" 
+                         VerticalAlignment="Center" 
+                         IsTabStop="False" />
+
+                <Button Content="Execute" Command="{Binding ExecuteOrder}" Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2"
+                    VerticalAlignment="Center" IsEnabled="{Binding ExecuteButtonEnabled}" />
+
+                <!--<Border Grid.Row="4"
                         Grid.Column="0"
                         Grid.ColumnSpan="4"
                         VerticalAlignment="Center"
@@ -365,13 +274,198 @@
                             </Style>
                         </TextBlock.Style>
                     </TextBlock>
-                </Border>
+                </Border>-->
             </Grid>
-        </Border>
-        <StackPanel Grid.Column="2"
-                    Grid.Row="4"
-                    VerticalAlignment="Stretch">
-            <!--<TextBlock Text="Active Limit Orders" HorizontalAlignment="Center" />-->
+        </Grid>
+        
+        <DataGrid x:Name="SecurityDataGrid"
+                  ItemsSource="{Binding DisplaySecurityCollectionView, 
+                                NotifyOnSourceUpdated=True, 
+                                UpdateSourceTrigger=PropertyChanged}"
+                  Grid.Row="1"
+                  Grid.RowSpan="2"
+                  Grid.Column="1"
+                  Grid.ColumnSpan="2"
+                  BorderThickness="0"
+                  HorizontalAlignment="Center"
+                  AutoGenerateColumns="False"
+                  CanUserDeleteRows="False"
+                  VerticalScrollBarVisibility="Visible"
+                  CanUserAddRows="False"
+                  ColumnWidth="Auto"
+                  Width="Auto"
+                  SelectedItem="{Binding SelectedDisplaySecurity, Mode=TwoWay}"
+                  RowStyle="{StaticResource RowStyle}"
+                  CellStyle="{StaticResource CellStyle}"
+                  ColumnHeaderStyle="{StaticResource HeaderStyle}"
+                  AlternationCount="2"
+                  Background="{StaticResource StockGridBackground}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Width="Auto" Header="Ticker" Binding="{Binding Ticker, Mode=OneWay}"
+                                    TextOptions.TextFormattingMode="Display" />
+                <DataGridTextColumn Width="*" Header="Description" Binding="{Binding Description, Mode=OneWay}" 
+                                    TextOptions.TextFormattingMode="Ideal"/>
+                <DataGridTextColumn Width="Auto" Header="Shares" Binding="{Binding Shares, Mode=OneWay}"
+                                    CellStyle="{StaticResource CellStyleRight}"/>
+                <DataGridTextColumn Width="Auto" Header="Price" Binding="{Binding Price, Mode=OneWay}"
+                                    CellStyle="{StaticResource CellStyleRight}"/>
+                <DataGridTextColumn Width="Auto" Header="Change" Binding="{Binding Change, Mode=OneWay}"
+                                    CellStyle="{StaticResource CellStyleRight}"/>
+                <DataGridTextColumn Width="Auto" Header="% Change"
+                                    Binding="{Binding PercentChange, Mode=OneWay}"
+                                    CellStyle="{StaticResource CellStyleCentered}"/>
+                <DataGridTextColumn Width="Auto" Header="Market Value" Binding="{Binding MarketValue, Mode=OneWay}"
+                                    CellStyle="{StaticResource CellStyleRight}"/>
+
+                <DataGridTextColumn Width="Auto" Header="Cost Basis" Binding="{Binding CostBasis, Mode=OneWay}"
+                                    CellStyle="{StaticResource CellStyleRight}"/>
+                <DataGridTextColumn Width="Auto" Header="Gain/Loss" Binding="{Binding GainLoss, Mode=OneWay}"
+                                    CellStyle="{StaticResource CellStyleRight}"/>
+                <DataGridTextColumn Width="Auto" Header="Yield" Binding="{Binding Yield, Mode=OneWay}"
+                                    CellStyle="{StaticResource CellStyleCentered}"/>
+                <DataGridTextColumn Width="Auto" Header="P/E Ratio" Binding="{Binding PeRatio, Mode=OneWay}"
+                                    CellStyle="{StaticResource CellStyleCentered}"/>
+                <DataGridTextColumn Width="Auto" Header="Volume" Binding="{Binding Volume, Mode=OneWay}"
+                                    CellStyle="{StaticResource CellStyleRight}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        
+        <Grid Name="Buttons" HorizontalAlignment="Stretch"
+              Grid.Row="3"
+              Grid.Column="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Button Grid.Row="0" Grid.Column="0" Margin="5" Content="All Assets"  Command="{Binding ShowAllSecurities}"/>
+            <Button Grid.Row="0" Grid.Column="1" Margin="5" Content="Equities"  Command="{Binding ShowStocksOnly}" />
+            <Button Grid.Row="1" Grid.Column="0" Margin="5" Content="Funds and ETFs" Command="{Binding ShowFundsOnly}" />
+            <Button HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="1" Margin="5" Style="{StaticResource ButtonStyleExperimental}" Content="TEST" 
+                    Command="{Binding UpdatePrices}" />
+        </Grid>
+        
+        <chart:PieChart
+            Grid.Row="1"
+            Grid.RowSpan="2"
+            Grid.Column="3"
+            Style="{StaticResource MinimalChartStyle}"
+            ChartTitle="Asset Allocation"
+            IsTabStop="False"
+            IsManipulationEnabled="False"
+            ChartSubTitle="{Binding ChartSubtitle}"
+            Background="Transparent"
+            SnapsToDevicePixels="True"
+            MinWidth="500"
+            MinHeight="500">
+            <chart:PieChart.Series>
+                <chart:ChartSeries
+                    DisplayMember="Ticker"
+                    ValueMember="Weight"
+                    ItemsSource="{Binding AllocationChartPositions, 
+                                NotifyOnSourceUpdated=True, 
+                                UpdateSourceTrigger=PropertyChanged}" />
+            </chart:PieChart.Series>
+        </chart:PieChart>
+        
+       
+              
+        
+
+        <Grid Name="Screener" 
+              Grid.Column="1"
+              Grid.ColumnSpan="2"
+              Grid.Row="3"
+              VerticalAlignment="Top"
+              MinHeight="75"
+              Background="{StaticResource Screener.Background}">
+            <Grid.RowDefinitions>
+                <RowDefinition MinHeight="20" />
+                <RowDefinition MinHeight="20" />
+                <RowDefinition MinHeight="20" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.Resources>
+                <Style TargetType="TextBox">
+                    <Setter Property="Foreground" Value="Black" />
+                    <Setter Property="FontSize" Value="13" />
+                </Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Foreground" Value="Black" />
+                    <Setter Property="FontSize" Value="13" />
+                </Style>
+            </Grid.Resources>
+            <TextBlock Grid.Row="0"
+                       Grid.Column="0"
+                       HorizontalAlignment="Left"
+                       Text="Stock Screener"
+                       FontSize="16"
+                       FontWeight="DemiBold" />
+            <StackPanel Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Center">
+                <TextBlock Text="Enter Ticker:" />
+                <TextBox Text="{Binding StockScreenerTicker, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=1000}"
+                         VerticalAlignment="Center"
+                         MinWidth="45"
+                         CaretBrush="Gray"
+                         BorderThickness="0,0,0,1"
+                         Background="Transparent"
+                         BorderBrush="Gray"
+                         IsTabStop="True" />
+
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2">
+                <TextBlock Text="{Binding ScreenerStock.Description, Mode=OneWay}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0">
+                <TextBlock Text="Bid:  " />
+                <TextBlock Text="{Binding ScreenerStock.Bid, Mode=OneWay}" Width="Auto" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
+                <TextBlock Text="Last: " />
+                <TextBlock Text="{Binding ScreenerStock.LastPrice}"
+                           Width="Auto" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="1">
+                <TextBlock Text="Yield:  " />
+                <TextBlock Text="{Binding ScreenerStock.Yield}"
+                           Width="Auto" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="0">
+                <TextBlock Text="Ask: " />
+                <TextBlock Text="{Binding ScreenerStock.Ask, Mode=OneWay}" Width="Auto" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="1">
+                <TextBlock Text="P/E Ratio: " />
+                <TextBlock Text="{Binding ScreenerStock.PeRatio, Mode=OneWay}" Width="Auto" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="2">
+                <TextBlock Text="Market Cap: " />
+                <TextBlock Text="{Binding ScreenerStock.MarketCap, Mode=OneWay}" Width="Auto" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="0">
+                <TextBlock Text="Volume:  " />
+                <TextBlock Text="{Binding ScreenerStock.Volume, Mode=OneWay}" Width="Auto" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="1">
+                <TextBlock />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="2">
+                <TextBlock />
+            </StackPanel>
+        </Grid>
+
+        <!--<StackPanel Name="LimitOrder" 
+                    Grid.Column="0"
+                    Grid.Row="3">            
             <DataGrid
                 ItemsSource="{Binding LimitOrderCollectionView, 
                         Mode=OneWay, 
@@ -385,7 +479,6 @@
                 RowHeaderWidth="0"
                 BorderThickness="0"
                 Background="{StaticResource StockGridBackground}"
-                MinHeight="200"
                 RowStyle="{StaticResource RowStyle}"
                 ColumnHeaderStyle="{StaticResource HeaderStyle}"
                 CellStyle="{StaticResource CellStyle}"
@@ -397,6 +490,6 @@
                     <DataGridTextColumn Header="Limit" Width="*" Binding="{Binding Limit, Mode=OneWay}" />
                 </DataGrid.Columns>
             </DataGrid>
-        </StackPanel>
+        </StackPanel>-->
     </Grid>
 </Window>
