@@ -78,7 +78,7 @@
                        FontWeight="DemiBold" />
             <StackPanel Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Bottom">
                 <TextBlock Text="Enter Ticker:" />
-                <TextBox Text="{Binding StockScreenerTicker, Mode=TwoWay}"
+                <TextBox Text="{Binding StockScreenerTicker, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=1000}"
                          MinWidth="45"
                          CaretBrush="Gray"
                          BorderThickness="0,0,0,1"
@@ -170,18 +170,30 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Width="Auto" Header="Ticker" Binding="{Binding Ticker, Mode=OneWay}"
                                     TextOptions.TextFormattingMode="Display" />
-                <DataGridTextColumn Width="*" Header="Description" Binding="{Binding Description, Mode=OneWay}" />
-                <DataGridTextColumn Width="Auto" Header="Shares" Binding="{Binding Shares, Mode=OneWay}" />
-                <DataGridTextColumn Width="Auto" Header="Price" Binding="{Binding Price, Mode=OneWay}" />
-                <DataGridTextColumn Width="Auto" Header="Today's Change ($)" Binding="{Binding Change, Mode=OneWay}" />
+                <DataGridTextColumn Width="*" Header="Description" Binding="{Binding Description, Mode=OneWay}" 
+                                    TextOptions.TextFormattingMode="Ideal"/>
+                <DataGridTextColumn Width="Auto" Header="Shares" Binding="{Binding Shares, Mode=OneWay}"
+                                    CellStyle="{StaticResource CellStyleRight}"/>
+                <DataGridTextColumn Width="Auto" Header="Price" Binding="{Binding Price, Mode=OneWay}"
+                                    CellStyle="{StaticResource CellStyleRight}"/>
+                <DataGridTextColumn Width="Auto" Header="Today's Change ($)" Binding="{Binding Change, Mode=OneWay}"
+                                    CellStyle="{StaticResource CellStyleRight}"/>
                 <DataGridTextColumn Width="Auto" Header="Today's Change (%)"
-                                    Binding="{Binding PercentChange, Mode=OneWay}" />
-                <DataGridTextColumn Width="Auto" Header="Market Value" Binding="{Binding MarketValue, Mode=OneWay}" />
-                <DataGridTextColumn Width="Auto" Header="Cost Basis" Binding="{Binding CostBasis, Mode=OneWay}" />
-                <DataGridTextColumn Width="Auto" Header="Gain/Loss" Binding="{Binding GainLoss, Mode=OneWay}" />
-                <DataGridTextColumn Width="Auto" Header="Yield" Binding="{Binding Yield, Mode=OneWay}" />
-                <DataGridTextColumn Width="Auto" Header="P/E Ratio" Binding="{Binding PeRatio, Mode=OneWay}" />
-                <DataGridTextColumn Width="Auto" Header="Volume" Binding="{Binding Volume, Mode=OneWay}" />
+                                    Binding="{Binding PercentChange, Mode=OneWay}"
+                                    CellStyle="{StaticResource CellStyleCentered}"/>
+                <DataGridTextColumn Width="Auto" Header="Market Value" Binding="{Binding MarketValue, Mode=OneWay}"
+                                    CellStyle="{StaticResource CellStyleRight}"/>
+
+                <DataGridTextColumn Width="Auto" Header="Cost Basis" Binding="{Binding CostBasis, Mode=OneWay}"
+                                    CellStyle="{StaticResource CellStyleRight}"/>
+                <DataGridTextColumn Width="Auto" Header="Gain/Loss" Binding="{Binding GainLoss, Mode=OneWay}"
+                                    CellStyle="{StaticResource CellStyleRight}"/>
+                <DataGridTextColumn Width="Auto" Header="Yield" Binding="{Binding Yield, Mode=OneWay}"
+                                    CellStyle="{StaticResource CellStyleCentered}"/>
+                <DataGridTextColumn Width="Auto" Header="P/E Ratio" Binding="{Binding PeRatio, Mode=OneWay}"
+                                    CellStyle="{StaticResource CellStyleCentered}"/>
+                <DataGridTextColumn Width="Auto" Header="Volume" Binding="{Binding Volume, Mode=OneWay}"
+                                    CellStyle="{StaticResource CellStyleRight}"/>
             </DataGrid.Columns>
         </DataGrid>
         <chart:PieChart
@@ -227,6 +239,7 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
+            
             <TextBlock Text="Trade Type:" Margin="3" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" />
             <ComboBox ItemsSource="{Binding TradeTypeStrings}" SelectedItem="{Binding SelectedTradeType, Mode=TwoWay}"
                       Height="Auto" Width="100" Margin="3" Grid.Row="0" Grid.Column="1"
