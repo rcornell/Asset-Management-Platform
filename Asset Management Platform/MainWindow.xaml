@@ -153,6 +153,7 @@
                   Grid.Row="3"
                   Grid.Column="0"
                   Grid.ColumnSpan="2"
+                  BorderThickness="0"
                   HorizontalAlignment="Center"
                   Margin="3"
                   AutoGenerateColumns="False"
@@ -166,7 +167,7 @@
                   CellStyle="{StaticResource CellStyle}"
                   ColumnHeaderStyle="{StaticResource HeaderStyle}"
                   AlternationCount="2"
-                  Background="Transparent">
+                  Background="{StaticResource StockGridBackground}">
             <DataGrid.Columns>
                 <DataGridTextColumn Width="Auto" Header="Ticker" Binding="{Binding Ticker, Mode=OneWay}"
                                     TextOptions.TextFormattingMode="Display" />
@@ -382,7 +383,8 @@
                 AlternationCount="2"
                 AlternatingRowBackground="{StaticResource Row.AlternatingRowBrush}"
                 RowHeaderWidth="0"
-                Background="Transparent"
+                BorderThickness="0"
+                Background="{StaticResource StockGridBackground}"
                 MinHeight="200"
                 RowStyle="{StaticResource RowStyle}"
                 ColumnHeaderStyle="{StaticResource HeaderStyle}"

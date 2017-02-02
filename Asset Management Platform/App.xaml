@@ -63,6 +63,7 @@
                 <GradientStop Offset="0" Color="{StaticResource ColumnHeader.BackgroundTop}" />
                 <GradientStop Offset="1" Color="{StaticResource ColumnHeader.BackgroundBottom}" />
             </LinearGradientBrush>
+            <SolidColorBrush x:Key="StockGridBackground">#EDEDED</SolidColorBrush>
 
             <!--BUTTON colors and brushes-->
             <Color x:Key="Button.BackgroundTop">#88F1FE</Color>
