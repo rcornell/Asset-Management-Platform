@@ -30,6 +30,19 @@ namespace Asset_Management_Platform
         /// </summary>
         /// 
 
+
+        private bool _orderTermsOK;
+
+        public bool OrderTermsOK
+        {
+            get { return _orderTermsOK; }
+            set
+            {
+                _orderTermsOK = value;
+                RaisePropertyChanged(() => OrderTermsOK);
+            }
+        }
+
         private ListCollectionView _limitOrderCollectionView;
         public ListCollectionView LimitOrderCollectionView
         {
@@ -480,6 +493,7 @@ namespace Asset_Management_Platform
             SelectedDurationType = "Day";
             ChartSubtitle = "All Positions";
             LimitBoxActive = false;
+            OrderTermsOK = false;
             LimitPrice = 0;
             TotalValue = 0;
 
@@ -593,6 +607,7 @@ namespace Asset_Management_Platform
             {
                 SetAlertMessage(new TradeMessage(_orderTickerText, _orderShareQuantity));
                 AlertBoxVisible = true;
+                OrderTermsOK = false;
             }
         }
 
@@ -618,9 +633,14 @@ namespace Asset_Management_Platform
                 secTypeMatch = false;
 
             if (tickerNotEmpty && shareQuantityValid && securityTypeValid && secTypeMatch)
+            {
+                OrderTermsOK = true;
                 return true;
+            }
+                
             else
             {
+                OrderTermsOK = false;
                 return false;
             }            
         }
@@ -659,7 +679,8 @@ namespace Asset_Management_Platform
             PreviewDescription = "";
             PreviewVolume = "";
             SelectedSecurityType = SecurityTypes[0];
-           
+
+            OrderTermsOK = false;           
             ExecuteButtonEnabled = false;
         }
 

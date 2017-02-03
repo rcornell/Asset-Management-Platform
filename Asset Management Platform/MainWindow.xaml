@@ -6,10 +6,14 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:chart="clr-namespace:De.TorstenMandelkow.MetroChart;assembly=De.TorstenMandelkow.MetroChart"
         xmlns:local="clr-namespace:Asset_Management_Platform.ViewModel"
+        xmlns:convert="clr-namespace:Asset_Management_Platform.Converters"
         mc:Ignorable="d"
         Title="Portfolio Management Test Utility"
         DataContext="{Binding Main, Source={StaticResource Locator}}"
         SizeToContent="WidthAndHeight">
+    <Window.Resources>
+        <convert:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
+    </Window.Resources>
     <Grid>
         <Grid.Background>
             <LinearGradientBrush StartPoint="0.5,0.5" EndPoint="0.5,1">
@@ -120,7 +124,7 @@
             <Border  HorizontalAlignment="Center"
                      VerticalAlignment="Bottom"
                      Background="{StaticResource Button.BackgroundBrush}"
-                     >
+                     Visibility="{Binding OrderTermsOK, Converter={StaticResource BoolToVisibility}}">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Order Terms OK" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     <Viewbox Width="50" 
