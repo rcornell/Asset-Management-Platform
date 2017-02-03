@@ -117,6 +117,20 @@
                         Grid.ColumnSpan="2" />
 
             </Grid>
+            <Border  HorizontalAlignment="Center"
+                     VerticalAlignment="Bottom"
+                     Background="{StaticResource Button.BackgroundBrush}"
+                     >
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Order Terms OK" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Viewbox Width="50" 
+                             Height="30">
+                        <ContentControl Content="{StaticResource CheckMark}" 
+                                    VerticalContentAlignment="Center" 
+                                    VerticalAlignment="Center"/>
+                    </Viewbox>
+                </StackPanel>
+            </Border>
         </StackPanel>
 
         <StackPanel Name="TradePreviewStackPanel"
