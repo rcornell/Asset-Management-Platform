@@ -77,6 +77,14 @@
             </LinearGradientBrush>
             <SolidColorBrush x:Key="Button.BorderBrush" Opacity="1" Color="{StaticResource Button.BorderColor}" />
 
+            <!--EXPERIMENTAL BUTTON COLORS AND BRUSHES-->
+            <Color x:Key="ExperimentalTop" >Aqua</Color>
+            <Color x:Key="ExperimentalBottom">Aquamarine</Color>
+            <LinearGradientBrush x:Key="ExperimentBrush" StartPoint="0,0.5" EndPoint="1,0.5">
+                <GradientStop Offset="0" Color="{StaticResource ExperimentalTop}"/>
+                <GradientStop Offset="0" Color="{StaticResource ExperimentalBottom}"/>
+            </LinearGradientBrush>
+
             <!--LimitBox ListView Colors and Brushes-->
             <Color x:Key="LimitBoxBackground">#C5F8FE</Color>
             <SolidColorBrush x:Key="LimitBoxBackgroundBrush" Color="{StaticResource LimitBoxBackground}"/>
@@ -176,24 +184,7 @@
                 </Setter>
             </Style>
 
-
-            <RadialGradientBrush x:Key="PreviewButtonRadialBrush" RadiusX="1" RadiusY="1">
-                <GradientStop Offset="0" Color="{StaticResource Button.BackgroundTop}"></GradientStop>
-                <GradientStop Offset="1" Color="{StaticResource Button.MouseOverBottomColor}"></GradientStop>
-            </RadialGradientBrush>
-
-            <!--<RadialGradientBrush x:Key="InternetBrush" Center="0.5,0.5" RadiusX="1" RadiusY="1" GradientOrigin="0.5,0.5"  MappingMode="RelativeToBoundingBox">
-                <GradientStop Color="Yellow" Offset="0"/>
-                <GradientStop Color="Black" Offset="0"/>
-                <GradientStop Color="Yellow" Offset="0"/>
-                <GradientStop Color="Black" Offset=".125"/>
-                <GradientStop Color="Yellow" Offset=".25"/>
-                <GradientStop Color="Black" Offset=".375"/>
-                <GradientStop Color="Yellow" Offset=".5"/>
-                <GradientStop Color="Black" Offset=".625"/>
-            </RadialGradientBrush>-->
-
-            <!--Preview Order Button Style-->
+            <!--Execute Order Button Style-->
             <Style x:Key="ExecuteButtonStyle" TargetType="{x:Type Button}">
                 <Setter Property="VerticalContentAlignment" Value="Center" />
                 <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -205,110 +196,48 @@
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Border x:Name="ExecuteButton_Border"
-                                    Background="{StaticResource Button.BackgroundBrush}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
                                     Padding="5,2,5,2"
                                     RenderTransformOrigin="0.5,0.5">
+                                <Border.Background>
+                                    <LinearGradientBrush x:Name="ExecuteButtonBrush" StartPoint="0,0.5" EndPoint="1,0.5">
+                                        <GradientStop x:Name="OffsetOne" Offset="0" Color="{StaticResource Button.MouseOverBottomColor}"/>
+                                        <GradientStop x:Name="OffsetTwo" Offset="0" Color="{StaticResource Button.MouseOverTopColor}" />
+                                        <GradientStop x:Name="OffsetThree" Offset="0" Color="{StaticResource Button.BackgroundBottom}" />
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <Border.CacheMode>
+                                    <BitmapCache RenderAtScale="2.0"/>
+                                </Border.CacheMode>
                                 <Border.RenderTransform>
                                     <TransformGroup>
                                         <ScaleTransform x:Name="Button_ScaleTransform" />
                                     </TransformGroup>
                                 </Border.RenderTransform>
-                                <Border.Style>
-                                    <Style TargetType="{x:Type Border}">
-                                        <Style.Triggers>
-                                            <EventTrigger RoutedEvent="MouseEnter">
-                                                <EventTrigger.Actions>
-
-                                                    <BeginStoryboard>
-                                                        <Storyboard Storyboard.TargetProperty="(Border.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
-                                                            <DoubleAnimationUsingKeyFrames AutoReverse="True"
-                                                                                           RepeatBehavior="Forever">
-                                                                <EasingDoubleKeyFrame Value="1.1"
-                                                                                      KeyTime="0:0:1">
-                                                                    <EasingDoubleKeyFrame.EasingFunction>
-                                                                        <PowerEase Power="2"/>
-                                                                    </EasingDoubleKeyFrame.EasingFunction>
-                                                                </EasingDoubleKeyFrame>
-                                                            </DoubleAnimationUsingKeyFrames>
-                                                        </Storyboard>
-                                                    </BeginStoryboard>
-
-                                                    <BeginStoryboard>
-                                                        <Storyboard Storyboard.TargetProperty="(Border.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
-                                                            <DoubleAnimationUsingKeyFrames AutoReverse="True"
-                                                                                           RepeatBehavior="Forever">
-                                                                <EasingDoubleKeyFrame Value="1.1"
-                                                                                      KeyTime="0:0:1">
-                                                                    <EasingDoubleKeyFrame.EasingFunction>
-                                                                        <PowerEase Power="2"/>
-                                                                    </EasingDoubleKeyFrame.EasingFunction>
-                                                                </EasingDoubleKeyFrame>
-                                                            </DoubleAnimationUsingKeyFrames>
-                                                        </Storyboard>
-                                                    </BeginStoryboard>
-                                                </EventTrigger.Actions>    
-                                            </EventTrigger>
-                                            
-                                            <EventTrigger RoutedEvent="MouseLeave">
-                                                <EventTrigger.Actions>
-
-                                                    <BeginStoryboard>
-                                                        <Storyboard Storyboard.TargetProperty="(Border.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
-                                                            <DoubleAnimationUsingKeyFrames >
-                                                                <EasingDoubleKeyFrame Value="1"
-                                                                                      KeyTime="1">
-                                                                    <EasingDoubleKeyFrame.EasingFunction>
-                                                                        <PowerEase Power="2"/>
-                                                                    </EasingDoubleKeyFrame.EasingFunction>
-                                                                </EasingDoubleKeyFrame>
-                                                            </DoubleAnimationUsingKeyFrames>
-                                                        </Storyboard>
-                                                    </BeginStoryboard>
-
-                                                    <BeginStoryboard>
-                                                        <Storyboard Storyboard.TargetProperty="(Border.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
-                                                            <DoubleAnimationUsingKeyFrames>
-                                                                <EasingDoubleKeyFrame Value="1"
-                                                                                      KeyTime="1">
-                                                                    <EasingDoubleKeyFrame.EasingFunction>
-                                                                        <PowerEase Power="2"/>
-                                                                    </EasingDoubleKeyFrame.EasingFunction>
-                                                                </EasingDoubleKeyFrame>
-                                                            </DoubleAnimationUsingKeyFrames>
-                                                        </Storyboard>
-                                                    </BeginStoryboard>
-                                                </EventTrigger.Actions>
-                                            </EventTrigger>
-
-
-                                        </Style.Triggers>
-                                    </Style>
-                                </Border.Style>
                                 <VisualStateManager.VisualStateGroups>
                                     <VisualStateGroup>
                                         <VisualState x:Name="Normal" />
                                         <VisualState x:Name="MouseOver">
                                             <Storyboard>
-                                                <ColorAnimationUsingKeyFrames Storyboard.TargetName="ExecuteButton_Border"
-                                                                              Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[0].(GradientStop.Color)">
-                                                    <EasingColorKeyFrame KeyTime="0:0:0.5"
-                                                                         Value="{StaticResource Button.MouseOverTopColor}">
-                                                        <EasingColorKeyFrame.EasingFunction>
-                                                            <PowerEase Power="2" />
-                                                        </EasingColorKeyFrame.EasingFunction>
-                                                    </EasingColorKeyFrame>
-                                                </ColorAnimationUsingKeyFrames>
-                                                <ColorAnimationUsingKeyFrames Storyboard.TargetName="ExecuteButton_Border"
-                                                                              Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
-                                                    <EasingColorKeyFrame KeyTime="0:0:0.5"
-                                                                         Value="{StaticResource Button.MouseOverBottomColor}">
-                                                        <EasingColorKeyFrame.EasingFunction>
-                                                            <PowerEase Power="2" />
-                                                        </EasingColorKeyFrame.EasingFunction>
-                                                    </EasingColorKeyFrame>
-                                                </ColorAnimationUsingKeyFrames>
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OffsetTwo"
+                                                                 Storyboard.TargetProperty="Offset"
+                                                                 Duration="0:0:1.0">
+                                                    <EasingDoubleKeyFrame Value="1">
+                                                        <EasingDoubleKeyFrame.EasingFunction>
+                                                            <PowerEase Power="2"/>
+                                                        </EasingDoubleKeyFrame.EasingFunction>
+                                                    </EasingDoubleKeyFrame>
+                                                </DoubleAnimationUsingKeyFrames>
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OffsetThree"
+                                                                 Storyboard.TargetProperty="Offset"
+                                                                 Duration="0:0:1.0">
+                                                    <EasingDoubleKeyFrame Value="1">
+                                                        <EasingDoubleKeyFrame.EasingFunction>
+                                                            <PowerEase Power="2"/>
+                                                        </EasingDoubleKeyFrame.EasingFunction>
+                                                    </EasingDoubleKeyFrame>
+                                                </DoubleAnimationUsingKeyFrames>
                                             </Storyboard>
                                         </VisualState>
                                         <VisualState x:Name="Pressed" />
@@ -337,8 +266,7 @@
                                     </VisualStateGroup>
                                 </VisualStateManager.VisualStateGroups>
                                 <ContentPresenter HorizontalAlignment="Center"
-                                                  VerticalAlignment="Center"
-                                                  />
+                                                  VerticalAlignment="Center"/>
                             </Border>
                         </ControlTemplate>
                     </Setter.Value>
@@ -346,31 +274,12 @@
             </Style>
 
 
-
-
-
-
-
-
-
-      
-
-
-            
-
-            <!--EXPERIMENTAL BUTTON STYLE-->
-            <Color x:Key="ExperimentalTop" >Aqua</Color>
-            <Color x:Key="ExperimentalBottom">Aquamarine</Color>
-            <LinearGradientBrush x:Key="ExperimentBrush" StartPoint="0,0.5" EndPoint="1,0.5">
-                <GradientStop Offset="0" Color="{StaticResource ExperimentalTop}"/>
-                <GradientStop Offset="0" Color="{StaticResource ExperimentalBottom}"/>
-            </LinearGradientBrush>
-
             <Style TargetType="{x:Type TextBlock}">
                 <Setter Property="FontWeight" Value="Light"/>
-                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="FontSize" Value="13"/>
             </Style>
 
+            <!--EXPERIMENTAL BUTTON STYLE-->
             <Style x:Key="ButtonStyleExperimental" TargetType="{x:Type Button}">
                 <Setter Property="VerticalContentAlignment" Value="Center" />
                 <Setter Property="HorizontalContentAlignment" Value="Center" />
