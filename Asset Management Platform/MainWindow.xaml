@@ -116,15 +116,19 @@
                 <TextBox Text="{Binding OrderShareQuantity, Mode=TwoWay}" Grid.Row="6" Grid.Column="1" Width="100"
                          Height="20" Margin="3" VerticalAlignment="Center" />
 
-                <Button Content="Preview Order" Margin="3" Command="{Binding PreviewOrder}" Grid.Row="7"
+                <Button Name="PreviewOrderButton" 
                         Grid.Column="0"
-                        VerticalAlignment="Center"
-                        Grid.ColumnSpan="2" />
+                        Grid.ColumnSpan="2"
+                        Grid.Row="7"
+                        Content="{Binding PreviewButtonText, NotifyOnSourceUpdated=True}"  
+                        Command="{Binding PreviewOrder}"                        
+                        VerticalAlignment="Center">
+                </Button>
 
             </Grid>
-            <Border  HorizontalAlignment="Center"
+            <!--<Border  HorizontalAlignment="Center"
                      VerticalAlignment="Bottom"
-                     Margin="0,15,0,0"
+                     Margin="0,20,0,0"
                      Background="{StaticResource Button.BackgroundBrush}"
                      Visibility="{Binding OrderTermsOK, Converter={StaticResource BoolToVisibility}}">
                 <StackPanel Orientation="Horizontal">
@@ -136,7 +140,7 @@
                                     VerticalAlignment="Center"/>
                     </Viewbox>
                 </StackPanel>
-            </Border>
+            </Border>-->
         </StackPanel>
 
         <StackPanel Name="TradePreviewStackPanel"
@@ -331,7 +335,7 @@
                     Background="{StaticResource StockGridBackground}"
                     RowStyle="{StaticResource RowStyle}"
                     ColumnHeaderStyle="{StaticResource LimitOrderHeaderStyle}"
-                    CellStyle="{StaticResource CellStyle}"
+                    CellStyle="{StaticResource CellStyleCentered}"
                     ColumnWidth="Auto" 
                     CanUserResizeColumns="False"
                     CanUserSortColumns="True"

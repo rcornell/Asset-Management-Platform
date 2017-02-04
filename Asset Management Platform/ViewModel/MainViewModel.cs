@@ -31,6 +31,19 @@ namespace Asset_Management_Platform
         /// 
 
 
+
+        private string _previewButtonText;
+
+        public string PreviewButtonText
+        {
+            get { return _previewButtonText; }
+            set
+            {
+                _previewButtonText = value;
+                RaisePropertyChanged(() => PreviewButtonText);
+            }
+        }
+
         private bool _orderTermsOK;
 
         public bool OrderTermsOK
@@ -211,7 +224,8 @@ namespace Asset_Management_Platform
         public string PreviewDescription {
             get { return _previewDescription; }
             set { _previewDescription = value;
-                RaisePropertyChanged(() => PreviewDescription); }
+                RaisePropertyChanged(() => PreviewDescription);
+            }
         }
 
         private string _previewVolume;
@@ -275,7 +289,9 @@ namespace Asset_Management_Platform
             get { return _limitPrice; }
             set { _limitPrice = value;
                 _executeButtonEnabled = false;
-                RaisePropertyChanged(() => LimitPrice); }
+                RaisePropertyChanged(() => LimitPrice);
+                PreviewButtonText = "Preview Order";
+            }
         }
 
 
@@ -287,6 +303,7 @@ namespace Asset_Management_Platform
             {
                 _selectedSecurityType = value;
                 RaisePropertyChanged(() => SelectedSecurityType);
+                PreviewButtonText = "Preview Order";
             }
         }
 
@@ -297,6 +314,7 @@ namespace Asset_Management_Platform
             {
                 _selectedDurationType = value;
                 RaisePropertyChanged(() => SelectedDurationType);
+                PreviewButtonText = "Preview Order";
             }
         }
 
@@ -309,10 +327,12 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => SelectedTermType);
                 if (_selectedTermType == "Limit" || _selectedTermType == "Stop Limit" || _selectedTermType == "Stop") {
                     LimitBoxActive = true;
+                    PreviewButtonText = "Preview Order";
                 }
                 else
                 {
                     LimitBoxActive = false;
+                    PreviewButtonText = "Preview Order";
                 }
                 _executeButtonEnabled = false;
             }
@@ -325,6 +345,7 @@ namespace Asset_Management_Platform
             set { _selectedTradeType = value;
                 RaisePropertyChanged(() => SelectedTradeType);
                 _executeButtonEnabled = false;
+                PreviewButtonText = "Preview Order";
             }
         }
 
@@ -335,6 +356,7 @@ namespace Asset_Management_Platform
             set { _orderTickerText = value.ToUpper();
                 RaisePropertyChanged(() => OrderTickerText);
                 _executeButtonEnabled = false;
+                PreviewButtonText = "Preview Order";
             }
         }
 
@@ -346,6 +368,7 @@ namespace Asset_Management_Platform
             set { _orderShareQuantity = value;
                 RaisePropertyChanged(() => OrderShareQuantity);
                 _executeButtonEnabled = false;
+                PreviewButtonText = "Preview Order";
             }
         }
 
@@ -492,6 +515,7 @@ namespace Asset_Management_Platform
             SecurityTypes = new ObservableCollection<Security> { new Stock(), new MutualFund() };
             SelectedDurationType = "Day";
             ChartSubtitle = "All Positions";
+            PreviewButtonText = "Preview Order";
             LimitBoxActive = false;
             OrderTermsOK = false;
             LimitPrice = 0;
@@ -635,12 +659,14 @@ namespace Asset_Management_Platform
             if (tickerNotEmpty && shareQuantityValid && securityTypeValid && secTypeMatch)
             {
                 OrderTermsOK = true;
+                PreviewButtonText = "Order Terms OK";
                 return true;
             }
                 
             else
             {
                 OrderTermsOK = false;
+                PreviewButtonText = "Preview Order";
                 return false;
             }            
         }
