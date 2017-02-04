@@ -63,6 +63,7 @@
                            HorizontalAlignment="Center"
                            FontSize="18" />
             </Border>
+            
             <Grid Name="TradeTermsStackPanel">
                 <Grid.RowDefinitions>
                     <RowDefinition />
@@ -123,10 +124,11 @@
             </Grid>
             <Border  HorizontalAlignment="Center"
                      VerticalAlignment="Bottom"
+                     Margin="0,15,0,0"
                      Background="{StaticResource Button.BackgroundBrush}"
                      Visibility="{Binding OrderTermsOK, Converter={StaticResource BoolToVisibility}}">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Order Terms OK" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock Margin="2,0,2,0" Text="Order Terms OK" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     <Viewbox Width="50" 
                              Height="30">
                         <ContentControl Content="{StaticResource CheckMark}" 
@@ -171,7 +173,7 @@
                                 Grid.Row="1"
                                 Grid.Column="0"
                                 Grid.ColumnSpan="2">
-                        <TextBlock Text="Description:"
+                        <TextBlock Text="Security Description"
                                    Margin="3,3,3,3"
                                    HorizontalAlignment="Center" />
                         <TextBox Text="{Binding PreviewDescription, Mode=OneWay}"
@@ -229,7 +231,7 @@
                          IsTabStop="False" />-->
 
 
-                    <TextBlock Text="Mkt Price:"
+                    <TextBlock Text="Market Price:"
                                Grid.Row="2"
                                Grid.Column="0"
                                VerticalAlignment="Center" />
@@ -313,22 +315,21 @@
                                FontSize="18" />
             </Border>
             <DataGrid 
-                Name="LimitDataGrid"
-                          ItemsSource="{Binding LimitOrderCollectionView, 
-                            Mode=OneWay, 
-                            NotifyOnSourceUpdated=True}"
-                          AutoGenerateColumns="True"
-                          CanUserDeleteRows="False"
-                          VerticalScrollBarVisibility="Visible"
-                          CanUserAddRows="False"
-                          AlternationCount="2"
-                          AlternatingRowBackground="{StaticResource Row.AlternatingRowBrush}"
-                          RowHeaderWidth="0"
-                          BorderThickness="0"
-                          Background="{StaticResource StockGridBackground}"
-                          RowStyle="{StaticResource RowStyle}"
-                          ColumnHeaderStyle="{StaticResource HeaderStyle}"
-                          CellStyle="{StaticResource CellStyle}">
+                    Name="LimitDataGrid"
+                    ItemsSource="{Binding LimitOrderCollectionView, Mode=OneWay, NotifyOnSourceUpdated=True}"
+                    MinHeight="100"
+                    AutoGenerateColumns="True"
+                    CanUserDeleteRows="False"
+                    VerticalScrollBarVisibility="Visible"
+                    CanUserAddRows="False"
+                    AlternationCount="2"
+                    AlternatingRowBackground="{StaticResource Row.AlternatingRowBrush}"
+                    RowHeaderWidth="0"
+                    BorderThickness="0"
+                    Background="{StaticResource StockGridBackground}"
+                    RowStyle="{StaticResource RowStyle}"
+                    ColumnHeaderStyle="{StaticResource LimitOrderHeaderStyle}"
+                    CellStyle="{StaticResource CellStyle}">
                 <!--<DataGrid.Columns>
                         <DataGridTextColumn Header="Limit Type" Width="Auto" Binding="{Binding TradeType, Mode=OneWay}" />
                         <DataGridTextColumn Header="Quantity" Width="Auto" Binding="{Binding Shares, Mode=OneWay}" />
@@ -435,7 +436,7 @@
               Grid.Column="1"
               Grid.ColumnSpan="1"
               Grid.Row="3"
-              VerticalAlignment="Top"
+              VerticalAlignment="Stretch"
               MinHeight="75"
               Background="{StaticResource Screener.Background}">
             <Grid.RowDefinitions>

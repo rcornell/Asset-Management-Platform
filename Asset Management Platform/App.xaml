@@ -409,7 +409,7 @@
                 </Setter>
             </Style>
 
-
+            <!--SecurityDataGrid Row Style-->
             <Style x:Key="RowStyle" TargetType="{x:Type DataGridRow}">
                 <Setter Property="Height" Value="25" />
                 <Setter Property="SnapsToDevicePixels" Value="True" />
@@ -582,35 +582,66 @@
                 </Setter>
             </Style>
 
+            <!--Limit Orders Datagrid Row Style-->
+            <Style x:Key="LimitOrderRowStyle" TargetType="{x:Type DataGridRow}" BasedOn="{StaticResource RowStyle}">
+                <Setter Property="FontSize" Value="12"/>
+            </Style>
 
-            <Style x:Key="DataGridGroupStyle" TargetType="{x:Type GroupItem}">
+
+            <!--Limit Orders Header Style-->
+            <Style x:Key="LimitOrderHeaderStyle" TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource HeaderStyle}">
+                <Setter Property="Height" Value="20" />
+                <Setter Property="FontWeight" Value="Normal" />
+                <Setter Property="FontSize" Value="12" />
                 <Setter Property="Template">
                     <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type GroupItem}"/>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-            <!--
-            </Style>-->
-
-            <Style x:Key="ListViewHeaderStyle" 
-                   TargetType="{x:Type GridViewColumnHeader}">
-                <Setter Property="VerticalContentAlignment" Value="Center" />
-                <Setter Property="Height" Value="30" />
-                <Setter Property="FontWeight" Value="Regular" />
-                <Setter Property="FontSize" Value="11" />
-                <Setter Property="SnapsToDevicePixels" Value="True"/>
-                <!--<Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
-                            <Grid Background="{StaticResource GridView.ColumnHeaderBrush}"
-                                  HorizontalAlignment="Stretch"
-                                  VerticalAlignment="Center">
-                                <ContentPresenter/>
-                            </Grid>
+                        <ControlTemplate TargetType="{x:Type DataGridColumnHeader}">
+                            <Border x:Name="headerBorder"
+                                        BorderThickness="0,1,0,1"
+                                        BorderBrush="{StaticResource ColumnHeader.BorderBrush}"
+                                        Padding="3,0,3,0"
+                                    Background="{StaticResource GridView.ColumnHeaderBrush}">
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal" />
+                                        <VisualState x:Name="MouseOver">
+                                            <Storyboard>
+                                                <ColorAnimationUsingKeyFrames Storyboard.TargetName="headerBorder"
+                                                                              Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[0].(GradientStop.Color)">
+                                                    <EasingColorKeyFrame KeyTime="0:0:0.5" Value="{StaticResource ColumnHeader.MouseOverTop}" >
+                                                        <EasingColorKeyFrame.EasingFunction>
+                                                            <PowerEase Power="2"/>
+                                                        </EasingColorKeyFrame.EasingFunction>
+                                                    </EasingColorKeyFrame>
+                                                </ColorAnimationUsingKeyFrames>
+                                                <ColorAnimationUsingKeyFrames Storyboard.TargetName="headerBorder"
+                                                                              Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+                                                    <EasingColorKeyFrame KeyTime="0:0:0.5" Value="{StaticResource ColumnHeader.MouseOverBottom}" >
+                                                        <EasingColorKeyFrame.EasingFunction>
+                                                            <PowerEase Power="2"/>
+                                                        </EasingColorKeyFrame.EasingFunction>
+                                                    </EasingColorKeyFrame>
+                                                </ColorAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <Storyboard>
+                                                <ColorAnimationUsingKeyFrames Storyboard.TargetName="headerBorder"
+                                                                              Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+                                                    <EasingColorKeyFrame KeyTime="0:0:0.0"
+                                                                         Value="{StaticResource Border.HeaderClickedColor}" />
+                                                </ColorAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                                <ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </Border>
                         </ControlTemplate>
                     </Setter.Value>
-                </Setter>-->
+                </Setter>
             </Style>
 
             <Style x:Key="MyContainerStyle" 
