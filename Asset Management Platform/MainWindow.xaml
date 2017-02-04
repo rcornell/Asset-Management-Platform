@@ -259,7 +259,9 @@
 
                     <Button Content="Execute" Command="{Binding ExecuteOrder}" Grid.Row="4" Grid.Column="0"
                             Grid.ColumnSpan="2"
-                            VerticalAlignment="Center" IsEnabled="{Binding ExecuteButtonEnabled}" />
+                            VerticalAlignment="Center" 
+                            IsEnabled="{Binding ExecuteButtonEnabled}"
+                            Style="{StaticResource ExecuteButtonStyle}"/>
 
                     <!--<Border Grid.Row="4"
                         Grid.Column="0"
