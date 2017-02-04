@@ -570,18 +570,37 @@ namespace Asset_Management_Platform
         {
             ChartSubtitle = "All Positions";
             AllocationChartPositions = _portfolioManagementService.GetChartAllSecurities();
+            foreach (var sec in SecurityList)
+            {
+                    sec.Hidden = false;
+            }
         }
 
         private void ExecuteShowStocksOnly()
         {
             ChartSubtitle = "Stocks only";
-            AllocationChartPositions = _portfolioManagementService.GetChartStocksOnly();        
+            AllocationChartPositions = _portfolioManagementService.GetChartStocksOnly();
+
+            foreach (var sec in SecurityList)
+            {
+                if (sec is DisplayMutualFund)
+                    sec.Hidden = true;
+                else
+                    sec.Hidden = false;
+            }   
         }
 
         private void ExecuteShowFundsOnly()
         {
             ChartSubtitle = "Mutual Funds only";
             AllocationChartPositions = _portfolioManagementService.GetChartFundsOnly();
+            foreach (var sec in SecurityList)
+            {
+                if (sec is DisplayStock)
+                    sec.Hidden = true;
+                else
+                    sec.Hidden = false;
+            }
         }
 
         private void ExecuteUpdatePrices()

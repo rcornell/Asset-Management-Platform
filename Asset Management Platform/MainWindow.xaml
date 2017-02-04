@@ -361,7 +361,7 @@
         </StackPanel>
 
         <DataGrid x:Name="SecurityDataGrid"
-                  ItemsSource="{Binding DisplaySecurityCollectionView, 
+                  ItemsSource="{Binding SecurityList, 
                                 NotifyOnSourceUpdated=True, 
                                 UpdateSourceTrigger=PropertyChanged}"
                   Grid.Row="1"

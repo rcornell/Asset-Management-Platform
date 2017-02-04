@@ -31,8 +31,21 @@ namespace Asset_Management_Platform
             }
         }
 
+        private bool _hidden;
+        public bool Hidden
+        {
+            get { return _hidden; }
+            set
+            {
+                _hidden = value;
+                RaisePropertyChanged(() => Hidden);
+            }
+        }
+
+
         public DisplaySecurity(string ticker, string securityType)
         {
+            Hidden = false;
             Ticker = ticker;
         }
     }
