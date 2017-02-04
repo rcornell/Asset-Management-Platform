@@ -575,7 +575,7 @@ namespace Asset_Management_Platform
         private void ExecuteShowStocksOnly()
         {
             ChartSubtitle = "Stocks only";
-            AllocationChartPositions = _portfolioManagementService.GetChartStocksOnly();
+            AllocationChartPositions = _portfolioManagementService.GetChartStocksOnly();        
         }
 
         private void ExecuteShowFundsOnly()
