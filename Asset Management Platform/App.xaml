@@ -593,6 +593,7 @@
                 <Setter Property="Height" Value="20" />
                 <Setter Property="FontWeight" Value="Normal" />
                 <Setter Property="FontSize" Value="12" />
+                <Setter Property="Width" Value="Auto"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type DataGridColumnHeader}">
@@ -664,15 +665,6 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-
-            <!--Currently Unused-->
-            <DataTemplate x:Key="GridCellTemplate">
-                <Grid Background="Pink"
-                                  HorizontalAlignment="Stretch"
-                                  VerticalAlignment="Center">
-                    <TextBlock Text="{Binding}"/>
-                </Grid>
-            </DataTemplate>
 
             <!--ComboBox Style-->
             <Style TargetType="{x:Type ComboBox}">

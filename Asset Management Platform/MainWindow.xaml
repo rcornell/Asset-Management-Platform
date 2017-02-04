@@ -316,9 +316,11 @@
             </Border>
             <DataGrid 
                     Name="LimitDataGrid"
-                    ItemsSource="{Binding LimitOrderCollectionView, Mode=OneWay, NotifyOnSourceUpdated=True}"
+                    Margin="0,2,0,0"
+                    DataContext="{Binding Main, Source={StaticResource Locator}}"
+                    ItemsSource="{Binding LimitOrderList, Mode=OneWay, NotifyOnSourceUpdated=True}"
                     MinHeight="100"
-                    AutoGenerateColumns="True"
+                    AutoGenerateColumns="False"
                     CanUserDeleteRows="False"
                     VerticalScrollBarVisibility="Visible"
                     CanUserAddRows="False"
@@ -329,13 +331,26 @@
                     Background="{StaticResource StockGridBackground}"
                     RowStyle="{StaticResource RowStyle}"
                     ColumnHeaderStyle="{StaticResource LimitOrderHeaderStyle}"
-                    CellStyle="{StaticResource CellStyle}">
-                <!--<DataGrid.Columns>
-                        <DataGridTextColumn Header="Limit Type" Width="Auto" Binding="{Binding TradeType, Mode=OneWay}" />
-                        <DataGridTextColumn Header="Quantity" Width="Auto" Binding="{Binding Shares, Mode=OneWay}" />
-                        <DataGridTextColumn Header="Ticker" Width="Auto" Binding="{Binding Ticker, Mode=OneWay}" />
-                        <DataGridTextColumn Header="Limit" Width="Auto" Binding="{Binding Limit, Mode=OneWay}" />
-                    </DataGrid.Columns>-->
+                    CellStyle="{StaticResource CellStyle}"
+                    ColumnWidth="Auto" 
+                    CanUserResizeColumns="False"
+                    CanUserSortColumns="True"
+                    MinColumnWidth="60">
+                <!--<DataGrid.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.Panel>
+                            <ItemsPanelTemplate>
+                                <DataGridRowsPresenter/>
+                            </ItemsPanelTemplate>
+                        </GroupStyle.Panel>
+                    </GroupStyle>
+                </DataGrid.GroupStyle>-->
+                <DataGrid.Columns>
+                        <DataGridTextColumn Header="Limit Type" Binding="{Binding TradeType, Mode=OneWay}" />
+                        <DataGridTextColumn Header="Quantity" Binding="{Binding Shares, Mode=OneWay}" />
+                        <DataGridTextColumn Header="Ticker" Binding="{Binding Ticker, Mode=OneWay}" />
+                        <DataGridTextColumn Header="Limit Price"  Binding="{Binding Limit, Mode=OneWay}" />
+                    </DataGrid.Columns>
             </DataGrid>
         </StackPanel>
 
@@ -359,6 +374,7 @@
                   ColumnHeaderStyle="{StaticResource HeaderStyle}"
                   AlternationCount="2"
                   Background="{StaticResource StockGridBackground}">
+
             <DataGrid.Columns>
                 <DataGridTextColumn Width="Auto" Header="Ticker" Binding="{Binding Ticker, Mode=OneWay}"
                                     TextOptions.TextFormattingMode="Display" />
