@@ -211,6 +211,21 @@ namespace Asset_Management_Platform
             }
         }
 
+        private LimitOrder _selectedLimitOrder;
+
+        public LimitOrder SelectedLimitOrder
+        {
+            get
+            {
+                return _selectedLimitOrder;
+            }
+            set
+            {
+                _selectedLimitOrder = value;
+                RaisePropertyChanged(() => SelectedLimitOrder);
+            }
+        }
+
 
         private string _chartSubtitle;
         public string ChartSubtitle {
@@ -448,6 +463,12 @@ namespace Asset_Management_Platform
         {
             get { return new RelayCommand(ExecuteShowFundsOnly); }
         }
+
+        public RelayCommand DeleteLimitOrder
+        {
+            get { return new RelayCommand(ExecuteDeleteLimitOrder); }
+        }
+
         public decimal _totalValue;
         public decimal TotalValue {
             get { return _totalValue; }
@@ -746,6 +767,12 @@ namespace Asset_Management_Platform
         public void ExecuteSavePortfolio()
         {
             _portfolioManagementService.UploadPortfolio();
+        }
+
+        public void ExecuteDeleteLimitOrder()
+        {
+            if (SelectedLimitOrder != null)
+                LimitOrderList.Remove(SelectedLimitOrder);
         }
 
         private void ExecuteCloseApplication()

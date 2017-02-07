@@ -338,6 +338,7 @@
                     RowStyle="{StaticResource RowStyle}"
                     ColumnHeaderStyle="{StaticResource LimitOrderHeaderStyle}"
                     CellStyle="{StaticResource CellStyleCentered}"
+                    SelectedItem="{Binding SelectedLimitOrder, Mode=OneWay, NotifyOnSourceUpdated=True}"
                     ColumnWidth="Auto" 
                     CanUserResizeColumns="False"
                     CanUserSortColumns="True"
@@ -357,6 +358,11 @@
                         <DataGridTextColumn Header="Ticker" Binding="{Binding Ticker, Mode=OneWay}" />
                         <DataGridTextColumn Header="Limit Price"  Binding="{Binding Limit, Mode=OneWay}" />
                     </DataGrid.Columns>
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Command="{Binding DeleteLimitOrder}" Header="Delete Limit Order"/>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
             </DataGrid>
         </StackPanel>
 
