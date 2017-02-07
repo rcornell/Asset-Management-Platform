@@ -541,6 +541,7 @@ namespace Asset_Management_Platform
             OrderTermsOK = false;
             LimitPrice = 0;
             TotalValue = 0;
+            AlertBoxMessage = "No Alerts. Ok to proceed.";
 
             _portfolioManagementService = portfolioService;
             Messenger.Default.Register<PortfolioMessage>(this, RefreshCollection);
@@ -773,6 +774,10 @@ namespace Asset_Management_Platform
         {
             if (SelectedLimitOrder != null)
                 LimitOrderList.Remove(SelectedLimitOrder);
+            else
+            {
+                AlertBoxMessage = "Notification: Please select a limit order to delete.";
+            }
         }
 
         private void ExecuteCloseApplication()

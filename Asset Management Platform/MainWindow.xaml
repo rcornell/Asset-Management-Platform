@@ -459,44 +459,44 @@
             </chart:PieChart.Series>
         </chart:PieChart>
 
-
-        <Grid Name="Screener"
-              Grid.Column="1"
-              Grid.ColumnSpan="1"
-              Grid.Row="3"
+        <StackPanel Grid.Column="1"
+                    Grid.ColumnSpan="1"
+                    Grid.Row="3">
+            <Grid Name="Screener"
+              
               VerticalAlignment="Stretch"
               MinHeight="75"
               Background="{StaticResource Screener.Background}">
-            <Grid.RowDefinitions>
-                <RowDefinition MinHeight="20" />
-                <RowDefinition MinHeight="20" />
-                <RowDefinition MinHeight="20" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <Grid.Resources>
-                <Style TargetType="TextBox">
-                    <Setter Property="Foreground" Value="Black" />
-                    <Setter Property="FontSize" Value="13" />
-                </Style>
-                <Style TargetType="TextBlock">
-                    <Setter Property="Foreground" Value="Black" />
-                    <Setter Property="FontSize" Value="13" />
-                </Style>
-            </Grid.Resources>
-            <TextBlock Grid.Row="0"
+                <Grid.RowDefinitions>
+                    <RowDefinition MinHeight="20" />
+                    <RowDefinition MinHeight="20" />
+                    <RowDefinition MinHeight="20" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.Resources>
+                    <Style TargetType="TextBox">
+                        <Setter Property="Foreground" Value="Black" />
+                        <Setter Property="FontSize" Value="13" />
+                    </Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Foreground" Value="Black" />
+                        <Setter Property="FontSize" Value="13" />
+                    </Style>
+                </Grid.Resources>
+                <TextBlock Grid.Row="0"
                        Grid.Column="0"
                        HorizontalAlignment="Left"
                        Text="Stock Screener"
                        FontSize="16"
-                       FontWeight="DemiBold" />
-            <StackPanel Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Center">
-                <TextBlock Text="Enter Ticker:" />
-                <TextBox
+                       FontWeight="Normal" />
+                <StackPanel Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Center">
+                    <TextBlock Text="Enter Ticker:" />
+                    <TextBox
                     Text="{Binding StockScreenerTicker, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=1000}"
                     VerticalAlignment="Center"
                     MinWidth="45"
@@ -506,49 +506,97 @@
                     BorderBrush="Gray"
                     IsTabStop="True" />
 
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2">
-                <TextBlock Text="{Binding ScreenerStock.Description, Mode=OneWay}" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0">
-                <TextBlock Text="Bid:  " />
-                <TextBlock Text="{Binding ScreenerStock.Bid, Mode=OneWay}" Width="Auto" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
-                <TextBlock Text="Last: " />
-                <TextBlock Text="{Binding ScreenerStock.LastPrice}"
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2">
+                    <TextBlock Text="{Binding ScreenerStock.Description, Mode=OneWay}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0">
+                    <TextBlock Text="Bid:  " />
+                    <TextBlock Text="{Binding ScreenerStock.Bid, Mode=OneWay}" Width="Auto" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
+                    <TextBlock Text="Last: " />
+                    <TextBlock Text="{Binding ScreenerStock.LastPrice}"
                            Width="Auto" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="1">
-                <TextBlock Text="Yield:  " />
-                <TextBlock Text="{Binding ScreenerStock.Yield}"
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="1">
+                    <TextBlock Text="Yield:  " />
+                    <TextBlock Text="{Binding ScreenerStock.Yield}"
                            Width="Auto" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="0">
-                <TextBlock Text="Ask: " />
-                <TextBlock Text="{Binding ScreenerStock.Ask, Mode=OneWay}" Width="Auto" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="1">
-                <TextBlock Text="P/E Ratio: " />
-                <TextBlock Text="{Binding ScreenerStock.PeRatio, Mode=OneWay}" Width="Auto" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="2">
-                <TextBlock Text="Market Cap: " />
-                <TextBlock Text="{Binding ScreenerStock.MarketCap, Mode=OneWay}" Width="Auto" />
-            </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="0">
+                    <TextBlock Text="Ask: " />
+                    <TextBlock Text="{Binding ScreenerStock.Ask, Mode=OneWay}" Width="Auto" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="1">
+                    <TextBlock Text="P/E Ratio: " />
+                    <TextBlock Text="{Binding ScreenerStock.PeRatio, Mode=OneWay}" Width="Auto" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="2">
+                    <TextBlock Text="Market Cap: " />
+                    <TextBlock Text="{Binding ScreenerStock.MarketCap, Mode=OneWay}" Width="Auto" />
+                </StackPanel>
 
-            <StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="0">
-                <TextBlock Text="Volume:  " />
-                <TextBlock Text="{Binding ScreenerStock.Volume, Mode=OneWay}" Width="Auto" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="1">
-                <TextBlock />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="2">
-                <TextBlock />
-            </StackPanel>
-        </Grid>
+                <StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="0">
+                    <TextBlock Text="Volume:  " />
+                    <TextBlock Text="{Binding ScreenerStock.Volume, Mode=OneWay}" Width="Auto" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="1">
+                    <TextBlock />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="2">
+                    <TextBlock />
+                </StackPanel>
+            </Grid>
+            <Border BorderBrush="{StaticResource Button.BackgroundBrush}"
+                    Background="{StaticResource Screener.Background}"
+                    BorderThickness="0,1,0,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch">
+                <TextBlock Text="{Binding AlertBoxMessage, Mode=OneWay, NotifyOnSourceUpdated=True}"
+                           Name="AlertBox"
+                           MinHeight="55"
+                           FontWeight="Normal"
+                           FontSize="16"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Foreground="Black">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Style.Triggers>
+                                <EventTrigger RoutedEvent="Binding.SourceUpdated" >
+                                    <BeginStoryboard>
+                                        <Storyboard Storyboard.TargetProperty="Foreground">
+                                            <ColorAnimation From="Black"
+                                                    To="Red"
+                                                    AutoReverse="True" 
+                                                    RepeatBehavior="3"
+                                                    Duration="0:0:2"/>
 
-        
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                    <!--<TextBlock.Triggers>
+                        <EventTrigger RoutedEvent="Binding.SourceUpdated" >
+                            <BeginStoryboard>
+                                <Storyboard Storyboard.TargetName="AlertBox"
+                                            Storyboard.TargetProperty="Foreground">
+                                    <ColorAnimation From="Black"
+                                                    To="Red"
+                                                    AutoReverse="True" 
+                                                    RepeatBehavior="3"
+                                                    Duration="0:0:2"/>
+                                    
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </TextBlock.Triggers>-->
+                </TextBlock>
+            </Border>
+        </StackPanel>
+
     </Grid>
 </Window>
