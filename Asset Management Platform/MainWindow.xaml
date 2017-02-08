@@ -257,55 +257,16 @@
                              VerticalAlignment="Center"
                              IsTabStop="False" />
 
-                    <Button Content="Execute" Command="{Binding ExecuteOrder}" Grid.Row="4" Grid.Column="0"
+                <Button Content="Execute" Command="{Binding ExecuteOrder}" 
+                            Grid.Row="4" 
+                            Grid.Column="0"
                             Grid.ColumnSpan="2"
                             VerticalAlignment="Center" 
                             IsEnabled="{Binding ExecuteButtonEnabled}"
                             Style="{StaticResource ExecuteButtonStyle}"/>
-
-                    <!--<Border Grid.Row="4"
-                        Grid.Column="0"
-                        Grid.ColumnSpan="4"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center">
-                    <TextBlock Text="{Binding AlertBoxMessage, Mode=OneWay, NotifyOnSourceUpdated=True}"
-                               Name="AlertBox"
-                               Background="Azure"
-                               FontSize="12"
-                               Foreground="Red"
-                               TextWrapping="Wrap">
-                        <TextBlock.Style>
-                            <Style TargetType="{x:Type TextBlock}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding AlertBoxVisible, NotifyOnSourceUpdated=True}"
-                                                 Value="True">
-                                        <Setter Property="Visibility" Value="Visible" />
-                                        <DataTrigger.EnterActions>
-                                            <BeginStoryboard>
-                                                <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetProperty="(TextBlock.Opacity)"
-                                                                     From="0"
-                                                                     To="1"
-                                                                     Duration="0:0:0.5" />
-
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </DataTrigger.EnterActions>
-                                    </DataTrigger>
-
-                                    <DataTrigger Binding="{Binding AlertBoxVisible, NotifyOnSourceUpdated=True}"
-                                                 Value="False">
-                                        <Setter Property="Visibility" Value="Hidden" />
-                                    </DataTrigger>
-
-                                </Style.Triggers>
-                            </Style>
-                        </TextBlock.Style>
-                    </TextBlock>
-                </Border>-->
-                </Grid>
+            </Grid>
         </StackPanel>
-        
+
         <StackPanel Name="LimitOrder"
                     MinWidth="250"
                     Orientation="Vertical"
@@ -317,19 +278,9 @@
                         BorderBrush="{StaticResource Button.BackgroundBrush}"
                         VerticalAlignment="Bottom"
                     HorizontalAlignment="Center">
-                <StackPanel Orientation="Horizontal" 
-                            HorizontalAlignment="Stretch">
-                    <Button Content="Delete" 
-                            HorizontalAlignment="Left"
-                            Command="{Binding DeleteLimitOrder}"
-                            Visibility="{Binding LimitOrderIsSelected, Converter={StaticResource BoolToVisibility}, Mode=OneWay, NotifyOnSourceUpdated=True}">
-                        
-                    </Button>
-                    <TextBlock Text="Active Limit Orders"
+                <TextBlock Text="Active Limit Orders"
                                HorizontalAlignment="Center"
                                FontSize="18" />
-                </StackPanel>
-                
             </Border>
             <DataGrid 
                     Name="LimitDataGrid"
@@ -367,6 +318,9 @@
                     </ContextMenu>
                 </DataGrid.ContextMenu>
             </DataGrid>
+            <Button Content="Delete Limit order"                            
+                    Command="{Binding DeleteLimitOrder}"
+                    IsEnabled="{Binding LimitOrderIsSelected}"/>
         </StackPanel>
 
         <DataGrid x:Name="SecurityDataGrid"
@@ -468,7 +422,7 @@
             <Grid Name="Screener"
               
               VerticalAlignment="Stretch"
-              MinHeight="75"
+              MinHeight="90"
               Background="{StaticResource Screener.Background}">
                 <Grid.RowDefinitions>
                     <RowDefinition MinHeight="20" />
@@ -558,7 +512,7 @@
                     VerticalAlignment="Stretch">
                 <TextBlock Text="{Binding AlertBoxMessage, NotifyOnTargetUpdated=True}"
                            Name="AlertBox"
-                           MinHeight="55"
+                           MinHeight="65"
                            FontWeight="Normal"
                            FontSize="16"
                            HorizontalAlignment="Center"
