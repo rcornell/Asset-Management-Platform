@@ -556,7 +556,7 @@ namespace Asset_Management_Platform
             OrderTermsOK = false;
             LimitPrice = 0;
             TotalValue = 0;
-            AlertBoxMessage = "No Alerts. Ok to proceed.";
+            AlertBoxMessage = "";
             LimitOrderIsSelected = false;
 
             _portfolioManagementService = portfolioService;

@@ -335,34 +335,26 @@
                     Name="LimitDataGrid"
                     Margin="0,2,0,0"
                     DataContext="{Binding Main, Source={StaticResource Locator}}"
-                    ItemsSource="{Binding LimitOrderList, Mode=OneWay, NotifyOnSourceUpdated=True}"
+                    ItemsSource="{Binding LimitOrderList, Mode=OneWay}"
                     MinHeight="100"
                     AutoGenerateColumns="False"
                     CanUserDeleteRows="False"
                     VerticalScrollBarVisibility="Visible"
                     CanUserAddRows="False"
-                    AlternationCount="2"
+                    AlternationCount="2"                
                     AlternatingRowBackground="{StaticResource Row.AlternatingRowBrush}"
+                    SelectionMode="Single"
                     RowHeaderWidth="0"
                     BorderThickness="0"
                     Background="{StaticResource StockGridBackground}"
                     RowStyle="{StaticResource RowStyle}"
                     ColumnHeaderStyle="{StaticResource LimitOrderHeaderStyle}"
                     CellStyle="{StaticResource CellStyleCentered}"
-                    SelectedItem="{Binding SelectedLimitOrder, Mode=OneWay, NotifyOnSourceUpdated=True}"
+                    SelectedItem="{Binding SelectedLimitOrder, Mode=OneWayToSource, NotifyOnSourceUpdated=True}"
                     ColumnWidth="Auto" 
                     CanUserResizeColumns="False"
                     CanUserSortColumns="True"
                     MinColumnWidth="60">
-                <!--<DataGrid.GroupStyle>
-                    <GroupStyle>
-                        <GroupStyle.Panel>
-                            <ItemsPanelTemplate>
-                                <DataGridRowsPresenter/>
-                            </ItemsPanelTemplate>
-                        </GroupStyle.Panel>
-                    </GroupStyle>
-                </DataGrid.GroupStyle>-->
                 <DataGrid.Columns>
                         <DataGridTextColumn Header="Limit Type" Binding="{Binding TradeType, Mode=OneWay}" />
                         <DataGridTextColumn Header="Quantity" Binding="{Binding Shares, Mode=OneWay}" />
@@ -564,7 +556,7 @@
                     BorderThickness="0,1,0,0"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch">
-                <TextBlock Text="{Binding AlertBoxMessage, Mode=OneWay, NotifyOnSourceUpdated=True}"
+                <TextBlock Text="{Binding AlertBoxMessage, NotifyOnTargetUpdated=True}"
                            Name="AlertBox"
                            MinHeight="55"
                            FontWeight="Normal"
@@ -575,15 +567,18 @@
                     <TextBlock.Style>
                         <Style TargetType="{x:Type TextBlock}">
                             <Style.Triggers>
-                                <EventTrigger RoutedEvent="Binding.SourceUpdated" >
+                                <EventTrigger RoutedEvent="Binding.TargetUpdated" >
                                     <BeginStoryboard>
-                                        <Storyboard Storyboard.TargetProperty="Foreground">
-                                            <ColorAnimation From="Black"
-                                                    To="Red"
-                                                    AutoReverse="True" 
-                                                    RepeatBehavior="3"
-                                                    Duration="0:0:2"/>
-
+                                        <Storyboard Storyboard.TargetProperty="Foreground.Color">
+                                            <ColorAnimation From="Transparent"
+                                                    To="Black"
+                                                    AutoReverse="True"                                                             
+                                                    RepeatBehavior="2x"
+                                                    Duration="0:0:0.5"/>
+                                            <ColorAnimation From="Transparent"
+                                                    To="Black"
+                                                    BeginTime="0:0:2.0"
+                                                    Duration="0:0:0.5"/>
                                         </Storyboard>
                                     </BeginStoryboard>
                                 </EventTrigger>
