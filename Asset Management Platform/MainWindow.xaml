@@ -88,7 +88,7 @@
                           VerticalContentAlignment="Center" VerticalAlignment="Center" />
 
                 <TextBlock Text="Security Type:" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" />
-                <ComboBox ItemsSource="{Binding SecurityTypes}" SelectedItem="{Binding SelectedSecurityType}"
+                <ComboBox ItemsSource="{Binding SecurityTypes}" SelectedItem="{Binding SelectedSecurityType, Mode=TwoWay}"
                           Height="Auto"
                           Width="100" Margin="3" Grid.Row="1" Grid.Column="1" VerticalContentAlignment="Center"
                           VerticalAlignment="Center" />
@@ -384,14 +384,14 @@
                 <StackPanel Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Center">
                     <TextBlock Text="Enter Ticker:" />
                     <TextBox
-                    Text="{Binding StockScreenerTicker, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=1000}"
-                    VerticalAlignment="Center"
-                    MinWidth="45"
-                    CaretBrush="Gray"
-                    BorderThickness="0,0,0,1"
-                    Background="Transparent"
-                    BorderBrush="Gray"
-                    IsTabStop="True" />
+                        Text="{Binding StockScreenerTicker, Mode=TwoWay, Delay=1000}"
+                        VerticalAlignment="Center"
+                        MinWidth="45"
+                        CaretBrush="Gray"
+                        BorderThickness="0,0,0,1"
+                        Background="Transparent"
+                        BorderBrush="Gray"
+                        IsTabStop="True" />
 
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2">

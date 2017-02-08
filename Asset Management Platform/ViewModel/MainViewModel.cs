@@ -430,8 +430,11 @@ namespace Asset_Management_Platform
             get { return _selectedDisplaySecurity; }
             set { _selectedDisplaySecurity = value;
                 RaisePropertyChanged(() => SelectedDisplaySecurity);
-                if(_selectedDisplaySecurity != null)
+                if (_selectedDisplaySecurity != null)
+                {
                     ExecuteScreenerPreview(_selectedDisplaySecurity.Ticker);
+                    PopulateSelectedSecurityTerms();
+                }
             }
         }
 
@@ -772,6 +775,19 @@ namespace Asset_Management_Platform
             var limitOrders = _portfolioManagementService.GetLimitOrders();
             LimitOrderCollectionView = new ListCollectionView(limitOrders);
             LimitOrderList = new ObservableCollection<LimitOrder>(limitOrders);
+        }
+
+        private void PopulateSelectedSecurityTerms()
+        {
+            OrderTickerText = _selectedDisplaySecurity.Ticker;
+            if (_selectedDisplaySecurity is DisplayStock)
+            {
+                SelectedSecurityType = SecurityTypes[0];
+            }
+            else
+            {
+                SelectedSecurityType = SecurityTypes[1];
+            }
         }
 
         public void ExecuteDeletePortfolio()
