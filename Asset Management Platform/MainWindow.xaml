@@ -58,14 +58,14 @@
                     Grid.RowSpan="3"
                     MinWidth="250">
             <Border BorderBrush="{StaticResource Button.BackgroundBrush}"
-                    BorderThickness="0,0,0,1">
+                    BorderThickness="0,0,0,1"
+                    Margin="2,0">
                 <TextBlock Text="Trade Instructions"
                            HorizontalAlignment="Center"
                            FontSize="18" />
             </Border>
-
             <Grid Name="TradeTermsStackPanel"
-                  Margin="2,0">
+                  Margin="2,3,2,0">
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition />
@@ -88,7 +88,8 @@
                           VerticalContentAlignment="Center" VerticalAlignment="Center" />
 
                 <TextBlock Text="Security Type:" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" />
-                <ComboBox ItemsSource="{Binding SecurityTypes}" SelectedItem="{Binding SelectedSecurityType, Mode=TwoWay}"
+                <ComboBox ItemsSource="{Binding SecurityTypes}"
+                          SelectedItem="{Binding SelectedSecurityType, Mode=TwoWay}"
                           Height="Auto"
                           Width="100" Margin="3" Grid.Row="1" Grid.Column="1" VerticalContentAlignment="Center"
                           VerticalAlignment="Center" />
@@ -117,21 +118,20 @@
                 <TextBox Text="{Binding OrderShareQuantity, Mode=TwoWay}" Grid.Row="6" Grid.Column="1" Width="100"
                          Height="20" Margin="3" VerticalAlignment="Center" />
 
-                <Button Name="PreviewOrderButton" 
+                <Button Name="PreviewOrderButton"
                         Grid.Column="0"
                         Grid.ColumnSpan="2"
                         Grid.Row="7"
                         MinHeight="20"
-                        Content="{Binding PreviewButtonText, NotifyOnSourceUpdated=True}"  
-                        Command="{Binding PreviewOrder}"                        
-                        VerticalAlignment="Center">
-                </Button>
+                        Content="{Binding PreviewButtonText, NotifyOnSourceUpdated=True}"
+                        Command="{Binding PreviewOrder}"
+                        VerticalAlignment="Center" />
 
             </Grid>
             <StackPanel Name="TradePreviewStackPanel"
-                    Orientation="Vertical"                    
-                    MinWidth="250"
-                    Margin="2,20,2,0">
+                        Orientation="Vertical"
+                        MinWidth="250"
+                        Margin="2,20,2,0">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
@@ -192,65 +192,68 @@
                              VerticalAlignment="Center"
                              IsTabStop="False" />
 
-                    <Button Content="Execute" Command="{Binding ExecuteOrder}" 
-                            Grid.Row="4" 
+                    <Button Content="Execute" Command="{Binding ExecuteOrder}"
+                            Grid.Row="4"
                             Grid.Column="0"
                             Grid.ColumnSpan="2"
-                            VerticalAlignment="Center" 
+                            VerticalAlignment="Center"
                             IsEnabled="{Binding ExecuteButtonEnabled}"
-                            Style="{StaticResource ExecuteButtonStyle}"/>
+                            Style="{StaticResource ExecuteButtonStyle}" />
                 </Grid>
             </StackPanel>
             <StackPanel Name="LimitOrder"
-                    MinWidth="250"
-                    Orientation="Vertical"
-                    Margin="2,20,2,0">
+                        MinWidth="250"
+                        Orientation="Vertical"
+                        Margin="2,20,0,0">
                 <Border BorderThickness="0,0,0,1"
                         BorderBrush="{StaticResource Button.BackgroundBrush}"
                         VerticalAlignment="Bottom"
-                    HorizontalAlignment="Center">
+                        HorizontalAlignment="Stretch"
+                        Margin="0,0,2,0">
                     <TextBlock Text="Active Limit Orders"
                                HorizontalAlignment="Center"
                                FontSize="18" />
                 </Border>
-                <DataGrid  Name="LimitDataGrid"
-                            Margin="0,2,0,0"
-                            DataContext="{Binding Main, Source={StaticResource Locator}}"
-                            ItemsSource="{Binding LimitOrderList, Mode=OneWay}"
-                            MinHeight="115"
-                            AutoGenerateColumns="False"
-                            CanUserDeleteRows="False"
-                            VerticalScrollBarVisibility="Visible"
-                            CanUserAddRows="False"
-                            AlternationCount="2"                
-                            AlternatingRowBackground="{StaticResource Row.AlternatingRowBrush}"
-                            SelectionMode="Single"
-                            RowHeaderWidth="0"
-                            BorderThickness="0"
-                            Background="{StaticResource StockGridBackground}"
-                            RowStyle="{StaticResource RowStyle}"
-                            ColumnHeaderStyle="{StaticResource LimitOrderHeaderStyle}"
-                            CellStyle="{StaticResource CellStyleCentered}"
-                            SelectedItem="{Binding SelectedLimitOrder, Mode=OneWayToSource, NotifyOnSourceUpdated=True}"
-                            ColumnWidth="Auto" 
-                            CanUserResizeColumns="False"
-                            CanUserSortColumns="True"
-                            MinColumnWidth="60">
+                <DataGrid Name="LimitDataGrid"
+                          Margin="0,3,0,0"
+                          DataContext="{Binding Main, Source={StaticResource Locator}}"
+                          ItemsSource="{Binding LimitOrderList, Mode=OneWay}"
+                          MinHeight="120"
+                          AutoGenerateColumns="False"
+                          CanUserDeleteRows="False"
+                          VerticalScrollBarVisibility="Visible"
+                          CanUserAddRows="False"
+                          AlternationCount="2"
+                          AlternatingRowBackground="{StaticResource Row.AlternatingRowBrush}"
+                          SelectionMode="Single"
+                          RowHeaderWidth="0"
+                          BorderThickness="0"
+                          Background="{StaticResource StockGridBackground}"
+                          RowStyle="{StaticResource RowStyle}"
+                          ColumnHeaderStyle="{StaticResource LimitOrderHeaderStyle}"
+                          CellStyle="{StaticResource CellStyleCentered}"
+                          SelectedItem="{Binding SelectedLimitOrder, Mode=OneWayToSource, NotifyOnSourceUpdated=True}"
+                          ColumnWidth="Auto"
+                          CanUserResizeColumns="False"
+                          CanUserSortColumns="True"
+                          MinColumnWidth="60">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Limit Type" Binding="{Binding TradeType, Mode=OneWay}" />
                         <DataGridTextColumn Header="Quantity" Binding="{Binding Shares, Mode=OneWay}" />
                         <DataGridTextColumn Header="Ticker" Binding="{Binding Ticker, Mode=OneWay}" />
-                        <DataGridTextColumn Header="Limit Price"  Binding="{Binding Limit, Mode=OneWay}" />
+                        <DataGridTextColumn Header="Limit Price" Binding="{Binding Limit, Mode=OneWay}" />
                     </DataGrid.Columns>
                     <DataGrid.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Command="{Binding DeleteLimitOrder}" Header="Delete Limit Order"/>
+                            <MenuItem Command="{Binding DeleteLimitOrder}" Header="Delete Limit Order" />
                         </ContextMenu>
                     </DataGrid.ContextMenu>
                 </DataGrid>
-                <Button Content="Delete Limit order"                            
-                    Command="{Binding DeleteLimitOrder}"
-                    IsEnabled="{Binding LimitOrderIsSelected}"/>
+                <Button Content="Delete Limit order"
+                        Command="{Binding DeleteLimitOrder}"
+                        IsEnabled="{Binding LimitOrderIsSelected}"
+                        VerticalAlignment="Bottom"
+                        Margin="0,0,2,0" />
             </StackPanel>
         </StackPanel>
         <DataGrid x:Name="SecurityDataGrid"
@@ -350,10 +353,10 @@
                     Grid.ColumnSpan="1"
                     Grid.Row="3">
             <Grid Name="Screener"
-              
-              VerticalAlignment="Stretch"
-              MinHeight="50"
-              Background="{StaticResource Screener.Background}">
+
+                  VerticalAlignment="Stretch"
+                  MinHeight="50"
+                  Background="{StaticResource Screener.Background}">
                 <Grid.RowDefinitions>
                     <RowDefinition MinHeight="20" />
                     <RowDefinition MinHeight="20" />
@@ -376,11 +379,11 @@
                     </Style>
                 </Grid.Resources>
                 <TextBlock Grid.Row="0"
-                       Grid.Column="0"
-                       HorizontalAlignment="Left"
-                       Text="Stock Screener"
-                       FontSize="16"
-                       FontWeight="Normal" />
+                           Grid.Column="0"
+                           HorizontalAlignment="Left"
+                           Text="Stock Screener"
+                           FontSize="16"
+                           FontWeight="Normal" />
                 <StackPanel Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Center">
                     <TextBlock Text="Enter Ticker:" />
                     <TextBox
@@ -404,12 +407,12 @@
                 <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
                     <TextBlock Text="Last: " />
                     <TextBlock Text="{Binding ScreenerStock.LastPrice}"
-                           Width="Auto" />
+                               Width="Auto" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Column="3" Grid.Row="1">
                     <TextBlock Text="Yield:  " />
                     <TextBlock Text="{Binding ScreenerStock.Yield}"
-                           Width="Auto" />
+                               Width="Auto" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="0">
                     <TextBlock Text="Ask: " />
@@ -451,18 +454,18 @@
                     <TextBlock.Style>
                         <Style TargetType="{x:Type TextBlock}">
                             <Style.Triggers>
-                                <EventTrigger RoutedEvent="Binding.TargetUpdated" >
+                                <EventTrigger RoutedEvent="Binding.TargetUpdated">
                                     <BeginStoryboard>
                                         <Storyboard Storyboard.TargetProperty="Foreground.Color">
                                             <ColorAnimation From="Transparent"
-                                                    To="Black"
-                                                    AutoReverse="True"                                                             
-                                                    RepeatBehavior="2x"
-                                                    Duration="0:0:0.5"/>
+                                                            To="Black"
+                                                            AutoReverse="True"
+                                                            RepeatBehavior="2x"
+                                                            Duration="0:0:0.5" />
                                             <ColorAnimation From="Transparent"
-                                                    To="Black"
-                                                    BeginTime="0:0:2.0"
-                                                    Duration="0:0:0.5"/>
+                                                            To="Black"
+                                                            BeginTime="0:0:2.0"
+                                                            Duration="0:0:0.5" />
                                         </Storyboard>
                                     </BeginStoryboard>
                                 </EventTrigger>
