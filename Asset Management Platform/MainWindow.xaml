@@ -315,10 +315,21 @@
                     VerticalAlignment="Center">
             <Border BorderThickness="0,0,0,1"
                         BorderBrush="{StaticResource Button.BackgroundBrush}"
-                        VerticalAlignment="Bottom">
-                <TextBlock Text="Active Limit Orders"
+                        VerticalAlignment="Bottom"
+                    HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal" 
+                            HorizontalAlignment="Stretch">
+                    <Button Content="Delete" 
+                            HorizontalAlignment="Left"
+                            Command="{Binding DeleteLimitOrder}"
+                            Visibility="{Binding LimitOrderIsSelected, Converter={StaticResource BoolToVisibility}, Mode=OneWay, NotifyOnSourceUpdated=True}">
+                        
+                    </Button>
+                    <TextBlock Text="Active Limit Orders"
                                HorizontalAlignment="Center"
                                FontSize="18" />
+                </StackPanel>
+                
             </Border>
             <DataGrid 
                     Name="LimitDataGrid"

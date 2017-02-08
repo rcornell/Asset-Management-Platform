@@ -23,7 +23,8 @@ namespace Asset_Management_Platform.Converters
         {
             if (value is Visibility && (Visibility)value == Visibility.Hidden)
                 return false;
-            return true;
+            else
+                return true;
         }
     }
 }

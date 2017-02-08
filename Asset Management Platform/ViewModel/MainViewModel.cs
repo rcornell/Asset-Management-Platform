@@ -156,6 +156,17 @@ namespace Asset_Management_Platform
             }
         }
 
+        private bool _limitOrderIsSelected;
+        public bool LimitOrderIsSelected
+        {
+            get { return _limitOrderIsSelected; }
+            set
+            {
+                _limitOrderIsSelected = value;
+                RaisePropertyChanged(() => LimitOrderIsSelected);
+            }
+        }
+
         private ObservableCollection<string> _tradeDurationStrings;
         public ObservableCollection<string> TradeDurationStrings
         {
@@ -222,6 +233,10 @@ namespace Asset_Management_Platform
             set
             {
                 _selectedLimitOrder = value;
+                if (_selectedLimitOrder != null)
+                    LimitOrderIsSelected = true;
+                else
+                    LimitOrderIsSelected = false;
                 RaisePropertyChanged(() => SelectedLimitOrder);
             }
         }
@@ -542,6 +557,7 @@ namespace Asset_Management_Platform
             LimitPrice = 0;
             TotalValue = 0;
             AlertBoxMessage = "No Alerts. Ok to proceed.";
+            LimitOrderIsSelected = false;
 
             _portfolioManagementService = portfolioService;
             Messenger.Default.Register<PortfolioMessage>(this, RefreshCollection);
@@ -773,7 +789,10 @@ namespace Asset_Management_Platform
         public void ExecuteDeleteLimitOrder()
         {
             if (SelectedLimitOrder != null)
+            {
                 LimitOrderList.Remove(SelectedLimitOrder);
+                SelectedLimitOrder = null;
+            }                
             else
             {
                 AlertBoxMessage = "Notification: Please select a limit order to delete.";
