@@ -114,6 +114,7 @@
                 <Setter Property="SnapsToDevicePixels" Value="True" />
                 <Setter Property="BorderThickness" Value="0" />
                 <Setter Property="FontWeight" Value="Normal"/>
+                <Setter Property="Margin" Value="2,0,2,0"/>
                 <Setter Property="BorderBrush" Value="{StaticResource Button.BorderBrush}" />
                 <Setter Property="Template">
                     <Setter.Value>
@@ -122,12 +123,7 @@
                                     Background="{StaticResource Button.BackgroundBrush}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
-                                    Padding="5,2,5,2"
-                                    RenderTransformOrigin="0.5,0.5"
-                                    >
-                                <Border.RenderTransform>
-                                    <ScaleTransform x:Name="Button_ScaleTransform" />
-                                </Border.RenderTransform>
+                                    Padding="5,2,5,2">
                                 <VisualStateManager.VisualStateGroups>
                                     <VisualStateGroup>
                                         <VisualState x:Name="Normal" />
@@ -195,14 +191,14 @@
                 <Setter Property="BorderThickness" Value="0" />
                 <Setter Property="FontWeight" Value="Normal"/>
                 <Setter Property="BorderBrush" Value="{StaticResource Button.BorderBrush}" />
+                <Setter Property="Margin" Value="2,0,2,0"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Border x:Name="ExecuteButton_Border"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
-                                    Padding="5,2,5,2"
-                                    RenderTransformOrigin="0.5,0.5">
+                                    Padding="5,2,5,2">
                                 <Border.Background>
                                     <LinearGradientBrush x:Name="ExecuteButtonBrush" StartPoint="0,0.5" EndPoint="1,0.5">
                                         <GradientStop x:Name="OffsetOne" Offset="0" Color="{StaticResource Button.MouseOverBottomColor}"/>
@@ -210,14 +206,6 @@
                                         <GradientStop x:Name="OffsetThree" Offset="0" Color="{StaticResource Button.BackgroundBottom}" />
                                     </LinearGradientBrush>
                                 </Border.Background>
-                                <Border.CacheMode>
-                                    <BitmapCache RenderAtScale="2.0"/>
-                                </Border.CacheMode>
-                                <Border.RenderTransform>
-                                    <TransformGroup>
-                                        <ScaleTransform x:Name="Button_ScaleTransform" />
-                                    </TransformGroup>
-                                </Border.RenderTransform>
                                 <VisualStateManager.VisualStateGroups>
                                     <VisualStateGroup>
                                         <VisualState x:Name="Normal" />

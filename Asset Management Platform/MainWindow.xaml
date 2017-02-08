@@ -55,16 +55,17 @@
                     Orientation="Vertical"
                     Grid.Row="1"
                     Grid.Column="0"
-                    Margin="2,0"
+                    Grid.RowSpan="3"
                     MinWidth="250">
             <Border BorderBrush="{StaticResource Button.BackgroundBrush}"
                     BorderThickness="0,0,0,1">
-                <TextBlock Text="1) Trade Instructions"
+                <TextBlock Text="Trade Instructions"
                            HorizontalAlignment="Center"
                            FontSize="18" />
             </Border>
-            
-            <Grid Name="TradeTermsStackPanel">
+
+            <Grid Name="TradeTermsStackPanel"
+                  Margin="2,0">
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition />
@@ -120,36 +121,18 @@
                         Grid.Column="0"
                         Grid.ColumnSpan="2"
                         Grid.Row="7"
+                        MinHeight="20"
                         Content="{Binding PreviewButtonText, NotifyOnSourceUpdated=True}"  
                         Command="{Binding PreviewOrder}"                        
                         VerticalAlignment="Center">
                 </Button>
 
             </Grid>
-            <!--<Border  HorizontalAlignment="Center"
-                     VerticalAlignment="Bottom"
-                     Margin="0,20,0,0"
-                     Background="{StaticResource Button.BackgroundBrush}"
-                     Visibility="{Binding OrderTermsOK, Converter={StaticResource BoolToVisibility}}">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Margin="2,0,2,0" Text="Order Terms OK" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <Viewbox Width="50" 
-                             Height="30">
-                        <ContentControl Content="{StaticResource CheckMark}" 
-                                    VerticalContentAlignment="Center" 
-                                    VerticalAlignment="Center"/>
-                    </Viewbox>
-                </StackPanel>
-            </Border>-->
-        </StackPanel>
-
-        <StackPanel Name="TradePreviewStackPanel"
-                    Orientation="Vertical"
-                    Grid.Column="0"
-                    Grid.Row="2"
+            <StackPanel Name="TradePreviewStackPanel"
+                    Orientation="Vertical"                    
                     MinWidth="250"
-                    Margin="2,0">
-            <Grid>
+                    Margin="2,20,2,0">
+                <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition />
@@ -168,7 +151,7 @@
                             BorderThickness="0,0,0,1"
                             BorderBrush="{StaticResource Button.BackgroundBrush}"
                             VerticalAlignment="Bottom">
-                        <TextBlock Text="2) Trade Preview"
+                        <TextBlock Text="Trade Preview"
                                    HorizontalAlignment="Center"
                                    FontSize="18" />
                     </Border>
@@ -187,54 +170,6 @@
                                  VerticalAlignment="Center"
                                  IsTabStop="False" />
                     </StackPanel>
-
-                    <!--<TextBlock Text="Ask:" 
-                           Grid.Row="2" 
-                           Grid.Column="0" 
-                           VerticalAlignment="Center" />
-                <TextBox Text="{Binding PreviewAsk, Mode=OneWay}" 
-                         Grid.Row="2" 
-                         Grid.Column="1"
-                         Margin="3" 
-                         VerticalAlignment="Center" 
-                         IsTabStop="False" />
-
-                <TextBlock Text="Bid:" 
-                           Grid.Row="3" 
-                           Grid.Column="0" 
-                           VerticalAlignment="Center" />
-                <TextBox Text="{Binding PreviewBid, Mode=OneWay}" 
-                         Grid.Row="3" 
-                         Grid.Column="1" 
-                         Margin="3" 
-                         VerticalAlignment="Center" 
-                         IsTabStop="False" />
-
-
-                <TextBlock Text="Ask Size:" 
-                           Grid.Row="4" 
-                           Grid.Column="0" 
-                           VerticalAlignment="Center" />
-                <TextBox Text="{Binding PreviewAskSize, Mode=OneWay}" 
-                         Grid.Row="4" 
-                         Grid.Column="1"
-                         Margin="3" 
-                         VerticalAlignment="Center" 
-                         IsTabStop="False" />
-
-
-                <TextBlock Text="Bid Size:" 
-                           Grid.Row="5" 
-                           Grid.Column="0" 
-                           VerticalAlignment="Center" />
-                <TextBox Text="{Binding PreviewBidSize, Mode=OneWay}" 
-                         Grid.Row="5" 
-                         Grid.Column="1" 
-                         Margin="3" 
-                         VerticalAlignment="Center" 
-                         IsTabStop="False" />-->
-
-
                     <TextBlock Text="Market Price:"
                                Grid.Row="2"
                                Grid.Column="0"
@@ -257,72 +192,67 @@
                              VerticalAlignment="Center"
                              IsTabStop="False" />
 
-                <Button Content="Execute" Command="{Binding ExecuteOrder}" 
+                    <Button Content="Execute" Command="{Binding ExecuteOrder}" 
                             Grid.Row="4" 
                             Grid.Column="0"
                             Grid.ColumnSpan="2"
                             VerticalAlignment="Center" 
                             IsEnabled="{Binding ExecuteButtonEnabled}"
                             Style="{StaticResource ExecuteButtonStyle}"/>
-            </Grid>
-        </StackPanel>
-
-        <StackPanel Name="LimitOrder"
+                </Grid>
+            </StackPanel>
+            <StackPanel Name="LimitOrder"
                     MinWidth="250"
                     Orientation="Vertical"
-                    Margin="2,0"
-                    Grid.Column="0"
-                    Grid.Row="3"
-                    VerticalAlignment="Center">
-            <Border BorderThickness="0,0,0,1"
+                    Margin="2,20,2,0">
+                <Border BorderThickness="0,0,0,1"
                         BorderBrush="{StaticResource Button.BackgroundBrush}"
                         VerticalAlignment="Bottom"
                     HorizontalAlignment="Center">
-                <TextBlock Text="Active Limit Orders"
+                    <TextBlock Text="Active Limit Orders"
                                HorizontalAlignment="Center"
                                FontSize="18" />
-            </Border>
-            <DataGrid 
-                    Name="LimitDataGrid"
-                    Margin="0,2,0,0"
-                    DataContext="{Binding Main, Source={StaticResource Locator}}"
-                    ItemsSource="{Binding LimitOrderList, Mode=OneWay}"
-                    MinHeight="100"
-                    AutoGenerateColumns="False"
-                    CanUserDeleteRows="False"
-                    VerticalScrollBarVisibility="Visible"
-                    CanUserAddRows="False"
-                    AlternationCount="2"                
-                    AlternatingRowBackground="{StaticResource Row.AlternatingRowBrush}"
-                    SelectionMode="Single"
-                    RowHeaderWidth="0"
-                    BorderThickness="0"
-                    Background="{StaticResource StockGridBackground}"
-                    RowStyle="{StaticResource RowStyle}"
-                    ColumnHeaderStyle="{StaticResource LimitOrderHeaderStyle}"
-                    CellStyle="{StaticResource CellStyleCentered}"
-                    SelectedItem="{Binding SelectedLimitOrder, Mode=OneWayToSource, NotifyOnSourceUpdated=True}"
-                    ColumnWidth="Auto" 
-                    CanUserResizeColumns="False"
-                    CanUserSortColumns="True"
-                    MinColumnWidth="60">
-                <DataGrid.Columns>
+                </Border>
+                <DataGrid  Name="LimitDataGrid"
+                            Margin="0,2,0,0"
+                            DataContext="{Binding Main, Source={StaticResource Locator}}"
+                            ItemsSource="{Binding LimitOrderList, Mode=OneWay}"
+                            MinHeight="115"
+                            AutoGenerateColumns="False"
+                            CanUserDeleteRows="False"
+                            VerticalScrollBarVisibility="Visible"
+                            CanUserAddRows="False"
+                            AlternationCount="2"                
+                            AlternatingRowBackground="{StaticResource Row.AlternatingRowBrush}"
+                            SelectionMode="Single"
+                            RowHeaderWidth="0"
+                            BorderThickness="0"
+                            Background="{StaticResource StockGridBackground}"
+                            RowStyle="{StaticResource RowStyle}"
+                            ColumnHeaderStyle="{StaticResource LimitOrderHeaderStyle}"
+                            CellStyle="{StaticResource CellStyleCentered}"
+                            SelectedItem="{Binding SelectedLimitOrder, Mode=OneWayToSource, NotifyOnSourceUpdated=True}"
+                            ColumnWidth="Auto" 
+                            CanUserResizeColumns="False"
+                            CanUserSortColumns="True"
+                            MinColumnWidth="60">
+                    <DataGrid.Columns>
                         <DataGridTextColumn Header="Limit Type" Binding="{Binding TradeType, Mode=OneWay}" />
                         <DataGridTextColumn Header="Quantity" Binding="{Binding Shares, Mode=OneWay}" />
                         <DataGridTextColumn Header="Ticker" Binding="{Binding Ticker, Mode=OneWay}" />
                         <DataGridTextColumn Header="Limit Price"  Binding="{Binding Limit, Mode=OneWay}" />
                     </DataGrid.Columns>
-                <DataGrid.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Command="{Binding DeleteLimitOrder}" Header="Delete Limit Order"/>
-                    </ContextMenu>
-                </DataGrid.ContextMenu>
-            </DataGrid>
-            <Button Content="Delete Limit order"                            
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Command="{Binding DeleteLimitOrder}" Header="Delete Limit Order"/>
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
+                </DataGrid>
+                <Button Content="Delete Limit order"                            
                     Command="{Binding DeleteLimitOrder}"
                     IsEnabled="{Binding LimitOrderIsSelected}"/>
+            </StackPanel>
         </StackPanel>
-
         <DataGrid x:Name="SecurityDataGrid"
                   ItemsSource="{Binding SecurityList, 
                                 NotifyOnSourceUpdated=True, 
@@ -422,7 +352,7 @@
             <Grid Name="Screener"
               
               VerticalAlignment="Stretch"
-              MinHeight="90"
+              MinHeight="50"
               Background="{StaticResource Screener.Background}">
                 <Grid.RowDefinitions>
                     <RowDefinition MinHeight="20" />
@@ -512,7 +442,7 @@
                     VerticalAlignment="Stretch">
                 <TextBlock Text="{Binding AlertBoxMessage, NotifyOnTargetUpdated=True}"
                            Name="AlertBox"
-                           MinHeight="65"
+                           MinHeight="15"
                            FontWeight="Normal"
                            FontSize="16"
                            HorizontalAlignment="Center"
