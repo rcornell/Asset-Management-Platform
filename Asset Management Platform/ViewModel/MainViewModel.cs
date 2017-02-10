@@ -334,6 +334,7 @@ namespace Asset_Management_Platform
                 _selectedSecurityType = value;
                 RaisePropertyChanged(() => SelectedSecurityType);
                 PreviewButtonText = "Preview Order";
+                AlertBoxMessage = "";
             }
         }
 
@@ -345,6 +346,7 @@ namespace Asset_Management_Platform
                 _selectedDurationType = value;
                 RaisePropertyChanged(() => SelectedDurationType);
                 PreviewButtonText = "Preview Order";
+                AlertBoxMessage = "";
             }
         }
 
@@ -358,11 +360,13 @@ namespace Asset_Management_Platform
                 if (_selectedTermType == "Limit" || _selectedTermType == "Stop Limit" || _selectedTermType == "Stop") {
                     LimitBoxActive = true;
                     PreviewButtonText = "Preview Order";
+                    AlertBoxMessage = "";
                 }
                 else
                 {
                     LimitBoxActive = false;
                     PreviewButtonText = "Preview Order";
+                    AlertBoxMessage = "";
                 }
                 _executeButtonEnabled = false;
             }
@@ -376,6 +380,7 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => SelectedTradeType);
                 _executeButtonEnabled = false;
                 PreviewButtonText = "Preview Order";
+                AlertBoxMessage = "";
             }
         }
 
@@ -387,6 +392,7 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => OrderTickerText);
                 _executeButtonEnabled = false;
                 PreviewButtonText = "Preview Order";
+                AlertBoxMessage = "";
             }
         }
 
@@ -399,6 +405,7 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => OrderShareQuantity);
                 _executeButtonEnabled = false;
                 PreviewButtonText = "Preview Order";
+                AlertBoxMessage = "";
             }
         }
 
@@ -707,7 +714,12 @@ namespace Asset_Management_Platform
             var tickerSecType = _portfolioManagementService.GetSecurityType(_orderTickerText, _selectedTradeType);
 
             if (tickerSecType == null)
+            {
+                var errorMessage = @"Your selected security type does not match the ticker's security type.";
+                Messenger.Default.Send(new TradeMessage(_orderTickerText,_orderShareQuantity, errorMessage));
                 return false;
+            }
+                
 
             if (_selectedSecurityType is Stock && tickerSecType is Stock)
                 secTypeMatch = true;
@@ -811,7 +823,8 @@ namespace Asset_Management_Platform
             }                
             else
             {
-                AlertBoxMessage = "Notification: Please select a limit order to delete.";
+                var errorMessage = @"Notification: Please select a limit order to delete.";
+                Messenger.Default.Send(new TradeMessage("X", 0, errorMessage));                
             }
         }
 

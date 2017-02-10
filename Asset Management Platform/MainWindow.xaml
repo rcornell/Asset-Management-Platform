@@ -218,7 +218,7 @@
                           Margin="0,3,0,0"
                           DataContext="{Binding Main, Source={StaticResource Locator}}"
                           ItemsSource="{Binding LimitOrderList, Mode=OneWay}"
-                          MinHeight="120"
+                          MinHeight="140"
                           AutoGenerateColumns="False"
                           CanUserDeleteRows="False"
                           VerticalScrollBarVisibility="Visible"
@@ -440,15 +440,18 @@
                     Background="{StaticResource Screener.Background}"
                     BorderThickness="0,1,0,0"
                     HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch">
+                    VerticalAlignment="Stretch"
+                   >
                 <TextBlock Text="{Binding AlertBoxMessage, NotifyOnTargetUpdated=True}"
                            Name="AlertBox"
-                           MinHeight="15"
+                           Width="{Binding ElementName=Screener, Path=ActualWidth}"
+                           MinHeight="30"
                            FontWeight="Normal"
-                           FontSize="16"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           Foreground="Black">
+                           FontSize="12"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Foreground="Black"
+                           TextWrapping="Wrap">
                     <TextBlock.Style>
                         <Style TargetType="{x:Type TextBlock}">
                             <Style.Triggers>

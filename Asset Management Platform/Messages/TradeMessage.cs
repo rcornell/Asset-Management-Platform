@@ -25,5 +25,12 @@ namespace Asset_Management_Platform.Messages
             Shares = shares;
             Message = string.Format(@"There is a problem with your order to buy {0} shares of {1}. Please make sure the terms are correct and that your selected security type (Stock or Mutual Fund) are correct.", shares, ticker);
         }
+
+        public TradeMessage(string ticker, int shares, string message)
+        {
+            Ticker = ticker;
+            Shares = shares;
+            Message = message;
+        }
     }
 }
