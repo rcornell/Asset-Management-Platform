@@ -106,6 +106,11 @@ namespace Asset_Management_Platform
             get { return string.Format(@"{0:0.0%}", Stock.PercentChange / 100); }
         }
 
+        public string DatePurchased
+        {
+            get { return _position.DatePurchased; }
+        }
+
         public DisplayStock(Position position, Stock stock)
             : base(position.Ticker, stock.SecurityType)
         {

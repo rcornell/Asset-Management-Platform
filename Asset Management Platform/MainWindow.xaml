@@ -300,10 +300,8 @@
                                     CellStyle="{StaticResource CellStyleRight}" />
                 <DataGridTextColumn Width="Auto" Header="Yield" Binding="{Binding Yield, Mode=OneWay}"
                                     CellStyle="{StaticResource CellStyleCentered}" />
-                <DataGridTextColumn Width="Auto" Header="P/E Ratio" Binding="{Binding PeRatio, Mode=OneWay}"
+                <DataGridTextColumn Width="Auto" Header="Date Purchased" Binding="{Binding DatePurchased, Mode=OneWay}"
                                     CellStyle="{StaticResource CellStyleCentered}" />
-                <DataGridTextColumn Width="Auto" Header="Volume" Binding="{Binding Volume, Mode=OneWay}"
-                                    CellStyle="{StaticResource CellStyleRight}" />
             </DataGrid.Columns>
         </DataGrid>
 

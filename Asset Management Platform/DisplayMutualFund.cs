@@ -87,6 +87,11 @@ namespace Asset_Management_Platform
             get { return string.Format(@"{0:0.0%}", (_fund.PercentChange / 100)); }
         }
 
+        public string DatePurchased
+        {
+            get { return _position.DatePurchased; }
+        }
+
         public DisplayMutualFund(Position position, MutualFund fund)
             : base(position.Ticker, fund.SecurityType)
         {
