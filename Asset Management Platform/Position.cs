@@ -10,8 +10,8 @@ namespace Asset_Management_Platform
     public class Position : ObservableObject
     {
 
-        private Stock _security;
-        public Stock Security
+        private Security _security;
+        public Security Security
         {
             get
             {
@@ -137,6 +137,17 @@ namespace Asset_Management_Platform
             get { return string.Format(@"{0:0.0%}", Security.PercentChange / 100); }
         }
 
+        private bool _hidden;
+        public bool Hidden
+        {
+            get { return _hidden; }
+            set
+            {
+                _hidden = value;
+                RaisePropertyChanged(() => Hidden);
+            }
+        }
+
         public Position(List<Taxlot> taxlots)
         {
             if (_taxlots == null)
@@ -159,7 +170,9 @@ namespace Asset_Management_Platform
             if (_taxlots != null)
                 Ticker = taxlot.Ticker;
 
-            _taxlots.Add(taxlot);
+            Taxlots.Add(taxlot);
+            Security = security;
+            
         }
 
         private string ComputeDatePurchased()

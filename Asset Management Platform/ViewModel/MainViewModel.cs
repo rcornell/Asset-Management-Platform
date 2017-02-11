@@ -588,9 +588,9 @@ namespace Asset_Management_Platform
         {
             ChartSubtitle = "All Positions";
             AllocationChartPositions = _portfolioManagementService.GetChartAllSecurities();
-            foreach (var sec in SecurityList)
+            foreach (var sec in Positions)
             {
-                    sec.Hidden = false;
+                sec.Hidden = false;
             }
         }
 
@@ -599,9 +599,9 @@ namespace Asset_Management_Platform
             ChartSubtitle = "Stocks only";
             AllocationChartPositions = _portfolioManagementService.GetChartStocksOnly();
 
-            foreach (var sec in SecurityList)
+            foreach (var sec in Positions)
             {
-                if (sec is DisplayMutualFund)
+                if (sec is MutualFund)
                     sec.Hidden = true;
                 else
                     sec.Hidden = false;
@@ -612,7 +612,7 @@ namespace Asset_Management_Platform
         {
             ChartSubtitle = "Mutual Funds only";
             AllocationChartPositions = _portfolioManagementService.GetChartFundsOnly();
-            foreach (var sec in SecurityList)
+            foreach (var sec in Positions)
             {
                 if (sec is DisplayStock)
                     sec.Hidden = true;
@@ -624,7 +624,8 @@ namespace Asset_Management_Platform
         private void ExecuteUpdatePrices()
         {
             _portfolioManagementService.TestLimitOrderMethods();
-            GetDisplaySecurities();
+            GetPositions();
+            GetTaxlots();
         }
 
         private void RefreshCollection(PortfolioMessage obj)
@@ -729,7 +730,8 @@ namespace Asset_Management_Platform
                 _portfolioManagementService.Buy(newTrade);
             else if (SelectedTradeType == "Sell")
                 _portfolioManagementService.Sell(newTrade);
-            GetDisplaySecurities();
+            GetPositions();
+            GetTaxlots();
             GetLimitOrders();
             ExecuteShowAllSecurities();
 
@@ -761,8 +763,8 @@ namespace Asset_Management_Platform
 
         private void PopulateSelectedSecurityTerms()
         {
-            OrderTickerText = _selectedDisplaySecurity.Ticker;
-            if (_selectedDisplaySecurity is DisplayStock)
+            OrderTickerText = _selectedPosition.Ticker;
+            if (_selectedPosition.Security is Stock)
             {
                 SelectedSecurityType = SecurityTypes[0];
             }
@@ -805,7 +807,8 @@ namespace Asset_Management_Platform
         public void ExecuteDeletePortfolio()
         {
             _portfolioManagementService.DeletePortfolio();
-            GetDisplaySecurities();
+            GetPositions();
+            GetTaxlots();
             ExecuteShowAllSecurities();
         }
 
