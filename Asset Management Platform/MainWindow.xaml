@@ -43,7 +43,7 @@
                     <Separator />
                     <MenuItem Header="_Exit" Command="{Binding CloseApplication}" />
                 </MenuItem>
-                <MenuItem Header="_Options">
+                <MenuItem Header="_Price Updates">
                     <MenuItem Header="Start Price Updates"/>
                     <MenuItem Header="Stop Price Updates"/>
                     <MenuItem Header="_Update Interval">
@@ -74,6 +74,7 @@
                            HorizontalAlignment="Center"
                            FontSize="18" />
             </Border>
+            
             <Grid Name="TradeTermsStackPanel"
                   Margin="2,3,2,0">
                 <Grid.RowDefinitions>
@@ -91,53 +92,114 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Text="Trade Type:" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" />
+                <TextBlock Text="Trade Type:" 
+                           Grid.Column="0" 
+                           Grid.Row="0" 
+                           VerticalAlignment="Center" />
                 <ComboBox ItemsSource="{Binding TradeTypeStrings}"
                           SelectedItem="{Binding SelectedTradeType, Mode=TwoWay}"
-                          Height="Auto" Width="100" Margin="3" Grid.Row="0" Grid.Column="1"
-                          VerticalContentAlignment="Center" VerticalAlignment="Center" />
+                          Height="Auto" 
+                          Width="100" 
+                          Margin="3" 
+                          Grid.Row="0" 
+                          Grid.Column="1"
+                          HorizontalAlignment="Right"
+                          VerticalContentAlignment="Center" 
+                          VerticalAlignment="Center" />
 
-                <TextBlock Text="Security Type:" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" />
+                <TextBlock Text="Security Type:" 
+                           Grid.Column="0" 
+                           Grid.Row="1" 
+                           VerticalAlignment="Center" />
                 <ComboBox ItemsSource="{Binding SecurityTypes}"
                           SelectedItem="{Binding SelectedSecurityType, Mode=TwoWay}"
                           Height="Auto"
-                          Width="100" Margin="3" Grid.Row="1" Grid.Column="1" VerticalContentAlignment="Center"
+                          Width="100" 
+                          Margin="3" 
+                          Grid.Row="1" 
+                          Grid.Column="1" 
+                          HorizontalAlignment="Right"
+                          VerticalContentAlignment="Center"
                           VerticalAlignment="Center" />
 
-                <TextBlock Text="Trade Terms:" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" />
-                <ComboBox ItemsSource="{Binding TradeTermStrings}" SelectedItem="{Binding SelectedTermType}"
+                <TextBlock Text="Trade Terms:" 
+                           Grid.Column="0" 
+                           Grid.Row="2" 
+                           VerticalAlignment="Center" />
+                <ComboBox ItemsSource="{Binding TradeTermStrings}" 
+                          SelectedItem="{Binding SelectedTermType}"
                           Height="Auto"
-                          Width="100" Margin="3" Grid.Row="2" Grid.Column="1" VerticalContentAlignment="Center"
+                          Width="100" 
+                          Margin="3" 
+                          Grid.Row="2" 
+                          Grid.Column="1" 
+                          HorizontalAlignment="Right"
+                          VerticalContentAlignment="Center"
                           VerticalAlignment="Center" />
 
-                <TextBlock Text="Duration:" Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" />
-                <ComboBox ItemsSource="{Binding TradeDurationStrings}" SelectedItem="{Binding SelectedDurationType}"
-                          Height="Auto" Width="100" Margin="3" Grid.Row="3" Grid.Column="1"
-                          VerticalContentAlignment="Center" VerticalAlignment="Center" />
+                <TextBlock Text="Duration:" 
+                           Grid.Column="0" Grid.Row="3" 
+                           VerticalAlignment="Center" />
+                <ComboBox ItemsSource="{Binding TradeDurationStrings}" 
+                          SelectedItem="{Binding SelectedDurationType}"
+                          Height="Auto" 
+                          Width="100" 
+                          Margin="3" 
+                          Grid.Row="3" 
+                          Grid.Column="1"
+                          HorizontalAlignment="Right"
+                          VerticalContentAlignment="Center" 
+                          VerticalAlignment="Center" />
 
-                <TextBlock Text="Limit/Stop:" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" />
-                <TextBox Text="{Binding LimitPrice, Mode=TwoWay}" Grid.Row="4" Grid.Column="1" Width="100" Height="20"
-                         Margin="3" VerticalAlignment="Center" IsEnabled="{Binding LimitBoxActive}" />
+                <TextBlock Text="Limit/Stop:" 
+                           Grid.Row="4" 
+                           Grid.Column="0" 
+                           VerticalAlignment="Center" />
+                <TextBox Text="{Binding LimitPrice, Mode=TwoWay}" 
+                         Grid.Row="4" 
+                         Grid.Column="1" 
+                         Width="100" 
+                         Height="20"
+                         Margin="3" 
+                         HorizontalAlignment="Right"
+                         VerticalAlignment="Center" 
+                         IsEnabled="{Binding LimitBoxActive}" />
 
-                <TextBlock Text="Ticker:" Grid.Column="0" Grid.Row="5" VerticalAlignment="Center" />
+                <TextBlock Text="Ticker:" 
+                           Grid.Column="0" 
+                           Grid.Row="5" 
+                           VerticalAlignment="Center" />
                 <TextBox Text="{Binding OrderTickerText, Mode=TwoWay}" Grid.Row="5" Grid.Column="1" Width="100"
                          Height="20"
-                         Margin="3" VerticalAlignment="Center" />
+                         Margin="3"
+                         HorizontalAlignment="Right"
+                         VerticalAlignment="Center" />
 
-                <TextBlock Text="Shares:" Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" />
-                <TextBox Text="{Binding OrderShareQuantity, Mode=TwoWay}" Grid.Row="6" Grid.Column="1" Width="100"
-                         Height="20" Margin="3" VerticalAlignment="Center" />
+                <TextBlock Text="Shares:" 
+                           Grid.Row="6" 
+                           Grid.Column="0" 
+                           VerticalAlignment="Center" />
+                <TextBox Text="{Binding OrderShareQuantity, Mode=TwoWay}" 
+                         Grid.Row="6" 
+                         Grid.Column="1" 
+                         Width="100"
+                         Height="20" 
+                         Margin="3"
+                         HorizontalAlignment="Right"
+                         VerticalAlignment="Center" />
 
                 <Button Name="PreviewOrderButton"
                         Grid.Column="0"
                         Grid.ColumnSpan="2"
                         Grid.Row="7"
                         MinHeight="20"
+                        Margin="3,3,3,0"
                         Content="{Binding PreviewButtonText, NotifyOnSourceUpdated=True}"
                         Command="{Binding PreviewOrder}"
                         VerticalAlignment="Center" />
 
             </Grid>
+            
             <StackPanel Name="TradePreviewStackPanel"
                         Orientation="Vertical"
                         MinWidth="250"
@@ -206,6 +268,7 @@
                             Grid.Row="4"
                             Grid.Column="0"
                             Grid.ColumnSpan="2"
+                            Margin="3,0,3,0"
                             VerticalAlignment="Center"
                             IsEnabled="{Binding ExecuteButtonEnabled}"
                             Style="{StaticResource ExecuteButtonStyle}" />
@@ -282,6 +345,7 @@
                   CanUserAddRows="False"
                   ColumnWidth="Auto"
                   MinWidth="500"
+                  RowHeaderWidth="0"
                   SelectedItem="{Binding SelectedDisplaySecurity, Mode=TwoWay}"
                   RowStyle="{StaticResource RowStyle}"
                   CellStyle="{StaticResource CellStyle}"
@@ -323,6 +387,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition />
@@ -330,9 +395,15 @@
             </Grid.RowDefinitions>
             <Button Grid.Row="0" Grid.Column="0" Margin="5" Content="All Assets" Command="{Binding ShowAllSecurities}" />
             <Button Grid.Row="0" Grid.Column="1" Margin="5" Content="Equities" Command="{Binding ShowStocksOnly}" />
-            <Button Grid.Row="1" Grid.Column="0" Margin="5" Content="Funds and ETFs" Command="{Binding ShowFundsOnly}" />
-            <Button HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="1"
-                    Margin="5" Style="{StaticResource ButtonStyleExperimental}" Content="TEST"
+            <Button Grid.Row="0" Grid.Column="2" Margin="5" Content="Funds and ETFs" Command="{Binding ShowFundsOnly}" />
+            <Button HorizontalContentAlignment="Stretch" 
+                    HorizontalAlignment="Stretch" 
+                    Grid.Row="1" 
+                    Grid.Column="0"
+                    Grid.ColumnSpan="3"
+                    Margin="5" 
+                    Style="{StaticResource ButtonStyleExperimental}" 
+                    Content="TEST"
                     Command="{Binding UpdatePrices}" />
         </Grid>
 
