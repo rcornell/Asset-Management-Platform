@@ -84,42 +84,94 @@ namespace Asset_Management_Platform
 
         public double Bid
         {
-            get { return Security.Bid; }
+            get {
+                if (Security is Stock)
+                {
+                    var s = (Stock)Security;
+                    return s.Bid;
+                }
+                return 0;
+            }
         }
 
         public double Ask
         {
-            get { return Security.Ask; }
+            get
+            {
+                if (Security is Stock)
+                {
+                    var s = (Stock)Security;
+                    return s.Ask;
+                }
+                return 0;
+            }
         }
 
         public string MarketCap
         {
             get
             {
-                var stringChars = Security.MarketCap.ToString().Split('.');
-                var newString = stringChars[0] + " Billion";
-                return newString;
+                if (Security is Stock)
+                {
+                    var s = (Stock)Security;
+                    var stringChars = s.MarketCap.ToString().Split('.');
+                    var newString = stringChars[0] + " Billion";
+                    return newString;
+                }
+                return "0";
             }
         }
 
         public double PeRatio
         {
-            get { return Security.PeRatio; }
+            get
+            {
+                if (Security is Stock)
+                {
+                    var s = (Stock)Security;
+                    return s.PeRatio;
+                }
+                return 0;
+            }
         }
 
         public double AskSize
         {
-            get { return Security.AskSize; }
+            get
+            {
+                if (Security is Stock)
+                {
+                    var s = (Stock)Security;
+                    return s.AskSize;
+                }
+                return 0;
+            }
         }
 
         public double BidSize
         {
-            get { return Security.BidSize; }
+            get
+            {
+                if (Security is Stock)
+                {
+                    var s = (Stock)Security;
+                    return s.BidSize;
+                }
+                return 0;
+            }
         }
 
         public string Volume
         {
-            get { return Security.Volume.ToString("#,##0"); }
+            get
+            {
+                if (Security is Stock)
+                {
+                    var s = (Stock)Security;
+                    return s.Volume.ToString("#,##0");
+                }
+                return "0";
+            }
         }
 
         public string GainLoss
