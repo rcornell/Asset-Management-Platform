@@ -417,7 +417,7 @@
                             <DataGridTextColumn Binding="{Binding Ticker}"/>
                             <DataGridTextColumn Binding="{Binding Description}"/>
                             <DataGridTextColumn Binding="{Binding Shares}"/>
-                            <DataGridTextColumn Binding="{Binding PriceXXXXXXX}"/>
+                            <DataGridTextColumn Binding="{Binding LastPrice}"/>
                             <DataGridTextColumn Binding="{Binding ChangeXXXXXXXX}"/>
                             <DataGridTextColumn Binding="{Binding PercentChangeXXXXXXXXXXX}"/>
                             <DataGridTextColumn Binding="{Binding MarketValue}"/>

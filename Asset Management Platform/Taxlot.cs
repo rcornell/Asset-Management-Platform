@@ -52,6 +52,11 @@ namespace Asset_Management_Platform
             get { return (Shares * LastPrice); }
         }
 
+        public decimal GainLoss
+        {
+            get {  return (LastPrice - PurchasePrice) * Shares; }
+        }
+
         public decimal LastPrice { get; set; }
 
         public Taxlot(string ticker, decimal shares, decimal purchasePrice, DateTime datePurchased, Security secType)
@@ -61,6 +66,16 @@ namespace Asset_Management_Platform
             PurchasePrice = purchasePrice;
             DatePurchased = datePurchased;
             SecurityType = secType;
+        }
+
+        public Taxlot(string ticker, decimal shares, decimal purchasePrice, DateTime datePurchased, Security secType, decimal lastPrice)
+        {
+            Ticker = ticker;
+            Shares = shares;
+            PurchasePrice = purchasePrice;
+            DatePurchased = datePurchased;
+            SecurityType = secType;
+            LastPrice = lastPrice;
         }
     }
 }

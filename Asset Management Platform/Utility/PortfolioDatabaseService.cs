@@ -168,7 +168,6 @@ namespace Asset_Management_Platform
                             secType = new Stock();
                         else
                             secType = new MutualFund();
-
                         var taxLot = new Taxlot(ticker, quantity, purchasePrice, datePurchased, secType);
                         taxlotsFromDatabase.Add(taxLot);
                     }

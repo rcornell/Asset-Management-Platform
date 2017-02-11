@@ -318,11 +318,19 @@ namespace Asset_Management_Platform
                 {
                     var newShareQuantity = lot.Shares - sharesToSell;
                     sharesToSell = 0;
-                    var newTaxlot = new Taxlot(lot.Ticker, newShareQuantity, lot.PurchasePrice, lot.DatePurchased, lot.SecurityType);
+                    var newTaxlot = new Taxlot(lot.Ticker, newShareQuantity, lot.PurchasePrice, lot.DatePurchased, lot.SecurityType, Price);
                     newTaxlots.Add(newTaxlot);
                 }
             }
             Taxlots = newTaxlots;
+        }
+
+        public void UpdateTaxlotPrices(decimal lastPrice)
+        {
+            foreach (var lot in Taxlots)
+            {
+                lot.LastPrice = lastPrice;
+            }
         }
 
         public Security GetSecurityType()
