@@ -824,21 +824,25 @@ namespace Asset_Management_Platform
 
         private void ExecuteSetIntervalTenSeconds()
         {
-            throw new NotImplementedException();
+            var span = new TimeSpan(0, 0, 10);
+            _portfolioManagementService.UpdateTimerInterval(span);
         }
         private void ExecuteSetIntervalThirtySeconds()
         {
-            throw new NotImplementedException();
+            var span = new TimeSpan(0, 0, 30);
+            _portfolioManagementService.UpdateTimerInterval(span);
         }
 
         private void ExecuteSetIntervalSixtySeconds()
         {
-            throw new NotImplementedException();
+            var span = new TimeSpan(0, 0, 60);
+            _portfolioManagementService.UpdateTimerInterval(span);
         }
 
         private void ExecuteSetIntervalFiveMinutes()
         {
-            throw new NotImplementedException();
+            var span = new TimeSpan(0, 5, 0);
+            _portfolioManagementService.UpdateTimerInterval(span);
         }
 
         public void ExecuteDeletePortfolio()

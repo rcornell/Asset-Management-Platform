@@ -35,6 +35,8 @@ namespace Asset_Management_Platform.Utility
 
         ObservableCollection<PositionByWeight> GetChartStocksOnly();
 
+        void UpdateTimerInterval(TimeSpan timespan);
+
         void UpdatePortfolioPrices();
 
         void UploadPortfolio();

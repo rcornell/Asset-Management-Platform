@@ -527,6 +527,20 @@ namespace Asset_Management_Platform.Utility
             CheckLimitOrdersForActive();
         }
 
+        public void UpdateTimerInterval(TimeSpan timespan)
+        {
+            if (timespan == null)
+                return;
+
+            var clockIsRunning = _timer.IsEnabled;
+
+            _timer.Stop();
+            _timer.Interval = timespan;
+
+            if (clockIsRunning)
+                _timer.Start();
+        }
+
         public void UpdatePortfolioPrices()
         {
             var listToUpdate = new List<Security>();            
