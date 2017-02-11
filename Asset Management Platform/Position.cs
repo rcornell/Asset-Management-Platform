@@ -46,13 +46,19 @@ namespace Asset_Management_Platform
 
         public decimal SharesOwned
         {
-            get { return ComputeSharesOwned(); }
-
+            get
+            {
+                return ComputeSharesOwned();                
+            }
         }
 
         public decimal CostBasis
         {
-            get { return ComputeCostBasis(); }
+            get
+            {
+                var cost = ComputeCostBasis();
+                return cost;
+            }
         }
 
         public decimal PurchasePrice

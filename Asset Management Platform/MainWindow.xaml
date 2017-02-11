@@ -379,7 +379,7 @@
         
         
         <DataGrid x:Name="SecurityDataGrid"
-                  ItemsSource="{Binding TestPositions,                   
+                  ItemsSource="{Binding Positions,
                                 NotifyOnSourceUpdated=True, 
                                 UpdateSourceTrigger=PropertyChanged}"
                   Grid.Row="1"
@@ -394,7 +394,7 @@
                   MinWidth="500"
                   RowHeaderWidth="0"
                   SelectionMode="Single"
-                  SelectedItem="{Binding SelectedDisplaySecurity, Mode=TwoWay}"
+                  SelectedItem="{Binding SelectedPosition, Mode=TwoWay}"
                   RowStyle="{StaticResource RowStyle}"
                   CellStyle="{StaticResource CellStyle}"
                   ColumnHeaderStyle="{StaticResource HeaderStyle}"                  
@@ -406,12 +406,12 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn Binding="{Binding Ticker}"/>
                             <DataGridTextColumn Binding="{Binding Description}"/>
-                            <DataGridTextColumn Binding="{Binding Position.Shares}"/>
+                            <DataGridTextColumn Binding="{Binding SharesOwned}"/>
                             <DataGridTextColumn Binding="{Binding Price}"/>
                             <DataGridTextColumn Binding="{Binding Change}"/>
                             <DataGridTextColumn Binding="{Binding PercentChange}"/>
                             <DataGridTextColumn Binding="{Binding MarketValue}"/>
-                            <DataGridTextColumn Binding="{Binding CostBasis}"/>
+                            <DataGridTextColumn Binding="{Binding CostBasis, Converter={StaticResource DecimalToStringConverter}}"/>
                             <DataGridTextColumn Binding="{Binding GainLoss}"/>
                             <DataGridTextColumn Binding="{Binding Yield}"/>
                             <DataGridTextColumn Binding="{Binding DatePurchased}"/>
@@ -495,7 +495,7 @@
                 <DataGridTextColumn Width="Auto" Header="Market Value" Binding="{Binding MarketValue, Mode=OneWay}"
                                     CellStyle="{StaticResource CellStyleRight}" />
 
-                <DataGridTextColumn Width="Auto" Header="Cost Basis" Binding="{Binding CostBasis, Mode=OneWay}"
+                <DataGridTextColumn Width="Auto" Header="Cost Basis" Binding="{Binding CostBasis, Mode=OneWay, Converter={StaticResource DecimalToStringConverter}}"
                                     CellStyle="{StaticResource CellStyleRight}" />
                 <DataGridTextColumn Width="Auto" Header="Gain/Loss" Binding="{Binding GainLoss, Mode=OneWay}"
                                     CellStyle="{StaticResource CellStyleRight}" />

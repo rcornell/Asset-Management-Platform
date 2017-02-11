@@ -14,6 +14,7 @@
         <ResourceDictionary>
             <vm:ViewModelLocator xmlns:vm="clr-namespace:Asset_Management_Platform.ViewModel" x:Key="Locator" d:IsDataSource="True" />
             <conv:BoolToCollapsedConverter x:Key="BoolToCollapsedConverter" />
+            <conv:DecimalToStringConverter x:Key="DecimalToStringConverter" />
             <Style x:Key="MinimalChartStyle" TargetType="{x:Type chart:ChartBase}">
                 <Setter Property="Width" Value="200" />
                 <Setter Property="Height" Value="200" />
