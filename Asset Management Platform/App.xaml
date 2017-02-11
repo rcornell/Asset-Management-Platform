@@ -307,11 +307,11 @@
                                     RenderTransformOrigin="0.5,0.5">
                                 <Border.Background>
                                     <LinearGradientBrush x:Name="ThisButtonBrush" StartPoint="0,0.5" EndPoint="1,0.5">
-                                        <GradientStop x:Name="OffsetOne" Offset="0" Color="Black"/>
+                                        <!--<GradientStop x:Name="OffsetOne" Offset="0" Color="Black"/>
                                         <GradientStop x:Name="OffsetTwo" Offset="0" Color="{StaticResource ExperimentalTop}" />
                                         <GradientStop x:Name="OffsetThree" Offset="0" Color="Purple" />
                                         <GradientStop x:Name="OffsetFour" Offset="0" Color="Pink" />
-                                        <GradientStop x:Name="OffsetFive" Offset="0" Color="Orange" />
+                                        <GradientStop x:Name="OffsetFive" Offset="0" Color="Orange" />-->
                                         <GradientStop x:Name="OffsetSix" Offset="0" Color="{StaticResource Button.BackgroundBottom}" />
                                     </LinearGradientBrush>
                                 </Border.Background>
@@ -320,9 +320,24 @@
                                 </Border.RenderTransform>
                                 <VisualStateManager.VisualStateGroups>
                                     <VisualStateGroup>
+                                        <VisualStateGroup.Transitions>
+                                            <VisualTransition From="MouseOver" To="Normal" GeneratedDuration="0:0:0.75"/>
+                                        </VisualStateGroup.Transitions>
                                         <VisualState x:Name="Normal" />
                                         <VisualState x:Name="MouseOver">
                                             <Storyboard>
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
+                                                    <EasingDoubleKeyFrame Value="0.95"
+                                                                          KeyTime="0:0:0.2"/>
+                                                    <EasingDoubleKeyFrame Value="1"
+                                                                          KeyTime="0:0:0.75">
+                                                        <EasingDoubleKeyFrame.EasingFunction>
+                                                            <PowerEase Power="2"/>
+                                                        </EasingDoubleKeyFrame.EasingFunction>
+                                                    </EasingDoubleKeyFrame>
+                                                </DoubleAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                            <!--<Storyboard>
                                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OffsetTwo"
                                                                  Storyboard.TargetProperty="Offset"
                                                                  Duration="0:0:1.0">
@@ -376,56 +391,7 @@
                                                         </EasingDoubleKeyFrame.EasingFunction>
                                                     </EasingDoubleKeyFrame>
                                                 </DoubleAnimationUsingKeyFrames>
-
-
-
-
-                                                <!--<ColorAnimationUsingKeyFrames Storyboard.TargetName="ThisButton"
-                                                                              Storyboard.TargetProperty="Background.GradientStops[1].(GradientStop.Color)"
-                                                                              BeginTime="0:0:1.01"
-                                                                              Duration="0">
-                                                    <EasingColorKeyFrame Value="{StaticResource ExperimentalBottom}">
-                                                        <EasingColorKeyFrame.EasingFunction>
-                                                            <PowerEase Power="2"/>
-                                                        </EasingColorKeyFrame.EasingFunction>
-                                                    </EasingColorKeyFrame>
-                                                </ColorAnimationUsingKeyFrames>
-                                                <ColorAnimationUsingKeyFrames Storyboard.TargetName="ThisButton"
-                                                                              Storyboard.TargetProperty="Background.GradientStops[2].(GradientStop.Color)"
-                                                                              BeginTime="0:0:1.01"
-                                                                              Duration="0">
-                                                    <EasingColorKeyFrame Value="{StaticResource ExperimentalTop}">
-                                                        <EasingColorKeyFrame.EasingFunction>
-                                                            <PowerEase Power="2"/>
-                                                        </EasingColorKeyFrame.EasingFunction>
-                                                    </EasingColorKeyFrame>
-                                                </ColorAnimationUsingKeyFrames>
-
-
-                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OffsetTwo"
-                                                                 Storyboard.TargetProperty="Offset"
-                                                                               BeginTime="0:0:1.0"
-                                                                 Duration="0:0:1.0">
-                                                    <EasingDoubleKeyFrame Value="0">
-                                                        <EasingDoubleKeyFrame.EasingFunction>
-                                                            <PowerEase Power="2"/>
-                                                        </EasingDoubleKeyFrame.EasingFunction>
-                                                    </EasingDoubleKeyFrame>
-                                                </DoubleAnimationUsingKeyFrames>
-                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OffsetThree"
-                                                                 Storyboard.TargetProperty="Offset"
-                                                                 Duration="0:0:1.0"
-                                                                               BeginTime="0:0:1.0">
-                                                    <EasingDoubleKeyFrame Value="0">
-                                                        <EasingDoubleKeyFrame.EasingFunction>
-                                                            <PowerEase Power="2"/>
-                                                        </EasingDoubleKeyFrame.EasingFunction>
-                                                    </EasingDoubleKeyFrame>
-                                                </DoubleAnimationUsingKeyFrames>-->
-
-
-
-                                            </Storyboard>
+                                            </Storyboard>-->
                                         </VisualState>
                                     </VisualStateGroup>
                                 </VisualStateManager.VisualStateGroups>
