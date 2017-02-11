@@ -67,34 +67,14 @@ namespace Asset_Management_Platform
             }
         }
 
-        private ListCollectionView _displayStockCollectionView;
-        public ListCollectionView DisplayStockCollectionView
+        private ListCollectionView _positionCollectionView;
+        public ListCollectionView PositionCollectionView
         {
-            get { return _displayStockCollectionView; }
-            set { _displayStockCollectionView = value;
-                RaisePropertyChanged(() => DisplayStockCollectionView);
-            }
-        }
-
-        private ListCollectionView _displayFundCollectionView;
-        public ListCollectionView DisplayFundCollectionView
-        {
-            get { return _displayFundCollectionView; }
+            get { return _positionCollectionView; }
             set
             {
-                _displayFundCollectionView = value;
-                RaisePropertyChanged(() => DisplayFundCollectionView);
-            }
-        }
-
-        private ListCollectionView _displaySecurityCollectionView;
-        public ListCollectionView DisplaySecurityCollectionView
-        {
-            get { return _displaySecurityCollectionView; }
-            set
-            {
-                _displaySecurityCollectionView = value;
-                RaisePropertyChanged(() => DisplaySecurityCollectionView);
+                _positionCollectionView = value;
+                RaisePropertyChanged(() => PositionCollectionView);
             }
         }
 
@@ -417,19 +397,22 @@ namespace Asset_Management_Platform
             get { return (PreviewPrice * OrderShareQuantity); }
         }
 
-        private DisplaySecurity _selectedDisplaySecurity;
-        public DisplaySecurity SelectedDisplaySecurity
+        private Position _selectedPosition;
+        public Position SelectedPosition
         {
-            get { return _selectedDisplaySecurity; }
-            set { _selectedDisplaySecurity = value;
-                RaisePropertyChanged(() => SelectedDisplaySecurity);
-                if (_selectedDisplaySecurity != null)
+            get { return _selectedPosition; }
+            set {
+                _selectedPosition = value;
+                RaisePropertyChanged(() => SelectedPosition);
+                if (_selectedPosition != null)
                 {
-                    ExecuteScreenerPreview(_selectedDisplaySecurity.Ticker);
+                    ExecuteScreenerPreview(_selectedPosition.Ticker);
                     PopulateSelectedSecurityTerms();
                 }
             }
         }
+
+        #region All Commands
 
         public RelayCommand DeletePortfolio
         {
@@ -438,7 +421,7 @@ namespace Asset_Management_Platform
         public RelayCommand SavePortfolio
         {
             get { return new RelayCommand(ExecuteSavePortfolio); }
-        }
+        }         
 
         public RelayCommand CloseApplication
         {
@@ -499,6 +482,7 @@ namespace Asset_Management_Platform
         {
             get { return new RelayCommand(ExecuteSetIntervalFiveMinutes); }
         }
+        #endregion
 
         public decimal _totalValue;
         public decimal TotalValue {
@@ -515,37 +499,6 @@ namespace Asset_Management_Platform
             set {
                 _allocationChartPositions = value;
                 RaisePropertyChanged(() => AllocationChartPositions);
-            }
-        }
-
-        private ObservableCollection<DisplayStock> _stockList;
-        public ObservableCollection<DisplayStock> StockList
-        {
-            get { return _stockList; }
-            set { _stockList = value;
-                RaisePropertyChanged(() => StockList);
-            }
-        }
-
-        private ObservableCollection<DisplayMutualFund> _fundList;
-        public ObservableCollection<DisplayMutualFund> MutualFundList
-        {
-            get { return _fundList; }
-            set
-            {
-                _fundList = value;
-                RaisePropertyChanged(() => MutualFundList);
-            }
-        }
-
-        private ObservableCollection<DisplaySecurity> _securityList;
-        public ObservableCollection<DisplaySecurity> SecurityList
-        {
-            get { return _securityList; }
-            set
-            {
-                _securityList = value;
-                RaisePropertyChanged(() => SecurityList);
             }
         }
 
@@ -610,19 +563,11 @@ namespace Asset_Management_Platform
             Messenger.Default.Register<TradeMessage>(this, SetAlertMessage);
             //_portfolioManagementService.StartUpdates(); //TURNED OFF FOR TESTING
 
-            
-            GetDisplaySecurities();
             GetPositions();
             GetTaxlots();
             GetLimitOrders();
             ExecuteShowAllSecurities();
             //DisplaySecurityCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("SecurityType"));
-
-            
-
-
-
-            //MakeTaxlots();
 
         }
 
@@ -638,73 +583,6 @@ namespace Asset_Management_Platform
             var lots = _portfolioManagementService.GetTaxlots();
             Taxlots = new ObservableCollection<Taxlot>(lots);
         }
-
-
-        //private void MakeTaxlots()
-        //{
-        //    var lots = new ObservableCollection<Taxlot>();
-
-        //    foreach (var sec in SecurityList)
-        //    {
-           
-        //        if (sec is DisplayStock)
-        //        {                   
-        //            var st = (DisplayStock)sec;
-
-        //            foreach (var taxlot in st.Position.Taxlots)
-        //            {
-        //                lots.Add(taxlot);
-        //            }
-        //        }
-        //        if (sec is DisplayMutualFund)
-        //        {
-        //            var mf = (DisplayMutualFund)sec;
-
-        //            foreach (var taxlot in mf.Position.Taxlots)
-        //            {
-        //                lots.Add(taxlot);
-        //            }
-        //        }
-        //    }
-
-        //    Taxlots = lots;
-        //    //DisplaySecurityCollectionView = new ListCollectionView(lots);
-        //    //DisplaySecurityCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Ticker"));
-            
-        //}
-
-        /// <summary>
-        /// Calls the PortfolioManagementService to find the current list
-        /// of stocks and mutual funds. Creates observable collections of each
-        /// for binding, then creates the list of all securities for binding.
-        /// </summary>
-        //private void GetDisplaySecurities()
-        //{
-        //    //Get each List<T> for stocks and mutual funds, then 
-        //    //create or update the corresponding ObservableCollection<T>
-        //    var displayStocksList = _portfolioManagementService.GetDisplayStocks();
-        //    StockList = new ObservableCollection<DisplayStock>(displayStocksList);
-
-        //    var displayMutualFundList = _portfolioManagementService.GetDisplayMutualFunds();
-        //    MutualFundList = new ObservableCollection<DisplayMutualFund>(displayMutualFundList);
-
-        //    //Instantiate list of all securities, then add all stock and MF items to it.
-        //    SecurityList = new ObservableCollection<DisplaySecurity>();
-            
-        //    foreach (var item in StockList)
-        //    {
-        //        SecurityList.Add(item);
-        //    }
-
-        //    foreach (var item in MutualFundList)
-        //    {
-        //        SecurityList.Add(item);
-        //    }
-
-        //    //Create or update the ListCollectionViews
-        //    //DisplaySecurityCollectionView = new ListCollectionView(SecurityList);
-        //    //DisplaySecurityCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("SecurityType"));
-        //}
 
         private void ExecuteShowAllSecurities()
         {
