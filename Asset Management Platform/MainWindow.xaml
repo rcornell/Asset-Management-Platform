@@ -318,7 +318,7 @@
                           RowHeaderWidth="0"
                           BorderThickness="0"
                           Background="{StaticResource StockGridBackground}"
-                          RowStyle="{StaticResource RowStyle}"
+                          RowStyle="{StaticResource LimitOrderRowStyle}"
                           ColumnHeaderStyle="{StaticResource LimitOrderHeaderStyle}"
                           CellStyle="{StaticResource CellStyleCentered}"
                           SelectedItem="{Binding SelectedLimitOrder, Mode=OneWayToSource, NotifyOnSourceUpdated=True}"
@@ -417,7 +417,7 @@
                     Grid.ColumnSpan="3"
                     Margin="5" 
                     Style="{StaticResource ButtonStyleExperimental}" 
-                    Content="TEST"
+                    Content="Reserved For New Functions."
                     Command="{Binding UpdatePrices}" />
         </Grid>
 

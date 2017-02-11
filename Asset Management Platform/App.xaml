@@ -254,6 +254,15 @@
                                                         </EasingColorKeyFrame.EasingFunction>
                                                     </EasingColorKeyFrame>
                                                 </ColorAnimationUsingKeyFrames>
+                                                <ColorAnimationUsingKeyFrames Storyboard.TargetName="ExecuteButton_Border"
+                                                                              Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[2].(GradientStop.Color)">
+                                                    <EasingColorKeyFrame KeyTime="0:0:0.1"
+                                                                         Value="{StaticResource Button.DisabledTopColor}">
+                                                        <EasingColorKeyFrame.EasingFunction>
+                                                            <PowerEase Power="2" />
+                                                        </EasingColorKeyFrame.EasingFunction>
+                                                    </EasingColorKeyFrame>
+                                                </ColorAnimationUsingKeyFrames>
                                             </Storyboard>
                                         </VisualState>
                                     </VisualStateGroup>
@@ -293,7 +302,7 @@
                                         <GradientStop x:Name="OffsetThree" Offset="0" Color="Purple" />
                                         <GradientStop x:Name="OffsetFour" Offset="0" Color="Pink" />
                                         <GradientStop x:Name="OffsetFive" Offset="0" Color="Orange" />
-                                        <GradientStop x:Name="OffsetSix" Offset="0" Color="Green" />
+                                        <GradientStop x:Name="OffsetSix" Offset="0" Color="{StaticResource Button.BackgroundBottom}" />
                                     </LinearGradientBrush>
                                 </Border.Background>
                                 <Border.RenderTransform>
@@ -698,13 +707,14 @@
             <!--Limit Orders Datagrid Row Style-->
             <Style x:Key="LimitOrderRowStyle" TargetType="{x:Type DataGridRow}" BasedOn="{StaticResource RowStyle}">
                 <Setter Property="FontSize" Value="12"/>
+                <Setter Property="FontWeight" Value="Thin"/>
             </Style>
 
             <!--Limit Orders Header Style-->
             <Style x:Key="LimitOrderHeaderStyle" TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource HeaderStyle}">
-                <Setter Property="Height" Value="20" />
+                <Setter Property="Height" Value="25" />
                 <Setter Property="FontWeight" Value="Normal" />
-                <Setter Property="FontSize" Value="12" />
+                <Setter Property="FontSize" Value="13" />
                 <Setter Property="Width" Value="Auto"/>
                 <Setter Property="Template">
                     <Setter.Value>

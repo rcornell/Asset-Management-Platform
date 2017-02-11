@@ -320,7 +320,7 @@ namespace Asset_Management_Platform
             set { _limitPrice = value;
                 _executeButtonEnabled = false;
                 RaisePropertyChanged(() => LimitPrice);
-                PreviewButtonText = "Preview Order";
+                RevertExecuteButtonAndAlert();
             }
         }
 
@@ -333,8 +333,7 @@ namespace Asset_Management_Platform
             {
                 _selectedSecurityType = value;
                 RaisePropertyChanged(() => SelectedSecurityType);
-                PreviewButtonText = "Preview Order";
-                AlertBoxMessage = "";
+                RevertExecuteButtonAndAlert();
             }
         }
 
@@ -345,8 +344,7 @@ namespace Asset_Management_Platform
             {
                 _selectedDurationType = value;
                 RaisePropertyChanged(() => SelectedDurationType);
-                PreviewButtonText = "Preview Order";
-                AlertBoxMessage = "";
+                RevertExecuteButtonAndAlert();
             }
         }
 
@@ -358,17 +356,13 @@ namespace Asset_Management_Platform
             set { _selectedTermType = value;
                 RaisePropertyChanged(() => SelectedTermType);
                 if (_selectedTermType == "Limit" || _selectedTermType == "Stop Limit" || _selectedTermType == "Stop") {
-                    LimitBoxActive = true;
-                    PreviewButtonText = "Preview Order";
-                    AlertBoxMessage = "";
+                    LimitBoxActive = true;                    
                 }
                 else
                 {
-                    LimitBoxActive = false;
-                    PreviewButtonText = "Preview Order";
-                    AlertBoxMessage = "";
+                    LimitBoxActive = false;                    
                 }
-                _executeButtonEnabled = false;
+                RevertExecuteButtonAndAlert();
             }
         }
 
@@ -378,9 +372,7 @@ namespace Asset_Management_Platform
             get { return _selectedTradeType; }
             set { _selectedTradeType = value;
                 RaisePropertyChanged(() => SelectedTradeType);
-                _executeButtonEnabled = false;
-                PreviewButtonText = "Preview Order";
-                AlertBoxMessage = "";
+                RevertExecuteButtonAndAlert();
             }
         }
 
@@ -390,9 +382,7 @@ namespace Asset_Management_Platform
             get { return _orderTickerText; }
             set { _orderTickerText = value.ToUpper();
                 RaisePropertyChanged(() => OrderTickerText);
-                _executeButtonEnabled = false;
-                PreviewButtonText = "Preview Order";
-                AlertBoxMessage = "";
+                RevertExecuteButtonAndAlert();
             }
         }
 
@@ -403,9 +393,7 @@ namespace Asset_Management_Platform
             get { return _orderShareQuantity; }
             set { _orderShareQuantity = value;
                 RaisePropertyChanged(() => OrderShareQuantity);
-                _executeButtonEnabled = false;
-                PreviewButtonText = "Preview Order";
-                AlertBoxMessage = "";
+                RevertExecuteButtonAndAlert();
             }
         }
 
@@ -428,8 +416,6 @@ namespace Asset_Management_Platform
         {
             get { return (PreviewPrice * OrderShareQuantity); }
         }
-
-        
 
         private DisplaySecurity _selectedDisplaySecurity;
         public DisplaySecurity SelectedDisplaySecurity
@@ -820,6 +806,13 @@ namespace Asset_Management_Platform
             {
                 SelectedSecurityType = SecurityTypes[1];
             }
+        }
+
+        private void RevertExecuteButtonAndAlert()
+        {
+            ExecuteButtonEnabled = false;
+            PreviewButtonText = "Preview Order";
+            AlertBoxMessage = "";
         }
 
         private void ExecuteSetIntervalTenSeconds()
