@@ -77,23 +77,32 @@ namespace Asset_Management_Platform.Utility
         /// Creates the list of taxlots, positions, and securities owned.
         /// </summary>
         private void BuildPortfolioSecurities()
-        {
+        {                                 
             _portfolioTaxlots = _portfolioDatabaseService.GetTaxlotsFromDatabase();
 
+            var tickers = new List<string>();
+            foreach (var lot in _portfolioTaxlots)
+            {
+                if (!tickers.Contains(lot.Ticker))
+                    tickers.Add(lot.Ticker);
+            }
+            var rawSecurities = _stockDataService.GetSecurityInfo(tickers);
+            _portfolioSecurities = _stockDataService.GetMutualFundExtraData(rawSecurities);
+
+
             if (_portfolioTaxlots.Count > 0)
-                _portfolioPositions = _portfolioDatabaseService.GetPositionsFromTaxlots(_portfolioTaxlots);
+                _portfolioPositions = _portfolioDatabaseService.GetPositionsFromTaxlots(_portfolioTaxlots, _portfolioSecurities);
             else
                 _portfolioPositions = new List<Position>();
 
-            var tickers = new List<string>();
-            foreach (var position in _portfolioPositions)
-            {
-                tickers.Add(position.Ticker);
-            }
+            //foreach (var position in _portfolioPositions)
+            //{
+            //    tickers.Add(position.Ticker);
+            //}
 
             //Could combine these into a startup GetAllInfo method in StockDataService
-            var rawSecurities = _stockDataService.GetSecurityInfo(tickers);
-            _portfolioSecurities = _stockDataService.GetMutualFundExtraData(rawSecurities);
+            
+            
         }
 
 
@@ -171,7 +180,7 @@ namespace Asset_Management_Platform.Utility
             {
                 //Add position to portfolio database for online storage
                 var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security);
-                var position = new Position(taxlot);
+                var position = new Position(taxlot, trade.Security);
                 _portfolioDatabaseService.AddToPortfolioDatabase(position);
 
                 //Add new displaystock for UI
@@ -188,7 +197,7 @@ namespace Asset_Management_Platform.Utility
             else if (trade.Security is MutualFund && !_portfolioPositions.Any(s => s.Ticker == trade.Ticker))
             {
                 var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security);
-                var position = new Position(taxlot);
+                var position = new Position(taxlot, trade.Security);
                 _portfolioDatabaseService.AddToPortfolioDatabase(position);
                 DisplayMutualFunds.Add(new DisplayMutualFund(position, (MutualFund)trade.Security));
             }

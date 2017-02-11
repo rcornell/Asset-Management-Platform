@@ -10,27 +10,27 @@ namespace Asset_Management_Platform
     public class Position : ObservableObject
     {
 
-        private Stock _stock;
-        public Stock Stock
+        private Stock _security;
+        public Stock Security
         {
             get
             {
-                return _stock;
+                return _security;
             }
             set
             {
-                _stock = value;
+                _security = value;
             }
         }
 
         public string Description
         {
-            get { return Stock.Description; }
+            get { return Security.Description; }
         }
 
         public decimal Price
         {
-            get { return Stock.LastPrice; }
+            get { return Security.LastPrice; }
         }
 
         private string _ticker;
@@ -64,7 +64,7 @@ namespace Asset_Management_Platform
         {
             get
             {
-                var value = Stock.LastPrice * SharesOwned;
+                var value = Security.LastPrice * SharesOwned;
                 var valueString = value.ToString("#,##0");
                 return valueString;
             }
@@ -72,7 +72,7 @@ namespace Asset_Management_Platform
 
         public string Yield
         {
-            get { return string.Format(Stock.Yield + "%"); }
+            get { return string.Format(Security.Yield + "%"); }
         }
 
         private List<Taxlot> _taxlots;
@@ -84,19 +84,19 @@ namespace Asset_Management_Platform
 
         public double Bid
         {
-            get { return Stock.Bid; }
+            get { return Security.Bid; }
         }
 
         public double Ask
         {
-            get { return Stock.Ask; }
+            get { return Security.Ask; }
         }
 
         public string MarketCap
         {
             get
             {
-                var stringChars = Stock.MarketCap.ToString().Split('.');
+                var stringChars = Security.MarketCap.ToString().Split('.');
                 var newString = stringChars[0] + " Billion";
                 return newString;
             }
@@ -104,37 +104,37 @@ namespace Asset_Management_Platform
 
         public double PeRatio
         {
-            get { return Stock.PeRatio; }
+            get { return Security.PeRatio; }
         }
 
         public double AskSize
         {
-            get { return Stock.AskSize; }
+            get { return Security.AskSize; }
         }
 
         public double BidSize
         {
-            get { return Stock.BidSize; }
+            get { return Security.BidSize; }
         }
 
         public string Volume
         {
-            get { return Stock.Volume.ToString("#,##0"); }
+            get { return Security.Volume.ToString("#,##0"); }
         }
 
         public string GainLoss
         {
-            get { return ((Stock.LastPrice - PurchasePrice) * SharesOwned).ToString("#,##0"); }
+            get { return ((Security.LastPrice - PurchasePrice) * SharesOwned).ToString("#,##0"); }
         }
 
         public decimal Change
         {
-            get { return Stock.Change; }
+            get { return Security.Change; }
         }
 
         public string PercentChange
         {
-            get { return string.Format(@"{0:0.0%}", Stock.PercentChange / 100); }
+            get { return string.Format(@"{0:0.0%}", Security.PercentChange / 100); }
         }
 
         public Position(List<Taxlot> taxlots)
@@ -151,7 +151,7 @@ namespace Asset_Management_Platform
             }
         }
 
-        public Position(Taxlot taxlot)
+        public Position(Taxlot taxlot, Security security)
         {
             if (_taxlots == null)
                 _taxlots = new List<Taxlot>();

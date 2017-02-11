@@ -12,7 +12,7 @@ namespace Asset_Management_Platform.Utility
 
         List<Taxlot> GetTaxlotsFromDatabase();
 
-        List<Position> GetPositionsFromTaxlots(List<Taxlot> taxlots);
+        List<Position> GetPositionsFromTaxlots(List<Taxlot> taxlots, List<Security> portfolioSecurities);
 
         void SavePortfolioToDatabase();
 

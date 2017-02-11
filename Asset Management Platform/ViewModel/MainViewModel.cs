@@ -560,11 +560,7 @@ namespace Asset_Management_Platform
 
         }
 
-
-
-
         private ObservableCollection<Taxlot> _taxlots;
-
         public ObservableCollection<Taxlot> Taxlots
         {
             get
@@ -575,6 +571,20 @@ namespace Asset_Management_Platform
             {
                 _taxlots = value;
                 RaisePropertyChanged(() => Taxlots);
+            }
+        }
+
+        private ObservableCollection<Position> _positions;
+        public ObservableCollection<Position> Positions
+        {
+            get
+            {
+                return _positions;
+            }
+            set
+            {
+                _positions = value;
+                RaisePropertyChanged(() => Positions);
             }
         }
 
@@ -642,8 +652,9 @@ namespace Asset_Management_Platform
                 }
             }
 
-            DisplaySecurityCollectionView = new ListCollectionView(lots);
-            DisplaySecurityCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Ticker"));
+            Taxlots = lots;
+            //DisplaySecurityCollectionView = new ListCollectionView(lots);
+            //DisplaySecurityCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Ticker"));
             
         }
 

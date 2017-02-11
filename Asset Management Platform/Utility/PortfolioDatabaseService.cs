@@ -177,13 +177,14 @@ namespace Asset_Management_Platform
             return taxlotsFromDatabase;
         }
 
-        public List<Position> GetPositionsFromTaxlots(List<Taxlot> taxlots)
+        public List<Position> GetPositionsFromTaxlots(List<Taxlot> taxlots, List<Security> portfolioSecurities)
         {
             foreach (var lot in taxlots)
             {
                 if (!_myPositions.Any(s => s.Ticker == lot.Ticker))
                 {
-                    _myPositions.Add(new Position(lot));
+                    var security = portfolioSecurities.Find(t => t.Ticker == lot.Ticker);
+                    _myPositions.Add(new Position(lot, security));
                 }
                 else if (_myPositions.Any(s => s.Ticker == lot.Ticker && s.SharesOwned != lot.Shares))
                 {
