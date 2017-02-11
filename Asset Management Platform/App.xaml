@@ -524,7 +524,7 @@
 
             <!--SecurityDataGrid Row Style-->
             <Style x:Key="RowStyle" TargetType="{x:Type DataGridRow}">
-                <Setter Property="Height" Value="25" />
+                <Setter Property="MinHeight" Value="25" />
                 <Setter Property="SnapsToDevicePixels" Value="True" />
                 <Setter Property="Validation.ErrorTemplate" Value="{x:Null}" />
                 <Setter Property="BorderBrush" Value="Transparent"/>

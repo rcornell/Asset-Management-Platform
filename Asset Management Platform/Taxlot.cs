@@ -47,6 +47,13 @@ namespace Asset_Management_Platform
             set { _securityType = value; }
         }
 
+        public decimal MarketValue
+        {
+            get { return (Shares * LastPrice); }
+        }
+
+        public decimal LastPrice { get; set; }
+
         public Taxlot(string ticker, decimal shares, decimal purchasePrice, DateTime datePurchased, Security secType)
         {
             Ticker = ticker;
