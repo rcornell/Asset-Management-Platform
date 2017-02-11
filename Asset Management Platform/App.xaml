@@ -68,8 +68,8 @@
             <Color x:Key="Button.BorderColor">#55040000</Color>
             <Color x:Key="Button.MouseOverTopColor">#59EDFF</Color>
             <Color x:Key="Button.MouseOverBottomColor">#2DE8FF</Color>
-            <Color x:Key="Button.DisabledTopColor">#C7F8FE</Color>
-            <Color x:Key="Button.DisabledBottomColor">#C7F8FE</Color>
+            <Color x:Key="Button.DisabledTopColor">#DBFBFF</Color>
+            <Color x:Key="Button.DisabledBottomColor">#DBFBFF</Color>
             <LinearGradientBrush x:Key="Button.BackgroundBrush" StartPoint="0.5,0" EndPoint="0.5,1">
                 <GradientStop Offset="0" Color="{StaticResource Button.BackgroundTop}" />
                 <GradientStop Offset="1" Color="{StaticResource Button.BackgroundBottom}" />
@@ -113,7 +113,8 @@
                 <Setter Property="HorizontalContentAlignment" Value="Center" />
                 <Setter Property="SnapsToDevicePixels" Value="True" />
                 <Setter Property="BorderThickness" Value="0" />
-                <Setter Property="FontWeight" Value="Normal"/>
+                <Setter Property="FontWeight" Value="Thin"/>
+                <Setter Property="FontSize" Value="15"/>
                 <Setter Property="Margin" Value="2,0,2,0"/>
                 <Setter Property="BorderBrush" Value="{StaticResource Button.BorderBrush}" />
                 <Setter Property="Template">
@@ -189,7 +190,8 @@
                 <Setter Property="HorizontalContentAlignment" Value="Center" />
                 <Setter Property="SnapsToDevicePixels" Value="True" />
                 <Setter Property="BorderThickness" Value="0" />
-                <Setter Property="FontWeight" Value="Normal"/>
+                <Setter Property="FontWeight" Value="Thin"/>
+                <Setter Property="FontSize" Value="15"/>
                 <Setter Property="BorderBrush" Value="{StaticResource Button.BorderBrush}" />
                 <Setter Property="Margin" Value="2,0,2,0"/>
                 <Setter Property="Template">
@@ -265,7 +267,8 @@
             </Style>
 
 
-            <Style TargetType="{x:Type TextBlock}">
+            <!--All textblock style-->
+            <Style x:Key="TextBlockStyle" TargetType="{x:Type TextBlock}">
                 <Setter Property="FontWeight" Value="Light"/>
                 <Setter Property="FontSize" Value="13"/>
             </Style>
