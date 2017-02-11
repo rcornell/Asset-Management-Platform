@@ -402,18 +402,28 @@
                   Background="{StaticResource StockGridBackground}">
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
-                    <DataGrid>
+                    <DataGrid ItemsSource="{Binding Taxlots}"
+                              AutoGenerateColumns="False"
+                              AlternationCount="2"
+                              ColumnHeaderHeight="0"
+                              RowHeaderWidth="0"
+                              CanUserDeleteRows="False"
+                              VerticalScrollBarVisibility="Hidden"
+                              CanUserAddRows="False"
+                              ColumnWidth="Auto"
+                              RowStyle="{StaticResource RowStyle}"
+                              CellStyle="{StaticResource CellStyle}">
                         <DataGrid.Columns>
                             <DataGridTextColumn Binding="{Binding Ticker}"/>
                             <DataGridTextColumn Binding="{Binding Description}"/>
-                            <DataGridTextColumn Binding="{Binding SharesOwned}"/>
-                            <DataGridTextColumn Binding="{Binding Price}"/>
-                            <DataGridTextColumn Binding="{Binding Change}"/>
-                            <DataGridTextColumn Binding="{Binding PercentChange}"/>
+                            <DataGridTextColumn Binding="{Binding Shares}"/>
+                            <DataGridTextColumn Binding="{Binding PriceXXXXXXX}"/>
+                            <DataGridTextColumn Binding="{Binding ChangeXXXXXXXX}"/>
+                            <DataGridTextColumn Binding="{Binding PercentChangeXXXXXXXXXXX}"/>
                             <DataGridTextColumn Binding="{Binding MarketValue}"/>
                             <DataGridTextColumn Binding="{Binding CostBasis, Converter={StaticResource DecimalToStringConverter}}"/>
                             <DataGridTextColumn Binding="{Binding GainLoss}"/>
-                            <DataGridTextColumn Binding="{Binding Yield}"/>
+                            <DataGridTextColumn Binding="{Binding YieldXXXXXXX}"/>
                             <DataGridTextColumn Binding="{Binding DatePurchased}"/>
                         </DataGrid.Columns>
                     </DataGrid>
@@ -479,29 +489,28 @@
                 </GroupStyle>
             </DataGrid.GroupStyle>-->
             <DataGrid.Columns>
-                <DataGridTextColumn Width="Auto" Header="Ticker" Binding="{Binding Ticker, Mode=OneWay}"
+                <DataGridTextColumn Width="Auto" Header="Ticker" Binding="{Binding Path=Ticker, Mode=OneWay}"
                                     TextOptions.TextFormattingMode="Display" />
-                <DataGridTextColumn Width="Auto" Header="Description" Binding="{Binding Description, Mode=OneWay}"
+                <DataGridTextColumn Width="Auto" Header="Description" Binding="{Binding Path=Description, Mode=OneWay}"
                                     TextOptions.TextFormattingMode="Ideal" />
-                <DataGridTextColumn Width="Auto" Header="Shares" Binding="{Binding Shares, Mode=OneWay}"
+                <DataGridTextColumn Width="Auto" Header="Shares" Binding="{Binding SharesOwned, Mode=OneWay, Converter={StaticResource DecimalToStringConverter}}"
                                     CellStyle="{StaticResource CellStyleRight}" />
-                <DataGridTextColumn Width="Auto" Header="Price" Binding="{Binding Price, Mode=OneWay}"
+                <DataGridTextColumn Width="Auto" Header="Price" Binding="{Binding Path=Price, Mode=OneWay}"
                                     CellStyle="{StaticResource CellStyleRight}" />
-                <DataGridTextColumn Width="Auto" Header="Change" Binding="{Binding Change, Mode=OneWay}"
+                <DataGridTextColumn Width="Auto" Header="Change" Binding="{Binding Path=Change, Mode=OneWay}"
                                     CellStyle="{StaticResource CellStyleRight}" />
                 <DataGridTextColumn Width="Auto" Header="% Change"
                                     Binding="{Binding PercentChange, Mode=OneWay}"
                                     CellStyle="{StaticResource CellStyleCentered}" />
-                <DataGridTextColumn Width="Auto" Header="Market Value" Binding="{Binding MarketValue, Mode=OneWay}"
+                <DataGridTextColumn Width="Auto" Header="Market Value" Binding="{Binding Path=MarketValue, Mode=OneWay}"
                                     CellStyle="{StaticResource CellStyleRight}" />
-
-                <DataGridTextColumn Width="Auto" Header="Cost Basis" Binding="{Binding CostBasis, Mode=OneWay, Converter={StaticResource DecimalToStringConverter}}"
+                <DataGridTextColumn Width="Auto" Header="Cost Basis" Binding="{Binding Path=CostBasis, Mode=OneWay, Converter={StaticResource DecimalToStringConverter}}"
                                     CellStyle="{StaticResource CellStyleRight}" />
-                <DataGridTextColumn Width="Auto" Header="Gain/Loss" Binding="{Binding GainLoss, Mode=OneWay}"
+                <DataGridTextColumn Width="Auto" Header="Gain/Loss" Binding="{Binding Path=GainLoss, Mode=OneWay}"
                                     CellStyle="{StaticResource CellStyleRight}" />
-                <DataGridTextColumn Width="Auto" Header="Yield" Binding="{Binding Yield, Mode=OneWay}"
+                <DataGridTextColumn Width="Auto" Header="Yield" Binding="{Binding Path=Yield, Mode=OneWay}"
                                     CellStyle="{StaticResource CellStyleCentered}" />
-                <DataGridTextColumn Width="Auto" Header="Date Purchased" Binding="{Binding DatePurchased, Mode=OneWay}"
+                <DataGridTextColumn Width="Auto" Header="Date Purchased" Binding="{Binding Path=DatePurchased, Mode=OneWay}"
                                     CellStyle="{StaticResource CellStyleCentered}" />
             </DataGrid.Columns>
         </DataGrid>
