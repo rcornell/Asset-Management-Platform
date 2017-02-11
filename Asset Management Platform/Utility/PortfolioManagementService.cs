@@ -596,6 +596,16 @@ namespace Asset_Management_Platform.Utility
             _timer.Stop();
         }
 
+        public List<Position> GetPositions()
+        {
+            return _portfolioPositions;
+        }
+
+        public List<Taxlot> GetTaxlots()
+        {
+            return _portfolioTaxlots;
+        }
+
         public List<DisplayStock> GetDisplayStocks()
         {
             return DisplayStocks;

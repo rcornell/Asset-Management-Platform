@@ -612,6 +612,8 @@ namespace Asset_Management_Platform
 
             
             GetDisplaySecurities();
+            GetPositions();
+            GetTaxlots();
             GetLimitOrders();
             ExecuteShowAllSecurities();
             //DisplaySecurityCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("SecurityType"));
@@ -620,76 +622,89 @@ namespace Asset_Management_Platform
 
 
 
-            MakeTaxlots();
+            //MakeTaxlots();
 
         }
 
 
-        private void MakeTaxlots()
+        private void GetPositions()
         {
-            var lots = new ObservableCollection<Taxlot>();
-
-            foreach (var sec in SecurityList)
-            {
-           
-                if (sec is DisplayStock)
-                {                   
-                    var st = (DisplayStock)sec;
-
-                    foreach (var taxlot in st.Position.Taxlots)
-                    {
-                        lots.Add(taxlot);
-                    }
-                }
-                if (sec is DisplayMutualFund)
-                {
-                    var mf = (DisplayMutualFund)sec;
-
-                    foreach (var taxlot in mf.Position.Taxlots)
-                    {
-                        lots.Add(taxlot);
-                    }
-                }
-            }
-
-            Taxlots = lots;
-            //DisplaySecurityCollectionView = new ListCollectionView(lots);
-            //DisplaySecurityCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Ticker"));
-            
+            var positions = _portfolioManagementService.GetPositions();
+            Positions = new ObservableCollection<Position>(positions);
         }
+
+        private void GetTaxlots()
+        {
+            var lots = _portfolioManagementService.GetTaxlots();
+            Taxlots = new ObservableCollection<Taxlot>(lots);
+        }
+
+
+        //private void MakeTaxlots()
+        //{
+        //    var lots = new ObservableCollection<Taxlot>();
+
+        //    foreach (var sec in SecurityList)
+        //    {
+           
+        //        if (sec is DisplayStock)
+        //        {                   
+        //            var st = (DisplayStock)sec;
+
+        //            foreach (var taxlot in st.Position.Taxlots)
+        //            {
+        //                lots.Add(taxlot);
+        //            }
+        //        }
+        //        if (sec is DisplayMutualFund)
+        //        {
+        //            var mf = (DisplayMutualFund)sec;
+
+        //            foreach (var taxlot in mf.Position.Taxlots)
+        //            {
+        //                lots.Add(taxlot);
+        //            }
+        //        }
+        //    }
+
+        //    Taxlots = lots;
+        //    //DisplaySecurityCollectionView = new ListCollectionView(lots);
+        //    //DisplaySecurityCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Ticker"));
+            
+        //}
 
         /// <summary>
         /// Calls the PortfolioManagementService to find the current list
         /// of stocks and mutual funds. Creates observable collections of each
         /// for binding, then creates the list of all securities for binding.
         /// </summary>
-        private void GetDisplaySecurities()
-        {
-            //Get each List<T> for stocks and mutual funds, then 
-            //create or update the corresponding ObservableCollection<T>
-            var displayStocksList = _portfolioManagementService.GetDisplayStocks();
-            StockList = new ObservableCollection<DisplayStock>(displayStocksList);
+        //private void GetDisplaySecurities()
+        //{
+        //    //Get each List<T> for stocks and mutual funds, then 
+        //    //create or update the corresponding ObservableCollection<T>
+        //    var displayStocksList = _portfolioManagementService.GetDisplayStocks();
+        //    StockList = new ObservableCollection<DisplayStock>(displayStocksList);
 
-            var displayMutualFundList = _portfolioManagementService.GetDisplayMutualFunds();
-            MutualFundList = new ObservableCollection<DisplayMutualFund>(displayMutualFundList);
+        //    var displayMutualFundList = _portfolioManagementService.GetDisplayMutualFunds();
+        //    MutualFundList = new ObservableCollection<DisplayMutualFund>(displayMutualFundList);
 
-            //Instantiate list of all securities, then add all stock and MF items to it.
-            SecurityList = new ObservableCollection<DisplaySecurity>();
+        //    //Instantiate list of all securities, then add all stock and MF items to it.
+        //    SecurityList = new ObservableCollection<DisplaySecurity>();
             
-            foreach (var item in StockList)
-            {
-                SecurityList.Add(item);
-            }
+        //    foreach (var item in StockList)
+        //    {
+        //        SecurityList.Add(item);
+        //    }
 
-            foreach (var item in MutualFundList)
-            {
-                SecurityList.Add(item);
-            }
+        //    foreach (var item in MutualFundList)
+        //    {
+        //        SecurityList.Add(item);
+        //    }
 
-            //Create or update the ListCollectionViews
-            //DisplaySecurityCollectionView = new ListCollectionView(SecurityList);
-            //DisplaySecurityCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("SecurityType"));
-        }
+        //    //Create or update the ListCollectionViews
+        //    //DisplaySecurityCollectionView = new ListCollectionView(SecurityList);
+        //    //DisplaySecurityCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("SecurityType"));
+        //}
 
         private void ExecuteShowAllSecurities()
         {
