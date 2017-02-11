@@ -379,7 +379,7 @@
         
         
         <DataGrid x:Name="SecurityDataGrid"
-                  ItemsSource="{Binding DisplaySecurityCollectionView,                   
+                  ItemsSource="{Binding TestPositions,                   
                                 NotifyOnSourceUpdated=True, 
                                 UpdateSourceTrigger=PropertyChanged}"
                   Grid.Row="1"
@@ -400,12 +400,42 @@
                   ColumnHeaderStyle="{StaticResource HeaderStyle}"                  
                   AlternationCount="2"
                   Background="{StaticResource StockGridBackground}">
-            <DataGrid.GroupStyle>
+            <DataGrid.RowDetailsTemplate>
+                <DataTemplate>
+                    <DataGrid>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Binding="{Binding Ticker}"/>
+                            <DataGridTextColumn Binding="{Binding Description}"/>
+                            <DataGridTextColumn Binding="{Binding Position.Shares}"/>
+                            <DataGridTextColumn Binding="{Binding Price}"/>
+                            <DataGridTextColumn Binding="{Binding Change}"/>
+                            <DataGridTextColumn Binding="{Binding PercentChange}"/>
+                            <DataGridTextColumn Binding="{Binding MarketValue}"/>
+                            <DataGridTextColumn Binding="{Binding CostBasis}"/>
+                            <DataGridTextColumn Binding="{Binding GainLoss}"/>
+                            <DataGridTextColumn Binding="{Binding Yield}"/>
+                            <DataGridTextColumn Binding="{Binding DatePurchased}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DataTemplate>
+            </DataGrid.RowDetailsTemplate>
+            
+            
+            <!--<DataGrid.RowHeaderTemplate>
+                <DataTemplate>
+                    <Expander  ExpandDirection="Down" Header="{Binding Ticker}">
+
+                    </Expander>
+                </DataTemplate>
+            </DataGrid.RowHeaderTemplate>-->
+            
+            
+            <!--<DataGrid.GroupStyle>
                 <GroupStyle >
                     <GroupStyle.HeaderTemplate>
                         <DataTemplate>
                             <StackPanel>
-                                <DataGridCell Content="{Binding Ticker}"/>
+                                <DataGridCell Content="{Binding Items[0].Ticker}"/>
                                 <DataGridCell Content="{Binding Description}"/>
                                 <DataGridCell Content="{Binding Position.Shares}"/>
                                 <DataGridCell Content="{Binding Price}"/>
@@ -447,7 +477,7 @@
                         </Style>
                     </GroupStyle.ContainerStyle>
                 </GroupStyle>
-            </DataGrid.GroupStyle>
+            </DataGrid.GroupStyle>-->
             <DataGrid.Columns>
                 <DataGridTextColumn Width="Auto" Header="Ticker" Binding="{Binding Ticker, Mode=OneWay}"
                                     TextOptions.TextFormattingMode="Display" />
