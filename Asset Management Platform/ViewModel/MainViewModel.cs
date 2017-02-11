@@ -644,6 +644,7 @@ namespace Asset_Management_Platform
 
             DisplaySecurityCollectionView = new ListCollectionView(lots);
             DisplaySecurityCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Ticker"));
+            
         }
 
         /// <summary>
