@@ -32,27 +32,33 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-
         <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
             <Menu DockPanel.Dock="Top"
                   Background="LightGray">
                 <MenuItem Header="_File"
                           IsTabStop="False">
-                    <MenuItem Header="_New Portfolio" Command="{Binding DeletePortfolio}" />
+                    <MenuItem Header="_New Portfolio" 
+                              Command="{Binding DeletePortfolio}" />
                     <MenuItem Header="_Load Portfolio" />
-                    <MenuItem Header="_Save Portfolio" Command="{Binding SavePortfolio}" />
+                    <MenuItem Header="_Save Portfolio" 
+                              Command="{Binding SavePortfolio}" />
                     <Separator />
-                    <MenuItem Header="_Exit" Command="{Binding CloseApplication}" />
+                    <MenuItem Header="_Exit" 
+                              Command="{Binding CloseApplication}" />
                 </MenuItem>
                 <MenuItem Header="_Price Updates"
                           IsTabStop="False">
                     <MenuItem Header="Start Price Updates"/>
                     <MenuItem Header="Stop Price Updates"/>
                     <MenuItem Header="_Update Interval">
-                        <MenuItem Header="_Ten Seconds" Command="{Binding SetIntervalTenSeconds}"/>
-                        <MenuItem Header="T_hirty Seconds" Command="{Binding SetIntervalThirtySeconds}"/>
-                        <MenuItem Header="_Sixty Seconds" Command="{Binding SetIntervalSixtySeconds}"/>
-                        <MenuItem Header="_Five Minutes" Command="{Binding SetIntervalOneMinute}"/>
+                        <MenuItem Header="_Ten Seconds" 
+                                  Command="{Binding SetIntervalTenSeconds}"/>
+                        <MenuItem Header="T_hirty Seconds" 
+                                  Command="{Binding SetIntervalThirtySeconds}"/>
+                        <MenuItem Header="_Sixty Seconds" 
+                                  Command="{Binding SetIntervalSixtySeconds}"/>
+                        <MenuItem Header="_Five Minutes" 
+                                  Command="{Binding SetIntervalFiveMinutes}"/>
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="_Help"
