@@ -584,7 +584,9 @@ namespace Asset_Management_Platform
             GetDisplaySecurities();
             GetLimitOrders();
             ExecuteShowAllSecurities();
-            DisplaySecurityCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("SecurityType"));
+            //DisplaySecurityCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("SecurityType"));
+
+            DisplaySecurityCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Position.Taxlots"));
         }
 
         /// <summary>

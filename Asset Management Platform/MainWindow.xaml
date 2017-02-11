@@ -323,6 +323,7 @@
                           CellStyle="{StaticResource CellStyleCentered}"
                           SelectedItem="{Binding SelectedLimitOrder, Mode=OneWayToSource, NotifyOnSourceUpdated=True}"
                           ColumnWidth="Auto"
+                          ScrollViewer.VerticalScrollBarVisibility="Auto"
                           CanUserResizeColumns="False"
                           CanUserSortColumns="True"
                           MinColumnWidth="60">
@@ -363,9 +364,38 @@
                   SelectedItem="{Binding SelectedDisplaySecurity, Mode=TwoWay}"
                   RowStyle="{StaticResource RowStyle}"
                   CellStyle="{StaticResource CellStyle}"
-                  ColumnHeaderStyle="{StaticResource HeaderStyle}"
+                  ColumnHeaderStyle="{StaticResource HeaderStyle}"                  
                   AlternationCount="2"
                   Background="{StaticResource StockGridBackground}">
+            <DataGrid.GroupStyle>
+                <GroupStyle >
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <StackPanel >
+                                <TextBlock Text="{Binding Ticker}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="{x:Type GroupItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate>
+                                        <Expander>
+                                            <Expander.Header >
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Ticker}"/>
+                                                    <TextBlock Text="{Binding Position.Taxlots.Count}"/>
+                                                </StackPanel>
+                                            </Expander.Header>
+                                        </Expander>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
+                </GroupStyle>
+            </DataGrid.GroupStyle>
 
             <DataGrid.Columns>
                 <DataGridTextColumn Width="Auto" Header="Ticker" Binding="{Binding Ticker, Mode=OneWay}"
