@@ -374,8 +374,12 @@
                         Margin="0,5,2,0" />
             </StackPanel>
         </StackPanel>
+        
+        <!--You have to bind to a collection of taxlots and group by ticker-->
+        
+        
         <DataGrid x:Name="SecurityDataGrid"
-                  ItemsSource="{Binding SecurityList, 
+                  ItemsSource="{Binding DisplaySecurityCollectionView,                   
                                 NotifyOnSourceUpdated=True, 
                                 UpdateSourceTrigger=PropertyChanged}"
                   Grid.Row="1"
@@ -396,12 +400,12 @@
                   ColumnHeaderStyle="{StaticResource HeaderStyle}"                  
                   AlternationCount="2"
                   Background="{StaticResource StockGridBackground}">
-            <DataGrid.GroupStyle>
+            <!--<DataGrid.GroupStyle>
                 <GroupStyle >
                     <GroupStyle.HeaderTemplate>
                         <DataTemplate>
                             <StackPanel >
-                                <TextBlock Text="{Binding Ticker}"/>
+                                <TextBlock Text="{Binding Ticker, Source={StaticResource Locator}}"/>
                             </StackPanel>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>
@@ -424,7 +428,7 @@
                         </Style>
                     </GroupStyle.ContainerStyle>
                 </GroupStyle>
-            </DataGrid.GroupStyle>
+            </DataGrid.GroupStyle>-->
 
             <DataGrid.Columns>
                 <DataGridTextColumn Width="Auto" Header="Ticker" Binding="{Binding Ticker, Mode=OneWay}"

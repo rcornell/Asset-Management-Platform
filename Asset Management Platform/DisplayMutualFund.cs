@@ -10,6 +10,11 @@ namespace Asset_Management_Platform
     {
 
         private Position _position;
+        public Position Position
+        {
+            get { return _position; }
+        }
+
         private MutualFund _fund;
         public MutualFund Fund
         {

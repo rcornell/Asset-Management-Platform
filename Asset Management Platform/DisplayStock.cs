@@ -9,6 +9,11 @@ namespace Asset_Management_Platform
     public class DisplayStock : DisplaySecurity
     {
         private Position _position;
+
+        public Position Position
+        {
+            get { return _position; }
+        }
         public Stock Stock { get; set; }
 
         public decimal Shares

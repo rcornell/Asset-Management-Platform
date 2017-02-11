@@ -559,6 +559,26 @@ namespace Asset_Management_Platform
             }
 
         }
+
+
+
+
+        private ObservableCollection<Taxlot> _taxlots;
+
+        public ObservableCollection<Taxlot> Taxlots
+        {
+            get
+            {
+                return _taxlots;
+            }
+            set
+            {
+                _taxlots = value;
+                RaisePropertyChanged(() => Taxlots);
+            }
+        }
+
+
         public MainViewModel(IPortfolioManagementService portfolioService)
         {
             TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
@@ -586,7 +606,44 @@ namespace Asset_Management_Platform
             ExecuteShowAllSecurities();
             //DisplaySecurityCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("SecurityType"));
 
-            DisplaySecurityCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Position.Taxlots"));
+            
+
+
+
+            MakeTaxlots();
+
+        }
+
+
+        private void MakeTaxlots()
+        {
+            var lots = new ObservableCollection<Taxlot>();
+
+            foreach (var sec in SecurityList)
+            {
+           
+                if (sec is DisplayStock)
+                {                   
+                    var st = (DisplayStock)sec;
+
+                    foreach (var taxlot in st.Position.Taxlots)
+                    {
+                        lots.Add(taxlot);
+                    }
+                }
+                if (sec is DisplayMutualFund)
+                {
+                    var mf = (DisplayMutualFund)sec;
+
+                    foreach (var taxlot in mf.Position.Taxlots)
+                    {
+                        lots.Add(taxlot);
+                    }
+                }
+            }
+
+            DisplaySecurityCollectionView = new ListCollectionView(lots);
+            DisplaySecurityCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Ticker"));
         }
 
         /// <summary>
@@ -618,8 +675,8 @@ namespace Asset_Management_Platform
             }
 
             //Create or update the ListCollectionViews
-            DisplaySecurityCollectionView = new ListCollectionView(SecurityList);
-            DisplaySecurityCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("SecurityType"));
+            //DisplaySecurityCollectionView = new ListCollectionView(SecurityList);
+            //DisplaySecurityCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("SecurityType"));
         }
 
         private void ExecuteShowAllSecurities()
