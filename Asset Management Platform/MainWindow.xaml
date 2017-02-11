@@ -43,6 +43,16 @@
                     <Separator />
                     <MenuItem Header="_Exit" Command="{Binding CloseApplication}" />
                 </MenuItem>
+                <MenuItem Header="_Options">
+                    <MenuItem Header="Start Price Updates"/>
+                    <MenuItem Header="Stop Price Updates"/>
+                    <MenuItem Header="_Update Interval">
+                        <MenuItem Header="_Ten Seconds" Command="{Binding SetIntervalTenSeconds}"/>
+                        <MenuItem Header="T_hirty Seconds" Command="{Binding SetIntervalThirtySeconds}"/>
+                        <MenuItem Header="_Sixty Seconds" Command="{Binding SetIntervalSixtySeconds}"/>
+                        <MenuItem Header="_Five Minutes" Command="{Binding SetIntervalOneMinute}"/>
+                    </MenuItem>
+                </MenuItem>
                 <MenuItem Header="_Help">
                     <MenuItem Header="Manual" />
                     <Separator />
@@ -201,6 +211,8 @@
                             Style="{StaticResource ExecuteButtonStyle}" />
                 </Grid>
             </StackPanel>
+            
+            
             <StackPanel Name="LimitOrder"
                         MinWidth="250"
                         Orientation="Vertical"
@@ -253,7 +265,7 @@
                         Command="{Binding DeleteLimitOrder}"
                         IsEnabled="{Binding LimitOrderIsSelected}"
                         VerticalAlignment="Bottom"
-                        Margin="0,0,2,0" />
+                        Margin="0,5,2,0" />
             </StackPanel>
         </StackPanel>
         <DataGrid x:Name="SecurityDataGrid"

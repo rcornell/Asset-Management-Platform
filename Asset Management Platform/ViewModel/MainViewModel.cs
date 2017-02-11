@@ -494,6 +494,26 @@ namespace Asset_Management_Platform
             get { return new RelayCommand(ExecuteDeleteLimitOrder); }
         }
 
+        public RelayCommand SetIntervalTenSeconds
+        {
+            get { return new RelayCommand(ExecuteSetIntervalTenSeconds); }
+        }
+
+        public RelayCommand SetIntervalThirtySeconds
+        {
+            get { return new RelayCommand(ExecuteSetIntervalThirtySeconds); }
+        }        
+
+        public RelayCommand SetIntervalSixtySeconds
+        {
+            get { return new RelayCommand(ExecuteSetIntervalSixtySeconds); }
+        }
+
+        public RelayCommand SetIntervalFiveMinutes
+        {
+            get { return new RelayCommand(ExecuteSetIntervalFiveMinutes); }
+        }
+
         public decimal _totalValue;
         public decimal TotalValue {
             get { return _totalValue; }
@@ -800,6 +820,25 @@ namespace Asset_Management_Platform
             {
                 SelectedSecurityType = SecurityTypes[1];
             }
+        }
+
+        private void ExecuteSetIntervalTenSeconds()
+        {
+            throw new NotImplementedException();
+        }
+        private void ExecuteSetIntervalThirtySeconds()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void ExecuteSetIntervalSixtySeconds()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void ExecuteSetIntervalFiveMinutes()
+        {
+            throw new NotImplementedException();
         }
 
         public void ExecuteDeletePortfolio()
