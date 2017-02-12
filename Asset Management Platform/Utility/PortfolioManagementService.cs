@@ -88,12 +88,6 @@ namespace Asset_Management_Platform.Utility
             }
             var rawSecurities = _stockDataService.GetSecurityInfo(tickers);
 
-            foreach (var pos in _portfolioPositions)
-            {
-                var security = rawSecurities.Find(s => s.Ticker == pos.Ticker);
-                pos.UpdateTaxlotPrices(security.LastPrice);
-            }
-
             _portfolioSecurities = _stockDataService.GetMutualFundExtraData(rawSecurities);
 
 
@@ -102,14 +96,20 @@ namespace Asset_Management_Platform.Utility
             else
                 _portfolioPositions = new List<Position>();
 
+            foreach (var pos in _portfolioPositions)
+            {
+                var security = rawSecurities.Find(s => s.Ticker == pos.Ticker);
+                pos.UpdateTaxlotPrices(security.LastPrice);
+            }
+
             //foreach (var position in _portfolioPositions)
             //{
             //    tickers.Add(position.Ticker);
             //}
 
             //Could combine these into a startup GetAllInfo method in StockDataService
-            
-            
+
+
         }
 
 

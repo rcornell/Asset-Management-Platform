@@ -400,46 +400,88 @@
                   ColumnHeaderStyle="{StaticResource HeaderStyle}"                  
                   AlternationCount="2"
                   Background="{StaticResource StockGridBackground}">
+            <!--<DataGrid.Resources>
+                <Style TargetType="{x:Type DataGridCell}">
+                    <Setter Property="IsHitTestVisible" Value="False"/>
+                </Style>
+            </DataGrid.Resources>-->
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
-                    <DataGrid ItemsSource="{Binding Taxlots}"
+                    <DataGrid Name="TaxlotDataGrid"
+                              ItemsSource="{Binding Taxlots}"
+                              MinWidth="500"
                               AutoGenerateColumns="False"
                               AlternationCount="2"
-                              ColumnHeaderHeight="0"
+                              ColumnHeaderHeight="1"
                               RowHeaderWidth="0"
                               CanUserDeleteRows="False"
                               VerticalScrollBarVisibility="Hidden"
                               CanUserAddRows="False"
                               ColumnWidth="Auto"
-                              RowStyle="{StaticResource RowStyle}"
-                              CellStyle="{StaticResource CellStyle}">
+                              HorizontalScrollBarVisibility="Disabled"
+                              RowStyle="{StaticResource RowDetailStyle}"
+                              CellStyle="{StaticResource CellStyle}"
+                              ColumnHeaderStyle="{StaticResource HeaderStyle}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Binding="{Binding Ticker}"/>
-                            <DataGridTextColumn Binding="{Binding Description}"/>
-                            <DataGridTextColumn Binding="{Binding Shares}"/>
-                            <DataGridTextColumn Binding="{Binding LastPrice}"/>
-                            <DataGridTextColumn Binding="{Binding ChangeXXXXXXXX}"/>
-                            <DataGridTextColumn Binding="{Binding PercentChangeXXXXXXXXXXX}"/>
-                            <DataGridTextColumn Binding="{Binding MarketValue}"/>
-                            <DataGridTextColumn Binding="{Binding CostBasis, Converter={StaticResource DecimalToStringConverter}}"/>
-                            <DataGridTextColumn Binding="{Binding GainLoss}"/>
-                            <DataGridTextColumn Binding="{Binding YieldXXXXXXX}"/>
-                            <DataGridTextColumn Binding="{Binding DatePurchased}"/>
+                            <DataGridTextColumn Binding="{Binding Ticker}"
+                                                Width="Auto"
+                                                Header="Ticker"/>
+                            <DataGridTextColumn Binding="{Binding RelativeSource={RelativeSource 
+                                                      FindAncestor,
+                                                      AncestorType={x:Type DataGrid}},
+                                                    Path=DataContext.Description}"
+                                                Width="Auto"
+                                                Header="Description"
+                                                MinWidth="100"/>
+                            <DataGridTextColumn Binding="{Binding Shares}"
+                                                Width="Auto"
+                                                CellStyle="{StaticResource CellStyleRight}"
+                                                Header="Shares"/>
+                            <DataGridTextColumn Binding="{Binding LastPrice}"
+                                                Width="Auto"
+                                                CellStyle="{StaticResource CellStyleRight}"
+                                                Header="Price"/>
+                            <DataGridTextColumn Binding="{Binding RelativeSource={RelativeSource 
+                                                      FindAncestor,
+                                                      AncestorType={x:Type DataGrid}},
+                                                    Path=DataContext.Change}"
+                                                Width="Auto"
+                                                CellStyle="{StaticResource CellStyleRight}"
+                                                Header="Change"/>
+                            <DataGridTextColumn Binding="{Binding RelativeSource={RelativeSource 
+                                                      FindAncestor,
+                                                      AncestorType={x:Type DataGrid}},
+                                                    Path=DataContext.PercentChange}"
+                                                Width="Auto"
+                                                CellStyle="{StaticResource CellStyleCentered}"
+                                                Header="% Change"/>
+                            <DataGridTextColumn Binding="{Binding MarketValue}"
+                                                Width="Auto"
+                                                CellStyle="{StaticResource CellStyleRight}"
+                                                Header="Market Value"/>
+                            <DataGridTextColumn Binding="{Binding CostBasis, Converter={StaticResource DecimalToStringConverter}}"
+                                                Width="Auto"
+                                                CellStyle="{StaticResource CellStyleRight}"
+                                                Header="Cost Basis"/>
+                            <DataGridTextColumn Binding="{Binding GainLoss}"
+                                                Width="Auto"
+                                                CellStyle="{StaticResource CellStyleRight}"
+                                                Header="Gain/Loss"/>
+                            <DataGridTextColumn Binding="{Binding RelativeSource={RelativeSource 
+                                                      FindAncestor,
+                                                      AncestorType={x:Type DataGrid}},
+                                                    Path=DataContext.Yield}"
+                                                Width="Auto"
+                                                CellStyle="{StaticResource CellStyleCentered}"
+                                                Header="Yield"/>
+                            <DataGridTextColumn Binding="{Binding DatePurchased}"
+                                                Width="Auto"
+                                                CellStyle="{StaticResource CellStyleCentered}"
+                                                Header="Date Purchased"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>
-            
-            
-            <!--<DataGrid.RowHeaderTemplate>
-                <DataTemplate>
-                    <Expander  ExpandDirection="Down" Header="{Binding Ticker}">
-
-                    </Expander>
-                </DataTemplate>
-            </DataGrid.RowHeaderTemplate>-->
-            
-            
             <!--<DataGrid.GroupStyle>
                 <GroupStyle >
                     <GroupStyle.HeaderTemplate>
@@ -489,6 +531,13 @@
                 </GroupStyle>
             </DataGrid.GroupStyle>-->
             <DataGrid.Columns>
+                <DataGridTemplateColumn  >
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button MinWidth="20" Content="+"/> 
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn Width="Auto"  Header="Ticker" Binding="{Binding Path=Ticker, Mode=OneWay}"
                                     TextOptions.TextFormattingMode="Display" />
                 <DataGridTextColumn Width="Auto" Header="Description" Binding="{Binding Path=Description, Mode=OneWay}"

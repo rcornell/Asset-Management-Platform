@@ -601,7 +601,7 @@ namespace Asset_Management_Platform
 
             foreach (var sec in Positions)
             {
-                if (sec is MutualFund)
+                if (sec.Security is MutualFund)
                     sec.Hidden = true;
                 else
                     sec.Hidden = false;
@@ -614,7 +614,7 @@ namespace Asset_Management_Platform
             AllocationChartPositions = _portfolioManagementService.GetChartFundsOnly();
             foreach (var sec in Positions)
             {
-                if (sec is DisplayStock)
+                if (sec.Security is Stock)
                     sec.Hidden = true;
                 else
                     sec.Hidden = false;
