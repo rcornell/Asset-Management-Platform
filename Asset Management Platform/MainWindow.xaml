@@ -13,6 +13,13 @@
         SizeToContent="WidthAndHeight">
     <Window.Resources>
         <convert:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
+        
+        <CollectionViewSource x:Key="DataGridItems" >
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="Ticker"/>
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
+        
     </Window.Resources>
     <Grid>
         <Grid.Background>
@@ -379,7 +386,7 @@
         
         
         <DataGrid x:Name="SecurityDataGrid"
-                  ItemsSource="{Binding Positions,
+                  ItemsSource="{Binding PositionCollectionView,
                                 NotifyOnSourceUpdated=True, 
                                 UpdateSourceTrigger=PropertyChanged}"
                   Grid.Row="1"
@@ -400,11 +407,50 @@
                   ColumnHeaderStyle="{StaticResource HeaderStyle}"                  
                   AlternationCount="2"
                   Background="{StaticResource StockGridBackground}">
-            <!--<DataGrid.Resources>
-                <Style TargetType="{x:Type DataGridCell}">
-                    <Setter Property="IsHitTestVisible" Value="False"/>
-                </Style>
-            </DataGrid.Resources>-->
+            <DataGrid.GroupStyle>
+                <!-- Style for groups at top level. -->
+                <GroupStyle>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="{x:Type GroupItem}">
+                            <Setter Property="Margin" Value="0,0,0,5"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type GroupItem}">
+                                        <Expander IsExpanded="False" 
+                                                
+                                                  BorderThickness="1,1,1,5">
+                                            <Expander.Header>
+                                                <DockPanel>
+                                                    <TextBlock FontWeight="Bold" Text="{Binding Path=Name}" Margin="5,0,0,0" Width="100"/>
+                                                </DockPanel>
+                                            </Expander.Header>
+                                            <Expander.Content>
+                                                <ItemsPresenter />
+                                            </Expander.Content>
+                                        </Expander>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
+                </GroupStyle>
+                <!-- Style for groups under the top level. -->
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <DockPanel Background="LightBlue">
+                                <TextBlock Text="{Binding Path=Ticker}" 
+                                           Margin="30,0,0,0" 
+                                           Width="100"/>
+                            </DockPanel>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+            </DataGrid.GroupStyle>
+            
+            
+            
+            
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
                     <DataGrid Name="TaxlotDataGrid"
@@ -531,13 +577,6 @@
                 </GroupStyle>
             </DataGrid.GroupStyle>-->
             <DataGrid.Columns>
-                <DataGridTemplateColumn  >
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button MinWidth="20" Content="+"/> 
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
                 <DataGridTextColumn Width="Auto"  Header="Ticker" Binding="{Binding Path=Ticker, Mode=OneWay}"
                                     TextOptions.TextFormattingMode="Display" />
                 <DataGridTextColumn Width="Auto" Header="Description" Binding="{Binding Path=Description, Mode=OneWay}"

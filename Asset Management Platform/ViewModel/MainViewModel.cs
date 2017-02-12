@@ -567,8 +567,8 @@ namespace Asset_Management_Platform
             GetTaxlots();
             GetLimitOrders();
             ExecuteShowAllSecurities();
-            //DisplaySecurityCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("SecurityType"));
-
+            PositionCollectionView = new ListCollectionView(Positions);
+            PositionCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Ticker"));                    
         }
 
 
