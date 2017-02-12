@@ -238,7 +238,7 @@ namespace Asset_Management_Platform
             if (_taxlots.Count > 1)
                 return "Multiple";
             else
-                return _taxlots[0].DatePurchased.ToShortDateString();
+                return _taxlots[0].DatePurchased.ToString();
         }
 
         private decimal ComputeSharesOwned()
