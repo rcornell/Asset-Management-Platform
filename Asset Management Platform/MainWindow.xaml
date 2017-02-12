@@ -410,7 +410,6 @@
                 <DataTemplate>
                     <DataGrid Name="TaxlotDataGrid"
                               ItemsSource="{Binding Taxlots}"
-                              MinWidth="500"
                               AutoGenerateColumns="False"
                               AlternationCount="2"
                               RowHeaderWidth="0"
@@ -421,10 +420,9 @@
                               HorizontalScrollBarVisibility="Disabled"
                               RowStyle="{StaticResource RowDetailStyle}"
                               CellStyle="{StaticResource CellStyle}"
-                              ColumnHeaderStyle="{StaticResource DetailHeaderStyle}"
-                              HorizontalAlignment="Right">
+                              ColumnHeaderStyle="{StaticResource DetailHeaderStyle}">
                         <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="Taxlots">
+                            <!--<DataGridTemplateColumn Header="Taxlots">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Viewbox Height="20" Width="20">
@@ -432,7 +430,7 @@
                                         </Viewbox>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
+                            </DataGridTemplateColumn>-->
                             <!--<DataGridTextColumn Binding="{Binding Ticker}"
                                                 Width="Auto"
                                                 Header="Ticker"/>
