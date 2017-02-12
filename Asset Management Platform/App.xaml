@@ -477,7 +477,6 @@
             <!--Security Data Grid DETAIL Header Style-->
             <Style x:Key="DetailHeaderStyle" TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource HeaderStyle}">
                 <Setter Property="Height" Value="20" />
-                <Setter Property="Margin" Value="0,10,0,0"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type DataGridColumnHeader}">
@@ -738,7 +737,6 @@
 
             <!--SecurityDataGrid RowDETAIL Style-->
             <Style x:Key="RowDetailStyle" TargetType="{x:Type DataGridRow}" BasedOn="{StaticResource RowStyle}">
-                <Setter Property="Margin" Value="10,0,0,0"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type DataGridRow}">

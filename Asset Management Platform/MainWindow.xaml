@@ -408,7 +408,19 @@
                   Background="{StaticResource StockGridBackground}">
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
-                    <DataGrid Name="TaxlotDataGrid"
+                    <StackPanel Margin="5" Orientation="Vertical"
+                                HorizontalAlignment="Left">
+                        <Border Background="{StaticResource GridView.ColumnHeaderBrush}"
+                                HorizontalAlignment="Stretch"
+                                BorderThickness="1"
+                                BorderBrush="{StaticResource ColumnHeader.BorderBrush}">
+                            <TextBlock Text="Taxlot Details"
+                                       Style="{StaticResource TextBlockStyle}"
+                                       FontSize="15"/>
+                        </Border>
+                        <DataGrid Name="TaxlotDataGrid"
+                              
+                              HorizontalAlignment="Left"
                               ItemsSource="{Binding Taxlots}"
                               AutoGenerateColumns="False"
                               AlternationCount="2"
@@ -485,9 +497,10 @@
                             <DataGridTextColumn Binding="{Binding DatePurchased}"
                                                 Width="Auto"
                                                 CellStyle="{StaticResource CellStyleCentered}"
-                                                Header="Date Purchased"/>
+                                                Header="Taxlot Date"/>
                         </DataGrid.Columns>
                     </DataGrid>
+                    </StackPanel>
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>
             <DataGrid.Columns>
