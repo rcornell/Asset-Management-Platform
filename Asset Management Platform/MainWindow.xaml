@@ -414,12 +414,18 @@
                                 HorizontalAlignment="Stretch"
                                 BorderThickness="1"
                                 BorderBrush="{StaticResource ColumnHeader.BorderBrush}">
-                            <TextBlock Text="Taxlot Details"
-                                       Style="{StaticResource TextBlockStyle}"
-                                       FontSize="15"/>
-                        </Border>
-                        <DataGrid Name="TaxlotDataGrid"
-                              
+                            <StackPanel Background="Transparent">
+                                <Border BorderThickness="0,0,0,1"
+                                        BorderBrush="{StaticResource ColumnHeader.BorderBrush}"
+                                        Width="Auto">
+                                    <TextBlock Text="Taxlot Details"
+                                               Style="{StaticResource TextBlockStyle}"
+                                               FontSize="14"
+                                               Padding="3,0"
+                                               Width="Auto"/>
+                                </Border>
+                                <DataGrid Name="TaxlotDataGrid"
+                                      BorderThickness="0"
                               HorizontalAlignment="Left"
                               ItemsSource="{Binding Taxlots}"
                               AutoGenerateColumns="False"
@@ -500,6 +506,8 @@
                                                 Header="Taxlot Date"/>
                         </DataGrid.Columns>
                     </DataGrid>
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>
