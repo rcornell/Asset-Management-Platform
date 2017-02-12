@@ -78,6 +78,17 @@ namespace Asset_Management_Platform
             }
         }
 
+        private ListCollectionView _taxlotsCollectionView;
+        public ListCollectionView TaxlotsCollectionView
+        {
+            get { return _taxlotsCollectionView; }
+            set
+            {
+                _taxlotsCollectionView = value;
+                RaisePropertyChanged(() => TaxlotsCollectionView);
+            }
+        }
+
 
         private Security _screenerStock;
         public Security ScreenerStock
@@ -568,7 +579,12 @@ namespace Asset_Management_Platform
             GetLimitOrders();
             ExecuteShowAllSecurities();
             PositionCollectionView = new ListCollectionView(Positions);
-            PositionCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Ticker"));                    
+            PositionCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Ticker"));
+            TaxlotsCollectionView = new ListCollectionView(Taxlots);
+            TaxlotsCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Ticker"));
+
+
+
         }
 
 
