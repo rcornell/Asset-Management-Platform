@@ -421,9 +421,19 @@
                               HorizontalScrollBarVisibility="Disabled"
                               RowStyle="{StaticResource RowDetailStyle}"
                               CellStyle="{StaticResource CellStyle}"
-                              ColumnHeaderStyle="{StaticResource DetailHeaderStyle}">
+                              ColumnHeaderStyle="{StaticResource DetailHeaderStyle}"
+                              HorizontalAlignment="Right">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Binding="{Binding Ticker}"
+                            <DataGridTemplateColumn Header="Taxlots">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Viewbox Height="20" Width="20">
+                                            <ContentControl Content="{StaticResource Chevron}"/>
+                                        </Viewbox>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <!--<DataGridTextColumn Binding="{Binding Ticker}"
                                                 Width="Auto"
                                                 Header="Ticker"/>
                             <DataGridTextColumn Binding="{Binding RelativeSource={RelativeSource 
@@ -432,12 +442,12 @@
                                                     Path=DataContext.Description}"
                                                 Width="Auto"
                                                 Header="Description"
-                                                MinWidth="100"/>
+                                                MinWidth="100"/>-->
                             <DataGridTextColumn Binding="{Binding Shares}"
                                                 Width="Auto"
                                                 CellStyle="{StaticResource CellStyleRight}"
                                                 Header="Shares"/>
-                            <DataGridTextColumn Binding="{Binding LastPrice}"
+                            <!--<DataGridTextColumn Binding="{Binding LastPrice}"
                                                 Width="Auto"
                                                 CellStyle="{StaticResource CellStyleRight}"
                                                 Header="Price"/>
@@ -454,7 +464,7 @@
                                                     Path=DataContext.PercentChange}"
                                                 Width="Auto"
                                                 CellStyle="{StaticResource CellStyleCentered}"
-                                                Header="% Change"/>
+                                                Header="% Change"/>-->
                             <DataGridTextColumn Binding="{Binding MarketValue}"
                                                 Width="Auto"
                                                 CellStyle="{StaticResource CellStyleRight}"
@@ -467,13 +477,13 @@
                                                 Width="Auto"
                                                 CellStyle="{StaticResource CellStyleRight}"
                                                 Header="Gain/Loss"/>
-                            <DataGridTextColumn Binding="{Binding RelativeSource={RelativeSource 
+                            <!--<DataGridTextColumn Binding="{Binding RelativeSource={RelativeSource 
                                                       FindAncestor,
                                                       AncestorType={x:Type DataGrid}},
                                                     Path=DataContext.Yield}"
                                                 Width="Auto"
                                                 CellStyle="{StaticResource CellStyleCentered}"
-                                                Header="Yield"/>
+                                                Header="Yield"/>-->
                             <DataGridTextColumn Binding="{Binding DatePurchased}"
                                                 Width="Auto"
                                                 CellStyle="{StaticResource CellStyleCentered}"
@@ -483,10 +493,8 @@
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>
             <DataGrid.Columns>
-                <DataGridTextColumn Width="Auto"  Header="Ticker" Binding="{Binding Path=Ticker, Mode=OneWay}"
-                                    TextOptions.TextFormattingMode="Display" />
-                <DataGridTextColumn Width="Auto" Header="Description" Binding="{Binding Path=Description, Mode=OneWay}"
-                                    TextOptions.TextFormattingMode="Ideal" />
+                <DataGridTextColumn Width="Auto"  Header="Ticker" Binding="{Binding Path=Ticker, Mode=OneWay}"/>
+                <DataGridTextColumn Width="Auto" Header="Description" Binding="{Binding Path=Description, Mode=OneWay}"/>
                 <DataGridTextColumn Width="Auto" Header="Shares" Binding="{Binding SharesOwned, Mode=OneWay, Converter={StaticResource DecimalToStringConverter}}"
                                     CellStyle="{StaticResource CellStyleRight}" />
                 <DataGridTextColumn Width="Auto" Header="Price" Binding="{Binding Path=Price, Mode=OneWay}"
