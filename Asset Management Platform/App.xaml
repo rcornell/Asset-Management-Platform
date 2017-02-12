@@ -472,13 +472,13 @@
 
             <!--Security Data Grid DETAIL Header Style-->
             <Style x:Key="DetailHeaderStyle" TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource HeaderStyle}">
-                <Setter Property="Height" Value="1" />
-                <Setter Property="Margin" Value="0,10,0,0"/>
+                <Setter Property="Height" Value="0" />
+                <Setter Property="Margin" Value="0,0,0,0"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type DataGridColumnHeader}">
                             <Border x:Name="headerBorder"
-                                        BorderThickness="0,1,0,1"
+                                        BorderThickness="0"
                                         BorderBrush="{StaticResource ColumnHeader.BorderBrush}"
                                         Padding="3,0,3,0"
                                     Background="{StaticResource GridView.ColumnHeaderBrush}">
@@ -735,6 +735,7 @@
 
             <!--SecurityDataGrid RowDETAIL Style-->
             <Style x:Key="RowDetailStyle" TargetType="{x:Type DataGridRow}" BasedOn="{StaticResource RowStyle}">
+                <Setter Property="Margin" Value="10,0,0,0"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type DataGridRow}">
