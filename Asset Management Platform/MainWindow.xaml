@@ -382,10 +382,13 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <DataGrid x:Name="SecurityDataGrid"
                       Grid.Row="0"
                       Grid.Column="0"
+                      Grid.ColumnSpan="3"
                       ItemsSource="{Binding Positions,
                                 NotifyOnSourceUpdated=True, 
                                 UpdateSourceTrigger=PropertyChanged}"
@@ -544,6 +547,8 @@
             <Grid MinHeight="30"
                   Grid.Row="1"
                   Grid.Column="0"
+                  Grid.ColumnSpan="2"
+                  Margin="0,3,0,3"
                   VerticalAlignment="Bottom"
                   Background="#7DFFE0">
                 <Grid.RowDefinitions>
@@ -569,6 +574,7 @@
                     <TextBlock Text="$$$$$$" VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="16"/>
                 </StackPanel>
             </Grid>
+            <Button Grid.Column="2" Grid.Row="1" Margin="2,3" Content="Show Limit Orders"></Button>
         </Grid>
         
 
