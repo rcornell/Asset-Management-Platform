@@ -502,6 +502,28 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => TotalValue); }
         }
 
+        public decimal _totalCostBasis;
+        public decimal TotalCostBasis
+        {
+            get { return _totalCostBasis; }
+            set
+            {
+                _totalCostBasis = value;
+                RaisePropertyChanged(() => TotalCostBasis);
+            }
+        }
+
+        public decimal _totalGainLoss;
+        public decimal TotalGainLoss
+        {
+            get { return _totalGainLoss; }
+            set
+            {
+                _totalGainLoss = value;
+                RaisePropertyChanged(() => TotalGainLoss);
+            }
+        }
+
         private ObservableCollection<PositionByWeight> _allocationChartPositions;
         public ObservableCollection<PositionByWeight> AllocationChartPositions {
             get {

@@ -550,7 +550,7 @@
                   Grid.ColumnSpan="2"
                   Margin="0,3,0,3"
                   VerticalAlignment="Bottom"
-                  Background="#7DFFE0">
+                  Background="#E8E8E8">
                 <Grid.RowDefinitions>
                     <RowDefinition />
                 </Grid.RowDefinitions>
@@ -561,17 +561,17 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock Text="Total Value: " VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="16"/>
-                    <TextBlock Text="$$$$$$" VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="16"/>
+                    <TextBlock Text="{Binding TotalValue}" VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="16"/>
                 </StackPanel>
 
                 <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock Text="Total Cost Basis:  " VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="16"/>
-                    <TextBlock Text="$$$$$$" VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="16"/>
+                    <TextBlock Text="{Binding TotalCostBasis}" VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="16"/>
                 </StackPanel>
 
                 <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock Text="Total Gain/Loss: " VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="16"/>
-                    <TextBlock Text="$$$$$$" VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="16"/>
+                    <TextBlock Text="{Binding TotalGainLoss}" VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="16"/>
                 </StackPanel>
             </Grid>
             <Button Grid.Column="2" Grid.Row="1" Margin="2,3" Content="Show Limit Orders"></Button>
