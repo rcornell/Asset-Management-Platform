@@ -545,9 +545,8 @@
                   Grid.Row="1"
                   Grid.Column="0"
                   VerticalAlignment="Bottom"
-                  Background="Purple">
+                  Background="#7DFFE0">
                 <Grid.RowDefinitions>
-                    <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
@@ -555,8 +554,20 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
+                <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="Total Value: " VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="16"/>
+                    <TextBlock Text="$$$$$$" VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="16"/>
+                </StackPanel>
 
+                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="Total Cost Basis:  " VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="16"/>
+                    <TextBlock Text="$$$$$$" VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="16"/>
+                </StackPanel>
 
+                <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="Total Gain/Loss: " VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="16"/>
+                    <TextBlock Text="$$$$$$" VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="16"/>
+                </StackPanel>
             </Grid>
         </Grid>
         
