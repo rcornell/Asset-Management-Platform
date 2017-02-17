@@ -588,7 +588,6 @@ namespace Asset_Management_Platform
             _portfolioManagementService = portfolioService;
             Messenger.Default.Register<PortfolioMessage>(this, RefreshCollection);
             Messenger.Default.Register<TradeMessage>(this, SetAlertMessage);
-            //_portfolioManagementService.StartUpdates(); //TURNED OFF FOR TESTING
 
             GetPositions();
             GetTaxlots();
@@ -599,8 +598,7 @@ namespace Asset_Management_Platform
             TaxlotsCollectionView = new ListCollectionView(Taxlots);
             TaxlotsCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Ticker"));
 
-
-
+            //_portfolioManagementService.StartUpdates(); //TURNED OFF FOR TESTING
         }
 
 
@@ -811,13 +809,14 @@ namespace Asset_Management_Platform
             ExecuteButtonEnabled = false;
             PreviewButtonText = "Preview Order";
             AlertBoxMessage = "";
-        }
+        }    
 
         private void ExecuteSetIntervalTenSeconds()
         {
             var span = new TimeSpan(0, 0, 10);
             _portfolioManagementService.UpdateTimerInterval(span);
         }
+
         private void ExecuteSetIntervalThirtySeconds()
         {
             var span = new TimeSpan(0, 0, 30);
@@ -888,8 +887,6 @@ namespace Asset_Management_Platform
         {
             AlertBoxMessage = message.Message;
             AlertBoxVisible = true;
-        }
-
-        
+        }     
     }
 }
