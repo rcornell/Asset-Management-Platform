@@ -419,7 +419,7 @@
             <DataGrid Name="LimitDataGrid"
                       Background="{StaticResource StockGridBackground}"
                       BorderBrush="{StaticResource ColumnHeader.BorderBrush}"
-                      BorderThickness="4,0,0,0"
+                      BorderThickness="4,1,1,1"
                       Panel.ZIndex="1"
                       Grid.Row="0"
                       Grid.Column="0"
@@ -460,11 +460,9 @@
                       Grid.Row="0"
                       Grid.Column="0"
                       Grid.ColumnSpan="4"
-                      ItemsSource="{Binding Positions,
-                                NotifyOnSourceUpdated=True, 
-                                UpdateSourceTrigger=PropertyChanged}"
-                      VerticalAlignment="Stretch"
-                      BorderThickness="0"
+                      BorderThickness="1"
+                      BorderBrush="{StaticResource ColumnHeader.BorderBrush}"
+                      VerticalAlignment="Stretch"                      
                       AutoGenerateColumns="False"
                       CanUserDeleteRows="False"
                       VerticalScrollBarVisibility="Visible"
@@ -473,6 +471,9 @@
                       MinWidth="805"
                       RowHeaderWidth="0"
                       SelectionMode="Single"
+                      ItemsSource="{Binding Positions,
+                                NotifyOnSourceUpdated=True, 
+                                UpdateSourceTrigger=PropertyChanged}"
                       SelectedItem="{Binding SelectedPosition, Mode=TwoWay}"
                       RowStyle="{StaticResource RowStyle}"
                       CellStyle="{StaticResource CellStyle}"
@@ -598,7 +599,7 @@
                   Grid.Row="1"
                   Grid.Column="0"
                   Grid.ColumnSpan="2"
-                  Margin="0,3,0,3"
+                  Margin="0,3,2,3"
                   VerticalAlignment="Bottom"
                   Background="#E8E8E8">
                 <Grid.RowDefinitions>
@@ -609,20 +610,36 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left">
-                    <TextBlock Text="Total Value: " VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="14"/>
-                    <TextBlock Text="{Binding TotalValue,StringFormat=C}" VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="14"/>
-                </StackPanel>
-
-                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Left">
-                    <TextBlock Text="Total Cost Basis:  " VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="14"/>
-                    <TextBlock Text="{Binding TotalCostBasis, StringFormat=C}" VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="14"/>
-                </StackPanel>
-
-                <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Left">
-                    <TextBlock Text="Total Gain/Loss: " VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="14"/>
-                    <TextBlock Text="{Binding TotalGainLoss, StringFormat=C}" VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="14"/>
-                </StackPanel>
+                <Border Grid.Row="0" 
+                        Grid.Column="0"    
+                        BorderBrush="{StaticResource ColumnHeader.BorderBrush}" 
+                        BorderThickness="1"
+                        Padding="2">
+                    <StackPanel  Orientation="Horizontal" HorizontalAlignment="Left">
+                        <TextBlock Text="Total Value: " VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="14"/>
+                        <TextBlock Text="{Binding TotalValue,StringFormat=C}" VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="14"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Row="0" 
+                        Grid.Column="1"    
+                        BorderBrush="{StaticResource ColumnHeader.BorderBrush}" 
+                        BorderThickness="0,1"
+                        Padding="2">
+                    <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Left">
+                        <TextBlock Text="Total Cost Basis:  " VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="14"/>
+                        <TextBlock Text="{Binding TotalCostBasis, StringFormat=C}" VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="14"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Row="0" 
+                        Grid.Column="2"    
+                        BorderBrush="{StaticResource ColumnHeader.BorderBrush}" 
+                        BorderThickness="1"
+                        Padding="2">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <TextBlock Text="Total Gain/Loss: " VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="14"/>
+                        <TextBlock Text="{Binding TotalGainLoss, StringFormat=C}" VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="14"/>
+                    </StackPanel>
+                </Border>
             </Grid>
             <Button Grid.Column="2" 
                     Grid.Row="1" 
