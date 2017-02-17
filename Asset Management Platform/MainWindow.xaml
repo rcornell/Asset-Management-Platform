@@ -402,7 +402,7 @@
                       Grid.Row="0"
                       Grid.Column="0"
                       Grid.ColumnSpan="4"
-                      HorizontalAlignment="Center"
+                      HorizontalAlignment="Right"
                       VerticalAlignment="Stretch"
                       BorderThickness="0"
                       AutoGenerateColumns="False"
@@ -410,8 +410,6 @@
                       VerticalScrollBarVisibility="Visible"
                       CanUserAddRows="False"
                       ColumnWidth="Auto"
-                      MinWidth="400"
-                      Width="{Binding ElementName=SecurityDataGrid, Path=ActualWidth}"
                       RowHeaderWidth="0"
                       SelectionMode="Single"
                       DataContext="{Binding Main, Source={StaticResource Locator}}"
@@ -460,6 +458,18 @@
                       ColumnHeaderStyle="{StaticResource HeaderStyle}"
                       AlternationCount="2"
                       Background="{StaticResource StockGridBackground}">
+                <DataGrid.Style>
+                    <Style TargetType="{x:Type DataGrid}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding LimitOrdersHidden}" Value="False">
+                                <Setter Property="IsEnabled" Value="False"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding LimitOrdersHidden}" Value="True">
+                                <Setter Property="IsEnabled" Value="True"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.Style>
                 <DataGrid.RowDetailsTemplate>
                     <DataTemplate>
                         <StackPanel Margin="5" Orientation="Vertical"
