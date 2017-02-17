@@ -30,9 +30,54 @@ namespace Asset_Management_Platform
         /// </summary>
         /// 
 
-
+        #region All Fields
         private bool _limitOrdersHidden;
+        private string _showLimitButtonText;
+        private string _previewButtonText;
+        private bool _orderTermsOK;
+        private ListCollectionView _limitOrderCollectionView;
+        private ListCollectionView _positionCollectionView;
+        private ListCollectionView _taxlotsCollectionView;
+        private Security _screenerStock;
+        private string _stockScreenerTicker;
+        private bool _alertBoxVisible;
+        private string _alertBoxMessage;
+        private bool _executeButtonEnabled;
+        private bool _limitBoxActive;
+        private bool _limitOrderIsSelected;
+        private ObservableCollection<string> _tradeDurationStrings;
+        private ObservableCollection<string> _tradeTermStrings;
+        private ObservableCollection<string> _tradeTypeStrings;
+        private ObservableCollection<Security> _securityTypeStrings;
+        private ObservableCollection<LimitOrder> _limitOrderList;
+        private LimitOrder _selectedLimitOrder;
+        private string _chartSubtitle;
+        private string _previewDescription;
+        private string _previewVolume;
+        private string _previewAsk;
+        private string _previewAskSize;
+        private string _previewBid;
+        private string _previewBidSize;
+        private decimal _limitPrice;
+        private Security _selectedSecurityType;
+        private string _selectedDurationType;
+        private string _selectedTradeType;
+        private string _selectedTermType;
+        private string _orderTickerText;
+        private Security _previewSecurity;
+        private ObservableCollection<PositionByWeight> _allocationChartPositions;
+        public decimal _totalGainLoss;
+        private decimal _previewPrice;
+        private int _orderShareQuantity;
+        private Position _selectedPosition;
+        public decimal _totalValue;
+        public decimal _totalCostBasis;
+        private IPortfolioManagementService _portfolioManagementService;
+        private ObservableCollection<Position> _positions;
+        private ObservableCollection<Taxlot> _taxlots;
+        #endregion
 
+        #region All Properties
         public bool LimitOrdersHidden
         {
             get { return _limitOrdersHidden; }
@@ -41,10 +86,7 @@ namespace Asset_Management_Platform
                 _limitOrdersHidden = value;
                 RaisePropertyChanged(() => LimitOrdersHidden);
             }
-        }
-
-        private string _showLimitButtonText;
-
+        }       
         public string ShowLimitButtonText
         {
             get { return _showLimitButtonText; }
@@ -53,10 +95,7 @@ namespace Asset_Management_Platform
                 _showLimitButtonText = value;
                 RaisePropertyChanged(() => ShowLimitButtonText);
             }
-        }
-
-        private string _previewButtonText;
-
+        }    
         public string PreviewButtonText
         {
             get { return _previewButtonText; }
@@ -65,10 +104,7 @@ namespace Asset_Management_Platform
                 _previewButtonText = value;
                 RaisePropertyChanged(() => PreviewButtonText);
             }
-        }
-
-        private bool _orderTermsOK;
-
+        }       
         public bool OrderTermsOK
         {
             get { return _orderTermsOK; }
@@ -78,8 +114,6 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => OrderTermsOK);
             }
         }
-
-        private ListCollectionView _limitOrderCollectionView;
         public ListCollectionView LimitOrderCollectionView
         {
             get { return _limitOrderCollectionView; }
@@ -88,9 +122,7 @@ namespace Asset_Management_Platform
                 _limitOrderCollectionView = value;
                 RaisePropertyChanged(() => LimitOrderCollectionView);
             }
-        }
-
-        private ListCollectionView _positionCollectionView;
+        }      
         public ListCollectionView PositionCollectionView
         {
             get { return _positionCollectionView; }
@@ -99,9 +131,7 @@ namespace Asset_Management_Platform
                 _positionCollectionView = value;
                 RaisePropertyChanged(() => PositionCollectionView);
             }
-        }
-
-        private ListCollectionView _taxlotsCollectionView;
+        }        
         public ListCollectionView TaxlotsCollectionView
         {
             get { return _taxlotsCollectionView; }
@@ -111,9 +141,6 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => TaxlotsCollectionView);
             }
         }
-
-
-        private Security _screenerStock;
         public Security ScreenerStock
         {
             get { return _screenerStock; }
@@ -121,9 +148,6 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => ScreenerStock);
             }
         }
-
-
-        private string _stockScreenerTicker;
         public string StockScreenerTicker
         {
             get { return _stockScreenerTicker; }
@@ -134,23 +158,17 @@ namespace Asset_Management_Platform
                 ExecuteScreenerPreview(_stockScreenerTicker);
             }
         }
-
-        private bool _alertBoxVisible;
         public bool AlertBoxVisible {
             get { return _alertBoxVisible; }
             set { _alertBoxVisible = value;
                 RaisePropertyChanged(() => AlertBoxVisible); }
-        }
-
-        private string _alertBoxMessage;
+        }      
         public string AlertBoxMessage {
             get { return _alertBoxMessage; }
             set { _alertBoxMessage = value;
                 RaisePropertyChanged(() => AlertBoxMessage);
             }
         }
-
-        private bool _executeButtonEnabled;
         public bool ExecuteButtonEnabled
         {
             get { return _executeButtonEnabled; }
@@ -160,8 +178,6 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => ExecuteButtonEnabled);
             }
         }
-
-        private bool _limitBoxActive;
         public bool LimitBoxActive
         {
             get { return _limitBoxActive; }
@@ -169,8 +185,6 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => LimitBoxActive);
             }
         }
-
-        private bool _limitOrderIsSelected;
         public bool LimitOrderIsSelected
         {
             get { return _limitOrderIsSelected; }
@@ -180,8 +194,6 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => LimitOrderIsSelected);
             }
         }
-
-        private ObservableCollection<string> _tradeDurationStrings;
         public ObservableCollection<string> TradeDurationStrings
         {
             get { return _tradeDurationStrings; }
@@ -191,8 +203,6 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => TradeDurationStrings);
             }
         }
-
-        private ObservableCollection<string> _tradeTermStrings;
         public ObservableCollection<string> TradeTermStrings
         {
             get { return _tradeTermStrings; }
@@ -202,8 +212,6 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => TradeTermStrings);
             }
         }
-
-        private ObservableCollection<string> _tradeTypeStrings;
         public ObservableCollection<string> TradeTypeStrings
         {
             get { return _tradeTypeStrings; }
@@ -213,8 +221,6 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => TradeTypeStrings);
             }
         }
-
-        private ObservableCollection<Security> _securityTypeStrings;
         public ObservableCollection<Security> SecurityTypes
         {
             get { return _securityTypeStrings; }
@@ -224,8 +230,6 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => SecurityTypes);
             }
         }
-
-        private ObservableCollection<LimitOrder> _limitOrderList;
         public ObservableCollection<LimitOrder> LimitOrderList
         {
             get { return _limitOrderList; }
@@ -235,9 +239,6 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => LimitOrderList);
             }
         }
-
-        private LimitOrder _selectedLimitOrder;
-
         public LimitOrder SelectedLimitOrder
         {
             get
@@ -254,25 +255,18 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => SelectedLimitOrder);
             }
         }
-
-
-        private string _chartSubtitle;
         public string ChartSubtitle {
             get { return _chartSubtitle; }
             set { _chartSubtitle = value;
                 RaisePropertyChanged(() => ChartSubtitle);
             }
         }
-
-        private string _previewDescription;
         public string PreviewDescription {
             get { return _previewDescription; }
             set { _previewDescription = value;
                 RaisePropertyChanged(() => PreviewDescription);
             }
         }
-
-        private string _previewVolume;
         public string PreviewVolume
         {
             get { return _previewVolume; }
@@ -282,8 +276,6 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => PreviewVolume);
             }
         }
-
-        private string _previewAsk;
         public string PreviewAsk
         {
             get { return _previewAsk; }
@@ -293,8 +285,6 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => PreviewAsk);
             }
         }
-
-        private string _previewAskSize;
         public string PreviewAskSize
         {
             get { return _previewAskSize; }
@@ -304,8 +294,6 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => PreviewAskSize);
             }
         }
-
-        private string _previewBid;
         public string PreviewBid
         {
             get { return _previewBid; }
@@ -315,8 +303,6 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => PreviewBid);
             }
         }
-
-        private string _previewBidSize;
         public string PreviewBidSize
         {
             get { return _previewBidSize; }
@@ -326,9 +312,6 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => PreviewBidSize);
             }
         }
-
-
-        private decimal _limitPrice;
         public decimal LimitPrice {
             get { return _limitPrice; }
             set { _limitPrice = value;
@@ -337,9 +320,6 @@ namespace Asset_Management_Platform
                 RevertExecuteButtonAndAlert();
             }
         }
-
-
-        private Security _selectedSecurityType;
         public Security SelectedSecurityType
         {
             get { return _selectedSecurityType; }
@@ -350,8 +330,6 @@ namespace Asset_Management_Platform
                 RevertExecuteButtonAndAlert();
             }
         }
-
-        private string _selectedDurationType;
         public string SelectedDurationType {
             get { return _selectedDurationType; }
             set
@@ -361,9 +339,6 @@ namespace Asset_Management_Platform
                 RevertExecuteButtonAndAlert();
             }
         }
-
-
-        private string _selectedTermType;
         public string SelectedTermType
         {
             get { return _selectedTermType; }
@@ -378,9 +353,7 @@ namespace Asset_Management_Platform
                 }
                 RevertExecuteButtonAndAlert();
             }
-        }
-
-        private string _selectedTradeType;
+        } 
         public string SelectedTradeType
         {
             get { return _selectedTradeType; }
@@ -389,8 +362,6 @@ namespace Asset_Management_Platform
                 RevertExecuteButtonAndAlert();
             }
         }
-
-        private string _orderTickerText;
         public string OrderTickerText
         {
             get { return _orderTickerText; }
@@ -399,9 +370,6 @@ namespace Asset_Management_Platform
                 RevertExecuteButtonAndAlert();
             }
         }
-
-
-        private int _orderShareQuantity;
         public int OrderShareQuantity
         {
             get { return _orderShareQuantity; }
@@ -409,9 +377,7 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => OrderShareQuantity);
                 RevertExecuteButtonAndAlert();
             }
-        }
-
-        private decimal _previewPrice;
+        }       
         public decimal PreviewPrice
         {
             get
@@ -425,13 +391,10 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => PreviewValue);
             }
         }
-
         public decimal PreviewValue
         {
             get { return (PreviewPrice * OrderShareQuantity); }
-        }
-
-        private Position _selectedPosition;
+        }     
         public Position SelectedPosition
         {
             get { return _selectedPosition; }
@@ -445,6 +408,81 @@ namespace Asset_Management_Platform
                 }
             }
         }
+        public decimal TotalValue
+        {
+            get { return _totalValue; }
+            set
+            {
+                _totalValue = value;
+                RaisePropertyChanged(() => TotalValue);
+            }
+        }
+        public decimal TotalCostBasis
+        {
+            get { return _totalCostBasis; }
+            set
+            {
+                _totalCostBasis = value;
+                RaisePropertyChanged(() => TotalCostBasis);
+            }
+        }
+        public decimal TotalGainLoss
+        {
+            get { return _totalGainLoss; }
+            set
+            {
+                _totalGainLoss = value;
+                RaisePropertyChanged(() => TotalGainLoss);
+            }
+        }
+        public ObservableCollection<PositionByWeight> AllocationChartPositions
+        {
+            get
+            {
+                return _allocationChartPositions;
+            }
+            set
+            {
+                _allocationChartPositions = value;
+                RaisePropertyChanged(() => AllocationChartPositions);
+            }
+        }
+        public Security PreviewSecurity
+        {
+            get { return _previewSecurity; }
+            set
+            {
+                _previewSecurity = value;
+                RaisePropertyChanged(() => PreviewSecurity);
+            }
+
+        }
+        public ObservableCollection<Taxlot> Taxlots
+        {
+            get
+            {
+                return _taxlots;
+            }
+            set
+            {
+                _taxlots = value;
+                RaisePropertyChanged(() => Taxlots);
+            }
+        }
+        public ObservableCollection<Position> Positions
+        {
+            get
+            {
+                return _positions;
+            }
+            set
+            {
+                _positions = value;
+                RaisePropertyChanged(() => Positions);
+            }
+        }
+
+        #endregion
 
         #region All Commands
 
@@ -522,86 +560,6 @@ namespace Asset_Management_Platform
             get { return new RelayCommand(ExecuteSetIntervalFiveMinutes); }
         }
         #endregion
-
-        public decimal _totalValue;
-        public decimal TotalValue {
-            get { return _totalValue; }
-            set { _totalValue = value;
-                RaisePropertyChanged(() => TotalValue); }
-        }
-
-        public decimal _totalCostBasis;
-        public decimal TotalCostBasis
-        {
-            get { return _totalCostBasis; }
-            set
-            {
-                _totalCostBasis = value;
-                RaisePropertyChanged(() => TotalCostBasis);
-            }
-        }
-
-        public decimal _totalGainLoss;
-        public decimal TotalGainLoss
-        {
-            get { return _totalGainLoss; }
-            set
-            {
-                _totalGainLoss = value;
-                RaisePropertyChanged(() => TotalGainLoss);
-            }
-        }
-
-        private ObservableCollection<PositionByWeight> _allocationChartPositions;
-        public ObservableCollection<PositionByWeight> AllocationChartPositions {
-            get {
-                return _allocationChartPositions;
-            }
-            set {
-                _allocationChartPositions = value;
-                RaisePropertyChanged(() => AllocationChartPositions);
-            }
-        }
-
-        private IPortfolioManagementService _portfolioManagementService;
-
-        private Security _previewSecurity;
-        public Security PreviewSecurity {
-            get { return _previewSecurity; }
-            set { _previewSecurity = value;
-                RaisePropertyChanged(() => PreviewSecurity);
-            }
-
-        }
-
-        private ObservableCollection<Taxlot> _taxlots;
-        public ObservableCollection<Taxlot> Taxlots
-        {
-            get
-            {
-                return _taxlots;
-            }
-            set
-            {
-                _taxlots = value;
-                RaisePropertyChanged(() => Taxlots);
-            }
-        }
-
-        private ObservableCollection<Position> _positions;
-        public ObservableCollection<Position> Positions
-        {
-            get
-            {
-                return _positions;
-            }
-            set
-            {
-                _positions = value;
-                RaisePropertyChanged(() => Positions);
-            }
-        }
-
 
         public MainViewModel(IPortfolioManagementService portfolioService)
         {
