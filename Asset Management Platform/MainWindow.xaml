@@ -525,15 +525,6 @@
                                               CellStyle="{StaticResource CellStyle}"
                                               ColumnHeaderStyle="{StaticResource DetailHeaderStyle}">
                                         <DataGrid.Columns>
-                                            <!--<DataGridTemplateColumn Header="Taxlots">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Viewbox Height="20" Width="20">
-                                            <ContentControl Content="{StaticResource Chevron}"/>
-                                        </Viewbox>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>-->
                                             <DataGridTextColumn Binding="{Binding Ticker}"
                                                                 Width="Auto"
                                                                 Header="Ticker" />
@@ -549,44 +540,19 @@
                                                                 Width="Auto"
                                                                 CellStyle="{StaticResource CellStyleRight}"
                                                                 Header="Shares" />
-                                            <!--<DataGridTextColumn Binding="{Binding LastPrice}"
-                                                Width="Auto"
-                                                CellStyle="{StaticResource CellStyleRight}"
-                                                Header="Price"/>
-                            <DataGridTextColumn Binding="{Binding RelativeSource={RelativeSource 
-                                                      FindAncestor,
-                                                      AncestorType={x:Type DataGrid}},
-                                                    Path=DataContext.Change}"
-                                                Width="Auto"
-                                                CellStyle="{StaticResource CellStyleRight}"
-                                                Header="Change"/>
-                            <DataGridTextColumn Binding="{Binding RelativeSource={RelativeSource 
-                                                      FindAncestor,
-                                                      AncestorType={x:Type DataGrid}},
-                                                    Path=DataContext.PercentChange}"
-                                                Width="Auto"
-                                                CellStyle="{StaticResource CellStyleCentered}"
-                                                Header="% Change"/>-->
-                                            <DataGridTextColumn Binding="{Binding MarketValue}"
+                                            <DataGridTextColumn Binding="{Binding MarketValue, StringFormat=C}"
                                                                 Width="Auto"
                                                                 CellStyle="{StaticResource CellStyleRight}"
                                                                 Header="Market Value" />
                                             <DataGridTextColumn
-                                                Binding="{Binding CostBasis, Converter={StaticResource DecimalToStringConverter}}"
+                                                Binding="{Binding CostBasis, StringFormat=C}"
                                                 Width="Auto"
                                                 CellStyle="{StaticResource CellStyleRight}"
                                                 Header="Cost Basis" />
-                                            <DataGridTextColumn Binding="{Binding GainLoss}"
+                                            <DataGridTextColumn Binding="{Binding GainLoss, StringFormat=C}"
                                                                 Width="Auto"
                                                                 CellStyle="{StaticResource CellStyleRight}"
                                                                 Header="Gain/Loss" />
-                                            <!--<DataGridTextColumn Binding="{Binding RelativeSource={RelativeSource 
-                                                      FindAncestor,
-                                                      AncestorType={x:Type DataGrid}},
-                                                    Path=DataContext.Yield}"
-                                                Width="Auto"
-                                                CellStyle="{StaticResource CellStyleCentered}"
-                                                Header="Yield"/>-->
                                             <DataGridTextColumn Binding="{Binding DatePurchased}"
                                                                 Width="Auto"
                                                                 CellStyle="{StaticResource CellStyleCentered}"
@@ -605,20 +571,20 @@
                     <DataGridTextColumn Width="Auto" Header="Shares"
                                         Binding="{Binding SharesOwned, Mode=OneWay, Converter={StaticResource DecimalToStringConverter}}"
                                         CellStyle="{StaticResource CellStyleRight}" />
-                    <DataGridTextColumn Width="Auto" Header="Price" Binding="{Binding Path=Price, Mode=OneWay}"
+                    <DataGridTextColumn Width="Auto" Header="Price" Binding="{Binding Path=Price, Mode=OneWay, StringFormat=C}"
                                         CellStyle="{StaticResource CellStyleRight}" />
-                    <DataGridTextColumn Width="Auto" Header="Change" Binding="{Binding Path=Change, Mode=OneWay}"
+                    <DataGridTextColumn Width="Auto" Header="Change" Binding="{Binding Path=Change, Mode=OneWay, StringFormat=C}"
                                         CellStyle="{StaticResource CellStyleRight}" />
                     <DataGridTextColumn Width="Auto" Header="% Change"
                                         Binding="{Binding PercentChange, Mode=OneWay}"
                                         CellStyle="{StaticResource CellStyleCentered}" />
                     <DataGridTextColumn Width="Auto" Header="Market Value"
-                                        Binding="{Binding Path=MarketValue, Mode=OneWay}"
+                                        Binding="{Binding Path=MarketValue, Mode=OneWay, StringFormat=C}"
                                         CellStyle="{StaticResource CellStyleRight}" />
                     <DataGridTextColumn Width="Auto" Header="Cost Basis"
-                                        Binding="{Binding Path=CostBasis, Mode=OneWay, Converter={StaticResource DecimalToStringConverter}}"
+                                        Binding="{Binding Path=CostBasis, Mode=OneWay, StringFormat=C}"
                                         CellStyle="{StaticResource CellStyleRight}" />
-                    <DataGridTextColumn Width="Auto" Header="Gain/Loss" Binding="{Binding Path=GainLoss, Mode=OneWay}"
+                    <DataGridTextColumn Width="Auto" Header="Gain/Loss" Binding="{Binding Path=GainLoss, Mode=OneWay, StringFormat=C}"
                                         CellStyle="{StaticResource CellStyleRight}" />
                     <DataGridTextColumn Width="Auto" Header="Yield" Binding="{Binding Path=Yield, Mode=OneWay}"
                                         CellStyle="{StaticResource CellStyleCentered}" />
@@ -643,19 +609,19 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <TextBlock Text="Total Value: " VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="16"/>
-                    <TextBlock Text="{Binding TotalValue}" VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="16"/>
+                <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left">
+                    <TextBlock Text="Total Value: " VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="14"/>
+                    <TextBlock Text="{Binding TotalValue,StringFormat=C}" VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="14"/>
                 </StackPanel>
 
-                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <TextBlock Text="Total Cost Basis:  " VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="16"/>
-                    <TextBlock Text="{Binding TotalCostBasis}" VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="16"/>
+                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Left">
+                    <TextBlock Text="Total Cost Basis:  " VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="14"/>
+                    <TextBlock Text="{Binding TotalCostBasis, StringFormat=C}" VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="14"/>
                 </StackPanel>
 
-                <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <TextBlock Text="Total Gain/Loss: " VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="16"/>
-                    <TextBlock Text="{Binding TotalGainLoss}" VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="16"/>
+                <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Left">
+                    <TextBlock Text="Total Gain/Loss: " VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="14"/>
+                    <TextBlock Text="{Binding TotalGainLoss, StringFormat=C}" VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="14"/>
                 </StackPanel>
             </Grid>
             <Button Grid.Column="2" 

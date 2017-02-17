@@ -8,8 +8,7 @@
              xmlns:chart="clr-namespace:De.TorstenMandelkow.MetroChart;assembly=De.TorstenMandelkow.MetroChart" 
              xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2" x:Class="Asset_Management_Platform.App"
              StartupUri="MainWindow.xaml"
-             d1p1:Ignorable="d"
-             >
+             d1p1:Ignorable="d">
     <Application.Resources>
         <ResourceDictionary>
             <vm:ViewModelLocator xmlns:vm="clr-namespace:Asset_Management_Platform.ViewModel" x:Key="Locator" d:IsDataSource="True" />
