@@ -64,6 +64,8 @@
             </LinearGradientBrush>
             <Color x:Key="StockGridBackgroundColor">#F9F9F9</Color>
             <SolidColorBrush x:Key="StockGridBackground" Color="{StaticResource StockGridBackgroundColor}" />
+            <Color x:Key="LimitGridBackgroundColor">#C4FFDF</Color>
+            <SolidColorBrush x:Key="LimitGridBackground" Color="{StaticResource LimitGridBackgroundColor}" />
 
             <!--BUTTON colors and brushes-->
             <Color x:Key="Button.BackgroundTop">#88F1FE</Color>
@@ -90,10 +92,6 @@
                 <GradientStop Offset="0" Color="{StaticResource ExperimentalTop}"/>
                 <GradientStop Offset="0" Color="{StaticResource ExperimentalBottom}"/>
             </LinearGradientBrush>
-
-            <!--LimitBox ListView Colors and Brushes-->
-            <Color x:Key="LimitBoxBackground">#C5F8FE</Color>
-            <SolidColorBrush x:Key="LimitBoxBackgroundBrush" Color="{StaticResource LimitBoxBackground}"/>
 
             <!--Override system colors-->
             <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />

@@ -395,16 +395,16 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-
             <DataGrid Name="LimitDataGrid"
                       Background="{StaticResource StockGridBackground}"
+                      BorderBrush="{StaticResource ColumnHeader.BorderBrush}"
+                      BorderThickness="4,0,0,0"
                       Panel.ZIndex="1"
                       Grid.Row="0"
                       Grid.Column="0"
                       Grid.ColumnSpan="4"
                       HorizontalAlignment="Right"
                       VerticalAlignment="Stretch"
-                      BorderThickness="0"
                       AutoGenerateColumns="False"
                       CanUserDeleteRows="False"
                       VerticalScrollBarVisibility="Visible"
