@@ -372,10 +372,10 @@
             </StackPanel>
         </StackPanel>
 
-        <Grid
-            Grid.Row="1"
-            Grid.RowSpan="2"
-            Grid.Column="1">
+        <Grid Name="CenterGrid"
+              Grid.Row="1"
+              Grid.RowSpan="2"
+              Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
@@ -385,6 +385,29 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
+
+            <DataGrid Name="NewLimitDataGrid"
+                      Background="#5C34FBE5"
+                      Panel.ZIndex="1"
+                      Grid.Row="0"
+                      Grid.Column="0"
+                      Grid.ColumnSpan="3"
+                      VerticalAlignment="Stretch"
+                      BorderThickness="0"
+                      AutoGenerateColumns="False"
+                      CanUserDeleteRows="False"
+                      VerticalScrollBarVisibility="Visible"
+                      CanUserAddRows="False"
+                      ColumnWidth="Auto"
+                      MinWidth="500"
+                      RowHeaderWidth="0"
+                      SelectionMode="Single"
+                      RowStyle="{StaticResource RowStyle}"
+                      CellStyle="{StaticResource CellStyle}"
+                      ColumnHeaderStyle="{StaticResource HeaderStyle}"
+                      AlternationCount="2"
+                      Visibility="{Binding LimitOrdersHidden, Converter={StaticResource BoolToVisibilityConverter}}" />
+            
             <DataGrid x:Name="SecurityDataGrid"
                       Grid.Row="0"
                       Grid.Column="0"
@@ -544,7 +567,8 @@
                                         CellStyle="{StaticResource CellStyleCentered}" />
                 </DataGrid.Columns>
             </DataGrid>
-            <Grid MinHeight="30"
+            <Grid Name="TotalsGrid" 
+                  MinHeight="30"
                   Grid.Row="1"
                   Grid.Column="0"
                   Grid.ColumnSpan="2"
@@ -574,6 +598,7 @@
                     <TextBlock Text="{Binding TotalGainLoss}" VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="16"/>
                 </StackPanel>
             </Grid>
+            
             <Button Grid.Column="2" Grid.Row="1" Margin="2,3" Content="Show Limit Orders"></Button>
         </Grid>
         
@@ -776,3 +801,4 @@
 
     </Grid>
 </Window>
+

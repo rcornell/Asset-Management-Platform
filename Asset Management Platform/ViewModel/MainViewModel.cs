@@ -31,6 +31,17 @@ namespace Asset_Management_Platform
         /// 
 
 
+        private bool _limitOrdersHidden;
+
+        public bool LimitOrdersHidden
+        {
+            get { return _limitOrdersHidden; }
+            set
+            {
+                _limitOrdersHidden = value;
+                RaisePropertyChanged(() => LimitOrdersHidden);
+            }
+        }
 
         private string _previewButtonText;
 
