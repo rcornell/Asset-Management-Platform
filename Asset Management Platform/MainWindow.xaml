@@ -67,7 +67,7 @@
             </Menu>
         </DockPanel>
 
-        <Grid Name="TradingTerms"                    
+        <Grid Name="TradeGrid"                    
                     Grid.Row="1"
                     Grid.Column="0"
                     Grid.RowSpan="3"
@@ -92,7 +92,7 @@
                            FontSize="18" />
             </Border>
 
-            <Grid Name="TradeTermsStackPanel"
+            <Grid Name="TradeTermsGrid"
                   Grid.Row="1"
                   Grid.Column="0"
                   Margin="2,3,2,0">
@@ -245,6 +245,7 @@
             <Border Grid.Row="2"
                     Grid.Column="0"
                     BorderThickness="0,0,0,1"
+                    Margin="0,20,0,0"
                     BorderBrush="{StaticResource Button.BackgroundBrush}"
                     VerticalAlignment="Bottom">
                 <TextBlock Text="Trade Preview"
@@ -252,45 +253,42 @@
                                    Style="{StaticResource TextBlockStyle}"
                                    FontSize="18" />
             </Border>
-
-            <StackPanel Name="TradePreviewStackPanel"
-                        Grid.Row="3"
-                        Orientation="Vertical"
-                        MinWidth="250"
-                        Margin="2,20,2,0">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition />
-                        <RowDefinition />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <StackPanel Orientation="Vertical"
+            <Grid Name="TradePreviewGrid"
+                      Grid.Row="3"
+                      MinWidth="250"
+                      Margin="2,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Vertical"
                                 Grid.Row="0"
                                 Grid.Column="0"
                                 Grid.ColumnSpan="2">
-                        <TextBlock Text="Security Description"
+                    <TextBlock Text="Security Description"
                                    Margin="3,3,3,1"
                                    Style="{StaticResource TextBlockStyle}"
                                    HorizontalAlignment="Center" />
-                        <TextBox Text="{Binding PreviewDescription, Mode=OneWay}"
+                    <TextBox Text="{Binding PreviewDescription, Mode=OneWay}"
                                  Width="Auto"
                                  Height="20"
                                  Margin="3,1,3,3"
                                  VerticalAlignment="Center"
                                  IsTabStop="False"
                                  Style="{StaticResource TextBoxStyle}"/>
-                    </StackPanel>
-                    <TextBlock Text="Market Price:"
+                </StackPanel>
+                <TextBlock Text="Market Price:"
                                Grid.Row="1"
                                Grid.Column="0"
                                Style="{StaticResource TextBlockStyle}"
                                VerticalAlignment="Center" />
-                    <TextBox Text="{Binding PreviewPrice, Mode=OneWay}" 
+                <TextBox Text="{Binding PreviewPrice, Mode=OneWay}" 
                              Margin="3" 
                              Grid.Row="1"
                              Grid.Column="1"
@@ -300,12 +298,12 @@
                              IsTabStop="False"
                              Style="{StaticResource TextBoxStyle}"/>
 
-                    <TextBlock Text="Order Value:"
+                <TextBlock Text="Order Value:"
                                Grid.Row="2"
                                Grid.Column="0"
                                Style="{StaticResource TextBlockStyle}"
                                VerticalAlignment="Center" />
-                    <TextBox Text="{Binding PreviewValue, Mode=OneWay}"
+                <TextBox Text="{Binding PreviewValue, Mode=OneWay}"
                              Grid.Row="2"
                              Grid.Column="1"
                              Margin="3"
@@ -313,7 +311,7 @@
                              IsTabStop="False"
                              Style="{StaticResource TextBoxStyle}"/>
 
-                    <Button Content="Execute" Command="{Binding ExecuteOrder}"
+                <Button Content="Execute" Command="{Binding ExecuteOrder}"
                             Grid.Row="3"
                             Grid.Column="0"
                             Grid.ColumnSpan="2"
@@ -322,8 +320,7 @@
                             TabIndex="8"
                             IsEnabled="{Binding ExecuteButtonEnabled}"
                             Style="{StaticResource ExecuteButtonStyle}" />
-                </Grid>
-            </StackPanel>
+            </Grid>
         </Grid>
 
         <Grid Name="CenterGrid"
