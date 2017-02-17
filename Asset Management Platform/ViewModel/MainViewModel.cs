@@ -604,17 +604,30 @@ namespace Asset_Management_Platform
 
         private void GetValueTotals()
         {
-
-
             var totalValue = 0M;
             var totalGainLoss = 0M;
             var totalCostBasis = 0M;
 
             foreach (var pos in Positions)
             {
-                totalValue += pos.MarketValue;
-                totalGainLoss += pos.GainLoss;
-                totalCostBasis += pos.CostBasis;
+                if (_showAllPositions)
+                {
+                    totalValue += pos.MarketValue;
+                    totalGainLoss += pos.GainLoss;
+                    totalCostBasis += pos.CostBasis;
+                }
+                else if (_showStocksOnly && pos.Security is Stock)
+                {
+                    totalValue += pos.MarketValue;
+                    totalGainLoss += pos.GainLoss;
+                    totalCostBasis += pos.CostBasis;
+                }
+                else if (_showFundsOnly && pos.Security is MutualFund)
+                {
+                    totalValue += pos.MarketValue;
+                    totalGainLoss += pos.GainLoss;
+                    totalCostBasis += pos.CostBasis;
+                }
             }
 
             TotalValue = totalValue;
@@ -645,6 +658,8 @@ namespace Asset_Management_Platform
             {
                 sec.Hidden = false;
             }
+
+            GetValueTotals();
         }
 
         private void ExecuteShowStocksOnly()
@@ -661,7 +676,9 @@ namespace Asset_Management_Platform
                     sec.Hidden = true;
                 else
                     sec.Hidden = false;
-            }   
+            }
+
+            GetValueTotals();
         }
 
         private void ExecuteShowFundsOnly()
@@ -679,6 +696,8 @@ namespace Asset_Management_Platform
                 else
                     sec.Hidden = false;
             }
+
+            GetValueTotals();
         }
 
         private void ExecuteUpdatePrices()
