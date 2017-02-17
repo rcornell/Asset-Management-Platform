@@ -67,22 +67,22 @@
             </Menu>
         </DockPanel>
 
-        <Grid Name="TradeGrid"                    
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    Grid.RowSpan="3"
-                    MinWidth="250">
+        <Grid Name="TradeGrid"
+              Grid.Row="1"
+              Grid.Column="0"
+              Grid.RowSpan="3"
+              MinWidth="250">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Border Grid.Row="0"
-                    Grid.Column="0"  
+                    Grid.Column="0"
                     BorderBrush="{StaticResource Button.BackgroundBrush}"
                     BorderThickness="0,0,0,1"
                     Margin="2,0">
@@ -111,94 +111,94 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Text="Trade Type:" 
-                           Grid.Column="0" 
+                <TextBlock Text="Trade Type:"
+                           Grid.Column="0"
                            Grid.Row="0"
                            Style="{StaticResource TextBlockStyle}"
                            VerticalAlignment="Center" />
                 <ComboBox ItemsSource="{Binding TradeTypeStrings}"
                           SelectedItem="{Binding SelectedTradeType, Mode=TwoWay}"
-                          Height="Auto" 
-                          Width="100" 
-                          Margin="3" 
-                          Grid.Row="0" 
+                          Height="Auto"
+                          Width="100"
+                          Margin="3"
+                          Grid.Row="0"
                           Grid.Column="1"
                           HorizontalAlignment="Right"
-                          VerticalContentAlignment="Center" 
-                          VerticalAlignment="Center"                         
-                          TabIndex="0"/>
+                          VerticalContentAlignment="Center"
+                          VerticalAlignment="Center"
+                          TabIndex="0" />
 
-                <TextBlock Text="Security Type:" 
-                           Grid.Column="0" 
+                <TextBlock Text="Security Type:"
+                           Grid.Column="0"
                            Grid.Row="1"
                            Style="{StaticResource TextBlockStyle}"
                            VerticalAlignment="Center" />
                 <ComboBox ItemsSource="{Binding SecurityTypes}"
                           SelectedItem="{Binding SelectedSecurityType, Mode=TwoWay}"
                           Height="Auto"
-                          Width="100" 
-                          Margin="3" 
-                          Grid.Row="1" 
-                          Grid.Column="1" 
+                          Width="100"
+                          Margin="3"
+                          Grid.Row="1"
+                          Grid.Column="1"
                           HorizontalAlignment="Right"
                           VerticalContentAlignment="Center"
-                          VerticalAlignment="Center"      
-                          TabIndex="1"/>
+                          VerticalAlignment="Center"
+                          TabIndex="1" />
 
-                <TextBlock Text="Trade Terms:" 
-                           Grid.Column="0" 
+                <TextBlock Text="Trade Terms:"
+                           Grid.Column="0"
                            Grid.Row="2"
                            Style="{StaticResource TextBlockStyle}"
                            VerticalAlignment="Center" />
-                <ComboBox ItemsSource="{Binding TradeTermStrings}" 
+                <ComboBox ItemsSource="{Binding TradeTermStrings}"
                           SelectedItem="{Binding SelectedTermType}"
                           Height="Auto"
-                          Width="100" 
-                          Margin="3" 
-                          Grid.Row="2" 
-                          Grid.Column="1" 
+                          Width="100"
+                          Margin="3"
+                          Grid.Row="2"
+                          Grid.Column="1"
                           HorizontalAlignment="Right"
                           VerticalContentAlignment="Center"
                           VerticalAlignment="Center"
-                          TabIndex="2"/>
+                          TabIndex="2" />
 
-                <TextBlock Text="Duration:" 
-                           Grid.Column="0" 
-                           Grid.Row="3" 
+                <TextBlock Text="Duration:"
+                           Grid.Column="0"
+                           Grid.Row="3"
                            Style="{StaticResource TextBlockStyle}"
                            VerticalAlignment="Center" />
-                <ComboBox ItemsSource="{Binding TradeDurationStrings}" 
+                <ComboBox ItemsSource="{Binding TradeDurationStrings}"
                           SelectedItem="{Binding SelectedDurationType}"
-                          Height="Auto" 
-                          Width="100" 
-                          Margin="3" 
-                          Grid.Row="3" 
+                          Height="Auto"
+                          Width="100"
+                          Margin="3"
+                          Grid.Row="3"
                           Grid.Column="1"
                           HorizontalAlignment="Right"
-                          VerticalContentAlignment="Center" 
+                          VerticalContentAlignment="Center"
                           VerticalAlignment="Center"
-                          TabIndex="3"/>
+                          TabIndex="3" />
 
-                <TextBlock Text="Limit/Stop Price:" 
-                           Grid.Row="4" 
+                <TextBlock Text="Limit/Stop Price:"
+                           Grid.Row="4"
                            Grid.Column="0"
                            Style="{StaticResource TextBlockStyle}"
                            VerticalAlignment="Center" />
-                <TextBox Text="{Binding LimitPrice, Mode=TwoWay}" 
-                         Grid.Row="4" 
-                         Grid.Column="1" 
-                         Width="100" 
+                <TextBox Text="{Binding LimitPrice, Mode=TwoWay}"
+                         Grid.Row="4"
+                         Grid.Column="1"
+                         Width="100"
                          Height="20"
-                         Margin="3" 
+                         Margin="3"
                          HorizontalAlignment="Right"
                          VerticalAlignment="Center"
                          Style="{StaticResource TextBoxStyle}"
                          IsEnabled="{Binding LimitBoxActive}"
                          IsTabStop="True"
-                         TabIndex="4"/>
+                         TabIndex="4" />
 
-                <TextBlock Text="Ticker:" 
-                           Grid.Column="0" 
+                <TextBlock Text="Ticker:"
+                           Grid.Column="0"
                            Grid.Row="5"
                            Style="{StaticResource TextBlockStyle}"
                            VerticalAlignment="Center" />
@@ -210,24 +210,24 @@
                          CharacterCasing="Upper"
                          Style="{StaticResource TextBoxStyle}"
                          IsTabStop="True"
-                         TabIndex="5"/>
+                         TabIndex="5" />
 
-                <TextBlock Text="Shares:" 
-                           Grid.Row="6" 
+                <TextBlock Text="Shares:"
+                           Grid.Row="6"
                            Grid.Column="0"
                            Style="{StaticResource TextBlockStyle}"
                            VerticalAlignment="Center" />
-                <TextBox Text="{Binding OrderShareQuantity, Mode=TwoWay}" 
-                         Grid.Row="6" 
-                         Grid.Column="1" 
+                <TextBox Text="{Binding OrderShareQuantity, Mode=TwoWay}"
+                         Grid.Row="6"
+                         Grid.Column="1"
                          Width="100"
-                         Height="20" 
+                         Height="20"
                          Margin="3"
                          HorizontalAlignment="Right"
                          VerticalAlignment="Center"
                          Style="{StaticResource TextBoxStyle}"
                          IsTabStop="True"
-                         TabIndex="6"/>
+                         TabIndex="6" />
 
                 <Button Name="PreviewOrderButton"
                         Grid.Column="0"
@@ -238,7 +238,7 @@
                         Content="{Binding PreviewButtonText, NotifyOnSourceUpdated=True}"
                         Command="{Binding PreviewOrder}"
                         VerticalAlignment="Center"
-                        TabIndex="7"/>
+                        TabIndex="7" />
 
             </Grid>
 
@@ -249,77 +249,134 @@
                     BorderBrush="{StaticResource Button.BackgroundBrush}"
                     VerticalAlignment="Bottom">
                 <TextBlock Text="Trade Preview"
-                                   HorizontalAlignment="Center"
-                                   Style="{StaticResource TextBlockStyle}"
-                                   FontSize="18" />
+                           HorizontalAlignment="Center"
+                           Style="{StaticResource TextBlockStyle}"
+                           FontSize="18" />
             </Border>
             <Grid Name="TradePreviewGrid"
-                      Grid.Row="3"
-                      MinWidth="250"
-                      Margin="2,0">
+                  Grid.Row="3"
+                  MinWidth="250"
+                  Margin="2,3,2,0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <StackPanel Orientation="Vertical"
-                                Grid.Row="0"
-                                Grid.Column="0"
-                                Grid.ColumnSpan="2">
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2">
                     <TextBlock Text="Security Description"
-                                   Margin="3,3,3,1"
-                                   Style="{StaticResource TextBlockStyle}"
-                                   HorizontalAlignment="Center" />
+                               Margin="3,3,3,1"
+                               Style="{StaticResource TextBlockStyle}"
+                               HorizontalAlignment="Center" />
                     <TextBox Text="{Binding PreviewDescription, Mode=OneWay}"
-                                 Width="Auto"
-                                 Height="20"
-                                 Margin="3,1,3,3"
-                                 VerticalAlignment="Center"
-                                 IsTabStop="False"
-                                 Style="{StaticResource TextBoxStyle}"/>
+                             Width="Auto"
+                             Height="20"
+                             Margin="3,1,3,3"
+                             VerticalAlignment="Center"
+                             IsTabStop="False"
+                             Style="{StaticResource TextBoxStyle}" />
                 </StackPanel>
                 <TextBlock Text="Market Price:"
-                               Grid.Row="1"
-                               Grid.Column="0"
-                               Style="{StaticResource TextBlockStyle}"
-                               VerticalAlignment="Center" />
-                <TextBox Text="{Binding PreviewPrice, Mode=OneWay}" 
-                             Margin="3" 
-                             Grid.Row="1"
-                             Grid.Column="1"
-                             VerticalAlignment="Center"
-                             IsManipulationEnabled="False"
-                             IsReadOnly="True"
-                             IsTabStop="False"
-                             Style="{StaticResource TextBoxStyle}"/>
+                           Grid.Row="1"
+                           Grid.Column="0"
+                           Style="{StaticResource TextBlockStyle}"
+                           VerticalAlignment="Center" />
+                <TextBox Text="{Binding PreviewPrice, Mode=OneWay}"
+                         Margin="3"
+                         Grid.Row="1"
+                         Grid.Column="1"
+                         VerticalAlignment="Center"
+                         IsManipulationEnabled="False"
+                         IsReadOnly="True"
+                         IsTabStop="False"
+                         Style="{StaticResource TextBoxStyle}" />
 
                 <TextBlock Text="Order Value:"
-                               Grid.Row="2"
-                               Grid.Column="0"
-                               Style="{StaticResource TextBlockStyle}"
-                               VerticalAlignment="Center" />
+                           Grid.Row="2"
+                           Grid.Column="0"
+                           Style="{StaticResource TextBlockStyle}"
+                           VerticalAlignment="Center" />
                 <TextBox Text="{Binding PreviewValue, Mode=OneWay}"
-                             Grid.Row="2"
-                             Grid.Column="1"
-                             Margin="3"
-                             VerticalAlignment="Center"
-                             IsTabStop="False"
-                             Style="{StaticResource TextBoxStyle}"/>
+                         Grid.Row="2"
+                         Grid.Column="1"
+                         Margin="3"
+                         VerticalAlignment="Center"
+                         IsTabStop="False"
+                         Style="{StaticResource TextBoxStyle}" />
+
+                <TextBlock Text="Bid Price:"
+                           Grid.Row="3"
+                           Grid.Column="0"
+                           Style="{StaticResource TextBlockStyle}"
+                           VerticalAlignment="Center" />
+                <TextBox Text="{Binding PreviewBid, Mode=OneWay}"
+                         Grid.Row="3"
+                         Grid.Column="1"
+                         Margin="3"
+                         VerticalAlignment="Center"
+                         IsTabStop="False"
+                         Style="{StaticResource TextBoxStyle}" />
+
+
+                <TextBlock Text="Ask Price:"
+                           Grid.Row="4"
+                           Grid.Column="0"
+                           Style="{StaticResource TextBlockStyle}"
+                           VerticalAlignment="Center" />
+                <TextBox Text="{Binding PreviewAsk, Mode=OneWay}"
+                         Grid.Row="4"
+                         Grid.Column="1"
+                         Margin="3"
+                         VerticalAlignment="Center"
+                         IsTabStop="False"
+                         Style="{StaticResource TextBoxStyle}" />
+
+                <TextBlock Text="Bid Size:"
+                           Grid.Row="5"
+                           Grid.Column="0"
+                           Style="{StaticResource TextBlockStyle}"
+                           VerticalAlignment="Center" />
+                <TextBox Text="{Binding PreviewBidSize, Mode=OneWay}"
+                         Grid.Row="5"
+                         Grid.Column="1"
+                         Margin="3"
+                         VerticalAlignment="Center"
+                         IsTabStop="False"
+                         Style="{StaticResource TextBoxStyle}" />
+
+                <TextBlock Text="Ask Size:"
+                           Grid.Row="6"
+                           Grid.Column="0"
+                           Style="{StaticResource TextBlockStyle}"
+                           VerticalAlignment="Center" />
+                <TextBox Text="{Binding PreviewAskSize, Mode=OneWay}"
+                         Grid.Row="6"
+                         Grid.Column="1"
+                         Margin="3"
+                         VerticalAlignment="Center"
+                         IsTabStop="False"
+                         Style="{StaticResource TextBoxStyle}" />
 
                 <Button Content="Execute" Command="{Binding ExecuteOrder}"
-                            Grid.Row="3"
-                            Grid.Column="0"
-                            Grid.ColumnSpan="2"
-                            Margin="3,0,3,0"
-                            VerticalAlignment="Center"
-                            TabIndex="8"
-                            IsEnabled="{Binding ExecuteButtonEnabled}"
-                            Style="{StaticResource ExecuteButtonStyle}" />
+                        Grid.Row="7"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        Margin="3,0,3,0"
+                        VerticalAlignment="Center"
+                        TabIndex="8"
+                        IsEnabled="{Binding ExecuteButtonEnabled}"
+                        Style="{StaticResource ExecuteButtonStyle}" />
             </Grid>
         </Grid>
 
