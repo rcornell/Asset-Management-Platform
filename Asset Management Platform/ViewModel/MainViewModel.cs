@@ -43,6 +43,18 @@ namespace Asset_Management_Platform
             }
         }
 
+        private string _showLimitButtonText;
+
+        public string ShowLimitButtonText
+        {
+            get { return _showLimitButtonText; }
+            set
+            {
+                _showLimitButtonText = value;
+                RaisePropertyChanged(() => ShowLimitButtonText);
+            }
+        }
+
         private string _previewButtonText;
 
         public string PreviewButtonText
@@ -436,6 +448,11 @@ namespace Asset_Management_Platform
 
         #region All Commands
 
+        public RelayCommand ToggleLimitDatagrid
+        {
+            get { return new RelayCommand(ExecuteToggleLimitDatagrid); }
+        }
+
         public RelayCommand DeletePortfolio
         {
             get { return new RelayCommand(ExecuteDeletePortfolio); }
@@ -588,6 +605,12 @@ namespace Asset_Management_Platform
 
         public MainViewModel(IPortfolioManagementService portfolioService)
         {
+
+            if (IsInDesignMode)
+            {
+                ShowLimitButtonText = "Show Limit Orders";
+            }
+
             TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
             TradeTermStrings = new ObservableCollection<string>() { "Market", "Limit", "Stop", "Stop Limit" };
             TradeDurationStrings = new ObservableCollection<string> { "Day", "GTC", "Market Close", "Market Open", "Overnight" };
@@ -595,6 +618,8 @@ namespace Asset_Management_Platform
             SelectedDurationType = "Day";
             ChartSubtitle = "All Positions";
             PreviewButtonText = "Preview Order";
+            ShowLimitButtonText = "Show Limit Orders";
+            LimitOrdersHidden = true;
             LimitBoxActive = false;
             OrderTermsOK = false;
             LimitPrice = 0;
@@ -851,6 +876,20 @@ namespace Asset_Management_Platform
         {
             var span = new TimeSpan(0, 5, 0);
             _portfolioManagementService.UpdateTimerInterval(span);
+        }
+
+        private void ExecuteToggleLimitDatagrid()
+        {
+            if (LimitOrdersHidden)
+            {
+                LimitOrdersHidden = false;
+                ShowLimitButtonText = "Hide Limit Orders";                
+            }
+            else
+            {
+                LimitOrdersHidden = true;
+                ShowLimitButtonText = "Show Limit Orders";
+            }
         }
 
         public void ExecuteDeletePortfolio()

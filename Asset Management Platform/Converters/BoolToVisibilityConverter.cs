@@ -14,9 +14,9 @@ namespace Asset_Management_Platform.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is bool && (bool)value == true)
-                return Visibility.Visible;
-            else
                 return Visibility.Hidden;
+            else
+                return Visibility.Visible;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
