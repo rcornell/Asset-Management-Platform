@@ -384,14 +384,15 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <DataGrid Name="NewLimitDataGrid"
-                      Background="#5C34FBE5"
+                      Background="{StaticResource StockGridBackground}"
                       Panel.ZIndex="1"
                       Grid.Row="0"
                       Grid.Column="0"
-                      Grid.ColumnSpan="3"
+                      Grid.ColumnSpan="4"
                       VerticalAlignment="Stretch"
                       BorderThickness="0"
                       AutoGenerateColumns="False"
@@ -399,19 +400,37 @@
                       VerticalScrollBarVisibility="Visible"
                       CanUserAddRows="False"
                       ColumnWidth="Auto"
-                      MinWidth="500"
+                      MinWidth="400"
+                      Width="{Binding ElementName=SecurityDataGrid, Path=ActualWidth}"
                       RowHeaderWidth="0"
                       SelectionMode="Single"
+                      DataContext="{Binding Main, Source={StaticResource Locator}}"
+                      ItemsSource="{Binding LimitOrderList, Mode=OneWay}"                                           
+                      SelectedItem="{Binding SelectedLimitOrder, Mode=OneWayToSource}"
                       RowStyle="{StaticResource RowStyle}"
                       CellStyle="{StaticResource CellStyle}"
                       ColumnHeaderStyle="{StaticResource HeaderStyle}"
                       AlternationCount="2"
-                      Visibility="{Binding LimitOrdersHidden, Converter={StaticResource BoolToVisibilityConverter}}" />
-            
+                      Visibility="{Binding LimitOrdersHidden, Converter={StaticResource BoolToVisibilityConverter}}" >
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Limit Type" Binding="{Binding TradeType, Mode=OneWay}" />
+                    <DataGridTextColumn Header="Quantity" Binding="{Binding Shares, Mode=OneWay}" />
+                    <DataGridTextColumn Header="Ticker" Binding="{Binding Ticker, Mode=OneWay}" />
+                    <DataGridTextColumn Header="Description" Binding="{Binding SecurityType.Description, Mode=OneWay}" />
+                    <DataGridTextColumn Header="Limit Price" Binding="{Binding Limit, Mode=OneWay}" />
+                    <DataGridTextColumn Header="Order Duration" Binding="{Binding OrderDuration, Mode=OneWay}" />
+                </DataGrid.Columns>
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Command="{Binding DeleteLimitOrder}" Header="Delete Limit Order" />
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+            </DataGrid>
+
             <DataGrid x:Name="SecurityDataGrid"
                       Grid.Row="0"
                       Grid.Column="0"
-                      Grid.ColumnSpan="3"
+                      Grid.ColumnSpan="4"
                       ItemsSource="{Binding Positions,
                                 NotifyOnSourceUpdated=True, 
                                 UpdateSourceTrigger=PropertyChanged}"
@@ -422,7 +441,7 @@
                       VerticalScrollBarVisibility="Visible"
                       CanUserAddRows="False"
                       ColumnWidth="Auto"
-                      MinWidth="500"
+                      MinWidth="805"
                       RowHeaderWidth="0"
                       SelectionMode="Single"
                       SelectedItem="{Binding SelectedPosition, Mode=TwoWay}"
@@ -598,12 +617,19 @@
                     <TextBlock Text="{Binding TotalGainLoss}" VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontSize="16"/>
                 </StackPanel>
             </Grid>
-            
             <Button Grid.Column="2" 
+                    Grid.Row="1" 
+                    Margin="2,3"
+                    Content="Delete Order"
+                    Command="{Binding DeleteLimitOrder}"
+                    IsEnabled="{Binding LimitOrderIsSelected}"
+                    MinWidth="125"/>
+            <Button Grid.Column="3" 
                     Grid.Row="1" 
                     Margin="2,3" 
                     Content="{Binding ShowLimitButtonText}"
-                    Command="{Binding ToggleLimitDatagrid}"/>
+                    Command="{Binding ToggleLimitDatagrid}"
+                    MinWidth="125"/>
         </Grid>
         
 
