@@ -8,6 +8,7 @@ using System.Windows.Data;
 using Asset_Management_Platform.Messages;
 using System.ComponentModel;
 using System;
+using System.Collections.Generic;
 
 namespace Asset_Management_Platform
 {
@@ -78,6 +79,7 @@ namespace Asset_Management_Platform
         private bool _showStocksOnly;
         private bool _showFundsOnly;
         private bool _showAllPositions;
+        private List<Position> _hiddenPositions;
         #endregion
 
         #region All Properties
@@ -654,9 +656,18 @@ namespace Asset_Management_Platform
 
             ChartSubtitle = "All Positions";
             AllocationChartPositions = _portfolioManagementService.GetChartAllSecurities();
-            foreach (var sec in Positions)
+            //foreach (var sec in Positions)
+            //{
+            //    sec.Hidden = false;
+            //}
+
+            if (_hiddenPositions != null && _hiddenPositions.Count > 0)
             {
-                sec.Hidden = false;
+                foreach (var pos in _hiddenPositions)
+                {
+                    Positions.Add(pos);
+                }
+                _hiddenPositions.Clear();
             }
 
             GetValueTotals();
