@@ -235,13 +235,34 @@
                         Grid.Row="7"
                         MinHeight="20"
                         Margin="3,3,3,0"
-                        Content="{Binding PreviewButtonText, NotifyOnSourceUpdated=True}"
+                    
                         Command="{Binding PreviewOrder}"
                         VerticalAlignment="Center"
-                        TabIndex="7" />
-
+                        TabIndex="7" >
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding PreviewButtonText, NotifyOnSourceUpdated=True}"/>
+                            <Viewbox Margin="5,0,0,0" 
+                                     MaxHeight="20">
+                                <ContentControl Content="{StaticResource CheckMark}">
+                                    <ContentControl.Style>
+                                        <Style TargetType="{x:Type ContentControl}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding OrderTermsOK}" Value="True">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding OrderTermsOK}" Value="False">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ContentControl.Style>
+                                </ContentControl>
+                            </Viewbox>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
             </Grid>
-
             <Border Grid.Row="2"
                     Grid.Column="0"
                     BorderThickness="0,0,0,1"
