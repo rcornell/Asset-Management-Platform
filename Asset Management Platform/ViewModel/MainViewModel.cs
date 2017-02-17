@@ -563,12 +563,6 @@ namespace Asset_Management_Platform
 
         public MainViewModel(IPortfolioManagementService portfolioService)
         {
-
-            if (IsInDesignMode)
-            {
-                ShowLimitButtonText = "Show Limit Orders";
-            }
-
             TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
             TradeTermStrings = new ObservableCollection<string>() { "Market", "Limit", "Stop", "Stop Limit" };
             TradeDurationStrings = new ObservableCollection<string> { "Day", "GTC", "Market Close", "Market Open", "Overnight" };
@@ -582,6 +576,8 @@ namespace Asset_Management_Platform
             OrderTermsOK = false;
             LimitPrice = 0;
             TotalValue = 0;
+            TotalCostBasis = 0;
+            TotalGainLoss = 0;
             AlertBoxMessage = "";
             LimitOrderIsSelected = false;
 
@@ -593,6 +589,7 @@ namespace Asset_Management_Platform
             GetTaxlots();
             GetLimitOrders();
             ExecuteShowAllSecurities();
+            GetValueTotals();
             PositionCollectionView = new ListCollectionView(Positions);
             PositionCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Ticker"));
             TaxlotsCollectionView = new ListCollectionView(Taxlots);
@@ -602,6 +599,23 @@ namespace Asset_Management_Platform
         }
 
 
+        private void GetValueTotals()
+        {
+            var totalValue = 0M;
+            var totalGainLoss = 0M;
+            var totalCostBasis = 0M;
+
+            foreach (var pos in Positions)
+            {
+                totalValue += pos.MarketValue;
+                totalGainLoss += pos.GainLoss;
+                totalCostBasis += pos.CostBasis;
+            }
+
+            TotalValue = totalValue;
+            TotalCostBasis = totalCostBasis;
+            TotalGainLoss = totalGainLoss;
+        }
         private void GetPositions()
         {
             var positions = _portfolioManagementService.GetPositions();

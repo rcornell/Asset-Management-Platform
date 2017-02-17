@@ -66,13 +66,11 @@ namespace Asset_Management_Platform
             get { return ComputePurchasePrice(); }
         }
 
-        public string MarketValue
+        public decimal MarketValue
         {
             get
             {
-                var value = Security.LastPrice * SharesOwned;
-                var valueString = value.ToString("#,##0");
-                return valueString;
+                return Security.LastPrice * SharesOwned;
             }
         }
 
@@ -180,9 +178,9 @@ namespace Asset_Management_Platform
             }
         }
 
-        public string GainLoss
+        public decimal GainLoss
         {
-            get { return ((Security.LastPrice - PurchasePrice) * SharesOwned).ToString("#,##0"); }
+            get { return ((Security.LastPrice - PurchasePrice) * SharesOwned); }
         }
 
         public decimal Change
