@@ -396,12 +396,13 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <DataGrid Name="NewLimitDataGrid"
+            <DataGrid Name="LimitDataGrid"
                       Background="{StaticResource StockGridBackground}"
                       Panel.ZIndex="1"
                       Grid.Row="0"
                       Grid.Column="0"
                       Grid.ColumnSpan="4"
+                      HorizontalAlignment="Center"
                       VerticalAlignment="Stretch"
                       BorderThickness="0"
                       AutoGenerateColumns="False"
@@ -425,9 +426,9 @@
                     <DataGridTextColumn Header="Limit Type" Binding="{Binding TradeType, Mode=OneWay}" />
                     <DataGridTextColumn Header="Quantity" Binding="{Binding Shares, Mode=OneWay}" />
                     <DataGridTextColumn Header="Ticker" Binding="{Binding Ticker, Mode=OneWay}" />
-                    <DataGridTextColumn Header="Description" Binding="{Binding SecurityType.Description, Mode=OneWay}" />
                     <DataGridTextColumn Header="Limit Price" Binding="{Binding Limit, Mode=OneWay}" />
                     <DataGridTextColumn Header="Order Duration" Binding="{Binding OrderDuration, Mode=OneWay}" />
+                    <DataGridTextColumn Header="Security Type" Binding="{Binding SecurityType, Mode=OneWay}" />
                 </DataGrid.Columns>
                 <DataGrid.ContextMenu>
                     <ContextMenu>

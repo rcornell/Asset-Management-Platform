@@ -888,6 +888,7 @@ namespace Asset_Management_Platform
             else
             {
                 LimitOrdersHidden = true;
+                SelectedLimitOrder = null;
                 ShowLimitButtonText = "Show Limit Orders";
             }
         }
