@@ -75,6 +75,9 @@ namespace Asset_Management_Platform
         private IPortfolioManagementService _portfolioManagementService;
         private ObservableCollection<Position> _positions;
         private ObservableCollection<Taxlot> _taxlots;
+        private bool _showStocksOnly;
+        private bool _showFundsOnly;
+        private bool _showAllPositions;
         #endregion
 
         #region All Properties
@@ -601,6 +604,8 @@ namespace Asset_Management_Platform
 
         private void GetValueTotals()
         {
+
+
             var totalValue = 0M;
             var totalGainLoss = 0M;
             var totalCostBasis = 0M;
@@ -630,6 +635,10 @@ namespace Asset_Management_Platform
 
         private void ExecuteShowAllSecurities()
         {
+            _showStocksOnly = false;
+            _showFundsOnly = false;
+            _showAllPositions = true;
+
             ChartSubtitle = "All Positions";
             AllocationChartPositions = _portfolioManagementService.GetChartAllSecurities();
             foreach (var sec in Positions)
@@ -640,6 +649,9 @@ namespace Asset_Management_Platform
 
         private void ExecuteShowStocksOnly()
         {
+            _showStocksOnly = true;
+            _showFundsOnly = false;
+            _showAllPositions = false;
             ChartSubtitle = "Stocks only";
             AllocationChartPositions = _portfolioManagementService.GetChartStocksOnly();
 
@@ -654,6 +666,10 @@ namespace Asset_Management_Platform
 
         private void ExecuteShowFundsOnly()
         {
+            _showStocksOnly = false;
+            _showFundsOnly = true;
+            _showAllPositions = false;
+
             ChartSubtitle = "Mutual Funds only";
             AllocationChartPositions = _portfolioManagementService.GetChartFundsOnly();
             foreach (var sec in Positions)
