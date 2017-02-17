@@ -443,9 +443,9 @@
                       Visibility="{Binding LimitOrdersHidden, Converter={StaticResource BoolToVisibilityConverter}}" >
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Limit Type" Binding="{Binding TradeType, Mode=OneWay}" />
-                    <DataGridTextColumn Header="Quantity" Binding="{Binding Shares, Mode=OneWay}" />
+                    <DataGridTextColumn Header="Quantity" Binding="{Binding Shares, Mode=OneWay, StringFormat='#,#.'}" />
                     <DataGridTextColumn Header="Ticker" Binding="{Binding Ticker, Mode=OneWay}" />
-                    <DataGridTextColumn Header="Limit Price" Binding="{Binding Limit, Mode=OneWay}" />
+                    <DataGridTextColumn Header="Limit Price" Binding="{Binding Limit, Mode=OneWay, StringFormat=C}" />
                     <DataGridTextColumn Header="Order Duration" Binding="{Binding OrderDuration, Mode=OneWay}" />
                     <DataGridTextColumn Header="Security Type" Binding="{Binding SecurityType, Mode=OneWay}" />
                 </DataGrid.Columns>
@@ -536,7 +536,7 @@
                                                 Width="Auto"
                                                 Header="Description"
                                                 MinWidth="100" />
-                                            <DataGridTextColumn Binding="{Binding Shares}"
+                                            <DataGridTextColumn Binding="{Binding Shares, StringFormat='#,#.'}"
                                                                 Width="Auto"
                                                                 CellStyle="{StaticResource CellStyleRight}"
                                                                 Header="Shares" />
@@ -569,7 +569,7 @@
                     <DataGridTextColumn Width="Auto" Header="Description"
                                         Binding="{Binding Path=Description, Mode=OneWay}" />
                     <DataGridTextColumn Width="Auto" Header="Shares"
-                                        Binding="{Binding SharesOwned, Mode=OneWay, Converter={StaticResource DecimalToStringConverter}}"
+                                        Binding="{Binding SharesOwned, Mode=OneWay, Converter={StaticResource DecimalToStringConverter}, StringFormat='#,#.'}"
                                         CellStyle="{StaticResource CellStyleRight}" />
                     <DataGridTextColumn Width="Auto" Header="Price" Binding="{Binding Path=Price, Mode=OneWay, StringFormat=C}"
                                         CellStyle="{StaticResource CellStyleRight}" />
