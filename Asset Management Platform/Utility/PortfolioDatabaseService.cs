@@ -22,7 +22,7 @@ namespace Asset_Management_Platform
     {
         private SqlDataReader _reader;
         private List<Position> _portfolioOriginalState;
-        private List<Position> _myPositions;
+        private List<Position> _myPositions; //This is THE main position list
         private IStockDataService _stockDatabaseService;
 
 
@@ -33,52 +33,6 @@ namespace Asset_Management_Platform
             _portfolioOriginalState = new List<Position>();
             _myPositions = new List<Position>();
 
-        }
-
-        public List<Position> GetPositions()
-        {
-            return _myPositions;
-        }
-
-        /// <summary>
-        /// Will attempt to load the MyPortfolio
-        /// table from SQL Database. If no MyPortfolio
-        /// table is found, it will return false.
-        /// </summary>
-        public bool CheckDBForPositions()
-        {
-            try
-            {
-                var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
-                using (var connection = new SqlConnection(storageString))
-                {
-                    connection.Open();
-                    using (var command = new SqlCommand())
-                    {
-                        command.Connection = connection;
-                        command.CommandText = @"SELECT * FROM MyPortfolio;";
-                        _reader = command.ExecuteReader();
-                        if (_reader.HasRows == true)
-                            return true;
-                    }
-                }
-            }
-            catch (SqlException ex)
-            {
-                var msg = new PortfolioMessage();
-                msg.Message = ex.Message;
-                Messenger.Default.Send(msg);
-                return false;
-            }
-            catch (InvalidOperationException ex)
-            {
-                var msg = new PortfolioMessage();
-                msg.Message = ex.Message;
-                Messenger.Default.Send(msg);
-                return false;
-            }
-
-            return false;
         }
 
         public List<Taxlot> GetTaxlotsFromDatabase()

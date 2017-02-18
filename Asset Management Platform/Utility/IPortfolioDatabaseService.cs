@@ -8,7 +8,6 @@ namespace Asset_Management_Platform.Utility
 {
     public interface IPortfolioDatabaseService
     {
-        bool CheckDBForPositions();
 
         List<Taxlot> GetTaxlotsFromDatabase();
 
