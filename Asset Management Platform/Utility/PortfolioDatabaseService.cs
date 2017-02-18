@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Asset_Management_Platform.Messages;
 using Asset_Management_Platform.Utility;
 using System.Configuration;
+using Asset_Management_Platform.Exceptions;
 using Asset_Management_Platform.SecurityClasses;
 
 namespace Asset_Management_Platform
@@ -336,7 +337,8 @@ namespace Asset_Management_Platform
             }
             catch (SqlException ex)
             {
-                throw new NotImplementedException();
+                var message = "Limit orders failed to upload properly";
+                throw new LimitOrderException(message, ex);
             }
         }
 
@@ -354,20 +356,26 @@ namespace Asset_Management_Platform
                 case "MyPortfolioBackup":
                     truncateString = @"TRUNCATE TABLE MyPortfolioBackup;";
                     break;
-                default:
-                    break;
             }
-
-            var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
-            using (var truncateConnection = new SqlConnection(storageString)) {
-                truncateConnection.Open();
-                using (var truncateCommand = new SqlCommand(truncateString, truncateConnection))
+            try
+            {
+                var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
+                using (var truncateConnection = new SqlConnection(storageString))
                 {
-                    truncateCommand.ExecuteNonQuery();
+                    truncateConnection.Open();
+                    using (var truncateCommand = new SqlCommand(truncateString, truncateConnection))
+                    {
+                        truncateCommand.ExecuteNonQuery();
+                    }
                 }
             }
+            catch (SqlException ex)
+            {
+                var message = @"Failed to truncate SQL table: " + truncateString;
+                throw new TruncateException(message, ex);
+            }
+            
         }
-
 
         /// <summary>
         /// Downloads and parses the list of limit orders from SQL table
@@ -451,36 +459,6 @@ namespace Asset_Management_Platform
             foreach(var pos in _myPositions.Where(s => s.Ticker == taxlotToAdd.Ticker)){
                 pos.Taxlots.Add(taxlotToAdd);
             }
-        }
-
-        /// <summary>
-        /// Takes a security and a share quantity. If the share quantity is equal to 
-        /// the total position, the ticker is added to the list to be deleted
-        /// when the database is updated.
-        /// </summary>
-        /// <param name="security"></param>
-        /// <param name="shares"></param>
-        public void SellSharesFromPortfolioDatabase(Security security, decimal shares)
-        {
-            //How did you get here?
-            throw new NotImplementedException();
-
-
-
-            //foreach (var p in _myPositions.Where(p => p.Ticker == security.Ticker))
-            //{
-            //    if (p.SharesOwned == shares)
-            //    {
-            //        //var deleteThis = new Position(security.Ticker, shares);
-            //        _positionsToDelete.Add(p.Ticker);
-            //        break;
-            //    }
-            //    else
-            //    {
-            //        p.SellShares(shares);
-            //    }
-            //}
-            //PROBABLY NEED TO SEND A MESSAGE TO UPDATE UI
         }
 
         /// <summary>

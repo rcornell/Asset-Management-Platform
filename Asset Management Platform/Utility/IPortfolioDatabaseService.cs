@@ -24,8 +24,6 @@ namespace Asset_Management_Platform.Utility
         void AddToPortfolioDatabase(Position positionToAdd);
 
         void AddToPortfolioDatabase(Taxlot taxlotToAdd);
-      
-        void SellSharesFromPortfolioDatabase(Security security, decimal shares);
 
         void DeletePortfolio(List<Position> positions);
 

@@ -122,6 +122,8 @@
     <Compile Include="DisplayMutualFund.cs" />
     <Compile Include="DisplaySecurity.cs" />
     <Compile Include="DisplayStock.cs" />
+    <Compile Include="Exceptions\LimitOrderException.cs" />
+    <Compile Include="Exceptions\TruncateException.cs" />
     <Compile Include="LimitOrder.cs" />
     <Compile Include="LimitOrderDBResult.cs" />
     <Compile Include="Messages\TradeMessage.cs" />
