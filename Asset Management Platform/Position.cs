@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Asset_Management_Platform.SecurityClasses;
 using GalaSoft.MvvmLight;
 
 namespace Asset_Management_Platform

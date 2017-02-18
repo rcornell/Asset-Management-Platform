@@ -8,6 +8,7 @@ using System.Windows.Threading;
 using GalaSoft.MvvmLight.Messaging;
 using Asset_Management_Platform.Messages;
 using System.Collections.ObjectModel;
+using Asset_Management_Platform.SecurityClasses;
 
 namespace Asset_Management_Platform.Utility
 {

@@ -12,42 +12,41 @@ namespace Asset_Management_Platform
         public string SecurityType;
 
         private string _cusip;
+        private string _ticker;
+        private string _description;
+        private decimal _lastPrice;
+        private double _yield;
+        private decimal _percentChange;
+        private decimal _change;
+
         public string Cusip
         {
             get { return _cusip; }
             set { _cusip = value;
                 RaisePropertyChanged(() => Cusip);
             }
-        }
-
-        private string _ticker;
+        }       
         public string Ticker
         {
             get { return _ticker; }
             set { _ticker = value;
                 RaisePropertyChanged(() => Ticker);
             }
-        }
-
-        private string _description;
+        }        
         public string Description
         {
             get { return _description; }
             set { _description = value;
                 RaisePropertyChanged(() => Description);
             }
-        }
-
-        private decimal _lastPrice;
+        }        
         public decimal LastPrice
         {
             get { return _lastPrice; }
             set { _lastPrice = value;
                 RaisePropertyChanged(() => LastPrice);
             }
-        }
-
-        private double _yield;
+        }        
         public double Yield
         {
             get { return _yield; }
@@ -55,15 +54,11 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => Yield);
             }
         }
-
-        private decimal _change;
         public decimal Change
         {
             get { return _change; }
             set { _change = value; }
-        }
-
-        private decimal _percentChange;
+        }       
         public decimal PercentChange
         {
             get { return _percentChange; }

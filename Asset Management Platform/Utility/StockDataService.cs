@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using GalaSoft.MvvmLight.Messaging;
 using Asset_Management_Platform.Messages;
 using System.Linq;
+using Asset_Management_Platform.SecurityClasses;
 
 
 namespace Asset_Management_Platform.Utility

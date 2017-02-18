@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Asset_Management_Platform.Messages;
 using Asset_Management_Platform.Utility;
 using System.Configuration;
+using Asset_Management_Platform.SecurityClasses;
 
 namespace Asset_Management_Platform
 {

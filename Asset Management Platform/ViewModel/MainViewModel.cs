@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Asset_Management_Platform.SecurityClasses;
 
 namespace Asset_Management_Platform
 {
