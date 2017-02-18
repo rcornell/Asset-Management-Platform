@@ -571,10 +571,12 @@ namespace Asset_Management_Platform
         public MainViewModel(IPortfolioManagementService portfolioService)
         {
             TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
-            TradeTermStrings = new ObservableCollection<string>() { "Market", "Limit", "Stop", "Stop Limit" };
-            TradeDurationStrings = new ObservableCollection<string> { "Day", "GTC", "Market Close", "Market Open", "Overnight" };
+            TradeTermStrings = new ObservableCollection<string>() { " ", "Market", "Limit", "Stop", "Stop Limit" };
+            TradeDurationStrings = new ObservableCollection<string> { " ", "Day", "GTC", "Market Close", "Market Open", "Overnight" };
             SecurityTypes = new ObservableCollection<Security> { new Stock(), new MutualFund() };
-            SelectedDurationType = "Day";
+            SelectedTradeType = TradeTypeStrings[0];
+            SelectedTermType = TradeTermStrings[0];
+            SelectedDurationType = TradeDurationStrings[0];            
             ChartSubtitle = "All Positions";
             PreviewButtonText = "Preview Order";
             ShowLimitButtonText = "Show Limit Orders";
@@ -850,11 +852,11 @@ namespace Asset_Management_Platform
             GetLimitOrders();
             ExecuteShowAllSecurities();
 
-            SelectedDurationType = " ";
             OrderTickerText = "";
             OrderShareQuantity = 0;
-            SelectedTermType = " ";
-            SelectedTradeType = " ";
+            SelectedTradeType = TradeTypeStrings[0];
+            SelectedTermType = TradeTermStrings[0];
+            SelectedDurationType = TradeDurationStrings[0];
             LimitPrice = 0;
             PreviewPrice = 0;
             PreviewBid = "";

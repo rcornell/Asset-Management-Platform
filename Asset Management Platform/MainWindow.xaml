@@ -151,7 +151,7 @@
                            Style="{StaticResource TextBlockStyle}"
                            VerticalAlignment="Center" />
                 <ComboBox ItemsSource="{Binding TradeTermStrings}"
-                          SelectedItem="{Binding SelectedTermType}"
+                          SelectedItem="{Binding SelectedTermType, Mode=TwoWay}"
                           Height="Auto"
                           Width="100"
                           Margin="3"
@@ -168,7 +168,7 @@
                            Style="{StaticResource TextBlockStyle}"
                            VerticalAlignment="Center" />
                 <ComboBox ItemsSource="{Binding TradeDurationStrings}"
-                          SelectedItem="{Binding SelectedDurationType}"
+                          SelectedItem="{Binding SelectedDurationType, Mode=TwoWay}"
                           Height="Auto"
                           Width="100"
                           Margin="3"

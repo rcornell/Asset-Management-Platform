@@ -181,7 +181,6 @@ namespace Asset_Management_Platform
             }
         }
 
-
         private void InsertPositions(List<Position> positions)
         {
             string storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
@@ -189,12 +188,7 @@ namespace Asset_Management_Platform
 
             foreach (var pos in positions)
             {
-                foreach (var lot in pos.Taxlots)
-                {
-                    insertString += string.Format("('{0}', '{1}', '{2}', '{3}', '{4}'), ", 
-                                                    lot.Ticker, lot.Shares, lot.PurchasePrice, 
-                                                    lot.DatePurchased, lot.SecurityType);
-                }
+                insertString = pos.Taxlots.Aggregate(insertString, (current, lot) => current + string.Format("('{0}', '{1}', '{2}', '{3}', '{4}'), ", lot.Ticker, lot.Shares, lot.PurchasePrice, lot.DatePurchased, lot.SecurityType));
             }
             insertString = insertString.Substring(0, insertString.Length - 2) + @";";
 
