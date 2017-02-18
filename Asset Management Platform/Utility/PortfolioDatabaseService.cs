@@ -280,7 +280,9 @@ namespace Asset_Management_Platform
         {
             var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             //Perhaps a way to create multiple backups?
-            //string backup = @"SELECT * INTO MyPortfolioBackup FROM MyPortfolio;";
+
+            TruncateTable("MyPortfolioBackup");
+
             var backup = @"INSERT INTO MyPortfolioBackup SELECT * FROM MyPortfolio";
             using (var connection = new SqlConnection(storageString))
             {
@@ -288,9 +290,6 @@ namespace Asset_Management_Platform
                 using (var command = new SqlCommand())
                 {
                     command.Connection = connection;
-
-                    command.CommandText = @"TRUNCATE Table [MyPortfolioBackup];";
-                    command.ExecuteNonQuery();
 
                     command.CommandText = backup;
                     command.ExecuteNonQuery();
@@ -310,7 +309,6 @@ namespace Asset_Management_Platform
                 if (order != final)
                     insertString += @", ";
             }
-
             try { 
                 using (var connection = new SqlConnection(storageString))
                 {
@@ -353,6 +351,9 @@ namespace Asset_Management_Platform
                 case "MyPortfolio":
                     truncateString = @"TRUNCATE TABLE MyPortfolio;";
                     break;
+                case "MyPortfolioBackup":
+                    truncateString = @"TRUNCATE TABLE MyPortfolioBackup;";
+                    break;
                 default:
                     break;
             }
@@ -377,7 +378,6 @@ namespace Asset_Management_Platform
             var limitOrders = new List<LimitOrder>();
             var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             var downloadString = @"SELECT * FROM dbo.MyLimitOrders;";
-            SqlDataReader reader;
             var limitDBResults = new List<LimitOrderDbResult>();
 
             using (var connection = new SqlConnection(storageString))
@@ -385,7 +385,7 @@ namespace Asset_Management_Platform
                 using (var command = new SqlCommand(downloadString, connection))
                 {
                     connection.Open();
-                    reader = command.ExecuteReader();
+                    var reader = command.ExecuteReader();
 
                     if (reader != null && reader.HasRows)
                     {
@@ -411,9 +411,10 @@ namespace Asset_Management_Platform
 
                 if (result.SecurityType == null)
                 {
-                    throw new NotImplementedException();
+                    continue;                   
                 }
-                else if (result.SecurityType == "Stock")
+
+                if (result.SecurityType == "Stock")
                 {
                     newSecurity = new Stock("", result.Ticker, "", 0, 0);
 
