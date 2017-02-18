@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Asset_Management_Platform.Messages
 {
-    class PortfolioMessage
+    public class PortfolioMessage
     {
         public List<Security> Securities;
         public string Message;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Asset_Management_Platform.Messages
 {
-    class DatabaseMessage
+    public class DatabaseMessage
     {
         public string Message;
         public bool Success;

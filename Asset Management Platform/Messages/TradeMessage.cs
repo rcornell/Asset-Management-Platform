@@ -9,9 +9,7 @@ namespace Asset_Management_Platform.Messages
     public class TradeMessage
     {
         public string Message;
-
         public string Ticker;
-
         public decimal Shares;
 
         public TradeMessage()
