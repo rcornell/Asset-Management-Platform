@@ -10,18 +10,18 @@ namespace Asset_Management_Platform
     public class PositionByWeight : ObservableObject
     {
         private string _ticker;
+        private decimal _weight;
+
         public string Ticker
         {
             get { return _ticker; }
             set
             {
                 _ticker = value;
-                RaisePropertyChanged(() => Ticker);
-                
+                RaisePropertyChanged(() => Ticker);                
             }
         }
-
-        private decimal _weight;
+       
         public decimal Weight
         {
             get { return _weight; }

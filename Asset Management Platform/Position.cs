@@ -12,6 +12,10 @@ namespace Asset_Management_Platform
     {
 
         private Security _security;
+        private string _ticker;
+        private bool _hidden;
+        private List<Taxlot> _taxlots;
+
         public Security Security
         {
             get
@@ -33,8 +37,7 @@ namespace Asset_Management_Platform
         {
             get { return Security.LastPrice; }
         }
-
-        private string _ticker;
+       
         public string Ticker {
             get { return _ticker;  }
             set { _ticker = value;  }
@@ -80,7 +83,6 @@ namespace Asset_Management_Platform
             get { return string.Format(Security.Yield + "%"); }
         }
 
-        private List<Taxlot> _taxlots;
         public List<Taxlot> Taxlots
         {
             get { return _taxlots; } 
@@ -194,7 +196,6 @@ namespace Asset_Management_Platform
             get { return string.Format(@"{0:0.0%}", Security.PercentChange / 100); }
         }
 
-        private bool _hidden;
         public bool Hidden
         {
             get { return _hidden; }
@@ -228,16 +229,15 @@ namespace Asset_Management_Platform
                 Ticker = taxlot.Ticker;
 
             Taxlots.Add(taxlot);
-            Security = security;
-            
+            Security = security;            
         }
 
         private string ComputeDatePurchased()
         {
             if (_taxlots.Count > 1)
                 return "Multiple";
-            else
-                return _taxlots[0].DatePurchased.ToString();
+
+            return _taxlots[0].DatePurchased.ToString();
         }
 
         private decimal ComputeSharesOwned()

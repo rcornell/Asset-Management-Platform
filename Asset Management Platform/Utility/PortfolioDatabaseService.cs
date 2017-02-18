@@ -522,7 +522,7 @@ namespace Asset_Management_Platform
             var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             var downloadString = @"SELECT * FROM dbo.MyLimitOrders;";
             SqlDataReader reader;
-            var limitDBResults = new List<LimitOrderDBResult>();
+            var limitDBResults = new List<LimitOrderDbResult>();
 
             using (var connection = new SqlConnection(storageString))
             {
@@ -542,7 +542,7 @@ namespace Asset_Management_Platform
                             var securityType = reader.GetString(5);
                             var orderDuration = reader.GetString(6);
 
-                            var newResult = new LimitOrderDBResult(tradeType, ticker, shares, limit, securityType, orderDuration);
+                            var newResult = new LimitOrderDbResult(tradeType, ticker, shares, limit, securityType, orderDuration);
                             limitDBResults.Add(newResult);
                         }
                     }
