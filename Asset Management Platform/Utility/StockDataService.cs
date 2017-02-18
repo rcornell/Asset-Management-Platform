@@ -22,7 +22,7 @@ namespace Asset_Management_Platform.Utility
         public StockDataService()
         {
             _securityDatabaseList = new List<Security>();
-            SeedDatabasesIfNeeded();
+            CheckDatabases();
         }
 
         /// <summary>
@@ -50,13 +50,14 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         /// <param name="securitiesToInsert"></param>
         /// <returns></returns>
-        public bool InsertIntoDatabase(Security securityToInsert)
+        public void TryDatabaseInsert(Security securityToInsert)
         {
             var isInDatabase = _securityDatabaseList.Any(s => s.Ticker == securityToInsert.Ticker);
 
             if (isInDatabase || securityToInsert.Ticker == @"N/A")
-                return false;
-            else if(securityToInsert.SecurityType == "Stock")
+                return;
+
+            if (securityToInsert.SecurityType == "Stock")
             {
                 var insertString = @"INSERT INTO Stocks (Ticker, Description, LastPrice, Yield) VALUES ";
                 var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
@@ -90,12 +91,10 @@ namespace Asset_Management_Platform.Utility
                     {
                         connection.Open();
                         command.ExecuteNonQuery();
-                    }
-                    
+                    }                    
                 }
             }
             _securityDatabaseList.Add(securityToInsert);
-            return true;
         }
 
         /// <summary>
@@ -204,7 +203,7 @@ namespace Asset_Management_Platform.Utility
                 using (var yahooAPI = new YahooAPIService())
                 {
                     var result = yahooAPI.GetSingleSecurity(ticker, _securityDatabaseList);
-                    var insertedOrNot = InsertIntoDatabase(result);
+                    TryDatabaseInsert(result);
                     return result;
                 }
             }
@@ -385,9 +384,9 @@ namespace Asset_Management_Platform.Utility
         }
 
         /// <summary>
-        /// Checks the SQL database. If it is null, seeds it.
+        /// Checks the SQL databases for stocks and funds. If empty, seeds it.
         /// </summary>
-        private void SeedDatabasesIfNeeded()
+        private void CheckDatabases()
         {
             if (IsStockDatabaseNull())
             {

@@ -11,7 +11,7 @@ namespace Asset_Management_Platform.Utility
 
         List<Security> LoadSecurityDatabase();
 
-        bool InsertIntoDatabase(Security securitiesToInsert);
+        void TryDatabaseInsert(Security securitiesToInsert);
 
         void UploadSecuritiesToDatabase();
 
