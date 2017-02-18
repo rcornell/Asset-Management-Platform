@@ -24,7 +24,7 @@ namespace Asset_Management_Platform
         private SqlDataReader _reader;
         private List<Position> _portfolioOriginalState;
         private List<Position> _myPositions; //This is THE main position list
-        private List<Taxlot> _myTaxlots; //ADDING THIS
+        private List<Taxlot> _myTaxlots; //This is THE main taxlot list
         private IStockDataService _stockDatabaseService;
 
 
@@ -35,7 +35,6 @@ namespace Asset_Management_Platform
             _portfolioOriginalState = new List<Position>();
             _myPositions = new List<Position>();
             _myTaxlots = new List<Taxlot>();
-
         }
 
         public List<Taxlot> GetTaxlotsFromDatabase()
@@ -342,6 +341,10 @@ namespace Asset_Management_Platform
             }
         }
 
+        /// <summary>
+        /// Truncates the specified table
+        /// </summary>
+        /// <param name="tableToTruncate"></param>
         private void TruncateTable(string tableToTruncate)
         {
             string truncateString = "";

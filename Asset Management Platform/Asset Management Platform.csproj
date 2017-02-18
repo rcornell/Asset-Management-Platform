@@ -119,9 +119,6 @@
     <Compile Include="Converters\BoolToCollapsedConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\DecimalToStringConverter.cs" />
-    <Compile Include="DisplayMutualFund.cs" />
-    <Compile Include="DisplaySecurity.cs" />
-    <Compile Include="DisplayStock.cs" />
     <Compile Include="Exceptions\LimitOrderException.cs" />
     <Compile Include="Exceptions\TruncateException.cs" />
     <Compile Include="LimitOrder.cs" />

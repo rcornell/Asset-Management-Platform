@@ -17,7 +17,7 @@ namespace Asset_Management_Platform.Utility
     {
         private List<SecurityClasses.StockFromJSON> stockList;
         private List<MutualFund> mutualFundList;
-        protected const string _truncateStockLiveTableCommandText = @"TRUNCATE TABLE [Stocks]"; //My table name 
+        protected const string _truncateStockLiveTableCommandText = @"TRUNCATE TABLE [Stocks]";
         protected const string _truncateMutualFundLiveTableCommandText = @"TRUNCATE TABLE [MutualFunds]";
         protected const int _batchSize = 2000; //max number times this look to add. Adjust for need vs. speed.
 
@@ -28,12 +28,6 @@ namespace Asset_Management_Platform.Utility
 
         public void LoadMutualFundJsonDataIntoSqlServer(string connectionString)
         {
-            //var jsonFi = new FileInfo(@"Assets\Games.json");
-            //return jsonFi.Exists
-            //    ?
-            //    JsonConvert.DeserializeObject<ObservableCollection<Game>>(File.ReadAllText(jsonFi.FullName))
-            //    : null;
-
             //Can I find a better way that deserializing to the StockTicker class with one property?
             var fileInfo = new FileInfo(@"SeedJson\SeedMutualFundInfo.json");
             var tickerJson = File.ReadAllText(fileInfo.FullName);
@@ -107,12 +101,9 @@ namespace Asset_Management_Platform.Utility
                     sqlCommand.ExecuteNonQuery();
                 }
 
-
                 var sqlBulkCopy = new SqlBulkCopy(sqlConnection)
                 {
-                    DestinationTableName = "[Stocks]"
-
-                   
+                    DestinationTableName = "[Stocks]"     
                 };
 
                 foreach (var security in stockList)
@@ -130,7 +121,6 @@ namespace Asset_Management_Platform.Utility
         protected void InsertDataTable(SqlBulkCopy sqlBulkCopy, SqlConnection sqlConnection, DataTable dataTable)
         {
             sqlBulkCopy.WriteToServer(dataTable);
-
             dataTable.Rows.Clear();
         }
 
