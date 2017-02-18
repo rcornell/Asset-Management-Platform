@@ -474,32 +474,15 @@ namespace Asset_Management_Platform.Utility
 
         public void UpdatePortfolioPrices()
         {
-            //var listToUpdate = new List<Security>();            
+            //Update securities' pricing data
+            _stockDataService.GetUpdatedPricing(_portfolioSecurities);
 
-            //foreach (var stock in DisplayStocks)
-            //{
-            //    listToUpdate.Add(stock.Stock);
-            //}
-
-            //foreach (var fund in DisplayMutualFunds)
-            //{
-            //    listToUpdate.Add(fund.Fund);
-            //}
-
-            //_stockDataService.GetUpdatedPricing(listToUpdate);
-
-            ////Update all prices for any displaysecurity
-            //foreach (var security in listToUpdate)
-            //{
-            //    if (security is Stock) {
-            //        DisplayStocks.FindAll(s => s.Ticker == security.Ticker).ForEach(p => p.Stock.LastPrice = security.LastPrice);
-            //    }
-            //    if (security is MutualFund)
-            //    {
-            //        DisplayMutualFunds.FindAll(m => m.Ticker == security.Ticker).ForEach(p => p.Fund.LastPrice = security.LastPrice);
-            //    }
-            //}
-            //Messenger.Default.Send(new PortfolioMessage());
+            //Update prices in all positions
+            foreach (var security in _portfolioSecurities)
+            {
+                _portfolioPositions.FindAll(s => s.Ticker == security.Ticker)
+                    .ForEach(p => p.Security.LastPrice = security.LastPrice);
+            }
         }
 
         /// <summary>
