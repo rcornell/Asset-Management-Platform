@@ -81,65 +81,6 @@ namespace Asset_Management_Platform
             return false;
         }
 
-        /// <summary>
-        /// Creates a List<Position> 
-        /// using the SQL Database's
-        /// MyPortfolio table.
-        /// </summary>
-        //public void LoadPositionsFromDatabase()
-        //{
-        //    List<Taxlot> taxlotsFromDatabase = new List<Taxlot>();
-        //    var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
-        //    using (var connection = new SqlConnection(storageString))
-        //    {
-        //        connection.Open();
-        //        using (var command = new SqlCommand())
-        //        {
-        //            command.Connection = connection;
-        //            command.CommandText = @"SELECT * FROM MyPortfolio;";
-        //            var reader = command.ExecuteReader();
-        //            while (reader.Read())
-        //            {
-        //                var ticker = reader.GetString(1);
-        //                var quantity = int.Parse(reader.GetString(2));
-        //                var purchasePrice = decimal.Parse(reader.GetString(3));
-        //                DateTime datePurchased = new DateTime();
-        //                if(reader.IsDBNull(4))
-        //                    datePurchased = new DateTime(2000,12,31);
-        //                else if (!string.IsNullOrEmpty(reader.GetString(4)))
-        //                    datePurchased = DateTime.Parse(reader.GetString(4));
-
-        //                var taxLot = new Taxlot(ticker, quantity, purchasePrice, datePurchased);
-        //                taxlotsFromDatabase.Add(taxLot);
-        //            }
-        //        }
-        //    }
-        //    foreach (var lot in taxlotsFromDatabase)
-        //    {
-        //        if (!_myPositions.Any(s => s.Ticker == lot.Ticker))
-        //        {
-        //            _myPositions.Add(new Position(lot));
-        //        }
-        //        else if (_myPositions.Any(s => s.Ticker == lot.Ticker && s.SharesOwned != lot.Shares))
-        //        {
-        //            _myPositions.Find(s => s.Ticker == lot.Ticker).AddTaxlot(lot);
-        //        }
-        //        else if (_myPositions.Any(s => s.Ticker == lot.Ticker && s.SharesOwned == lot.Shares))
-        //        {
-        //            var pos = _myPositions.Find(s => s.Ticker == lot.Ticker);
-        //            if (pos.Taxlots.Any(d => d.DatePurchased == lot.DatePurchased))
-        //                continue;
-        //            else
-        //                pos.AddTaxlot(lot);
-        //        }
-        //    }
-
-        //    foreach (var pos in _myPositions)
-        //    {
-        //        _databaseOriginalState.Add(new Position(pos.Taxlots));
-        //    }
-        //}
-
         public List<Taxlot> GetTaxlotsFromDatabase()
         {
             var taxlotsFromDatabase = new List<Taxlot>();
