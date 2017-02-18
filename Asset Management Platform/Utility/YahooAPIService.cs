@@ -12,7 +12,6 @@ namespace Asset_Management_Platform.Utility
 {
     class YahooAPIService : IDisposable
     {
-
         /// <summary>
         /// Yahoo API tags for url string. These
         /// are added the string in sequence with
@@ -106,7 +105,7 @@ namespace Asset_Management_Platform.Utility
         //y     Dividend Yield
         /// </summary>
 
-        const string _baseUrl = "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=sl1yj1barvb6a5c1p2n";
+        const string BaseUrl = "http://download.finance.yahoo.com/d/quotes.csv?s=@&f=sl1yj1barvb6a5c1p2n";
 
         public YahooAPIService()
         {
@@ -123,7 +122,7 @@ namespace Asset_Management_Platform.Utility
         {
             Security securityBeingUpdated;
 
-            var yahooRequestUrl = _baseUrl.Replace("@", tickerToLookUp);
+            var yahooRequestUrl = BaseUrl.Replace("@", tickerToLookUp);
             var response = await GetWebResponse(yahooRequestUrl);
             var yahooResult = new YahooAPIResult(response);
 
@@ -198,7 +197,7 @@ namespace Asset_Management_Platform.Utility
                 tickerString = tickerString.Substring(0, tickerString.Length - 1);
 
                 //Add my tickers to the middle of the url
-                tickerString = _baseUrl.Replace("@", tickerString); 
+                tickerString = BaseUrl.Replace("@", tickerString); 
 
                 try
                 {
@@ -262,7 +261,7 @@ namespace Asset_Management_Platform.Utility
                 tickerString = tickerString.Substring(0, tickerString.Length - 1);
 
                 //Add my tickers to the middle of the url
-                tickerString = _baseUrl.Replace("@", tickerString); 
+                tickerString = BaseUrl.Replace("@", tickerString); 
 
                 try
                 {
@@ -320,8 +319,7 @@ namespace Asset_Management_Platform.Utility
 
                 using (var streamReader = new StreamReader(response))
                 {
-                    string result = streamReader.ReadToEnd();
-
+                    var result = streamReader.ReadToEnd();
                     return result;
                 }
             }
@@ -349,23 +347,22 @@ namespace Asset_Management_Platform.Utility
                 var newStock = new Stock(yahooResult);
                 return newStock;
             }
-            else if (determinedType == "Mutual Fund")
+
+            if (determinedType == "Mutual Fund")
             {
                 var newFund = new MutualFund(yahooResult);
                 return newFund;
             }
-            else
-                return new Security("", "N/A", "Unknown Ticker", 0, 0.00);
+            
+            return new Security("", "N/A", "Unknown Ticker", 0, 0.00);
         }
 
         private List<YahooAPIResult> CreateYahooAPIResultList(string webResult)
         {
             var yahooResultList = new List<YahooAPIResult>();
 
-            string fixedResponse = Regex.Replace(webResult, @"\r\n?|\n", string.Empty);
-            string[] lines = webResult.Split(
-                        new char[] { '\r', '\n' },
-                        StringSplitOptions.RemoveEmptyEntries);
+            //string fixedResponse = Regex.Replace(webResult, @"\r\n?|\n", string.Empty);
+            var lines = webResult.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
             foreach (var line in lines)
             {
@@ -387,8 +384,8 @@ namespace Asset_Management_Platform.Utility
         {
             if (yahooResult.MarketCapIsNA && yahooResult.PeRatioIsNA && yahooResult.Ticker.Length == 5)
                 return "Mutual Fund";
-            else
-                return "Stock";
+
+            return "Stock";
         }
 
         /// <summary>
@@ -400,10 +397,7 @@ namespace Asset_Management_Platform.Utility
         /// <returns></returns>
         private bool IsSecurityUnknown(YahooAPIResult yahooResult)
         {
-            if (yahooResult.Description == @"N/A")
-                return true;
-
-            return false;
+            return yahooResult.Description == @"N/A";
         }
 
         //Reminder: Fully implement IDisposable
