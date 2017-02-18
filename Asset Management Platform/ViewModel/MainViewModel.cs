@@ -9,6 +9,7 @@ using Asset_Management_Platform.Messages;
 using System.ComponentModel;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Asset_Management_Platform
 {
@@ -656,12 +657,9 @@ namespace Asset_Management_Platform
 
             ChartSubtitle = "All Positions";
             AllocationChartPositions = _portfolioManagementService.GetChartAllSecurities();
-            //foreach (var sec in Positions)
-            //{
-            //    sec.Hidden = false;
-            //}
 
             ClearHiddenList();
+            
 
             GetValueTotals();
         }
@@ -677,7 +675,7 @@ namespace Asset_Management_Platform
             ClearHiddenList();
 
             _hiddenPositions = new List<Position>();
-            var trimmedList = new ObservableCollection<Position>(Positions);
+            var trimmedList = new List<Position>(Positions);
 
             foreach (var pos in Positions)
             {
@@ -687,7 +685,7 @@ namespace Asset_Management_Platform
                 }
             }
 
-            Positions = trimmedList;
+            Positions = new ObservableCollection<Position>(trimmedList.OrderBy(t => t.Ticker));
 
             GetValueTotals();
         }
@@ -704,7 +702,7 @@ namespace Asset_Management_Platform
             ClearHiddenList();
 
             _hiddenPositions = new List<Position>();
-            var trimmedList = new ObservableCollection<Position>(Positions);
+            var trimmedList = new List<Position>(Positions);
 
             foreach (var pos in Positions)
             {
@@ -715,7 +713,7 @@ namespace Asset_Management_Platform
                 }
             }
 
-            Positions = trimmedList;
+            Positions = new ObservableCollection<Position>(trimmedList.OrderBy(t => t.Ticker));
 
 
             GetValueTotals();
@@ -723,14 +721,18 @@ namespace Asset_Management_Platform
 
         private void ClearHiddenList()
         {
+            var listToSort = new List<Position>(Positions);
+
             if (_hiddenPositions != null && _hiddenPositions.Count > 0)
             {
                 foreach (var pos in _hiddenPositions)
                 {
-                    Positions.Add(pos);
+                    listToSort.Add(pos);
                 }
                 _hiddenPositions.Clear();
             }
+
+            Positions = new ObservableCollection<Position>(listToSort.OrderBy(t => t.Ticker));
         }
 
         private void ExecuteUpdatePrices()
