@@ -17,7 +17,7 @@ namespace Asset_Management_Platform.Utility
         private IStockDataService _stockDataService;
         private IPortfolioDatabaseService _portfolioDatabaseService;
         private DispatcherTimer _timer;
-        private List<Security> _securityDatabaseList; //Known securities. Not currently used for anything.
+        private List<Security> _securityDatabaseList;
         private List<LimitOrder> _limitOrderList;
         private List<Taxlot> _portfolioTaxlots;
         private List<Position> _portfolioPositions;
@@ -183,6 +183,9 @@ namespace Asset_Management_Platform.Utility
             var limit = trade.Limit;
             var orderDuration = trade.OrderDuration;
 
+            if (trade.Terms == "Limit" || trade.Terms == "Stop Limit" || trade.Terms == "Stop" && limit <= 0)
+                return false;
+
             if (security != null && !string.IsNullOrEmpty(ticker) && shares > 0 
                 && !string.IsNullOrEmpty(terms) && !string.IsNullOrEmpty(orderDuration))
                 return true;
@@ -211,13 +214,17 @@ namespace Asset_Management_Platform.Utility
             {
                 //Order is valid but limit prevents execution
                 CreateLimitOrder(trade);
+                return;
             }
-            else if (validOrder && limitType && isActiveLimitOrder)
+
+            if (validOrder && limitType && isActiveLimitOrder)
             {
-                //Order is valid and a limit-type and is active
+                //Order is valid and a limit type and is active
                 SellPosition(trade);
+                return;
             }
-            else if (validOrder && trade.Terms == "Market")
+
+            if (validOrder && trade.Terms == "Market")
             {
                 //Order is valid and a market order
                 SellPosition(trade);
@@ -231,10 +238,10 @@ namespace Asset_Management_Platform.Utility
             var securityType = position.GetSecurityType();
             var ticker = trade.Ticker;
             var shares = trade.Shares;
-
+            
             if (shares == position.SharesOwned)
             {
-                //Find and remove the security from portfolio
+                //User selling all shares, so find and remove the security from portfolio
                 var securityToRemove = _portfolioSecurities.Find(s => s.Ticker == ticker);
                 _portfolioSecurities.Remove(securityToRemove);
 
@@ -246,17 +253,18 @@ namespace Asset_Management_Platform.Utility
                     _portfolioTaxlots.Remove(lot);
                 }
 
-                //Remove the position that was passed in to this method
+                //Remove the position
                 _portfolioPositions.Remove(position);
-            }
+            }            
             else if (shares > position.SharesOwned)
             {
+                //User trying to sell too many shares
                 var message = new TradeMessage() { Shares = shares, Ticker = ticker, Message = "Order quantity exceeds shares owned!" };
                 Messenger.Default.Send(message);
             }
-            else //selling partial position
+            else 
             {
-                //The position reduces its shares  
+                //User selling partial position
                 position.SellShares(shares);
             }
         }
@@ -279,7 +287,8 @@ namespace Asset_Management_Platform.Utility
             {
                 return true;
             }
-            else if (buyOrSell == "Buy" && terms == "Limit" && security.LastPrice >= limit)
+
+            if (buyOrSell == "Buy" && terms == "Limit" && security.LastPrice >= limit)
             {
                 return false;
             }
@@ -289,7 +298,8 @@ namespace Asset_Management_Platform.Utility
             {
                 return true;
             }
-            else if (buyOrSell == "Sell" && terms == "Limit" && security.LastPrice >= limit)
+
+            if (buyOrSell == "Sell" && terms == "Limit" && security.LastPrice >= limit)
             {
                 return false;
             }
@@ -374,11 +384,12 @@ namespace Asset_Management_Platform.Utility
             var securityToReturn = _stockDataService.GetSecurityInfo(ticker);
             if (securityToReturn is Stock)
                 return (Stock)securityToReturn;
-            else if (securityToReturn is MutualFund)
+            if (securityToReturn is MutualFund)
                 return (MutualFund)securityToReturn;
-            else return new Stock("", "XXX", "Unknown Stock", 0, 0.00);
-        }
 
+            //Should not hit this.
+            return new Stock("", "XXX", "Unknown Stock", 0, 0.00);
+        }
 
         /// <summary>
         /// Will be called through the order entry system, where a security type
@@ -397,6 +408,10 @@ namespace Asset_Management_Platform.Utility
             else return new Stock("", "XXX", "Unknown Stock", 0, 0.00);
         }
 
+        /// <summary>
+        /// Returns PositionsByWeight for all securities
+        /// </summary>
+        /// <returns></returns>
         public ObservableCollection<PositionByWeight> GetChartAllSecurities()
         {
             decimal totalValue = 0;
@@ -416,6 +431,10 @@ namespace Asset_Management_Platform.Utility
             return positionsByWeight;
         }
 
+        /// <summary>
+        /// Returns PositionsByWeight for stocks only
+        /// </summary>
+        /// <returns></returns>
         public ObservableCollection<PositionByWeight> GetChartStocksOnly()
         {
             decimal totalValue = 0;
@@ -435,6 +454,10 @@ namespace Asset_Management_Platform.Utility
             return positionsByWeight;
         }
 
+        /// <summary>
+        /// Returns PositionsByWeight for mutual funds only
+        /// </summary>
+        /// <returns></returns>
         public ObservableCollection<PositionByWeight> GetChartFundsOnly()
         {
             decimal totalValue = 0;
@@ -549,14 +572,14 @@ namespace Asset_Management_Platform.Utility
             _stockDataService.UploadSecuritiesToDatabase();
         }
 
-        public void UploadLimitOrdersToDatabase()
-        {
-            _portfolioDatabaseService.UploadLimitOrdersToDatabase(LimitOrderList);
-        }
-
         public void UploadPortfolio()
         {
             _portfolioDatabaseService.SavePortfolioToDatabase();
+        }
+
+        public void UploadLimitOrdersToDatabase()
+        {
+            _portfolioDatabaseService.UploadLimitOrdersToDatabase(LimitOrderList);
         }
 
         public void DeletePortfolio()
@@ -566,6 +589,9 @@ namespace Asset_Management_Platform.Utility
             _portfolioDatabaseService.DeletePortfolio(_portfolioPositions);
         }
 
+        /// <summary>
+        /// For testing only.
+        /// </summary>
         public void TestLimitOrderMethods()
         {
             UpdatePortfolioPrices();
