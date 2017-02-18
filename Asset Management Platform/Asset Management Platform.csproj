@@ -152,7 +152,6 @@
     <Compile Include="Utility\YahooAPIResult.cs" />
     <Compile Include="Utility\YahooAPIService.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
-    <Compile Include="SecuritiesList.cs" />
     <Compile Include="Utility\PortfolioDatabaseService.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="MainWindow.xaml">
