@@ -233,14 +233,8 @@ namespace Asset_Management_Platform
         private void DeletePositions(List<Position> positions)
         {
             var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
-            string deleteString = @"Delete From dbo.MyPortfolio Where Ticker in ("; //value1, value2, ...);
+            var deleteString = positions.Aggregate(@"Delete From dbo.MyPortfolio Where Ticker in (", (current, pos) => current + string.Format(@"'{0}', ", pos.Ticker)); //value1, value2, ...);
 
-            foreach (var pos in positions)
-            {
-                //Deletes all taxlots for position being updated
-                deleteString += string.Format(@"'{0}', ", pos.Ticker);
-
-            }
             deleteString = deleteString.Substring(0, deleteString.Length - 2);
             deleteString += @");";
 
@@ -267,7 +261,7 @@ namespace Asset_Management_Platform
             if (originalPosition.PurchasePrice != portfolioPosition.PurchasePrice)
                 return false;
 
-            for (int i = 0; i < portfolioPosition.Taxlots.Count; i++)
+            for (var i = 0; i < portfolioPosition.Taxlots.Count; i++)
             {
                 var originalTaxlotDateTime = originalPosition.Taxlots[i].DatePurchased;
                 var portfolioTaxlotDateTime = portfolioPosition.Taxlots[i].DatePurchased;
@@ -287,8 +281,8 @@ namespace Asset_Management_Platform
             var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             //Perhaps a way to create multiple backups?
             //string backup = @"SELECT * INTO MyPortfolioBackup FROM MyPortfolio;";
-            string backup = @"INSERT INTO MyPortfolioBackup SELECT * FROM MyPortfolio";
-            using (SqlConnection connection = new SqlConnection(storageString))
+            var backup = @"INSERT INTO MyPortfolioBackup SELECT * FROM MyPortfolio";
+            using (var connection = new SqlConnection(storageString))
             {
                 connection.Open();
                 using (var command = new SqlCommand())
@@ -312,14 +306,7 @@ namespace Asset_Management_Platform
             var final = limitOrders.Last();
             foreach (var order in limitOrders)
             {
-                var tradeType = order.TradeType;
-                var ticker = order.Ticker;
-                var shares = order.Shares;
-                var limit = order.Limit;
-                var securityType = order.SecurityType.ToString();
-                var orderDuration = order.OrderDuration;
-
-                insertString += string.Format(@"('{0}', '{1}', {2}, {3}, '{4}', '{5}')", tradeType, ticker, shares, limit, securityType, orderDuration);
+                insertString += string.Format(@"('{0}', '{1}', {2}, {3}, '{4}', '{5}')", order.TradeType, order.Ticker, order.Shares, order.Limit, order.SecurityType, order.OrderDuration);
                 if (order != final)
                     insertString += @", ";
             }
