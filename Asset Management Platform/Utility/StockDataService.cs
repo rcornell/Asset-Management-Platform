@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using GalaSoft.MvvmLight.Messaging;
 using Asset_Management_Platform.Messages;
 using System.Linq;
+using System.Threading.Tasks;
 using Asset_Management_Platform.SecurityClasses;
 
 
@@ -50,7 +51,7 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         /// <param name="securitiesToInsert"></param>
         /// <returns></returns>
-        public void TryDatabaseInsert(Security securityToInsert)
+        public async void TryDatabaseInsert(Security securityToInsert)
         {
             var isInDatabase = _securityDatabaseList.Any(s => s.Ticker == securityToInsert.Ticker);
 
@@ -71,7 +72,7 @@ namespace Asset_Management_Platform.Utility
                     using (var command = new SqlCommand(insertString, connection))
                     {
                         connection.Open();
-                        command.ExecuteNonQuery();
+                        await command.ExecuteNonQueryAsync();
                     }
                 }
             }
@@ -90,7 +91,7 @@ namespace Asset_Management_Platform.Utility
                     using (var command = new SqlCommand(insertString, connection))
                     {
                         connection.Open();
-                        command.ExecuteNonQuery();
+                        await command.ExecuteNonQueryAsync();
                     }                    
                 }
             }
@@ -101,7 +102,7 @@ namespace Asset_Management_Platform.Utility
         /// Uploads table to database upon closing.
         /// </summary>
         /// <returns></returns>
-        public void UploadSecuritiesToDatabase()
+        public async void UploadSecuritiesToDatabase()
         {
             if (_securityDatabaseList == null || _securityDatabaseList.Count == 0)
                 return;
@@ -111,18 +112,18 @@ namespace Asset_Management_Platform.Utility
             {
                 connection.Open();
 
-                UploadStocksToDb(connection);
-                UploadFundsToDb(connection);
+                await UploadStocksToDb(connection);
+                await UploadFundsToDb(connection);
             }            
         }
 
-        private void UploadFundsToDb(SqlConnection connection)
+        private async Task UploadFundsToDb(SqlConnection connection)
         {
             //Truncate MF table
             var deleteMFCommand = @"TRUNCATE TABLE dbo.MutualFunds;";
             using (var command = new SqlCommand(deleteMFCommand, connection))
             {
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
 
             //Create the VALUES portion of the SQL Insert
@@ -146,18 +147,18 @@ namespace Asset_Management_Platform.Utility
                 fundInsertBase += fundValues;
                 using (var command = new SqlCommand(fundInsertBase, connection))
                 {
-                    command.ExecuteNonQuery();
+                    await command.ExecuteNonQueryAsync();
                 }
             }
         }
 
-        private void UploadStocksToDb(SqlConnection connection)
+        private async Task UploadStocksToDb(SqlConnection connection)
         {
             //Clear the table of stocks
             var deleteStockCommand = @"TRUNCATE TABLE dbo.Stocks;";
             using (var command = new SqlCommand(deleteStockCommand, connection))
             {
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
 
             //Create the VALUES for the SQL Insert
@@ -180,7 +181,7 @@ namespace Asset_Management_Platform.Utility
 
                 using (var command = new SqlCommand(stockInsertBase, connection))
                 {
-                    command.ExecuteNonQuery();
+                    await command.ExecuteNonQueryAsync();
                 }
             }
         }
@@ -423,7 +424,5 @@ namespace Asset_Management_Platform.Utility
                 seeder.LoadMutualFundJsonDataIntoSqlServer(storageString);
             }
         }
-
-
     }
 }
