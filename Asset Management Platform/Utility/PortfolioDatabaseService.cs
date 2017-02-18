@@ -41,24 +41,21 @@ namespace Asset_Management_Platform
             var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             using (var connection = new SqlConnection(storageString))
             {
-                connection.Open();
-                using (var command = new SqlCommand())
+                var commandText = @"SELECT * FROM MyPortfolio;";
+
+                using (var command = new SqlCommand(commandText, connection))
                 {
-                    command.Connection = connection;
-                    command.CommandText = @"SELECT * FROM MyPortfolio;";
+                    connection.Open();
                     var reader = command.ExecuteReader();
                     while (reader.Read())
                     {
                         Security secType;
+                        var datePurchased = new DateTime();
 
                         var ticker = reader.GetString(1);
                         var quantity = int.Parse(reader.GetString(2));
-                        var purchasePrice = decimal.Parse(reader.GetString(3));
-                        DateTime datePurchased = new DateTime();
-                        if (reader.IsDBNull(4))
-                            datePurchased = new DateTime(2000, 12, 31);
-                        else if (!string.IsNullOrEmpty(reader.GetString(4)))
-                            datePurchased = DateTime.Parse(reader.GetString(4));
+                        var purchasePrice = decimal.Parse(reader.GetString(3));                        
+                        datePurchased = reader.IsDBNull(4) ? new DateTime(2000, 12, 31) : DateTime.Parse(reader.GetString(4));
                         var securityTypeResult = reader.GetString(5);
                         if (securityTypeResult == "Stock")
                             secType = new Stock();
