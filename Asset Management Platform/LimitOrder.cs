@@ -10,14 +10,19 @@ namespace Asset_Management_Platform
     public class LimitOrder : ObservableObject
     {
         private string _tradeType;
+        private string _orderDuration;
+        private Security _securityType;
+        private decimal _limit;
+        private decimal _shares;
+        private string _ticker;
+
         public string TradeType {
             get { return _tradeType; }
             set { _tradeType = value;
                 RaisePropertyChanged(() => TradeType);
             }            
         }
-
-        private string _ticker;
+       
         public string Ticker
         {
             get { return _ticker; }
@@ -25,17 +30,14 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => Ticker);
             }
         }
-
-        private decimal _shares;
+       
         public decimal Shares {
             get { return _shares; }
             set { _shares = value;
                 RaisePropertyChanged(() => Shares);
             }
         }
-
-
-        private decimal _limit;
+        
         public decimal Limit
         {
             get { return _limit; }
@@ -43,17 +45,14 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => Limit);
             }
         }
-
-        private Security _securityType;
+       
         public Security SecurityType {
             get { return _securityType; }
             set { _securityType = value;
                 RaisePropertyChanged(() => SecurityType);
             }
         }
-
-
-        private string _orderDuration;
+      
         public string OrderDuration
         {
             get { return _orderDuration; }
@@ -79,23 +78,21 @@ namespace Asset_Management_Platform
 
         public override string ToString()
         {
-            return string.Format(@"{0} {1} shares of {2} at LIMIT {3}.", TradeType, Shares, Ticker, Limit);
+            return $@"{TradeType} {Shares} shares of {Ticker} at LIMIT {Limit}.";
         }
 
         public bool IsLimitOrderActive(decimal lastPrice)
         {
             if (TradeType == "Buy" && lastPrice <= Limit)
                 return true;
-            else if (TradeType == "Buy" && lastPrice >= Limit)
+            if (TradeType == "Buy" && lastPrice >= Limit)
                 return false;
-            else if (TradeType == "Sell" && lastPrice >= Limit)
+            if (TradeType == "Sell" && lastPrice >= Limit)
                 return true;
-            else if (TradeType == "Sell" && lastPrice <= Limit)
+            if (TradeType == "Sell" && lastPrice <= Limit)
                 return false;
 
             return false; //Why did you reach this?
         }
-
-
     }
 }

@@ -17,7 +17,6 @@ namespace Asset_Management_Platform
         public decimal Limit;
         public string OrderDuration;
 
-
         public Trade(string buyOrSell, Security securityToAdd, string ticker, decimal shares, string terms, decimal limit, string orderDuration)
         {
             BuyOrSell = buyOrSell;
@@ -27,8 +26,8 @@ namespace Asset_Management_Platform
             Terms = terms;
             Limit = limit;
             OrderDuration = orderDuration;
-
         }
+
         public Trade()
         {
 

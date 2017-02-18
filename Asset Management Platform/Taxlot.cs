@@ -9,13 +9,17 @@ namespace Asset_Management_Platform
     public class Taxlot
     {
         private DateTime _datePurchased;
+        private Security _securityType;
+        private decimal _shares;
+        private decimal _purchasePrice;
+        private string _ticker;
+
         public DateTime DatePurchased
         {
             get { return _datePurchased; }
             set { _datePurchased = value; }
         }
-
-        private string _ticker;
+        
         public string Ticker
         {
             get { return _ticker; }
@@ -26,22 +30,19 @@ namespace Asset_Management_Platform
         {
             get { return (_purchasePrice * _shares); }
         }
-
-        private decimal _purchasePrice;
+       
         public decimal PurchasePrice
         {
             get { return _purchasePrice; }
             set { _purchasePrice = value; }
         }
-
-        private decimal _shares;
+        
         public decimal Shares
         {
             get { return _shares; }
             set { _shares = value; }
         }
-
-        private Security _securityType;
+       
         public Security SecurityType {
             get { return _securityType; }
             set { _securityType = value; }
