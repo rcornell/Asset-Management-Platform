@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Asset_Management_Platform.SecurityClasses
 {
-    class MunicipalBond : FixedIncome
+    public class MunicipalBond : FixedIncome
     {
         public MunicipalBond(string cusip, string ticker, string description, decimal lastPrice, double yield) 
             : base(cusip, ticker, description, lastPrice, yield)

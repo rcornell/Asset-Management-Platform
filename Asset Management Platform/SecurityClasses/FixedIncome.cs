@@ -6,21 +6,53 @@ using System.Threading.Tasks;
 
 namespace Asset_Management_Platform
 {
-    class FixedIncome : Security
+    public class FixedIncome : Security
     {
+
+
         private double _coupon;
-        public double Coupon { get; set; }
-
         private string _issuer;
-        public string Issuer { get; set; }
-
         private string _rating;
-        public string Rating { get; set; }
+
+        public double Coupon
+        {
+            get
+            {
+                return _coupon; 
+            }
+            set
+            {
+                _coupon = value;
+            }            
+        }
+        public string Issuer
+        {
+            get
+            {
+                return _issuer;
+            }
+            set
+            {
+                _issuer = value;
+            }
+
+        }
+        public string Rating
+        {
+            get
+            {
+                return _rating;
+            }
+            set
+            {
+                _rating = value;
+            }
+
+        }
 
         public string RatingDescription {
             get { return GetRatingDescription(); }
         }
-
 
         public FixedIncome(string cusip, string ticker, string description, decimal lastPrice, double yield) 
             : base(cusip, ticker, description, lastPrice, yield)
@@ -31,9 +63,9 @@ namespace Asset_Management_Platform
         public FixedIncome(string cusip, string ticker, string description, decimal lastPrice, double yield, double coupon, string issuer, string rating)
             : base(cusip, ticker, description, lastPrice, yield)
         {
-            _coupon = coupon;
-            _issuer = issuer;
-            _rating = rating;
+            Coupon = coupon;
+            Issuer = issuer;
+            Rating = rating;
         }
 
         public string GetRatingDescription()

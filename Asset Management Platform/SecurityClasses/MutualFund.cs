@@ -12,6 +12,11 @@ namespace Asset_Management_Platform
     {
 
         private string _assetClass;
+        private string _category;
+        private string _subcategory;
+
+
+
 
         [JsonProperty("AssetClass")]
         public string AssetClass
@@ -23,8 +28,7 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => AssetClass);
             }
         }
-
-        private string _category;
+        
         [JsonProperty("Category")]
         public string Category
         {
@@ -35,8 +39,7 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => Category);
             }
         }
-
-        private string _subcategory;
+        
         [JsonProperty("Subcategory")]
         public string Subcategory {
             get { return _subcategory; }
@@ -44,7 +47,6 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => Subcategory);
             }
         }
-
 
         public MutualFund(string cusip, string ticker, string description, decimal lastPrice, double yield)
             : base (cusip, ticker, description, lastPrice, yield)
@@ -72,18 +74,6 @@ namespace Asset_Management_Platform
             Change = yahooResult.Change;
             PercentChange = yahooResult.PercentChange;
         }
-
-        public MutualFund(YahooAPIResult yahooResult, string assetClass, string category, string subcategory)
-            : base("", yahooResult.Ticker, yahooResult.Description, yahooResult.LastPrice, yahooResult.Yield)
-        {
-            SecurityType = "Mutual Fund";
-            AssetClass = assetClass;
-            Category = category;
-            Subcategory = subcategory;
-            Change = yahooResult.Change;
-            PercentChange = yahooResult.PercentChange;
-        }
-
 
         public MutualFund()
         {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Asset_Management_Platform.SecurityClasses
 {
-    class CorporateBond : FixedIncome
+    public class CorporateBond : FixedIncome
     {
         public CorporateBond(string cusip, string ticker, string description, decimal lastPrice, double yield) 
             : base(cusip, ticker, description, lastPrice, yield)
