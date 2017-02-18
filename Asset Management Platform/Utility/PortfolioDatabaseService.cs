@@ -70,9 +70,9 @@ namespace Asset_Management_Platform
             return _myTaxlots;
         }
 
-        public List<Position> GetPositionsFromTaxlots(List<Taxlot> taxlots, List<Security> portfolioSecurities)
+        public List<Position> GetPositionsFromTaxlots(List<Security> portfolioSecurities)
         {
-            foreach (var lot in taxlots)
+            foreach (var lot in _myTaxlots)
             {
                 if (!_myPositions.Any(s => s.Ticker == lot.Ticker))
                 {
@@ -93,14 +93,12 @@ namespace Asset_Management_Platform
                 }
             }
 
-
             foreach (var pos in _myPositions)
             {
                 _portfolioOriginalState.Add(new Position(pos.Taxlots));
             }
 
             return _myPositions;
-
         }
 
         /// <summary>
@@ -152,8 +150,6 @@ namespace Asset_Management_Platform
                 {
                     var equal = false;
                     var originalPosition = _portfolioOriginalState.Find(s => s.Ticker == p.Ticker);
-
-                    var experimentalEqual = originalPosition.Taxlots.SequenceEqual(p.Taxlots);
 
                     if (originalPosition != null)
                         equal = TaxLotsAreEqual(originalPosition, p);

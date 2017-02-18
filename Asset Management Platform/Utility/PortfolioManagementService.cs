@@ -66,15 +66,16 @@ namespace Asset_Management_Platform.Utility
                 if (!tickers.Contains(lot.Ticker))
                     tickers.Add(lot.Ticker);
             }
-            var rawSecurities = _stockDataService.GetSecurityInfo(tickers);
 
-            //Append Yahoo API data for Mutual Funds with SQL DB's record of asset class & categories
+            //Get updated security data then append Yahoo API data for Mutual Funds 
+            //with SQL DB's record of asset class & categories.
             //Ideally a future API will provide this data in previous steps
-            _portfolioSecurities = _stockDataService.GetMutualFundExtraData(rawSecurities);
+            var rawSecurities = _stockDataService.GetSecurityInfo(tickers);
+            _portfolioSecurities = _stockDataService.GetMutualFundExtraData(rawSecurities);           
 
-            //If taxlots exist, build positions.
+            //If taxlots exist, build positions with updated pricing data.
             if (_portfolioTaxlots.Count > 0)
-                _portfolioPositions = _portfolioDatabaseService.GetPositionsFromTaxlots(_portfolioTaxlots, _portfolioSecurities);
+                _portfolioPositions = _portfolioDatabaseService.GetPositionsFromTaxlots(_portfolioSecurities);
             else
                 _portfolioPositions = new List<Position>();
 
