@@ -133,32 +133,32 @@ namespace Asset_Management_Platform.Utility
             if (!_securityDatabaseList.Any(s => s.Ticker == trade.Ticker))
                 _securityDatabaseList.Add(trade.Security);
 
-            //Check to confirm that shares of this security aren't in relevant
-            //Stock or MutualFund list
+            //Check to confirm that shares of this security aren't already owned
             if (trade.Security is Stock && !_portfolioPositions.Any(s => s.Ticker == trade.Ticker))
             {
-                //Add position to portfolio database for online storage
+                //Create taxlot and position, then add to position list
                 var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security, trade.Security.LastPrice);
                 var position = new Position(taxlot, trade.Security);
                 _portfolioDatabaseService.AddToPortfolioDatabase(position);
             }
-            //Ticker exists in database and security is stock
+            //Ticker exists in portfolio and security is stock
             else if (trade.Security is Stock && _portfolioPositions.Any(s => s.Ticker == trade.Ticker))
             {
-                //See if this affects the DisplayStock in the UI
+                //Create new taxlot and add to existing position
                 var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security, trade.Security.LastPrice);
                 _portfolioDatabaseService.AddToPortfolioDatabase(taxlot);
             }
-            //This ticker isn't already owned and it is a MutualFund
+            //Ticker is not already owned and is a MutualFund
             else if (trade.Security is MutualFund && !_portfolioPositions.Any(s => s.Ticker == trade.Ticker))
             {
+                //Create new taxlot and add to existing position
                 var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security, trade.Security.LastPrice);
                 var position = new Position(taxlot, trade.Security);
                 _portfolioDatabaseService.AddToPortfolioDatabase(position);
             }
             else if (trade.Security is MutualFund && _portfolioPositions.Any(s => s.Ticker == trade.Ticker))
             {
-                //Security is known and already held, so just add the new taxlot.
+                //Create new taxlot and add to existing position
                 var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security, trade.Security.LastPrice);
                 _portfolioDatabaseService.AddToPortfolioDatabase(taxlot);
             }
