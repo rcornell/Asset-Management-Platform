@@ -19,9 +19,11 @@ namespace Asset_Management_Platform.Utility
 
         void Sell(Trade trade);
 
-        Security GetTradePreviewSecurity(string ticker);
+        Task<Security> GetTradePreviewSecurity(string ticker);
 
-        Security GetTradePreviewSecurity(string ticker, Security SelectedSecurityType);
+        Task<Security> GetTradePreviewSecurity(string ticker, Security SelectedSecurityType);
+
+        Task<Security> GetSecurityType(string ticker, string tradeType);
 
         List<Position> GetPositions();
 
@@ -43,8 +45,6 @@ namespace Asset_Management_Platform.Utility
 
         void DeletePortfolio();
         void UploadAllDatabases();
-
-        Security GetSecurityType(string ticker, string tradeType);
 
         void TestLimitOrderMethods();
     }

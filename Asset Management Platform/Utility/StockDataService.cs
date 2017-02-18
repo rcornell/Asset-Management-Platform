@@ -341,7 +341,7 @@ namespace Asset_Management_Platform.Utility
         /// <summary>
         /// Check to see if SQL Database for stocks is empty.
         /// </summary>
-        private bool IsStockDatabaseEmpty()
+        private async Task<bool> IsStockDatabaseEmpty()
         {
             var result = 0;
             var cmdText = @"SELECT COUNT(*) from Stocks";
@@ -352,7 +352,8 @@ namespace Asset_Management_Platform.Utility
                 connection.Open();
                 using (var command = new SqlCommand(cmdText, connection))
                 {
-                    int.TryParse(command.ExecuteScalar().ToString(), out result);
+                    var response = await command.ExecuteScalarAsync();
+                    int.TryParse(response.ToString(), out result);
                 }
             }
 
@@ -365,7 +366,7 @@ namespace Asset_Management_Platform.Utility
         /// <summary>
         /// Check to see if SQL Database for funds is empty.
         /// </summary>
-        private bool IsMutualFundDatabaseEmpty()
+        private async Task<bool> IsMutualFundDatabaseEmpty()
         {
             var result = 0;
             var cmdText = @"SELECT COUNT(*) from MutualFunds";
@@ -376,7 +377,8 @@ namespace Asset_Management_Platform.Utility
                 connection.Open();
                 using (var command = new SqlCommand(cmdText, connection))
                 {
-                    int.TryParse(command.ExecuteScalar().ToString(), out result);
+                    var response = await command.ExecuteScalarAsync();
+                    int.TryParse(response.ToString(), out result);
                 }
             }
 
@@ -389,14 +391,14 @@ namespace Asset_Management_Platform.Utility
         /// <summary>
         /// Checks the SQL databases for stocks and funds. If empty, seeds it.
         /// </summary>
-        private void CheckDatabases()
+        private async Task CheckDatabases()
         {
-            if (IsStockDatabaseEmpty())
+            if (await IsStockDatabaseEmpty())
             {
                 SeedStockDatabase();
                 Messenger.Default.Send(new DatabaseMessage("Empty database restored.", false));
             }
-            if (IsMutualFundDatabaseEmpty())
+            if (await IsMutualFundDatabaseEmpty())
             {
                 SeedMutualFundDatabase();
                 Messenger.Default.Send(new DatabaseMessage("Empty database restored.", false));
@@ -407,21 +409,21 @@ namespace Asset_Management_Platform.Utility
         /// Seeds the SQL table if it has no contents using 
         /// local SeedTicker.json file.
         /// </summary>
-        private void SeedStockDatabase()
+        private async Task SeedStockDatabase()
         {
             var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             using (var seeder = new SecurityTableSeederDataService())
             {
-                seeder.LoadStockJsonDataIntoSqlServer(storageString);
+                await seeder.LoadStockJsonDataIntoSqlServer(storageString);
             }
         }
 
-        private void SeedMutualFundDatabase()
+        private async Task SeedMutualFundDatabase()
         {
             var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             using (var seeder = new SecurityTableSeederDataService())
             {
-                seeder.LoadMutualFundJsonDataIntoSqlServer(storageString);
+                await seeder.LoadMutualFundJsonDataIntoSqlServer(storageString);
             }
         }
     }

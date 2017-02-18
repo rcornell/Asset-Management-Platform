@@ -54,7 +54,7 @@ namespace Asset_Management_Platform.Utility
         /// <summary>
         /// Creates the list of taxlots, positions, and securities owned.
         /// </summary>
-        private void BuildPortfolioSecurities()
+        private async void BuildPortfolioSecurities()
         {                 
             //Get taxlots from SQL DB                
             _portfolioTaxlots = _portfolioDatabaseService.GetTaxlotsFromDatabase();
@@ -70,7 +70,7 @@ namespace Asset_Management_Platform.Utility
             //Get updated security data then append Yahoo API data for Mutual Funds 
             //with SQL DB's record of asset class & categories.
             //Ideally a future API will provide this data in previous steps
-            var rawSecurities = _stockDataService.GetSecurityInfo(tickers);
+            var rawSecurities = await _stockDataService.GetSecurityInfo(tickers);
             _portfolioSecurities = _stockDataService.GetMutualFundExtraData(rawSecurities);           
 
             //If taxlots exist, build positions with updated pricing data.
@@ -380,9 +380,9 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         /// <param name="ticker"></param>
         /// <returns></returns>
-        public Security GetTradePreviewSecurity(string ticker)
+        public async Task<Security> GetTradePreviewSecurity(string ticker)
         {
-            var securityToReturn = _stockDataService.GetSecurityInfo(ticker);
+            var securityToReturn = await _stockDataService.GetSecurityInfo(ticker);
             if (securityToReturn is Stock)
                 return (Stock)securityToReturn;
             if (securityToReturn is MutualFund)
@@ -399,14 +399,16 @@ namespace Asset_Management_Platform.Utility
         /// <param name="ticker"></param>
         /// <param name="securityType"></param>
         /// <returns></returns>
-        public Security GetTradePreviewSecurity(string ticker, Security securityType)
+        public async Task<Security> GetTradePreviewSecurity(string ticker, Security securityType)
         {
-            var securityToReturn = _stockDataService.GetSecurityInfo(ticker);
+            var securityToReturn = await _stockDataService.GetSecurityInfo(ticker);
             if (securityToReturn is Stock)
                 return (Stock)securityToReturn;
-            else if (securityToReturn is MutualFund)
+            if (securityToReturn is MutualFund)
                 return (MutualFund)securityToReturn;
-            else return new Stock("", "XXX", "Unknown Stock", 0, 0.00);
+
+            //Should not hit this.
+            return new Stock("", "XXX", "Unknown Stock", 0, 0.00);
         }
 
         /// <summary>
@@ -547,7 +549,7 @@ namespace Asset_Management_Platform.Utility
         /// <param name="ticker"></param>
         /// <param name="tradeType"></param>
         /// <returns></returns>
-        public Security GetSecurityType(string ticker, string tradeType)
+        public async Task<Security> GetSecurityType(string ticker, string tradeType)
         {
             Security secType;
 
@@ -555,7 +557,7 @@ namespace Asset_Management_Platform.Utility
                 secType = _portfolioPositions.Find(s => s.Ticker == ticker).GetSecurityType();
             else
             {
-                secType = _stockDataService.GetSecurityInfo(ticker);
+                secType = await _stockDataService.GetSecurityInfo(ticker);
             }
 
             return secType;

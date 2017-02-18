@@ -750,12 +750,12 @@ namespace Asset_Management_Platform
             //_portfolio = _portfolioManagementService.GetPortfolio();
         }
 
-        private void ExecutePreviewOrder()
+        private async void ExecutePreviewOrder()
         {
             var orderOk = CheckOrderTerms();     
             if (orderOk)
             {
-                PreviewSecurity = _portfolioManagementService.GetTradePreviewSecurity(_orderTickerText, SelectedSecurityType);
+                PreviewSecurity = await _portfolioManagementService.GetTradePreviewSecurity(_orderTickerText, SelectedSecurityType);
 
                 if (PreviewSecurity is Stock)
                 {
@@ -831,11 +831,11 @@ namespace Asset_Management_Platform
             }            
         }
 
-        private void ExecuteScreenerPreview(string screenerTicker)
+        private async void ExecuteScreenerPreview(string screenerTicker)
         {
             if (!string.IsNullOrEmpty(screenerTicker))
             {
-                var resultSecurity = _portfolioManagementService.GetTradePreviewSecurity(screenerTicker);
+                var resultSecurity = await _portfolioManagementService.GetTradePreviewSecurity(screenerTicker);
                 ScreenerStock = resultSecurity;
             }
         }

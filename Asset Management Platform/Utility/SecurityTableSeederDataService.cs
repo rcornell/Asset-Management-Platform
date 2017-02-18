@@ -26,7 +26,7 @@ namespace Asset_Management_Platform.Utility
             
         }
 
-        public void LoadMutualFundJsonDataIntoSqlServer(string connectionString)
+        public async Task LoadMutualFundJsonDataIntoSqlServer(string connectionString)
         {
             //Can I find a better way that deserializing to the StockTicker class with one property?
             var fileInfo = new FileInfo(@"SeedJson\SeedMutualFundInfo.json");
@@ -53,7 +53,7 @@ namespace Asset_Management_Platform.Utility
                 // Truncate the live table
                 using (var sqlCommand = new SqlCommand(_truncateMutualFundLiveTableCommandText, sqlConnection))
                 {
-                    sqlCommand.ExecuteNonQuery();
+                    await sqlCommand.ExecuteNonQueryAsync();
                 }
 
 
@@ -68,13 +68,13 @@ namespace Asset_Management_Platform.Utility
                     dataTable.Rows.Add("", fund.Ticker, "", fund.LastPrice, fund.Yield, fund.AssetClass, fund.Category, fund.Subcategory);
                 }
 
-                InsertDataTable(sqlBulkCopy, sqlConnection, dataTable);
+                await InsertDataTable(sqlBulkCopy, sqlConnection, dataTable);
 
                 sqlConnection.Close();
             }
         }
 
-        public void LoadStockJsonDataIntoSqlServer(string connectionString)
+        public async Task LoadStockJsonDataIntoSqlServer(string connectionString)
         {
             //Can I find a better way that deserializing to the StockTicker class with one property?
             var fileInfo = new FileInfo(@"SeedJson\SeedTickers.json");
@@ -98,7 +98,7 @@ namespace Asset_Management_Platform.Utility
                 // Truncate the live table
                 using (var sqlCommand = new SqlCommand(_truncateStockLiveTableCommandText, sqlConnection))
                 {
-                    sqlCommand.ExecuteNonQuery();
+                    await sqlCommand.ExecuteNonQueryAsync();
                 }
 
                 var sqlBulkCopy = new SqlBulkCopy(sqlConnection)
@@ -111,16 +111,16 @@ namespace Asset_Management_Platform.Utility
                     dataTable.Rows.Add(null, security.Ticker, security.Description, null, null);
                 }
 
-               InsertDataTable(sqlBulkCopy, sqlConnection, dataTable);
+               await InsertDataTable(sqlBulkCopy, sqlConnection, dataTable);
 
-                sqlConnection.Close();
+               sqlConnection.Close();
             }
             
         }
 
-        protected void InsertDataTable(SqlBulkCopy sqlBulkCopy, SqlConnection sqlConnection, DataTable dataTable)
+        protected async Task InsertDataTable(SqlBulkCopy sqlBulkCopy, SqlConnection sqlConnection, DataTable dataTable)
         {
-            sqlBulkCopy.WriteToServer(dataTable);
+            await sqlBulkCopy.WriteToServerAsync(dataTable);
             dataTable.Rows.Clear();
         }
 
