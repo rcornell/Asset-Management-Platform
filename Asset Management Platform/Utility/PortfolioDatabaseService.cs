@@ -123,34 +123,28 @@ namespace Asset_Management_Platform
 
             foreach (var p in _myPositions)
             {
-                //Is the current position's ticker in the original state but the quantity is different?
+                //Current position's ticker is in the original list but the current quantity is different
                 if (_portfolioOriginalState.Any(pos => pos.Ticker == p.Ticker && pos.SharesOwned != p.SharesOwned))
                 {
                     positionsToUpdate.Add(p);
                     continue;
                 }
 
-                //Is the ticker not present in the original database?
+                //Current position's ticker not in original list
                 if (!_portfolioOriginalState.Any(pos => pos.Ticker == p.Ticker))
                 {
                     positionsToInsert.Add(p);
                     continue;
                 }
 
-                //For a ticker match with the same share quantity, check to make sure
-                //There isn't actually a different set of taxlots with the same share total
+                //Current position share quantity matches original list. 
+                //Check if taxlots are different or the same as original.
                 if (_portfolioOriginalState.Any(pos => pos.Ticker == p.Ticker && pos.SharesOwned == p.SharesOwned))
                 {
-                    var equal = false;
                     var originalPosition = _portfolioOriginalState.Find(s => s.Ticker == p.Ticker);
 
-                    if (originalPosition != null)
-                        equal = TaxLotsAreEqual(originalPosition, p);
-
-                    if (!equal)
-                    {
+                    if (originalPosition != null && !TaxLotsAreEqual(originalPosition, p))
                         positionsToUpdate.Add(p);
-                    }
                 }
             }
 
