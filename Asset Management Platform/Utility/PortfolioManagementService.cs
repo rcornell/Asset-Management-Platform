@@ -18,8 +18,11 @@ namespace Asset_Management_Platform.Utility
         private IPortfolioDatabaseService _portfolioDatabaseService;
         private DispatcherTimer _timer;
         private List<Security> _securityDatabaseList; //Known securities. Not currently used for anything.
-
         private List<LimitOrder> _limitOrderList;
+        private List<Taxlot> _portfolioTaxlots;
+        private List<Position> _portfolioPositions;
+        private List<Security> _portfolioSecurities;
+
         public List<LimitOrder> LimitOrderList //used to display in MainViewModel
         {
             get
@@ -27,12 +30,7 @@ namespace Asset_Management_Platform.Utility
                 return _limitOrderList;
             }
         }
-
-        private List<Taxlot> _portfolioTaxlots;
-        private List<Position> _portfolioPositions;
-        private List<Security> _portfolioSecurities;
-
-
+        
         public PortfolioManagementService(IStockDataService stockDataService, IPortfolioDatabaseService portfolioDatabaseService)
         {
             _stockDataService = stockDataService;
@@ -395,27 +393,16 @@ namespace Asset_Management_Platform.Utility
             decimal totalValue = 0;
             var positionsByWeight = new ObservableCollection<PositionByWeight>();
 
-            //foreach (var stock in _displayStocks)
-            //{
-            //    totalValue += decimal.Parse(stock.MarketValue);
-            //}
+            foreach (var pos in _portfolioPositions)
+            {
+                totalValue += pos.MarketValue;
+            }
 
-            //foreach (var fund in _displayMutualFunds)
-            //{
-            //    totalValue += decimal.Parse(fund.MarketValue);
-            //}
-
-            //foreach (var stock in _displayStocks)
-            //{
-            //    decimal weight = (decimal.Parse(stock.MarketValue) / totalValue) * 100;
-            //    positionsByWeight.Add(new PositionByWeight(stock.Ticker, Math.Round(weight, 2)));
-            //}
-
-            //foreach (var fund in _displayMutualFunds)
-            //{
-            //    decimal weight = (decimal.Parse(fund.MarketValue) / totalValue) * 100;
-            //    positionsByWeight.Add(new PositionByWeight(fund.Ticker, Math.Round(weight, 2)));
-            //}
+            foreach (var pos in _portfolioPositions)
+            {
+                var weight = (pos.MarketValue / totalValue) * 100;
+                positionsByWeight.Add(new PositionByWeight(pos.Ticker, Math.Round(weight, 2)));
+            }
 
             return positionsByWeight;
         }
@@ -425,16 +412,16 @@ namespace Asset_Management_Platform.Utility
             decimal totalValue = 0;
             var positionsByWeight = new ObservableCollection<PositionByWeight>();
 
-            //foreach (var stock in _displayStocks)
-            //{
-            //    totalValue += decimal.Parse(stock.MarketValue);
-            //}
+            foreach (var pos in _portfolioPositions.Where(s => s.Security is Stock))
+            {
+                totalValue += pos.MarketValue;
+            }
 
-            //foreach (var stock in _displayStocks)
-            //{
-            //    decimal weight = (decimal.Parse(stock.MarketValue) / totalValue) * 100;
-            //    positionsByWeight.Add(new PositionByWeight(stock.Ticker, Math.Round(weight, 2)));
-            //}
+            foreach (var pos in _portfolioPositions.Where(s => s.Security is Stock))
+            {
+                var weight = (pos.MarketValue / totalValue) * 100;
+                positionsByWeight.Add(new PositionByWeight(pos.Ticker, Math.Round(weight, 2)));
+            }
 
             return positionsByWeight;
         }
@@ -444,16 +431,16 @@ namespace Asset_Management_Platform.Utility
             decimal totalValue = 0;
             var positionsByWeight = new ObservableCollection<PositionByWeight>();
 
-            //foreach (var fund in _displayMutualFunds)
-            //{
-            //    totalValue += decimal.Parse(fund.MarketValue);
-            //}
+            foreach (var pos in _portfolioPositions.Where(s => s.Security is MutualFund))
+            {
+                totalValue += pos.MarketValue;
+            }
 
-            //foreach (var fund in _displayMutualFunds)
-            //{
-            //    decimal weight = (decimal.Parse(fund.MarketValue) / totalValue) * 100;
-            //    positionsByWeight.Add(new PositionByWeight(fund.Ticker, Math.Round(weight, 2)));
-            //}
+            foreach (var pos in _portfolioPositions.Where(s => s.Security is MutualFund))
+            {
+                var weight = (pos.MarketValue / totalValue) * 100;
+                positionsByWeight.Add(new PositionByWeight(pos.Ticker, Math.Round(weight, 2)));
+            }
 
             return positionsByWeight;
         }
