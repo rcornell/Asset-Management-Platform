@@ -75,26 +75,28 @@ namespace Asset_Management_Platform
             foreach (var lot in _myTaxlots)
             {
                 if (!_myPositions.Any(s => s.Ticker == lot.Ticker))
-                {
+                {   
+                    //No position in _myPositions with this ticker yet.
                     var security = portfolioSecurities.Find(t => t.Ticker == lot.Ticker);
                     _myPositions.Add(new Position(lot, security));
                 }
                 else if (_myPositions.Any(s => s.Ticker == lot.Ticker && s.SharesOwned != lot.Shares))
                 {
+                    //Position with this ticker exists but the taxlot share quantity is different.
                     _myPositions.Find(s => s.Ticker == lot.Ticker).AddTaxlot(lot);
                 }
                 else if (_myPositions.Any(s => s.Ticker == lot.Ticker && s.SharesOwned == lot.Shares))
                 {
+                    //Ticker and share quantities match. Check date to see if duplicate taxlot.
                     var pos = _myPositions.Find(s => s.Ticker == lot.Ticker);
-                    if (pos.Taxlots.Any(d => d.DatePurchased == lot.DatePurchased))
-                        continue;
-                    else
+                    if (!pos.Taxlots.Any(d => d.DatePurchased == lot.DatePurchased))
                         pos.AddTaxlot(lot);
                 }
             }
 
             foreach (var pos in _myPositions)
             {
+                //Create the list of positions at startup for use in shutdown methods.
                 _portfolioOriginalState.Add(new Position(pos.Taxlots));
             }
 
@@ -102,7 +104,7 @@ namespace Asset_Management_Platform
         }
 
         /// <summary>
-        /// Compares _myPortfolio to the _databaseOriginalState from launch
+        /// Compares _myPositions to the _databaseOriginalState from launch
         /// and creates lists of securities to update, insert, or delete.
         /// </summary>
         public void SavePortfolioToDatabase()
@@ -113,23 +115,14 @@ namespace Asset_Management_Platform
             var positionsToUpdate = new List<Position>();
             var positionsToDelete = new List<Position>();
 
-            foreach (var op in _portfolioOriginalState)
+            foreach (var pos in _portfolioOriginalState)
             {
-                if (!_myPositions.Any(s => s.Ticker == op.Ticker))
-                    positionsToDelete.Add(op);
+                if (!_myPositions.Any(s => s.Ticker == pos.Ticker))
+                    positionsToDelete.Add(pos);
             }
-
 
             foreach (var p in _myPositions)
             {
-                ////Is the quantity zero'd out from a sale?
-                ////if (_portfolioOriginalState.Any(pos => pos.Ticker == p.Ticker && pos.SharesOwned == 0))
-                //if(!_portfolioOriginalState.Any(s => s.Ticker == p.Ticker))
-                //{
-                //    positionsToDelete.Add(p);
-                //    continue;
-                //}
-
                 //Is the current position's ticker in the original state but the quantity is different?
                 if (_portfolioOriginalState.Any(pos => pos.Ticker == p.Ticker && pos.SharesOwned != p.SharesOwned))
                 {
@@ -159,7 +152,6 @@ namespace Asset_Management_Platform
                         positionsToUpdate.Add(p);
                     }
                 }
-
             }
 
             //If no inserts, updates, or deletes, exit method.
