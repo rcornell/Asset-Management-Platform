@@ -70,7 +70,7 @@ namespace Asset_Management_Platform.Utility
 
                     using (var command = new SqlCommand(insertString, connection))
                     {
-                        connection.Open(); //is this necessary in a Using?
+                        connection.Open();
                         command.ExecuteNonQuery();
                     }
                 }
@@ -103,21 +103,20 @@ namespace Asset_Management_Platform.Utility
         /// <returns></returns>
         public void UploadSecuritiesToDatabase()
         {
-            if (_securityDatabaseList == null)
+            if (_securityDatabaseList == null || _securityDatabaseList.Count == 0)
                 return;
 
             var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
-
             using (var connection = new SqlConnection(storageString))
             {
                 connection.Open();
 
-                UploadStocksToDB(connection);
-                UploadFundsToDB(connection);
+                UploadStocksToDb(connection);
+                UploadFundsToDb(connection);
             }            
         }
 
-        private void UploadFundsToDB(SqlConnection connection)
+        private void UploadFundsToDb(SqlConnection connection)
         {
             //Truncate MF table
             var deleteMFCommand = @"TRUNCATE TABLE dbo.MutualFunds;";
@@ -152,7 +151,7 @@ namespace Asset_Management_Platform.Utility
             }
         }
 
-        private void UploadStocksToDB(SqlConnection connection)
+        private void UploadStocksToDb(SqlConnection connection)
         {
             //Clear the table of stocks
             var deleteStockCommand = @"TRUNCATE TABLE dbo.Stocks;";
@@ -210,23 +209,6 @@ namespace Asset_Management_Platform.Utility
             return new Stock("", "", "", 0, 0.00); //If you hit this, the ticker was null or empty
         }
 
-        /// <summary>
-        /// Called by UpdatePortfolioPrices and LimitOrderChecks
-        /// </summary>
-        /// <param name="securities"></param>
-        /// <returns></returns>
-        public void GetUpdatedPricing(List<Security> securities)
-        {
-            var resultList = new List<Security>();
-            if (securities != null && securities.Count > 0)
-            {
-                using (var yahooAPI = new YahooAPIService())
-                {
-                    yahooAPI.GetUpdatedPricing(securities);
-                }
-            }
-        }
-
         public List<Security> GetSecurityInfo(List<string> tickers)
         {
             var resultList = new List<Security>();
@@ -263,6 +245,23 @@ namespace Asset_Management_Platform.Utility
             return updatedSecurities;
         }
 
+        /// <summary>
+        /// Called by UpdatePortfolioPrices and LimitOrderChecks
+        /// </summary>
+        /// <param name="securities"></param>
+        /// <returns></returns>
+        public void GetUpdatedPricing(List<Security> securities)
+        {
+            var resultList = new List<Security>();
+            if (securities != null && securities.Count > 0)
+            {
+                using (var yahooAPI = new YahooAPIService())
+                {
+                    yahooAPI.GetUpdatedPricing(securities);
+                }
+            }
+        }
+
         private List<Security> LoadMutualFundsFromDB(SqlConnection connection)
         {
             var securityList = new List<Security>();
@@ -289,7 +288,7 @@ namespace Asset_Management_Platform.Utility
                     if (!reader.IsDBNull(2))
                         description = string.IsNullOrEmpty(reader.GetString(2)) ? "" : reader.GetString(2);
                     if (!reader.IsDBNull(3))
-                        lastPrice = decimal.Parse(reader.GetString(3)); //if paused here, it's because you're not sure if Float will work.
+                        lastPrice = decimal.Parse(reader.GetString(3));
                     if (!reader.IsDBNull(4))
                         yield = double.Parse(reader.GetString(4));
                     if (!reader.IsDBNull(5))
@@ -328,7 +327,7 @@ namespace Asset_Management_Platform.Utility
                     if (!reader.IsDBNull(2))
                         description = string.IsNullOrEmpty(reader.GetString(2)) ? "" : reader.GetString(2);
                     if (!reader.IsDBNull(3))
-                        lastPrice = decimal.Parse(reader.GetString(3)); //if paused here, it's because you're not sure if Float will work.
+                        lastPrice = decimal.Parse(reader.GetString(3));
                     if (!reader.IsDBNull(4))
                         yield = double.Parse(reader.GetString(4));
                     securityList.Add(new Stock(cusip, ticker, description, lastPrice, yield));
@@ -339,9 +338,9 @@ namespace Asset_Management_Platform.Utility
         }
 
         /// <summary>
-        /// Check to see if SQL Database is empty. If it is, return true. 
+        /// Check to see if SQL Database for stocks is empty.
         /// </summary>
-        private bool IsStockDatabaseNull()
+        private bool IsStockDatabaseEmpty()
         {
             var result = 0;
             var cmdText = @"SELECT COUNT(*) from Stocks";
@@ -358,11 +357,14 @@ namespace Asset_Management_Platform.Utility
 
             if (result > 0)
                 return false; //Database IS NOT empty
-            else
-                return true; //Database IS empty
+
+            return true; //Database IS empty
         }
 
-        private bool IsMutualFundDatabaseNull()
+        /// <summary>
+        /// Check to see if SQL Database for funds is empty.
+        /// </summary>
+        private bool IsMutualFundDatabaseEmpty()
         {
             var result = 0;
             var cmdText = @"SELECT COUNT(*) from MutualFunds";
@@ -378,9 +380,9 @@ namespace Asset_Management_Platform.Utility
             }
 
             if (result > 0)
-                return false; //Database IS NOT empty
-            else
-                return true; //Database IS empty
+                return false; //Database IS NOT empty            
+
+            return true; //Database IS empty
         }
 
         /// <summary>
@@ -388,12 +390,12 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         private void CheckDatabases()
         {
-            if (IsStockDatabaseNull())
+            if (IsStockDatabaseEmpty())
             {
                 SeedStockDatabase();
                 Messenger.Default.Send(new DatabaseMessage("Empty database restored.", false));
             }
-            if (IsMutualFundDatabaseNull())
+            if (IsMutualFundDatabaseEmpty())
             {
                 SeedMutualFundDatabase();
                 Messenger.Default.Send(new DatabaseMessage("Empty database restored.", false));
