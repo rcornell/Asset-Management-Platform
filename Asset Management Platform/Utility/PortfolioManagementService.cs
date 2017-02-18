@@ -39,11 +39,11 @@ namespace Asset_Management_Platform.Utility
             //Load known security info from SQL DB
             _securityDatabaseList = _stockDataService.LoadSecurityDatabase();
 
-            //Create a list of owned securities
-            BuildPortfolioSecurities();
-
-            //Download limit orders from DB
+            //Download limit orders from SQL DB
             GetLimitOrderList();
+
+            //Create the core List<T>'s of taxlots, positions, and securities
+            BuildPortfolioSecurities();
 
             _timer = new DispatcherTimer();
             _timer.Tick += _timer_Tick;
@@ -55,9 +55,11 @@ namespace Asset_Management_Platform.Utility
         /// Creates the list of taxlots, positions, and securities owned.
         /// </summary>
         private void BuildPortfolioSecurities()
-        {                                 
+        {                 
+            //Get taxlots from SQL DB                
             _portfolioTaxlots = _portfolioDatabaseService.GetTaxlotsFromDatabase();
 
+            //Gather all tickers and get pricing data
             var tickers = new List<string>();
             foreach (var lot in _portfolioTaxlots)
             {
@@ -66,21 +68,22 @@ namespace Asset_Management_Platform.Utility
             }
             var rawSecurities = _stockDataService.GetSecurityInfo(tickers);
 
+            //Append Yahoo API data for Mutual Funds with SQL DB's record of asset class & categories
+            //Ideally a future API will provide this data in previous steps
             _portfolioSecurities = _stockDataService.GetMutualFundExtraData(rawSecurities);
 
-
+            //If taxlots exist, build positions.
             if (_portfolioTaxlots.Count > 0)
                 _portfolioPositions = _portfolioDatabaseService.GetPositionsFromTaxlots(_portfolioTaxlots, _portfolioSecurities);
             else
                 _portfolioPositions = new List<Position>();
 
+            //Update all Positions' taxlot pricing
             foreach (var pos in _portfolioPositions)
             {
-                var security = rawSecurities.Find(s => s.Ticker == pos.Ticker);
+                var security = _portfolioSecurities.Find(s => s.Ticker == pos.Ticker);
                 pos.UpdateTaxlotPrices(security.LastPrice);
             }
-
-            //Could combine these into a startup GetAllInfo method in StockDataService
         }
 
         private void GetLimitOrderList()
@@ -88,24 +91,30 @@ namespace Asset_Management_Platform.Utility
             _limitOrderList = _portfolioDatabaseService.LoadLimitOrdersFromDatabase();
         }
 
+        /// <summary>
+        /// Evaluate trade instructions and add to portfolio if appropriate.
+        /// A limit order that is not active will be added to the list of 
+        /// limit orders.
+        /// </summary>
+        /// <param name="trade"></param>
         public void Buy(Trade trade)
         {
             var limitType = false;
 
             //Check if any values are null or useless
-            var validOrder = OrderTermsAreValid(trade);
-            var isActiveLimitOrder = CheckOrderLimit(trade);
+            var validOrder = CheckOrderTerms(trade);
+            var activeLimitOrder = CheckOrderLimit(trade);
             if (trade.Terms == "Limit" || trade.Terms == "Stop Limit" || trade.Terms == "Stop")
                 limitType = true;
 
-            if (validOrder && limitType && !isActiveLimitOrder)
+            if (validOrder && limitType && !activeLimitOrder)
             {
                 //Order is valid but limit prevents execution
                 CreateLimitOrder(trade);
                 return;
             }
 
-            if (validOrder && limitType && isActiveLimitOrder)
+            if (validOrder && limitType && activeLimitOrder)
             {
                 //Order is valid and a limit-type and is active
                 AddPosition(trade);
@@ -165,7 +174,7 @@ namespace Asset_Management_Platform.Utility
             _limitOrderList.Add(newLimitOrder);
         }
 
-        private bool OrderTermsAreValid(Trade trade)
+        private bool CheckOrderTerms(Trade trade)
         {
             var security = trade.Security;
             var ticker = trade.Ticker;
@@ -193,7 +202,7 @@ namespace Asset_Management_Platform.Utility
             var limitType = false;
 
             //Check if any values are null or useless
-            var validOrder = OrderTermsAreValid(trade);
+            var validOrder = CheckOrderTerms(trade);
             var isActiveLimitOrder = CheckOrderLimit(trade);
             if (trade.Terms == "Limit" || trade.Terms == "Stop Limit" || trade.Terms == "Stop")
                 limitType = true;
@@ -360,7 +369,7 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         /// <param name="ticker"></param>
         /// <returns></returns>
-        public Security GetOrderPreviewSecurity(string ticker)
+        public Security GetTradePreviewSecurity(string ticker)
         {
             var securityToReturn = _stockDataService.GetSecurityInfo(ticker);
             if (securityToReturn is Stock)
@@ -378,7 +387,7 @@ namespace Asset_Management_Platform.Utility
         /// <param name="ticker"></param>
         /// <param name="securityType"></param>
         /// <returns></returns>
-        public Security GetOrderPreviewSecurity(string ticker, Security securityType)
+        public Security GetTradePreviewSecurity(string ticker, Security securityType)
         {
             var securityToReturn = _stockDataService.GetSecurityInfo(ticker);
             if (securityToReturn is Stock)
@@ -460,9 +469,6 @@ namespace Asset_Management_Platform.Utility
 
         public void UpdateTimerInterval(TimeSpan timespan)
         {
-            if (timespan == null)
-                return;
-
             var clockIsRunning = _timer.IsEnabled;
 
             _timer.Stop();
@@ -476,13 +482,6 @@ namespace Asset_Management_Platform.Utility
         {
             //Update securities' pricing data
             _stockDataService.GetUpdatedPricing(_portfolioSecurities);
-
-            //Update prices in all positions
-            foreach (var security in _portfolioSecurities)
-            {
-                _portfolioPositions.FindAll(s => s.Ticker == security.Ticker)
-                    .ForEach(p => p.Security.LastPrice = security.LastPrice);
-            }
         }
 
         /// <summary>

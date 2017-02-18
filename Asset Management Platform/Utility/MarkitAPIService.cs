@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 
 namespace Asset_Management_Platform.Utility
 {
+    //Not currently implemented
     public class MarkitAPIService : IDisposable
     {
         const string baseUri = @"http://dev.markitondemand.com/MODApis/Api/v2/Quote/json?symbol=";
@@ -58,7 +59,6 @@ namespace Asset_Management_Platform.Utility
 
             return newSec;
         }
-
 
         public Security GetSingleSecurity(string tickerToLookUp, List<Security> securityList)
         {

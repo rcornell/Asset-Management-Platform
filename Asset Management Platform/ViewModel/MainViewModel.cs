@@ -753,7 +753,7 @@ namespace Asset_Management_Platform
             var orderOk = CheckOrderTerms();     
             if (orderOk)
             {
-                PreviewSecurity = _portfolioManagementService.GetOrderPreviewSecurity(_orderTickerText, SelectedSecurityType);
+                PreviewSecurity = _portfolioManagementService.GetTradePreviewSecurity(_orderTickerText, SelectedSecurityType);
 
                 if (PreviewSecurity is Stock)
                 {
@@ -833,7 +833,7 @@ namespace Asset_Management_Platform
         {
             if (!string.IsNullOrEmpty(screenerTicker))
             {
-                var resultSecurity = _portfolioManagementService.GetOrderPreviewSecurity(screenerTicker);
+                var resultSecurity = _portfolioManagementService.GetTradePreviewSecurity(screenerTicker);
                 ScreenerStock = resultSecurity;
             }
         }

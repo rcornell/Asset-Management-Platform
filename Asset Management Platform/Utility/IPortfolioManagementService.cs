@@ -19,9 +19,9 @@ namespace Asset_Management_Platform.Utility
 
         void Sell(Trade trade);
 
-        Security GetOrderPreviewSecurity(string ticker);
+        Security GetTradePreviewSecurity(string ticker);
 
-        Security GetOrderPreviewSecurity(string ticker, Security SelectedSecurityType);
+        Security GetTradePreviewSecurity(string ticker, Security SelectedSecurityType);
 
         List<Position> GetPositions();
 
