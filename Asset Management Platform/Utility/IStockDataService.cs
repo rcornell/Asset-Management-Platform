@@ -16,11 +16,11 @@ namespace Asset_Management_Platform.Utility
 
         List<Security> GetSecurityList();
 
-        Security GetSecurityInfo(string ticker);
+        Task<Security> GetSecurityInfo(string ticker);
 
         void GetUpdatedPricing(List<Security> securities);
 
-        List<Security> GetSecurityInfo(List<string> tickers);
+        Task<List<Security>> GetSecurityInfo(List<string> tickers);
 
         List<Security> GetMutualFundExtraData(List<Security> rawSecurities);
     }

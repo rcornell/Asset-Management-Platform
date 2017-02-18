@@ -119,12 +119,12 @@ namespace Asset_Management_Platform.Utility
         /// <param name="tickerToLookUp"></param>
         /// <param name="securityDBList"></param>
         /// <returns></returns>
-        public Security GetSingleSecurity(string tickerToLookUp, List<Security> securityDBList)
+        public async Task<Security> GetSingleSecurity(string tickerToLookUp, List<Security> securityDBList)
         {
             Security securityBeingUpdated;
 
             var yahooRequestUrl = _baseUrl.Replace("@", tickerToLookUp);
-            var response = GetWebResponse(yahooRequestUrl);
+            var response = await GetWebResponse(yahooRequestUrl);
             var yahooResult = new YahooAPIResult(response);
 
             //Ticker is unknown, return blank security.
@@ -181,10 +181,8 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         /// <param name="tickers"></param>
         /// <returns></returns>
-        public List<Security> GetMultipleSecurities(List<string> tickers)
+        public async Task<List<Security>> GetMultipleSecurities(List<string> tickers)
         {
-
-            //"\"AAPL\",119.97,1.90,639.72B,119.97,120.00,14.44,23211038,500,900,\"Apple Inc.\",\"-0.11 - -0.09%\",\"-0.09%\""
             //string.Format("Percentage is {0:0.0%}", ratio)
             var securitiesToReturn = new List<Security>(); //Instantiate the list to return
 
@@ -204,7 +202,7 @@ namespace Asset_Management_Platform.Utility
 
                 try
                 {
-                    string response = GetWebResponse(tickerString);
+                    string response = await GetWebResponse(tickerString);
                     string result = Regex.Replace(response, "\\r\\n", "\r\n");
 
                     //Create a List<YahooAPIResult> of the results
@@ -251,7 +249,7 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         /// <param name="securities"></param>
         /// <returns></returns>
-        public void GetUpdatedPricing(List<Security> securities)
+        public async Task GetUpdatedPricing(List<Security> securities)
         {
             string tickerString = "";
             foreach (var s in securities)
@@ -269,7 +267,7 @@ namespace Asset_Management_Platform.Utility
                 try
                 {
                     //Get the web response and clean it up
-                    string response = GetWebResponse(tickerString);
+                    string response = await GetWebResponse(tickerString);
                     string result = Regex.Replace(response, "\\r\\n", "\r\n");
 
                     //Create an array of the results
@@ -311,17 +309,18 @@ namespace Asset_Management_Platform.Utility
             }
         }
 
-        private string GetWebResponse(string url)
+        private async Task<string> GetWebResponse(string url)
         {
-            var web_client = new WebClient();
+            var webClient = new WebClient();
+            var uri = new Uri(url);
 
             try
             {
-                Stream response = web_client.OpenRead(url);
+                var response = await webClient.OpenReadTaskAsync(uri);;
 
-                using (StreamReader stream_reader = new StreamReader(response))
+                using (var streamReader = new StreamReader(response))
                 {
-                    string result = stream_reader.ReadToEnd();
+                    string result = streamReader.ReadToEnd();
 
                     return result;
                 }
