@@ -23,6 +23,7 @@ namespace Asset_Management_Platform
         private SqlDataReader _reader;
         private List<Position> _portfolioOriginalState;
         private List<Position> _myPositions; //This is THE main position list
+        private List<Taxlot> _myTaxlots; //ADDING THIS
         private IStockDataService _stockDatabaseService;
 
 
@@ -32,12 +33,12 @@ namespace Asset_Management_Platform
 
             _portfolioOriginalState = new List<Position>();
             _myPositions = new List<Position>();
+            _myTaxlots = new List<Taxlot>();
 
         }
 
         public List<Taxlot> GetTaxlotsFromDatabase()
         {
-            var taxlotsFromDatabase = new List<Taxlot>();
             var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             using (var connection = new SqlConnection(storageString))
             {
@@ -62,11 +63,11 @@ namespace Asset_Management_Platform
                         else
                             secType = new MutualFund();
                         var taxLot = new Taxlot(ticker, quantity, purchasePrice, datePurchased, secType);
-                        taxlotsFromDatabase.Add(taxLot);
+                        _myTaxlots.Add(taxLot);
                     }
                 }
             }
-            return taxlotsFromDatabase;
+            return _myTaxlots;
         }
 
         public List<Position> GetPositionsFromTaxlots(List<Taxlot> taxlots, List<Security> portfolioSecurities)
