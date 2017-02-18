@@ -28,24 +28,6 @@ namespace Asset_Management_Platform.Utility
             }
         }
 
-        private List<DisplayStock> _displayStocks;
-        public List<DisplayStock> DisplayStocks //used to display in MainViewModel
-        {
-            get
-            {
-                return _displayStocks;
-            }
-        }
-
-        private List<DisplayMutualFund> _displayMutualFunds;
-        public List<DisplayMutualFund> DisplayMutualFunds //used to display in MainViewModel
-        {
-            get
-            {
-                return _displayMutualFunds;
-            }
-        }
-
         private List<Taxlot> _portfolioTaxlots;
         private List<Position> _portfolioPositions;
         private List<Security> _portfolioSecurities;
@@ -61,9 +43,6 @@ namespace Asset_Management_Platform.Utility
 
             //Create a list of owned securities
             BuildPortfolioSecurities();
-
-            //Build list of DisplaySecurities
-            BuildDisplaySecurityLists();
 
             //Download limit orders from DB
             GetLimitOrderList();
@@ -103,44 +82,7 @@ namespace Asset_Management_Platform.Utility
                 pos.UpdateTaxlotPrices(security.LastPrice);
             }
 
-            //foreach (var position in _portfolioPositions)
-            //{
-            //    tickers.Add(position.Ticker);
-            //}
-
             //Could combine these into a startup GetAllInfo method in StockDataService
-
-
-        }
-
-
-        /// <summary>
-        /// Creates the lists of UI-bindable stocks and mutual funds.
-        /// Separate lists need to be maintained if the user switches
-        /// the UI display criteria.
-        /// </summary>
-        private void BuildDisplaySecurityLists()
-        {
-            _displayStocks = new List<DisplayStock>();
-            _displayMutualFunds = new List<DisplayMutualFund>();
-
-            foreach (var pos in _portfolioPositions)
-            {
-                //Search the list of OWNED securities for a match
-                var matchingSecurity = _portfolioSecurities.Find(s => s.Ticker == pos.Ticker);
-
-                //If no match within security list, look it up.
-                if (matchingSecurity == null)
-                {
-                    matchingSecurity = _stockDataService.GetSecurityInfo(pos.Ticker);
-                }
-
-                //Create appropriate security type and add to lists for UI.
-                if (matchingSecurity != null && matchingSecurity is Stock)
-                    _displayStocks.Add(new DisplayStock(pos, (Stock)matchingSecurity));
-                else if (matchingSecurity != null && matchingSecurity is MutualFund)
-                    _displayMutualFunds.Add(new DisplayMutualFund(pos, (MutualFund)matchingSecurity));
-            }
         }
 
         private void GetLimitOrderList()
@@ -164,13 +106,15 @@ namespace Asset_Management_Platform.Utility
                 CreateLimitOrder(trade);
                 return;
             }
-            else if(validOrder && limitType && isActiveLimitOrder)
+
+            if (validOrder && limitType && isActiveLimitOrder)
             {
                 //Order is valid and a limit-type and is active
                 AddPosition(trade);
                 return;
             }
-            else if (validOrder && trade.Terms == "Market")
+
+            if (validOrder && trade.Terms == "Market")
             {
                 //Order is valid and a market order
                 AddPosition(trade);
@@ -190,9 +134,6 @@ namespace Asset_Management_Platform.Utility
                 var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security, trade.Security.LastPrice);
                 var position = new Position(taxlot, trade.Security);
                 _portfolioDatabaseService.AddToPortfolioDatabase(position);
-
-                //Add new displaystock for UI
-                DisplayStocks.Add(new DisplayStock(position, (Stock)trade.Security));
             }
             //Ticker exists in database and security is stock
             else if (trade.Security is Stock && _portfolioPositions.Any(s => s.Ticker == trade.Ticker))
@@ -207,7 +148,6 @@ namespace Asset_Management_Platform.Utility
                 var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security, trade.Security.LastPrice);
                 var position = new Position(taxlot, trade.Security);
                 _portfolioDatabaseService.AddToPortfolioDatabase(position);
-                DisplayMutualFunds.Add(new DisplayMutualFund(position, (MutualFund)trade.Security));
             }
             else if (trade.Security is MutualFund && _portfolioPositions.Any(s => s.Ticker == trade.Ticker))
             {
@@ -301,19 +241,6 @@ namespace Asset_Management_Platform.Utility
 
                 //Remove the position that was passed in to this method
                 _portfolioPositions.Remove(position);
-
-                if (securityType is Stock)
-                {
-                    //Remove the DisplayStock
-                    var displayStockToRemove = _displayStocks.Find(f => f.Ticker == ticker);
-                    _displayStocks.Remove(displayStockToRemove);
-                }
-                else if (securityType is MutualFund)
-                {
-                    //Remove the DisplayMutualFund
-                    var displayFundToRemove = _displayMutualFunds.Find(f => f.Ticker == ticker);
-                    _displayMutualFunds.Remove(displayFundToRemove);
-                }
             }
             else if (shares > position.SharesOwned)
             {
@@ -468,27 +395,27 @@ namespace Asset_Management_Platform.Utility
             decimal totalValue = 0;
             var positionsByWeight = new ObservableCollection<PositionByWeight>();
 
-            foreach (var stock in _displayStocks)
-            {
-                totalValue += decimal.Parse(stock.MarketValue);
-            }
+            //foreach (var stock in _displayStocks)
+            //{
+            //    totalValue += decimal.Parse(stock.MarketValue);
+            //}
 
-            foreach (var fund in _displayMutualFunds)
-            {
-                totalValue += decimal.Parse(fund.MarketValue);
-            }
+            //foreach (var fund in _displayMutualFunds)
+            //{
+            //    totalValue += decimal.Parse(fund.MarketValue);
+            //}
 
-            foreach (var stock in _displayStocks)
-            {
-                decimal weight = (decimal.Parse(stock.MarketValue) / totalValue) * 100;
-                positionsByWeight.Add(new PositionByWeight(stock.Ticker, Math.Round(weight, 2)));
-            }
+            //foreach (var stock in _displayStocks)
+            //{
+            //    decimal weight = (decimal.Parse(stock.MarketValue) / totalValue) * 100;
+            //    positionsByWeight.Add(new PositionByWeight(stock.Ticker, Math.Round(weight, 2)));
+            //}
 
-            foreach (var fund in _displayMutualFunds)
-            {
-                decimal weight = (decimal.Parse(fund.MarketValue) / totalValue) * 100;
-                positionsByWeight.Add(new PositionByWeight(fund.Ticker, Math.Round(weight, 2)));
-            }
+            //foreach (var fund in _displayMutualFunds)
+            //{
+            //    decimal weight = (decimal.Parse(fund.MarketValue) / totalValue) * 100;
+            //    positionsByWeight.Add(new PositionByWeight(fund.Ticker, Math.Round(weight, 2)));
+            //}
 
             return positionsByWeight;
         }
@@ -498,16 +425,16 @@ namespace Asset_Management_Platform.Utility
             decimal totalValue = 0;
             var positionsByWeight = new ObservableCollection<PositionByWeight>();
 
-            foreach (var stock in _displayStocks)
-            {
-                totalValue += decimal.Parse(stock.MarketValue);
-            }
+            //foreach (var stock in _displayStocks)
+            //{
+            //    totalValue += decimal.Parse(stock.MarketValue);
+            //}
 
-            foreach (var stock in _displayStocks)
-            {
-                decimal weight = (decimal.Parse(stock.MarketValue) / totalValue) * 100;
-                positionsByWeight.Add(new PositionByWeight(stock.Ticker, Math.Round(weight, 2)));
-            }
+            //foreach (var stock in _displayStocks)
+            //{
+            //    decimal weight = (decimal.Parse(stock.MarketValue) / totalValue) * 100;
+            //    positionsByWeight.Add(new PositionByWeight(stock.Ticker, Math.Round(weight, 2)));
+            //}
 
             return positionsByWeight;
         }
@@ -517,16 +444,16 @@ namespace Asset_Management_Platform.Utility
             decimal totalValue = 0;
             var positionsByWeight = new ObservableCollection<PositionByWeight>();
 
-            foreach (var fund in _displayMutualFunds)
-            {
-                totalValue += decimal.Parse(fund.MarketValue);
-            }
+            //foreach (var fund in _displayMutualFunds)
+            //{
+            //    totalValue += decimal.Parse(fund.MarketValue);
+            //}
 
-            foreach (var fund in _displayMutualFunds)
-            {
-                decimal weight = (decimal.Parse(fund.MarketValue) / totalValue) * 100;
-                positionsByWeight.Add(new PositionByWeight(fund.Ticker, Math.Round(weight, 2)));
-            }
+            //foreach (var fund in _displayMutualFunds)
+            //{
+            //    decimal weight = (decimal.Parse(fund.MarketValue) / totalValue) * 100;
+            //    positionsByWeight.Add(new PositionByWeight(fund.Ticker, Math.Round(weight, 2)));
+            //}
 
             return positionsByWeight;
         }
@@ -560,31 +487,31 @@ namespace Asset_Management_Platform.Utility
 
         public void UpdatePortfolioPrices()
         {
-            var listToUpdate = new List<Security>();            
+            //var listToUpdate = new List<Security>();            
 
-            foreach (var stock in DisplayStocks)
-            {
-                listToUpdate.Add(stock.Stock);
-            }
+            //foreach (var stock in DisplayStocks)
+            //{
+            //    listToUpdate.Add(stock.Stock);
+            //}
 
-            foreach (var fund in DisplayMutualFunds)
-            {
-                listToUpdate.Add(fund.Fund);
-            }
+            //foreach (var fund in DisplayMutualFunds)
+            //{
+            //    listToUpdate.Add(fund.Fund);
+            //}
 
-            _stockDataService.GetUpdatedPricing(listToUpdate);
+            //_stockDataService.GetUpdatedPricing(listToUpdate);
 
-            //Update all prices for any displaysecurity
-            foreach (var security in listToUpdate)
-            {
-                if (security is Stock) {
-                    DisplayStocks.FindAll(s => s.Ticker == security.Ticker).ForEach(p => p.Stock.LastPrice = security.LastPrice);
-                }
-                if (security is MutualFund)
-                {
-                    DisplayMutualFunds.FindAll(m => m.Ticker == security.Ticker).ForEach(p => p.Fund.LastPrice = security.LastPrice);
-                }
-            }
+            ////Update all prices for any displaysecurity
+            //foreach (var security in listToUpdate)
+            //{
+            //    if (security is Stock) {
+            //        DisplayStocks.FindAll(s => s.Ticker == security.Ticker).ForEach(p => p.Stock.LastPrice = security.LastPrice);
+            //    }
+            //    if (security is MutualFund)
+            //    {
+            //        DisplayMutualFunds.FindAll(m => m.Ticker == security.Ticker).ForEach(p => p.Fund.LastPrice = security.LastPrice);
+            //    }
+            //}
             //Messenger.Default.Send(new PortfolioMessage());
         }
 
@@ -612,16 +539,6 @@ namespace Asset_Management_Platform.Utility
         public List<Taxlot> GetTaxlots()
         {
             return _portfolioTaxlots;
-        }
-
-        public List<DisplayStock> GetDisplayStocks()
-        {
-            return DisplayStocks;
-        }
-
-        public List<DisplayMutualFund> GetDisplayMutualFunds()
-        {
-            return DisplayMutualFunds;
         }
 
         public List<LimitOrder> GetLimitOrders()
@@ -675,8 +592,6 @@ namespace Asset_Management_Platform.Utility
 
         public void DeletePortfolio()
         {
-            _displayStocks.Clear();
-            _displayMutualFunds.Clear();
             _portfolioSecurities.Clear();
             _portfolioTaxlots.Clear();
             _portfolioDatabaseService.DeletePortfolio(_portfolioPositions);

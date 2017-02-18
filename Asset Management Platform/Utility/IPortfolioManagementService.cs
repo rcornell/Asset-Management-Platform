@@ -27,10 +27,6 @@ namespace Asset_Management_Platform.Utility
 
         List<Taxlot> GetTaxlots();
 
-        List<DisplayStock> GetDisplayStocks();
-
-        List<DisplayMutualFund> GetDisplayMutualFunds();
-
         List<LimitOrder> GetLimitOrders();
 
         ObservableCollection<PositionByWeight> GetChartAllSecurities();
