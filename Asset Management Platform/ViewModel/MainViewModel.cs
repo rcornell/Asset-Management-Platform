@@ -661,14 +661,7 @@ namespace Asset_Management_Platform
             //    sec.Hidden = false;
             //}
 
-            if (_hiddenPositions != null && _hiddenPositions.Count > 0)
-            {
-                foreach (var pos in _hiddenPositions)
-                {
-                    Positions.Add(pos);
-                }
-                _hiddenPositions.Clear();
-            }
+            ClearHiddenList();
 
             GetValueTotals();
         }
@@ -681,13 +674,20 @@ namespace Asset_Management_Platform
             ChartSubtitle = "Stocks only";
             AllocationChartPositions = _portfolioManagementService.GetChartStocksOnly();
 
-            foreach (var sec in Positions)
+            ClearHiddenList();
+
+            _hiddenPositions = new List<Position>();
+            var trimmedList = new ObservableCollection<Position>(Positions);
+
+            foreach (var pos in Positions)
             {
-                if (sec.Security is MutualFund)
-                    sec.Hidden = true;
-                else
-                    sec.Hidden = false;
+                if (pos.Security is MutualFund) { 
+                    trimmedList.Remove(pos);
+                    _hiddenPositions.Add(pos);
+                }
             }
+
+            Positions = trimmedList;
 
             GetValueTotals();
         }
@@ -700,15 +700,37 @@ namespace Asset_Management_Platform
 
             ChartSubtitle = "Mutual Funds only";
             AllocationChartPositions = _portfolioManagementService.GetChartFundsOnly();
-            foreach (var sec in Positions)
+
+            ClearHiddenList();
+
+            _hiddenPositions = new List<Position>();
+            var trimmedList = new ObservableCollection<Position>(Positions);
+
+            foreach (var pos in Positions)
             {
-                if (sec.Security is Stock)
-                    sec.Hidden = true;
-                else
-                    sec.Hidden = false;
+                if (pos.Security is Stock)
+                {
+                    trimmedList.Remove(pos);
+                    _hiddenPositions.Add(pos);
+                }
             }
 
+            Positions = trimmedList;
+
+
             GetValueTotals();
+        }
+
+        private void ClearHiddenList()
+        {
+            if (_hiddenPositions != null && _hiddenPositions.Count > 0)
+            {
+                foreach (var pos in _hiddenPositions)
+                {
+                    Positions.Add(pos);
+                }
+                _hiddenPositions.Clear();
+            }
         }
 
         private void ExecuteUpdatePrices()
