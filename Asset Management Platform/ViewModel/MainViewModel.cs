@@ -10,7 +10,9 @@ using System.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Asset_Management_Platform.SecurityClasses;
+using System.Threading.Tasks;
 
 namespace Asset_Management_Platform
 {
@@ -82,6 +84,7 @@ namespace Asset_Management_Platform
         private bool _showFundsOnly;
         private bool _showAllPositions;
         private List<Position> _hiddenPositions;
+        private bool _previewOrderIsBusy;
         #endregion
 
         #region All Properties
@@ -514,7 +517,7 @@ namespace Asset_Management_Platform
 
         public RelayCommand PreviewOrder
         {
-            get { return new RelayCommand(ExecutePreviewOrder); }
+            get { return new RelayCommand(async () => await ExecutePreviewOrder(), CanPreview); }
         }
 
         public RelayCommand ExecuteOrder
@@ -759,15 +762,14 @@ namespace Asset_Management_Platform
             {
                 GetPositions();
                 GetTaxlots();
-                ExecuteShowAllSecurities();
                 GetValueTotals();
             }
-
-            //_portfolio = _portfolioManagementService.GetPortfolio();
         }
 
-        private async void ExecutePreviewOrder()
+        private async Task ExecutePreviewOrder()
         {
+            _previewOrderIsBusy = true;
+
             var orderOk = CheckOrderTerms();     
             if (orderOk)
             {
@@ -803,6 +805,7 @@ namespace Asset_Management_Platform
                 AlertBoxVisible = true;
                 OrderTermsOK = false;
             }
+            _previewOrderIsBusy = false;
         }
 
         private bool CheckOrderTerms()
@@ -982,6 +985,11 @@ namespace Asset_Management_Platform
         {
             _portfolioManagementService.UploadAllDatabases();
             System.Windows.Application.Current.Shutdown();
+        }
+
+        private bool CanPreview()
+        {
+            return !_previewOrderIsBusy;
         }
 
         private void SetAlertMessage(TradeMessage message)
