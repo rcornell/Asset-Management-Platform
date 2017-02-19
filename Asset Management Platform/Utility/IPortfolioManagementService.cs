@@ -45,7 +45,8 @@ namespace Asset_Management_Platform.Utility
 
         void DeletePortfolio();
         void UploadAllDatabases();
-
         void TestLimitOrderMethods();
+
+        Task<bool> LoadLocalTaxlots(ObservableCollection<Taxlot> taxlots);
     }
 }

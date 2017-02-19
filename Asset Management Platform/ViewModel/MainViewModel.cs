@@ -981,7 +981,10 @@ namespace Asset_Management_Platform
 
         private async Task ExecuteLoadPortfolio()
         {
-            
+            using (var portFileOps = new PortfolioFileOps())
+            {
+                var taxlots = await portFileOps.TryLoadPortfolio();                
+            }
         }
 
         private void ExecuteUpdatePrices()
