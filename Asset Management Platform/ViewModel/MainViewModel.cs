@@ -978,7 +978,7 @@ namespace Asset_Management_Platform
 
         private async Task ExecuteSavePortfolio()
         {
-            //_portfolioManagementService.UploadPortfolio();
+            
         }
 
         private async Task ExecuteLoadPortfolio()
