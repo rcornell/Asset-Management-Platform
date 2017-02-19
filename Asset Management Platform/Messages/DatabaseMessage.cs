@@ -9,17 +9,19 @@ namespace Asset_Management_Platform.Messages
     public class DatabaseMessage
     {
         public string Message;
-        public bool Success;
+        public bool PositionsSuccessful;
+        public bool LimitOrdersSuccessful;
 
         public DatabaseMessage()
         {
 
         }
 
-        public DatabaseMessage(string message, bool success)
+        public DatabaseMessage(string message, bool positionsSuccessful, bool limitOrdersSuccessful)
         {
             Message = message;
-            Success = success;
+            PositionsSuccessful = positionsSuccessful;
+            LimitOrdersSuccessful = limitOrdersSuccessful;
         }
     }
 }

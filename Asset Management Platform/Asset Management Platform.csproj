@@ -123,6 +123,7 @@
     <Compile Include="Exceptions\TruncateException.cs" />
     <Compile Include="LimitOrder.cs" />
     <Compile Include="LimitOrderDBResult.cs" />
+    <Compile Include="Messages\PortfolioSqlMessage.cs" />
     <Compile Include="Messages\TradeMessage.cs" />
     <Compile Include="PositionByWeight.cs" />
     <Compile Include="Taxlot.cs" />

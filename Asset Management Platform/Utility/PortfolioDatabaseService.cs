@@ -171,12 +171,12 @@ namespace Asset_Management_Platform
             }
             catch (SqlException ex)
             {
-                var msg = new DatabaseMessage(ex.Message, false);
+                var msg = new PortfolioSqlMessage(ex.Message, false);
                 Messenger.Default.Send(msg);
             }
             catch (InvalidOperationException ex)
             {
-                var msg = new DatabaseMessage(ex.Message, false);
+                var msg = new PortfolioSqlMessage(ex.Message, false);
                 Messenger.Default.Send(msg);
             }
         }

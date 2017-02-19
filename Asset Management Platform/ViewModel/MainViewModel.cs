@@ -595,14 +595,11 @@ namespace Asset_Management_Platform
             LimitOrderIsSelected = false;
 
             _portfolioManagementService = portfolioService;
-            Messenger.Default.Register<PortfolioMessage>(this, RefreshCollection);
+            Messenger.Default.Register<DatabaseMessage>(this, RefreshCollection);
             Messenger.Default.Register<TradeMessage>(this, SetAlertMessage);
 
-            GetPositions();
-            GetTaxlots();
             GetLimitOrders();
-            ExecuteShowAllSecurities();
-            GetValueTotals();
+
             PositionCollectionView = new ListCollectionView(Positions);
             PositionCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Ticker"));
             TaxlotsCollectionView = new ListCollectionView(Taxlots);
@@ -644,12 +641,14 @@ namespace Asset_Management_Platform
             TotalCostBasis = totalCostBasis;
             TotalGainLoss = totalGainLoss;
         }
-        private async void GetPositions()
+
+        private void GetPositions() //Don't put async here...
         {
             var positions = _portfolioManagementService.GetPositions();
 
-            if(positions != null)
+            if(positions != null)            
                 Positions = new ObservableCollection<Position>(positions);
+            
         }
 
         private void GetTaxlots()
@@ -657,7 +656,9 @@ namespace Asset_Management_Platform
             var lots = _portfolioManagementService.GetTaxlots();
 
             if (lots != null)
+            {
                 Taxlots = new ObservableCollection<Taxlot>(lots);
+            }
         }
 
         private void ExecuteShowAllSecurities()
@@ -669,8 +670,7 @@ namespace Asset_Management_Platform
             ChartSubtitle = "All Positions";
             AllocationChartPositions = _portfolioManagementService.GetChartAllSecurities();
 
-            ClearHiddenList();
-            
+            ClearHiddenList();            
 
             GetValueTotals();
         }
@@ -753,8 +753,16 @@ namespace Asset_Management_Platform
             GetTaxlots();
         }
 
-        private void RefreshCollection(PortfolioMessage obj)
+        private void RefreshCollection(DatabaseMessage message)
         {
+            if (message.PositionsSuccessful)
+            {
+                GetPositions();
+                GetTaxlots();
+                ExecuteShowAllSecurities();
+                GetValueTotals();
+            }
+
             //_portfolio = _portfolioManagementService.GetPortfolio();
         }
 
@@ -774,7 +782,6 @@ namespace Asset_Management_Platform
                     PreviewAskSize = ((Stock)PreviewSecurity).AskSize.ToString();
                     PreviewBid = ((Stock)PreviewSecurity).Bid.ToString();
                     PreviewBidSize = ((Stock)PreviewSecurity).BidSize.ToString();
-
                 }
                 else if (PreviewSecurity is MutualFund)
                 {
@@ -829,8 +836,7 @@ namespace Asset_Management_Platform
                 OrderTermsOK = true;
                 PreviewButtonText = "Order Terms OK";
                 return true;
-            }
-                
+            }                
             else
             {
                 OrderTermsOK = false;
