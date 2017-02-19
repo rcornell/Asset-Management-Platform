@@ -600,8 +600,9 @@ namespace Asset_Management_Platform.Utility
 
         public async Task<bool> LoadLocalTaxlots(ObservableCollection<Taxlot> taxlots)
         {
-
-            return false;
+            var taxlotList = new List<Taxlot>(taxlots);
+            var result = await _portfolioDatabaseService.BuildLocalTaxlots(taxlotList);
+            return result;
         }
 
         /// <summary>

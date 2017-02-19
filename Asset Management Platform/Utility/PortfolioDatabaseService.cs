@@ -70,6 +70,18 @@ namespace Asset_Management_Platform
             return _myTaxlots;
         }
 
+        public async Task<bool> BuildLocalTaxlots(List<Taxlot> taxlots)
+        {
+            if (taxlots == null)
+                return false;
+
+            foreach (var lot in taxlots)
+            {
+                _myTaxlots.Add(lot);
+            }
+            return true;
+        }
+
         public List<Position> GetPositionsFromTaxlots(List<Security> portfolioSecurities)
         {
             foreach (var lot in _myTaxlots)
@@ -102,6 +114,8 @@ namespace Asset_Management_Platform
 
             return _myPositions;
         }
+
+
 
         /// <summary>
         /// Compares _myPositions to the _databaseOriginalState from launch

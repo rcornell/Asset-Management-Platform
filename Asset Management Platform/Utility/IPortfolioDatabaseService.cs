@@ -27,5 +27,7 @@ namespace Asset_Management_Platform.Utility
 
         void DeletePortfolio(List<Position> positions);
 
+        Task<bool> BuildLocalTaxlots(List<Taxlot> taxlots);
+
     }
 }
