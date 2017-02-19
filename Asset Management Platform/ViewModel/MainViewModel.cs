@@ -85,6 +85,8 @@ namespace Asset_Management_Platform
         private bool _showAllPositions;
         private List<Position> _hiddenPositions;
         private bool _previewOrderIsBusy;
+        private bool _canSave;
+        private bool _canLoad;
         #endregion
 
         #region All Properties
@@ -507,12 +509,11 @@ namespace Asset_Management_Platform
         }
         public RelayCommand SavePortfolio
         {
-            get { return new RelayCommand(ExecuteSavePortfolio); }
+            get { return new RelayCommand(async () => await ExecuteSavePortfolio(), CanSave); }
         }
-
         public RelayCommand LoadPortfolio
         {
-            get { return new RelayCommand(ExecuteLoadPortfolio); }
+            get { return new RelayCommand(async () => await ExecuteLoadPortfolio(), CanLoad); }
         }
 
         public RelayCommand CloseApplication
@@ -601,6 +602,8 @@ namespace Asset_Management_Platform
             TotalGainLoss = 0;
             AlertBoxMessage = "";
             LimitOrderIsSelected = false;
+            _canLoad = true;
+            _canSave = true;
 
             _portfolioManagementService = portfolioService;
             Messenger.Default.Register<DatabaseMessage>(this, RefreshCollection);
@@ -973,12 +976,12 @@ namespace Asset_Management_Platform
             ExecuteShowAllSecurities();
         }
 
-        private void ExecuteSavePortfolio()
+        private async Task ExecuteSavePortfolio()
         {
-            _portfolioManagementService.UploadPortfolio();
+            //_portfolioManagementService.UploadPortfolio();
         }
 
-        private void ExecuteLoadPortfolio()
+        private async Task ExecuteLoadPortfolio()
         {
             
         }
@@ -1006,6 +1009,16 @@ namespace Asset_Management_Platform
         private bool CanPreview()
         {
             return !_previewOrderIsBusy;
+        }
+
+        private bool CanLoad()
+        {
+            return _canLoad;
+        }
+
+        private bool CanSave()
+        {
+            return _canSave;
         }
 
         private void SetAlertMessage(TradeMessage message)
