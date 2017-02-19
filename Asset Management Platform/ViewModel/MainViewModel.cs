@@ -757,13 +757,6 @@ namespace Asset_Management_Platform
             Positions = new ObservableCollection<Position>(listToSort.OrderBy(t => t.Ticker));
         }
 
-        private void ExecuteUpdatePrices()
-        {
-            _portfolioManagementService.TestLimitOrderMethods();
-            GetPositions();
-            GetTaxlots();
-        }
-
         private void RefreshCollection(DatabaseMessage message)
         {
             if (message.PositionsSuccessful)
@@ -976,6 +969,8 @@ namespace Asset_Management_Platform
             ExecuteShowAllSecurities();
         }
 
+
+
         private async Task ExecuteSavePortfolio()
         {
             
@@ -984,6 +979,18 @@ namespace Asset_Management_Platform
         private async Task ExecuteLoadPortfolio()
         {
             
+        }
+
+        private void ExecuteUpdatePrices()
+        {
+            //_portfolioManagementService.TestLimitOrderMethods();
+            //GetPositions();
+            //GetTaxlots();
+            using (var portFileOps = new PortfolioFileOps())
+            {
+                var saved = portFileOps.TrySaveTaxlots(Taxlots);
+            }
+
         }
 
         private void ExecuteDeleteLimitOrder()
