@@ -770,7 +770,7 @@ namespace Asset_Management_Platform
         {
             _previewOrderIsBusy = true;
 
-            var orderOk = CheckOrderTerms();     
+            var orderOk = await CheckOrderTerms();  //JUST MADE THIS AWAITED
             if (orderOk)
             {
                 PreviewSecurity = await _portfolioManagementService.GetTradePreviewSecurity(_orderTickerText, SelectedSecurityType);
@@ -808,7 +808,7 @@ namespace Asset_Management_Platform
             _previewOrderIsBusy = false;
         }
 
-        private bool CheckOrderTerms()
+        private async Task<bool> CheckOrderTerms()
         {
             //Check ticker, share, and secType to see if they are valid
             var tickerNotEmpty = !string.IsNullOrEmpty(_orderTickerText);
@@ -817,7 +817,7 @@ namespace Asset_Management_Platform
 
             //Check to see that selected security type matches the ticker
             bool secTypeMatch;
-            var tickerSecType = _portfolioManagementService.GetSecurityType(_orderTickerText, _selectedTradeType);
+            var tickerSecType = await _portfolioManagementService.GetSecurityType(_orderTickerText, _selectedTradeType);
 
             if (tickerSecType == null)
             {
