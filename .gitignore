@@ -166,6 +166,9 @@ csx/
 ecf/
 rcf/
 
+# Don't commit connection strings
+**/*[Secrets]*.config
+
 # Microsoft Azure ApplicationInsights config file
 ApplicationInsights.config
 
