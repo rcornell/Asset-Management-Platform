@@ -575,7 +575,6 @@ namespace Asset_Management_Platform
             TradeDurationStrings = new ObservableCollection<string> { " ", "Day", "GTC", "Market Close", "Market Open", "Overnight" };
             SecurityTypes = new ObservableCollection<Security> { new Stock(), new MutualFund() };
 
-
             Positions = new ObservableCollection<Position>();
             Taxlots = new ObservableCollection<Taxlot>();
 

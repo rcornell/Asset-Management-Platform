@@ -59,6 +59,8 @@ namespace Asset_Management_Platform.Utility
             //Get taxlots from SQL DB                
             //_portfolioTaxlots = await Task.Run(() => _portfolioDatabaseService.GetTaxlotsFromDatabase());
             _portfolioTaxlots = await _portfolioDatabaseService.GetTaxlotsFromDatabase();
+            _portfolioTaxlots = new List<Taxlot>();
+            
 
             //Gather all tickers and get pricing data
             var tickers = new List<string>();
@@ -68,6 +70,7 @@ namespace Asset_Management_Platform.Utility
                     tickers.Add(lot.Ticker);
             }
 
+            tickers.Add("IBM");
             //Get updated security data then append Yahoo API data for Mutual Funds 
             //with SQL DB's record of asset class & categories.
             //Ideally a future API will provide this data in previous steps

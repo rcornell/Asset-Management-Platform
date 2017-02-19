@@ -251,14 +251,14 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         /// <param name="securities"></param>
         /// <returns></returns>
-        public void GetUpdatedPricing(List<Security> securities)
+        public async Task GetUpdatedPricing(List<Security> securities)
         {
             var resultList = new List<Security>();
             if (securities != null && securities.Count > 0)
             {
                 using (var yahooAPI = new YahooAPIService())
                 {
-                    yahooAPI.GetUpdatedPricing(securities);
+                    await yahooAPI.GetUpdatedPricing(securities);
                 }
             }
         }
@@ -395,12 +395,12 @@ namespace Asset_Management_Platform.Utility
         {
             if (await IsStockDatabaseEmpty())
             {
-                SeedStockDatabase();
+                await SeedStockDatabase();
                 Messenger.Default.Send(new DatabaseMessage("Empty database restored.", false));
             }
             if (await IsMutualFundDatabaseEmpty())
             {
-                SeedMutualFundDatabase();
+                await SeedMutualFundDatabase();
                 Messenger.Default.Send(new DatabaseMessage("Empty database restored.", false));
             }
         }
