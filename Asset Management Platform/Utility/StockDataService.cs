@@ -19,10 +19,11 @@ namespace Asset_Management_Platform.Utility
     public class StockDataService : IStockDataService
     {
         private List<Security> _securityDatabaseList;
-
+        private readonly string _storageString;
         public StockDataService()
         {
             _securityDatabaseList = new List<Security>();
+            _storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             CheckDatabases();
         }
 
@@ -32,9 +33,8 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         public List<Security> LoadSecurityDatabase()
         {
-            var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             
-            using (var connection = new SqlConnection(storageString))
+            using (var connection = new SqlConnection(_storageString))
             {
                 connection.Open();
                 var stocks = LoadStocksFromDB(connection);
@@ -61,8 +61,7 @@ namespace Asset_Management_Platform.Utility
             if (securityToInsert.SecurityType == "Stock")
             {
                 var insertString = @"INSERT INTO Stocks (Ticker, Description, LastPrice, Yield) VALUES ";
-                var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
-                using (var connection = new SqlConnection(storageString))
+                using (var connection = new SqlConnection(_storageString))
                 {
                     securityToInsert.Description = securityToInsert.Description.Replace(@"'", @"");
                     var securityInfo = string.Format(@"('{0}', '{1}', {2}, {3});", securityToInsert.Ticker, securityToInsert.Description,
@@ -80,8 +79,7 @@ namespace Asset_Management_Platform.Utility
             {
                 var fund = (MutualFund)securityToInsert;
                 var insertString = @"INSERT INTO MutualFunds (Ticker, Description, LastPrice, Yield, AssetClass, Category, Subcategory) VALUES ";
-                var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
-                using (var connection = new SqlConnection(storageString))
+                using (var connection = new SqlConnection(_storageString))
                 {
                     var securityInfo = string.Format(@"('{0}', '{1}', {2}, {3}, '{4}', '{5}', '{6}')", securityToInsert.Ticker, securityToInsert.Description,
                         securityToInsert.LastPrice, securityToInsert.Yield, fund.AssetClass, fund.Category, fund.Subcategory);
@@ -108,8 +106,7 @@ namespace Asset_Management_Platform.Utility
             if (_securityDatabaseList == null || _securityDatabaseList.Count == 0)
                 return;
 
-            var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
-            using (var connection = new SqlConnection(storageString))
+            using (var connection = new SqlConnection(_storageString))
             {
                 connection.Open();
 
@@ -346,9 +343,8 @@ namespace Asset_Management_Platform.Utility
         {
             var result = 0;
             var cmdText = @"SELECT COUNT(*) from Stocks";
-            var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
 
-            using (var connection = new SqlConnection(storageString))
+            using (var connection = new SqlConnection(_storageString))
             {
                 connection.Open();
                 using (var command = new SqlCommand(cmdText, connection))
@@ -371,9 +367,8 @@ namespace Asset_Management_Platform.Utility
         {
             var result = 0;
             var cmdText = @"SELECT COUNT(*) from MutualFunds";
-            var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
 
-            using (var connection = new SqlConnection(storageString))
+            using (var connection = new SqlConnection(_storageString))
             {
                 connection.Open();
                 using (var command = new SqlCommand(cmdText, connection))
@@ -412,19 +407,17 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         private async Task SeedStockDatabase()
         {
-            var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             using (var seeder = new SecurityTableSeederDataService())
             {
-                await seeder.LoadStockJsonDataIntoSqlServer(storageString);
+                await seeder.LoadStockJsonDataIntoSqlServer(_storageString);
             }
         }
 
         private async Task SeedMutualFundDatabase()
         {
-            var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             using (var seeder = new SecurityTableSeederDataService())
             {
-                await seeder.LoadMutualFundJsonDataIntoSqlServer(storageString);
+                await seeder.LoadMutualFundJsonDataIntoSqlServer(_storageString);
             }
         }
     }
