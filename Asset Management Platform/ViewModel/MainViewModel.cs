@@ -764,6 +764,12 @@ namespace Asset_Management_Platform
                 GetTaxlots();
                 GetValueTotals();
             }
+
+            if (AllocationChartPositions == null)
+            {
+                ExecuteShowAllSecurities();
+            }
+
         }
 
         private async Task ExecutePreviewOrder()
