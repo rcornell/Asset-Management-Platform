@@ -18,7 +18,7 @@ namespace Asset_Management_Platform.Utility
 
         Task<Security> GetSecurityInfo(string ticker);
 
-        void GetUpdatedPricing(List<Security> securities);
+        Task GetUpdatedPricing(List<Security> securities);
 
         Task<List<Security>> GetSecurityInfo(List<string> tickers);
 

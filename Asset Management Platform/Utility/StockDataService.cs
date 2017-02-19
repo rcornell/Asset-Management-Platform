@@ -90,6 +90,7 @@ namespace Asset_Management_Platform.Utility
 
                     using (var command = new SqlCommand(insertString, connection))
                     {
+                       
                         connection.Open();
                         await command.ExecuteNonQueryAsync();
                     }                    
@@ -251,14 +252,14 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         /// <param name="securities"></param>
         /// <returns></returns>
-        public void GetUpdatedPricing(List<Security> securities)
+        public async Task GetUpdatedPricing(List<Security> securities)
         {
             var resultList = new List<Security>();
             if (securities != null && securities.Count > 0)
             {
                 using (var yahooAPI = new YahooAPIService())
                 {
-                    yahooAPI.GetUpdatedPricing(securities);
+                    await yahooAPI.GetUpdatedPricing(securities);
                 }
             }
         }
@@ -352,8 +353,8 @@ namespace Asset_Management_Platform.Utility
                 connection.Open();
                 using (var command = new SqlCommand(cmdText, connection))
                 {
-                    var response = await command.ExecuteScalarAsync();
-                    int.TryParse(response.ToString(), out result);
+                        var response = await command.ExecuteScalarAsync();
+                        int.TryParse(response.ToString(), out result);          
                 }
             }
 
@@ -395,13 +396,13 @@ namespace Asset_Management_Platform.Utility
         {
             if (await IsStockDatabaseEmpty())
             {
-                SeedStockDatabase();
-                Messenger.Default.Send(new DatabaseMessage("Empty database restored.", false));
+                await SeedStockDatabase();
+                Messenger.Default.Send(new PortfolioSqlMessage("Empty database restored.", false));
             }
             if (await IsMutualFundDatabaseEmpty())
             {
-                SeedMutualFundDatabase();
-                Messenger.Default.Send(new DatabaseMessage("Empty database restored.", false));
+                await SeedMutualFundDatabase();
+                Messenger.Default.Send(new PortfolioSqlMessage("Empty database restored.", false));
             }
         }
 

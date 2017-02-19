@@ -35,19 +35,19 @@ namespace Asset_Management_Platform.Utility
         {
             _stockDataService = stockDataService;
             _portfolioDatabaseService = portfolioDatabaseService;
+          
+            //Download limit orders from SQL DB
+            GetLimitOrderList();
+                       
+            _timer = new DispatcherTimer();
+            _timer.Tick += _timer_Tick;
+            _timer.Interval = new TimeSpan(0, 0, 10);
 
             //Load known security info from SQL DB
             _securityDatabaseList = _stockDataService.LoadSecurityDatabase();
 
-            //Download limit orders from SQL DB
-            GetLimitOrderList();
-
             //Create the core List<T>'s of taxlots, positions, and securities
             BuildPortfolioSecurities();
-
-            _timer = new DispatcherTimer();
-            _timer.Tick += _timer_Tick;
-            _timer.Interval = new TimeSpan(0, 0, 10);    
         }
 
 
@@ -55,9 +55,10 @@ namespace Asset_Management_Platform.Utility
         /// Creates the list of taxlots, positions, and securities owned.
         /// </summary>
         private async void BuildPortfolioSecurities()
-        {                 
+        {
             //Get taxlots from SQL DB                
-            _portfolioTaxlots = _portfolioDatabaseService.GetTaxlotsFromDatabase();
+            //_portfolioTaxlots = await Task.Run(() => _portfolioDatabaseService.GetTaxlotsFromDatabase());
+            _portfolioTaxlots = await _portfolioDatabaseService.GetTaxlotsFromDatabase();           
 
             //Gather all tickers and get pricing data
             var tickers = new List<string>();
@@ -71,7 +72,7 @@ namespace Asset_Management_Platform.Utility
             //with SQL DB's record of asset class & categories.
             //Ideally a future API will provide this data in previous steps
             var rawSecurities = await _stockDataService.GetSecurityInfo(tickers);
-            _portfolioSecurities = _stockDataService.GetMutualFundExtraData(rawSecurities);           
+            _portfolioSecurities = _stockDataService.GetMutualFundExtraData(rawSecurities);
 
             //If taxlots exist, build positions with updated pricing data.
             if (_portfolioTaxlots.Count > 0)
@@ -85,6 +86,8 @@ namespace Asset_Management_Platform.Utility
                 var security = _portfolioSecurities.Find(s => s.Ticker == pos.Ticker);
                 pos.UpdateTaxlotPrices(security.LastPrice);
             }
+
+            Messenger.Default.Send(new DatabaseMessage("Complete", true, false));
         }
 
         private void GetLimitOrderList()
@@ -417,6 +420,9 @@ namespace Asset_Management_Platform.Utility
         /// <returns></returns>
         public ObservableCollection<PositionByWeight> GetChartAllSecurities()
         {
+            if (_portfolioPositions == null)
+                return new ObservableCollection<PositionByWeight>();
+
             decimal totalValue = 0;
             var positionsByWeight = new ObservableCollection<PositionByWeight>();
 

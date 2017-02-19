@@ -37,7 +37,7 @@ namespace Asset_Management_Platform
             _myTaxlots = new List<Taxlot>();
         }
 
-        public List<Taxlot> GetTaxlotsFromDatabase()
+        public async Task<List<Taxlot>> GetTaxlotsFromDatabase()
         {
             var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             using (var connection = new SqlConnection(storageString))
@@ -47,7 +47,7 @@ namespace Asset_Management_Platform
                 using (var command = new SqlCommand(commandText, connection))
                 {
                     connection.Open();
-                    var reader = command.ExecuteReader();
+                    var reader = await Task.Run(() => command.ExecuteReader());
                     while (reader.Read())
                     {
                         Security secType;
@@ -171,12 +171,12 @@ namespace Asset_Management_Platform
             }
             catch (SqlException ex)
             {
-                var msg = new DatabaseMessage(ex.Message, false);
+                var msg = new PortfolioSqlMessage(ex.Message, false);
                 Messenger.Default.Send(msg);
             }
             catch (InvalidOperationException ex)
             {
-                var msg = new DatabaseMessage(ex.Message, false);
+                var msg = new PortfolioSqlMessage(ex.Message, false);
                 Messenger.Default.Send(msg);
             }
         }

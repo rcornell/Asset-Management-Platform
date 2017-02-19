@@ -10,7 +10,9 @@ using System.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Asset_Management_Platform.SecurityClasses;
+using System.Threading.Tasks;
 
 namespace Asset_Management_Platform
 {
@@ -82,6 +84,7 @@ namespace Asset_Management_Platform
         private bool _showFundsOnly;
         private bool _showAllPositions;
         private List<Position> _hiddenPositions;
+        private bool _previewOrderIsBusy;
         #endregion
 
         #region All Properties
@@ -514,7 +517,7 @@ namespace Asset_Management_Platform
 
         public RelayCommand PreviewOrder
         {
-            get { return new RelayCommand(ExecutePreviewOrder); }
+            get { return new RelayCommand(async () => await ExecutePreviewOrder(), CanPreview); }
         }
 
         public RelayCommand ExecuteOrder
@@ -574,6 +577,10 @@ namespace Asset_Management_Platform
             TradeTermStrings = new ObservableCollection<string>() { " ", "Market", "Limit", "Stop", "Stop Limit" };
             TradeDurationStrings = new ObservableCollection<string> { " ", "Day", "GTC", "Market Close", "Market Open", "Overnight" };
             SecurityTypes = new ObservableCollection<Security> { new Stock(), new MutualFund() };
+
+            Positions = new ObservableCollection<Position>();
+            Taxlots = new ObservableCollection<Taxlot>();
+
             SelectedTradeType = TradeTypeStrings[0];
             SelectedTermType = TradeTermStrings[0];
             SelectedDurationType = TradeDurationStrings[0];            
@@ -591,14 +598,11 @@ namespace Asset_Management_Platform
             LimitOrderIsSelected = false;
 
             _portfolioManagementService = portfolioService;
-            Messenger.Default.Register<PortfolioMessage>(this, RefreshCollection);
+            Messenger.Default.Register<DatabaseMessage>(this, RefreshCollection);
             Messenger.Default.Register<TradeMessage>(this, SetAlertMessage);
 
-            GetPositions();
-            GetTaxlots();
             GetLimitOrders();
-            ExecuteShowAllSecurities();
-            GetValueTotals();
+
             PositionCollectionView = new ListCollectionView(Positions);
             PositionCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Ticker"));
             TaxlotsCollectionView = new ListCollectionView(Taxlots);
@@ -640,16 +644,24 @@ namespace Asset_Management_Platform
             TotalCostBasis = totalCostBasis;
             TotalGainLoss = totalGainLoss;
         }
-        private void GetPositions()
+
+        private void GetPositions() //Don't put async here...
         {
             var positions = _portfolioManagementService.GetPositions();
-            Positions = new ObservableCollection<Position>(positions);
+
+            if(positions != null)            
+                Positions = new ObservableCollection<Position>(positions);
+            
         }
 
         private void GetTaxlots()
         {
             var lots = _portfolioManagementService.GetTaxlots();
-            Taxlots = new ObservableCollection<Taxlot>(lots);
+
+            if (lots != null)
+            {
+                Taxlots = new ObservableCollection<Taxlot>(lots);
+            }
         }
 
         private void ExecuteShowAllSecurities()
@@ -661,8 +673,7 @@ namespace Asset_Management_Platform
             ChartSubtitle = "All Positions";
             AllocationChartPositions = _portfolioManagementService.GetChartAllSecurities();
 
-            ClearHiddenList();
-            
+            ClearHiddenList();            
 
             GetValueTotals();
         }
@@ -745,14 +756,27 @@ namespace Asset_Management_Platform
             GetTaxlots();
         }
 
-        private void RefreshCollection(PortfolioMessage obj)
+        private void RefreshCollection(DatabaseMessage message)
         {
-            //_portfolio = _portfolioManagementService.GetPortfolio();
+            if (message.PositionsSuccessful)
+            {
+                GetPositions();
+                GetTaxlots();
+                GetValueTotals();
+            }
+
+            if (AllocationChartPositions == null)
+            {
+                ExecuteShowAllSecurities();
+            }
+
         }
 
-        private async void ExecutePreviewOrder()
+        private async Task ExecutePreviewOrder()
         {
-            var orderOk = CheckOrderTerms();     
+            _previewOrderIsBusy = true;
+
+            var orderOk = await CheckOrderTerms();  //JUST MADE THIS AWAITED
             if (orderOk)
             {
                 PreviewSecurity = await _portfolioManagementService.GetTradePreviewSecurity(_orderTickerText, SelectedSecurityType);
@@ -766,7 +790,6 @@ namespace Asset_Management_Platform
                     PreviewAskSize = ((Stock)PreviewSecurity).AskSize.ToString();
                     PreviewBid = ((Stock)PreviewSecurity).Bid.ToString();
                     PreviewBidSize = ((Stock)PreviewSecurity).BidSize.ToString();
-
                 }
                 else if (PreviewSecurity is MutualFund)
                 {
@@ -788,9 +811,10 @@ namespace Asset_Management_Platform
                 AlertBoxVisible = true;
                 OrderTermsOK = false;
             }
+            _previewOrderIsBusy = false;
         }
 
-        private bool CheckOrderTerms()
+        private async Task<bool> CheckOrderTerms()
         {
             //Check ticker, share, and secType to see if they are valid
             var tickerNotEmpty = !string.IsNullOrEmpty(_orderTickerText);
@@ -799,7 +823,7 @@ namespace Asset_Management_Platform
 
             //Check to see that selected security type matches the ticker
             bool secTypeMatch;
-            var tickerSecType = _portfolioManagementService.GetSecurityType(_orderTickerText, _selectedTradeType);
+            var tickerSecType = await _portfolioManagementService.GetSecurityType(_orderTickerText, _selectedTradeType);
 
             if (tickerSecType == null)
             {
@@ -821,8 +845,7 @@ namespace Asset_Management_Platform
                 OrderTermsOK = true;
                 PreviewButtonText = "Order Terms OK";
                 return true;
-            }
-                
+            }                
             else
             {
                 OrderTermsOK = false;
@@ -968,6 +991,11 @@ namespace Asset_Management_Platform
         {
             _portfolioManagementService.UploadAllDatabases();
             System.Windows.Application.Current.Shutdown();
+        }
+
+        private bool CanPreview()
+        {
+            return !_previewOrderIsBusy;
         }
 
         private void SetAlertMessage(TradeMessage message)
