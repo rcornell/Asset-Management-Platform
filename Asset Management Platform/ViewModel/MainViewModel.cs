@@ -973,7 +973,10 @@ namespace Asset_Management_Platform
 
         private async Task ExecuteSavePortfolio()
         {
-            
+            using (var portFileOps = new PortfolioFileOps())
+            {
+                var saved = await portFileOps.TrySaveTaxlots(Taxlots);
+            }
         }
 
         private async Task ExecuteLoadPortfolio()
@@ -983,14 +986,9 @@ namespace Asset_Management_Platform
 
         private void ExecuteUpdatePrices()
         {
-            //_portfolioManagementService.TestLimitOrderMethods();
-            //GetPositions();
-            //GetTaxlots();
-            using (var portFileOps = new PortfolioFileOps())
-            {
-                var saved = portFileOps.TrySaveTaxlots(Taxlots);
-            }
-
+            _portfolioManagementService.TestLimitOrderMethods();
+            GetPositions();
+            GetTaxlots();
         }
 
         private void ExecuteDeleteLimitOrder()
