@@ -22,9 +22,9 @@ namespace Asset_Management_Platform
     public class PortfolioDatabaseService : IPortfolioDatabaseService
     {
         private readonly string _storageString;
-        private List<Position> _portfolioOriginalState;
-        private List<Position> _myPositions; //This is THE main position list
-        private List<Taxlot> _myTaxlots; //This is THE main taxlot list
+        private readonly List<Position> _portfolioOriginalState;
+        private readonly List<Position> _myPositions; //This is THE main position list
+        private readonly List<Taxlot> _myTaxlots; //This is THE main taxlot list
         private IStockDataService _stockDatabaseService;
 
 

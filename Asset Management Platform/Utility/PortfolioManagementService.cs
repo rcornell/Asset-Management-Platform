@@ -14,10 +14,10 @@ namespace Asset_Management_Platform.Utility
 {
     public class PortfolioManagementService : IPortfolioManagementService
     {
-        private IStockDataService _stockDataService;
-        private IPortfolioDatabaseService _portfolioDatabaseService;
-        private DispatcherTimer _timer;
-        private List<Security> _securityDatabaseList;
+        private readonly IStockDataService _stockDataService;
+        private readonly IPortfolioDatabaseService _portfolioDatabaseService;
+        private readonly DispatcherTimer _timer;
+        private readonly List<Security> _securityDatabaseList;
         private List<LimitOrder> _limitOrderList;
         private List<Taxlot> _portfolioTaxlots;
         private List<Position> _portfolioPositions;

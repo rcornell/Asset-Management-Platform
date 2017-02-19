@@ -18,7 +18,7 @@ namespace Asset_Management_Platform.Utility
     /// </summary>
     public class StockDataService : IStockDataService
     {
-        private List<Security> _securityDatabaseList;
+        private readonly List<Security> _securityDatabaseList;
         private readonly string _storageString;
         public StockDataService()
         {
