@@ -9,7 +9,7 @@ namespace Asset_Management_Platform.Utility
     public interface IPortfolioDatabaseService
     {
 
-        List<Taxlot> GetTaxlotsFromDatabase();
+        Task<List<Taxlot>> GetTaxlotsFromDatabase();
 
         List<Position> GetPositionsFromTaxlots(List<Security> portfolioSecurities);
 

@@ -574,6 +574,11 @@ namespace Asset_Management_Platform
             TradeTermStrings = new ObservableCollection<string>() { " ", "Market", "Limit", "Stop", "Stop Limit" };
             TradeDurationStrings = new ObservableCollection<string> { " ", "Day", "GTC", "Market Close", "Market Open", "Overnight" };
             SecurityTypes = new ObservableCollection<Security> { new Stock(), new MutualFund() };
+
+
+            Positions = new ObservableCollection<Position>();
+            Taxlots = new ObservableCollection<Taxlot>();
+
             SelectedTradeType = TradeTypeStrings[0];
             SelectedTermType = TradeTermStrings[0];
             SelectedDurationType = TradeDurationStrings[0];            
@@ -640,16 +645,20 @@ namespace Asset_Management_Platform
             TotalCostBasis = totalCostBasis;
             TotalGainLoss = totalGainLoss;
         }
-        private void GetPositions()
+        private async void GetPositions()
         {
             var positions = _portfolioManagementService.GetPositions();
-            Positions = new ObservableCollection<Position>(positions);
+
+            if(positions != null)
+                Positions = new ObservableCollection<Position>(positions);
         }
 
         private void GetTaxlots()
         {
             var lots = _portfolioManagementService.GetTaxlots();
-            Taxlots = new ObservableCollection<Taxlot>(lots);
+
+            if (lots != null)
+                Taxlots = new ObservableCollection<Taxlot>(lots);
         }
 
         private void ExecuteShowAllSecurities()
