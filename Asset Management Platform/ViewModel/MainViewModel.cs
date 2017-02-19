@@ -776,7 +776,7 @@ namespace Asset_Management_Platform
         {
             _previewOrderIsBusy = true;
 
-            var orderOk = await CheckOrderTerms();  //JUST MADE THIS AWAITED
+            var orderOk = await CheckOrderTerms();
             if (orderOk)
             {
                 PreviewSecurity = await _portfolioManagementService.GetTradePreviewSecurity(_orderTickerText, SelectedSecurityType);

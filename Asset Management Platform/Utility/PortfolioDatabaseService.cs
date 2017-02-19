@@ -21,6 +21,7 @@ namespace Asset_Management_Platform
     /// </summary>
     public class PortfolioDatabaseService : IPortfolioDatabaseService
     {
+        private readonly string _storageString;
         private SqlDataReader _reader;
         private List<Position> _portfolioOriginalState;
         private List<Position> _myPositions; //This is THE main position list
@@ -32,6 +33,7 @@ namespace Asset_Management_Platform
         {            
             _stockDatabaseService = stockDatabaseService;
 
+            _storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             _portfolioOriginalState = new List<Position>();
             _myPositions = new List<Position>();
             _myTaxlots = new List<Taxlot>();
@@ -39,8 +41,7 @@ namespace Asset_Management_Platform
 
         public async Task<List<Taxlot>> GetTaxlotsFromDatabase()
         {
-            var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
-            using (var connection = new SqlConnection(storageString))
+            using (var connection = new SqlConnection(_storageString))
             {
                 var commandText = @"SELECT * FROM MyPortfolio;";
 
@@ -183,7 +184,7 @@ namespace Asset_Management_Platform
 
         private void InsertPositions(List<Position> positions)
         {
-            string storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
+            
             string insertString = @"INSERT INTO dbo.MyPortfolio (Ticker, Shares, CostBasis, DatePurchased, SecurityType) VALUES ";
 
             foreach (var pos in positions)
@@ -192,7 +193,7 @@ namespace Asset_Management_Platform
             }
             insertString = insertString.Substring(0, insertString.Length - 2) + @";";
 
-            using (var connection = new SqlConnection(storageString))
+            using (var connection = new SqlConnection(_storageString))
             {
                 connection.Open();
                 using (var command = new SqlCommand(insertString, connection))
@@ -207,7 +208,6 @@ namespace Asset_Management_Platform
             //Delete the taxlots/positions so they can be re-added
             DeletePositions(positions);
 
-            var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             string insertString = @"INSERT INTO dbo.MyPortfolio (Ticker, Shares, CostBasis, DatePurchased, SecurityType) VALUES ";
 
             foreach (var pos in positions)
@@ -220,7 +220,7 @@ namespace Asset_Management_Platform
             }
             insertString = insertString.Substring(0, insertString.Length - 2) + @";";
 
-            using (var connection = new SqlConnection(storageString))
+            using (var connection = new SqlConnection(_storageString))
             {
                 connection.Open();
                 using (var command = new SqlCommand(insertString, connection))
@@ -232,13 +232,12 @@ namespace Asset_Management_Platform
 
         private void DeletePositions(List<Position> positions)
         {
-            var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             var deleteString = positions.Aggregate(@"Delete From dbo.MyPortfolio Where Ticker in (", (current, pos) => current + string.Format(@"'{0}', ", pos.Ticker)); //value1, value2, ...);
 
             deleteString = deleteString.Substring(0, deleteString.Length - 2);
             deleteString += @");";
 
-            using (var connection = new SqlConnection(storageString))
+            using (var connection = new SqlConnection(_storageString))
             {
                 connection.Open();
                 using (var command = new SqlCommand(deleteString, connection))
@@ -278,13 +277,12 @@ namespace Asset_Management_Platform
         /// </summary>
         public void BackupDatabase()
         {
-            var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             //Perhaps a way to create multiple backups?
 
             TruncateTable("MyPortfolioBackup");
 
             var backup = @"INSERT INTO MyPortfolioBackup SELECT * FROM MyPortfolio";
-            using (var connection = new SqlConnection(storageString))
+            using (var connection = new SqlConnection(_storageString))
             {
                 connection.Open();
                 using (var command = new SqlCommand())
@@ -300,7 +298,6 @@ namespace Asset_Management_Platform
         public void UploadLimitOrdersToDatabase(List<LimitOrder> limitOrders)
         {
             var insertString = @"INSERT INTO dbo.MyLimitOrders (TradeType, Ticker, Shares, Limit, SecurityType, OrderDuration) VALUES ";
-            var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
 
             var final = limitOrders.Last();
             foreach (var order in limitOrders)
@@ -310,7 +307,7 @@ namespace Asset_Management_Platform
                     insertString += @", ";
             }
             try { 
-                using (var connection = new SqlConnection(storageString))
+                using (var connection = new SqlConnection(_storageString))
                 {
                     connection.Open();
                     var selectAllString = @"SELECT * FROM MyLimitOrders";
@@ -324,7 +321,7 @@ namespace Asset_Management_Platform
                     }    
                 }
 
-                using (var connection = new SqlConnection(storageString))
+                using (var connection = new SqlConnection(_storageString))
                 {
                     connection.Open();
 
@@ -362,8 +359,7 @@ namespace Asset_Management_Platform
             }
             try
             {
-                var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
-                using (var truncateConnection = new SqlConnection(storageString))
+                using (var truncateConnection = new SqlConnection(_storageString))
                 {
                     truncateConnection.Open();
                     using (var truncateCommand = new SqlCommand(truncateString, truncateConnection))
@@ -387,11 +383,10 @@ namespace Asset_Management_Platform
         public List<LimitOrder> LoadLimitOrdersFromDatabase()
         {
             var limitOrders = new List<LimitOrder>();
-            var storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             var downloadString = @"SELECT * FROM dbo.MyLimitOrders;";
             var limitDBResults = new List<LimitOrderDbResult>();
 
-            using (var connection = new SqlConnection(storageString))
+            using (var connection = new SqlConnection(_storageString))
             {
                 using (var command = new SqlCommand(downloadString, connection))
                 {
