@@ -36,7 +36,8 @@
                           IsTabStop="False">
                     <MenuItem Header="_New Portfolio" 
                               Command="{Binding DeletePortfolio}" />
-                    <MenuItem Header="_Load Portfolio" />
+                    <MenuItem Header="_Load Portfolio"
+                              Command="{Binding LoadPortfolio}"/>
                     <MenuItem Header="_Save Portfolio" 
                               Command="{Binding SavePortfolio}" />
                     <Separator />

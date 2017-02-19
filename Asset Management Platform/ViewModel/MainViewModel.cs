@@ -508,7 +508,12 @@ namespace Asset_Management_Platform
         public RelayCommand SavePortfolio
         {
             get { return new RelayCommand(ExecuteSavePortfolio); }
-        }         
+        }
+
+        public RelayCommand LoadPortfolio
+        {
+            get { return new RelayCommand(ExecuteLoadPortfolio); }
+        }
 
         public RelayCommand CloseApplication
         {
@@ -960,7 +965,7 @@ namespace Asset_Management_Platform
             }
         }
 
-        public void ExecuteDeletePortfolio()
+        private void ExecuteDeletePortfolio()
         {
             _portfolioManagementService.DeletePortfolio();
             GetPositions();
@@ -968,12 +973,17 @@ namespace Asset_Management_Platform
             ExecuteShowAllSecurities();
         }
 
-        public void ExecuteSavePortfolio()
+        private void ExecuteSavePortfolio()
         {
             _portfolioManagementService.UploadPortfolio();
         }
 
-        public void ExecuteDeleteLimitOrder()
+        private void ExecuteLoadPortfolio()
+        {
+            
+        }
+
+        private void ExecuteDeleteLimitOrder()
         {
             if (SelectedLimitOrder != null)
             {
