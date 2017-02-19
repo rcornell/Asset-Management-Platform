@@ -22,7 +22,6 @@ namespace Asset_Management_Platform
     public class PortfolioDatabaseService : IPortfolioDatabaseService
     {
         private readonly string _storageString;
-        private SqlDataReader _reader;
         private List<Position> _portfolioOriginalState;
         private List<Position> _myPositions; //This is THE main position list
         private List<Taxlot> _myTaxlots; //This is THE main taxlot list
