@@ -20,11 +20,16 @@ namespace Asset_Management_Platform.Utility
     {
         private readonly List<Security> _securityDatabaseList;
         private readonly string _storageString;
+        private readonly bool _localMode;
         public StockDataService()
         {
             _securityDatabaseList = new List<Security>();
             _storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
-            CheckDatabases();
+            _localMode = _storageString == null ? true : false;
+
+            if (!_localMode) { 
+                CheckDatabases();
+            }
         }
 
         /// <summary>

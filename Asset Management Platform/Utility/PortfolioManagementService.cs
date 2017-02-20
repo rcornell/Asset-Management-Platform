@@ -18,6 +18,7 @@ namespace Asset_Management_Platform.Utility
         private readonly IPortfolioDatabaseService _portfolioDatabaseService;
         private readonly DispatcherTimer _timer;
         private readonly List<Security> _securityDatabaseList;
+        private readonly bool _localMode;
         private List<LimitOrder> _limitOrderList;
         private List<Taxlot> _portfolioTaxlots;
         private List<Position> _portfolioPositions;
@@ -56,6 +57,12 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         private async void BuildPortfolioSecurities()
         {
+
+            //CHANGE THIS TO SUPPORT LOCAL LOADING
+
+
+
+
             //Get taxlots from SQL DB                
             //_portfolioTaxlots = await Task.Run(() => _portfolioDatabaseService.GetTaxlotsFromDatabase());
             _portfolioTaxlots = await _portfolioDatabaseService.GetTaxlotsFromDatabase();           

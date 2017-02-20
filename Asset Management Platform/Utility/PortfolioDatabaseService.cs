@@ -21,11 +21,13 @@ namespace Asset_Management_Platform
     /// </summary>
     public class PortfolioDatabaseService : IPortfolioDatabaseService
     {
-        private readonly string _storageString;
+        private readonly string _storageString;        
         private readonly List<Position> _portfolioOriginalState;
         private readonly List<Position> _myPositions; //This is THE main position list
         private readonly List<Taxlot> _myTaxlots; //This is THE main taxlot list
         private IStockDataService _stockDatabaseService;
+
+        public readonly bool LocalMode;
 
 
         public PortfolioDatabaseService(IStockDataService stockDatabaseService)
@@ -33,6 +35,8 @@ namespace Asset_Management_Platform
             _stockDatabaseService = stockDatabaseService;
 
             _storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
+            LocalMode = _storageString == null ? true : false;
+
             _portfolioOriginalState = new List<Position>();
             _myPositions = new List<Position>();
             _myTaxlots = new List<Taxlot>();
