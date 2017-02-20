@@ -126,7 +126,7 @@ namespace Asset_Management_Platform.Utility
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            documentsPath = string.Empty;
         }
     }
 }
