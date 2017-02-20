@@ -36,6 +36,7 @@ namespace Asset_Management_Platform.Utility
         {
             _stockDataService = stockDataService;
             _portfolioDatabaseService = portfolioDatabaseService;
+            _localMode = _portfolioDatabaseService.IsLocalMode();
           
             //Download limit orders from SQL DB
             GetLimitOrderList();
@@ -638,5 +639,9 @@ namespace Asset_Management_Platform.Utility
             return false;
         }
 
+        public bool IsLocalMode()
+        {
+            return _localMode;
+        }
     }
 }

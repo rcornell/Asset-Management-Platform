@@ -87,6 +87,7 @@ namespace Asset_Management_Platform
         private bool _previewOrderIsBusy;
         private bool _canSave;
         private bool _canLoad;
+        private readonly bool _localMode;
         #endregion
 
         #region All Properties
@@ -604,6 +605,7 @@ namespace Asset_Management_Platform
             LimitOrderIsSelected = false;
             _canLoad = true;
             _canSave = true;
+            _localMode = _portfolioManagementService.IsLocalMode();
 
             _portfolioManagementService = portfolioService;
             Messenger.Default.Register<DatabaseMessage>(this, RefreshCollection);

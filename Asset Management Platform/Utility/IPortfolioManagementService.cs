@@ -48,5 +48,7 @@ namespace Asset_Management_Platform.Utility
         void TestLimitOrderMethods();
 
         Task<bool> BuildLocalPositions(ObservableCollection<Taxlot> taxlots);
+
+        bool IsLocalMode();
     }
 }
