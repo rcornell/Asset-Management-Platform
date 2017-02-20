@@ -13,6 +13,8 @@ namespace Asset_Management_Platform.Utility
 
         List<Position> GetPositionsFromTaxlots(List<Security> portfolioSecurities);
 
+        List<Position> GetPositionsFromTaxlots();
+
         List<Position> GetEmptyPositionsList();
 
         void SavePortfolioToDatabase();
@@ -27,7 +29,7 @@ namespace Asset_Management_Platform.Utility
 
         void DeletePortfolio(List<Position> positions);
 
-        Task<bool> BuildLocalTaxlots(List<Taxlot> taxlots);
+        List<Taxlot> BuildLocalTaxlots(List<Taxlot> taxlots);
 
         bool IsLocalMode();
 

@@ -78,18 +78,23 @@ namespace Asset_Management_Platform
             return _myTaxlots;
         }
 
-        public async Task<bool> BuildLocalTaxlots(List<Taxlot> taxlots)
+        public List<Taxlot> BuildLocalTaxlots(List<Taxlot> taxlots)
         {
             if (taxlots == null)
-                return false;
+                return new List<Taxlot>(); //Should not hit this
 
             foreach (var lot in taxlots)
             {
-                _myTaxlots.Add(lot);
+                _myTaxlots.Add(new Taxlot(lot.Ticker, lot.Shares, lot.PurchasePrice, lot.DatePurchased, lot.SecurityType));
             }
-            return true;
+            return _myTaxlots;
         }
 
+        /// <summary>
+        /// This method is called if NOT in local mode.
+        /// </summary>
+        /// <param name="portfolioSecurities"></param>
+        /// <returns></returns>
         public List<Position> GetPositionsFromTaxlots(List<Security> portfolioSecurities)
         {
             foreach (var lot in _myTaxlots)
@@ -123,7 +128,41 @@ namespace Asset_Management_Platform
             return _myPositions;
         }
 
+        /// <summary>
+        /// This method is called if in local mode.
+        /// </summary>
+        /// <returns></returns>
+        public List<Position> GetPositionsFromTaxlots()
+        {
+            foreach (var lot in _myTaxlots)
+            {
+                if (!_myPositions.Any(s => s.Ticker == lot.Ticker))
+                {
+                    //No position in _myPositions with this ticker yet.
+                    _myPositions.Add(new Position(lot, lot.SecurityType));
+                }
+                else if (_myPositions.Any(s => s.Ticker == lot.Ticker && s.SharesOwned != lot.Shares))
+                {
+                    //Position with this ticker exists but the taxlot share quantity is different.
+                    _myPositions.Find(s => s.Ticker == lot.Ticker).AddTaxlot(lot);
+                }
+                else if (_myPositions.Any(s => s.Ticker == lot.Ticker && s.SharesOwned == lot.Shares))
+                {
+                    //Ticker and share quantities match. Check date to see if duplicate taxlot.
+                    var pos = _myPositions.Find(s => s.Ticker == lot.Ticker);
+                    if (!pos.Taxlots.Any(d => d.DatePurchased == lot.DatePurchased))
+                        pos.AddTaxlot(lot);
+                }
+            }
 
+            foreach (var pos in _myPositions)
+            {
+                //Create the list of positions at startup for use in shutdown methods.
+                _portfolioOriginalState.Add(new Position(pos.Taxlots));
+            }
+
+            return _myPositions;
+        }
 
         /// <summary>
         /// Compares _myPositions to the _databaseOriginalState from launch

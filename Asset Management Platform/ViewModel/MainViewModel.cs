@@ -981,7 +981,10 @@ namespace Asset_Management_Platform
         {
             using (var portFileOps = new PortfolioFileOps())
             {
-                var taxlots = await portFileOps.TryLoadPortfolio();                
+                var taxlots = await portFileOps.TryLoadPortfolio();
+                var result = _portfolioManagementService.BuildLocalPositions(taxlots);
+
+                Messenger.Default.Send(new DatabaseMessage("Success", true, false));
             }
         }
 

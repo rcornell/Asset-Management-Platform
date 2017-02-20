@@ -600,11 +600,20 @@ namespace Asset_Management_Platform.Utility
             _portfolioDatabaseService.DeletePortfolio(_portfolioPositions);
         }
 
-        public async Task<bool> LoadLocalTaxlots(ObservableCollection<Taxlot> taxlots)
+        public bool BuildLocalPositions(ObservableCollection<Taxlot> taxlots)
         {
             var taxlotList = new List<Taxlot>(taxlots);
-            var result = await _portfolioDatabaseService.BuildLocalTaxlots(taxlotList);
-            return result;
+            try
+            {
+                _portfolioTaxlots = _portfolioDatabaseService.BuildLocalTaxlots(taxlotList);
+                _portfolioPositions = _portfolioDatabaseService.GetPositionsFromTaxlots();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                //Handle exception
+                return false;   
+            }            
         }
 
         /// <summary>

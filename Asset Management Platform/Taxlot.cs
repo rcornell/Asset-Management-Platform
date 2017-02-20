@@ -60,6 +60,11 @@ namespace Asset_Management_Platform
 
         public decimal LastPrice { get; set; }
 
+        public Taxlot()
+        {
+            
+        }
+
         public Taxlot(string ticker, decimal shares, decimal purchasePrice, DateTime datePurchased, Security secType)
         {
             Ticker = ticker;
