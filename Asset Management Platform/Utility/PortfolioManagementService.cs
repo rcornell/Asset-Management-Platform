@@ -99,7 +99,10 @@ namespace Asset_Management_Platform.Utility
 
         private void GetLimitOrderList()
         {
-            _limitOrderList = _portfolioDatabaseService.LoadLimitOrdersFromDatabase();
+            if (!_portfolioDatabaseService.IsLocalMode())
+                _limitOrderList = _portfolioDatabaseService.LoadLimitOrdersFromDatabase();
+            else
+                _limitOrderList = new List<LimitOrder>();
         }
 
         /// <summary>

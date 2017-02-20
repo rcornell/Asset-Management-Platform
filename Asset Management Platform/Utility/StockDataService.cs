@@ -38,7 +38,9 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         public List<Security> LoadSecurityDatabase()
         {
-            
+            if (_localMode)
+                return _securityDatabaseList;
+
             using (var connection = new SqlConnection(_storageString))
             {
                 connection.Open();
