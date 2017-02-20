@@ -1010,7 +1010,10 @@ namespace Asset_Management_Platform
 
         private void ExecuteCloseApplication()
         {
-            _portfolioManagementService.UploadAllDatabases();
+            if (_localMode)
+                ExecuteSavePortfolio();
+            else
+                _portfolioManagementService.UploadAllDatabases();
             System.Windows.Application.Current.Shutdown();
         }
 
