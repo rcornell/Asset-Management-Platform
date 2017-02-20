@@ -332,6 +332,15 @@ namespace Asset_Management_Platform
             }
         }
 
+        public void UpdateTaxlotSecurities(Security updatedSecurity)
+        {
+            foreach (var lot in Taxlots)
+            {
+                lot.SecurityType = updatedSecurity;
+                lot.LastPrice = updatedSecurity.LastPrice;
+            }
+        }
+
         public Security GetSecurityType()
         {
             return Taxlots[0].SecurityType;

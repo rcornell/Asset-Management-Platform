@@ -422,7 +422,7 @@ namespace Asset_Management_Platform.Utility
         /// <returns></returns>
         public ObservableCollection<PositionByWeight> GetChartAllSecurities()
         {
-            if (_portfolioPositions == null)
+            if (_portfolioPositions == null || !PositionsHaveValue())
                 return new ObservableCollection<PositionByWeight>();
 
             decimal totalValue = 0;
@@ -430,6 +430,7 @@ namespace Asset_Management_Platform.Utility
 
             foreach (var pos in _portfolioPositions)
             {
+                //make this tolerate divide by zero
                 totalValue += pos.MarketValue;
             }
 
@@ -600,20 +601,22 @@ namespace Asset_Management_Platform.Utility
             _portfolioDatabaseService.DeletePortfolio(_portfolioPositions);
         }
 
-        public bool BuildLocalPositions(ObservableCollection<Taxlot> taxlots)
+        public async Task<bool> BuildLocalPositions(ObservableCollection<Taxlot> taxlots)
         {
             var taxlotList = new List<Taxlot>(taxlots);
             try
             {
                 _portfolioTaxlots = _portfolioDatabaseService.BuildLocalTaxlots(taxlotList);
                 _portfolioPositions = _portfolioDatabaseService.GetPositionsFromTaxlots();
+                await _stockDataService.GetUpdatedPricing(_portfolioPositions);
+                Messenger.Default.Send(new DatabaseMessage("Success", true, false));
                 return true;
             }
             catch (Exception ex)
             {
                 //Handle exception
                 return false;   
-            }            
+            }
         }
 
         /// <summary>
@@ -623,6 +626,16 @@ namespace Asset_Management_Platform.Utility
         {
             UpdatePortfolioPrices();
             CheckLimitOrdersForActive();
+        }
+
+        private bool PositionsHaveValue()
+        {
+            foreach (var pos in _portfolioPositions)
+            {
+                if (pos.MarketValue > 0)
+                    return true;
+            }
+            return false;
         }
 
     }

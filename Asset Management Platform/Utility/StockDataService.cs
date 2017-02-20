@@ -271,6 +271,25 @@ namespace Asset_Management_Platform.Utility
             }
         }
 
+        public async Task GetUpdatedPricing(List<Position> positions)
+        {
+            var secList = new List<Security>();
+
+            foreach (var pos in positions)
+            {
+                secList.Add(pos.Security);
+            }
+
+
+            if (positions != null && positions.Count > 0)
+            {
+                using (var yahooAPI = new YahooAPIService())
+                {
+                    await yahooAPI.GetUpdatedPricing(positions);
+                }
+            }
+        }
+
         private List<Security> LoadMutualFundsFromDB(SqlConnection connection)
         {
             var securityList = new List<Security>();

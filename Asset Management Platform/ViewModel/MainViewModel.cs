@@ -766,11 +766,10 @@ namespace Asset_Management_Platform
                 GetValueTotals();
             }
 
-            if (AllocationChartPositions == null)
+            if (AllocationChartPositions == null && Positions != null)
             {
                 ExecuteShowAllSecurities();
             }
-
         }
 
         private async Task ExecutePreviewOrder()
@@ -983,8 +982,6 @@ namespace Asset_Management_Platform
             {
                 var taxlots = await portFileOps.TryLoadPortfolio();
                 var result = _portfolioManagementService.BuildLocalPositions(taxlots);
-
-                Messenger.Default.Send(new DatabaseMessage("Success", true, false));
             }
         }
 

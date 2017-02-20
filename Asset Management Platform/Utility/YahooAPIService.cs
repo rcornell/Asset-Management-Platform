@@ -308,6 +308,69 @@ namespace Asset_Management_Platform.Utility
             }
         }
 
+        public async Task GetUpdatedPricing(List<Position> positions)
+        {
+            string tickerString = "";
+            foreach (var pos in positions)
+            {
+                tickerString += pos.Ticker + "+";
+            }
+
+            if (tickerString != "")
+            {
+                tickerString = tickerString.Substring(0, tickerString.Length - 1);
+
+                //Add my tickers to the middle of the url
+                tickerString = BaseUrl.Replace("@", tickerString);
+
+                try
+                {
+                    //Get the web response and clean it up
+                    string response = await GetWebResponse(tickerString);
+                    string result = Regex.Replace(response, "\\r\\n", "\r\n");
+
+                    //Create an array of the results
+                    var yahooResults = CreateYahooAPIResultList(result);
+
+                    //logic for looping through results
+                    foreach (var yahooResult in yahooResults)
+                    {
+                        var secType = DetermineIfStockOrFund(yahooResult);
+
+                        if (IsSecurityUnknown(yahooResult))
+                        {
+                            continue; //do not update security
+                        }
+
+                        if (secType == "Stock")
+                        {
+                            var position = positions.Find(s => s.Ticker == yahooResult.Ticker);
+                            position.Security = new Stock(yahooResult);
+                            position.UpdateTaxlotSecurities(new Stock(yahooResult));
+                        }
+                        else if (secType == "Mutual Fund")
+                        {
+                            var position = positions.Find(s => s.Ticker == yahooResult.Ticker);
+                            position.Security = new MutualFund(yahooResult);
+                            position.UpdateTaxlotSecurities(new MutualFund(yahooResult));
+                        }
+                        else
+                        {
+                            throw new NotImplementedException();
+                        }
+                    }
+                }
+                catch (ArgumentNullException ex) //Error in parsing Yahoo API results.
+                {
+                    throw new NotImplementedException();
+                }
+                catch (ArgumentException ex)
+                {
+                    throw new NotImplementedException();
+                }
+            }
+        }
+
         private async Task<string> GetWebResponse(string url)
         {
             var webClient = new WebClient();

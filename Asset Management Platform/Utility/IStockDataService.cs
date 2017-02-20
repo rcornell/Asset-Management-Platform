@@ -20,6 +20,8 @@ namespace Asset_Management_Platform.Utility
 
         Task GetUpdatedPricing(List<Security> securities);
 
+        Task GetUpdatedPricing(List<Position> positions);
+
         Task<List<Security>> GetSecurityInfo(List<string> tickers);
 
         List<Security> GetMutualFundExtraData(List<Security> rawSecurities);

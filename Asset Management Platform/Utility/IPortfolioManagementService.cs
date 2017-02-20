@@ -47,6 +47,6 @@ namespace Asset_Management_Platform.Utility
         void UploadAllDatabases();
         void TestLimitOrderMethods();
 
-        bool BuildLocalPositions(ObservableCollection<Taxlot> taxlots);
+        Task<bool> BuildLocalPositions(ObservableCollection<Taxlot> taxlots);
     }
 }
