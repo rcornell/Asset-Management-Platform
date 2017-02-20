@@ -57,12 +57,6 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         private async void BuildPortfolioSecurities()
         {
-
-            //CHANGE THIS TO SUPPORT LOCAL LOADING
-
-
-
-
             //Get taxlots from SQL DB                
             //_portfolioTaxlots = await Task.Run(() => _portfolioDatabaseService.GetTaxlotsFromDatabase());
             _portfolioTaxlots = await _portfolioDatabaseService.GetTaxlotsFromDatabase();           
@@ -85,7 +79,7 @@ namespace Asset_Management_Platform.Utility
             if (_portfolioTaxlots.Count > 0)
                 _portfolioPositions = _portfolioDatabaseService.GetPositionsFromTaxlots(_portfolioSecurities);
             else
-                _portfolioPositions = new List<Position>();
+                _portfolioPositions = _portfolioDatabaseService.GetEmptyPositionsList();
 
             //Update all Positions' taxlot pricing
             foreach (var pos in _portfolioPositions)
@@ -152,8 +146,7 @@ namespace Asset_Management_Platform.Utility
             {
                 //Create taxlot and position, then add to position list
                 var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security, trade.Security.LastPrice);
-                var position = new Position(taxlot, trade.Security);
-                _portfolioDatabaseService.AddToPortfolioDatabase(position);
+                _portfolioDatabaseService.AddToPortfolioDatabase(taxlot);
             }
             //Ticker exists in portfolio and security is stock
             else if (trade.Security is Stock && _portfolioPositions.Any(s => s.Ticker == trade.Ticker))
@@ -167,8 +160,7 @@ namespace Asset_Management_Platform.Utility
             {
                 //Create new taxlot and add to existing position
                 var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security, trade.Security.LastPrice);
-                var position = new Position(taxlot, trade.Security);
-                _portfolioDatabaseService.AddToPortfolioDatabase(position);
+                _portfolioDatabaseService.AddToPortfolioDatabase(taxlot);
             }
             else if (trade.Security is MutualFund && _portfolioPositions.Any(s => s.Ticker == trade.Ticker))
             {

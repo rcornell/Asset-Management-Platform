@@ -45,6 +45,9 @@ namespace Asset_Management_Platform
 
         public async Task<List<Taxlot>> GetTaxlotsFromDatabase()
         {
+            if (_localMode)
+                return _myTaxlots;
+
             using (var connection = new SqlConnection(_storageString))
             {
                 var commandText = @"SELECT * FROM MyPortfolio;";
@@ -457,24 +460,27 @@ namespace Asset_Management_Platform
         }      
 
         /// <summary>
-        /// Adds a new security to a portfolio as a new Position
-        /// with one taxlot
-        /// </summary>
-        /// <param name="positionToAdd"></param>
-        public void AddToPortfolioDatabase(Position positionToAdd)
-        {
-            _myPositions.Add(positionToAdd);   
-        }
-
-        /// <summary>
         /// Adds a taxlot to an existing position in some security
         /// </summary>
         /// <param name="taxlotToAdd"></param>
         public void AddToPortfolioDatabase(Taxlot taxlotToAdd)
         {
-            foreach(var pos in _myPositions.Where(s => s.Ticker == taxlotToAdd.Ticker)){
-                pos.Taxlots.Add(taxlotToAdd);
+            //Add to taxlot list
+            _myTaxlots.Add(taxlotToAdd);
+
+            //If position with ticker exists, add the taxlot to position.
+            if (!_myPositions.Any(s => s.Ticker == taxlotToAdd.Ticker))
+            {
+                _myPositions.Add(new Position(taxlotToAdd, taxlotToAdd.SecurityType));
             }
+            else
+            {
+                foreach (var pos in _myPositions.Where(s => s.Ticker == taxlotToAdd.Ticker))
+                {
+                    pos.Taxlots.Add(taxlotToAdd);
+                }
+            }
+            
         }
 
         /// <summary>
@@ -485,6 +491,11 @@ namespace Asset_Management_Platform
         public void DeletePortfolio(List<Position> positions)
         {
             DeletePositions(positions);
+        }
+
+        public List<Position> GetEmptyPositionsList()
+        {
+            return _myPositions;
         }
 
         public bool IsLocalMode()

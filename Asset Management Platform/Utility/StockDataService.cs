@@ -230,6 +230,9 @@ namespace Asset_Management_Platform.Utility
 
         public List<Security> GetMutualFundExtraData(List<Security> rawSecurities)
         {
+            if (_localMode)
+                return rawSecurities;
+
             var updatedSecurities = new List<Security>();
             var funds = rawSecurities.Where(s => s is MutualFund);
 

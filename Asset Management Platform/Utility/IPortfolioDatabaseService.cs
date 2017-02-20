@@ -13,6 +13,8 @@ namespace Asset_Management_Platform.Utility
 
         List<Position> GetPositionsFromTaxlots(List<Security> portfolioSecurities);
 
+        List<Position> GetEmptyPositionsList();
+
         void SavePortfolioToDatabase();
 
         void UploadLimitOrdersToDatabase(List<LimitOrder> limitOrders);
@@ -20,8 +22,6 @@ namespace Asset_Management_Platform.Utility
         List<LimitOrder> LoadLimitOrdersFromDatabase();
 
         void BackupDatabase();
-
-        void AddToPortfolioDatabase(Position positionToAdd);
 
         void AddToPortfolioDatabase(Taxlot taxlotToAdd);
 

@@ -969,8 +969,6 @@ namespace Asset_Management_Platform
             ExecuteShowAllSecurities();
         }
 
-
-
         private async Task ExecuteSavePortfolio()
         {
             using (var portFileOps = new PortfolioFileOps())
