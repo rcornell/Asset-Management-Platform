@@ -58,10 +58,9 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         private async Task BuildPortfolioSecurities()
         {
-            //Get taxlots from SQL DB                
-            //_portfolioTaxlots = await Task.Run(() => _portfolioDatabaseService.GetTaxlotsFromDatabase());
+            //Calls PortfolioDatabaseService to create its List<Taxlot> then
+            //a reference to that field
             _portfolioTaxlots = await _portfolioDatabaseService.GetTaxlotsFromDatabase();
-            await BuildLocalTaxlots(_portfolioTaxlots);
 
             //Gather all tickers and get pricing data
             var tickers = new List<string>();
@@ -93,9 +92,16 @@ namespace Asset_Management_Platform.Utility
             Messenger.Default.Send(new DatabaseMessage("Complete", true, false));
         }
 
+        /// <summary>
+        /// This method is called in local mode when a user loads a
+        /// stored json file with taxlot data
+        /// </summary>
+        /// <param name="taxlots"></param>
+        /// <returns></returns>
         public async Task<bool> BuildPortfolioSecurities(IEnumerable<Taxlot> taxlots)
         {
-            _portfolioTaxlots = BuildLocalTaxlots(taxlots);
+            var taxlotList = taxlots.ToList();
+            _portfolioTaxlots = _portfolioDatabaseService.BuildLocalTaxlots(taxlotList);
             _portfolioPositions = _portfolioDatabaseService.GetPositionsFromTaxlots();
             await _stockDataService.GetUpdatedPricing(_portfolioPositions);
 
@@ -103,21 +109,6 @@ namespace Asset_Management_Platform.Utility
 
             Messenger.Default.Send(new DatabaseMessage("Success", true, false));
             return true;
-        }
-
-        private List<Taxlot> BuildLocalTaxlots(IEnumerable<Taxlot> localTaxlots)
-        {
-            var taxlotList = localTaxlots.ToList();
-            try
-            {
-                var taxlots = _portfolioDatabaseService.BuildLocalTaxlots(taxlotList);
-                return taxlots;                
-            }
-            catch (Exception ex)
-            {
-                //Handle exception
-                return new List<Taxlot>();
-            }
         }
 
         private void GetLimitOrderList()
