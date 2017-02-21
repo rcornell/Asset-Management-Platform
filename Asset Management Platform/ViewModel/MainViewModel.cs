@@ -582,6 +582,8 @@ namespace Asset_Management_Platform
 
         public MainViewModel(IPortfolioManagementService portfolioService)
         {
+            _portfolioManagementService = portfolioService;
+
             TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
             TradeTermStrings = new ObservableCollection<string>() { " ", "Market", "Limit", "Stop", "Stop Limit" };
             TradeDurationStrings = new ObservableCollection<string> { " ", "Day", "GTC", "Market Close", "Market Open", "Overnight" };
@@ -607,13 +609,8 @@ namespace Asset_Management_Platform
             LimitOrderIsSelected = false;
             _canLoad = true;
             _canSave = true;
-            _localMode = ConfigurationManager.AppSettings["StorageConnectionString"] == null ? true : false;
-
-            _portfolioManagementService = portfolioService;
-            Messenger.Default.Register<DatabaseMessage>(this, RefreshCollection);
-            Messenger.Default.Register<TradeMessage>(this, SetAlertMessage);
-            Messenger.Default.Register<FileErrorMessage>(this, SetAlertMessage);
-
+            _localMode = _portfolioManagementService.IsLocalMode();
+           
             GetLimitOrders();
 
             PositionCollectionView = new ListCollectionView(Positions);
