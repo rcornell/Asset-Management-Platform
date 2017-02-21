@@ -62,7 +62,6 @@ namespace Asset_Management_Platform.Utility
             //a reference to that field
             _portfolioTaxlots = await _portfolioDatabaseService.BuildDatabaseTaxlots();
 
-            _portfolioTaxlots = new List<Taxlot>();
             //Get security data with market data API (currently YahooAPI)
             var tickers = _portfolioTaxlots.Select(s => s.Ticker).Distinct().ToList();
             var rawSecurities = await _stockDataService.GetSecurityInfo(tickers);
