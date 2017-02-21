@@ -121,7 +121,7 @@
     <Compile Include="Converters\DecimalToStringConverter.cs" />
     <Compile Include="Exceptions\LimitOrderException.cs" />
     <Compile Include="Exceptions\TruncateException.cs" />
-    <Compile Include="FileErrorMessage.cs" />
+    <Compile Include="Messages\FileErrorMessage.cs" />
     <Compile Include="LimitOrder.cs" />
     <Compile Include="LimitOrderDBResult.cs" />
     <Compile Include="Messages\PortfolioSqlMessage.cs" />
@@ -146,7 +146,7 @@
     <Compile Include="Utility\IStockDataService.cs" />
     <Compile Include="Utility\MarkitAPIService.cs" />
     <Compile Include="Utility\MarkitJsonResult.cs" />
-    <Compile Include="Utility\PortfolioFileOps.cs" />
+    <Compile Include="SaveLoad\PortfolioFileOps.cs" />
     <Compile Include="Utility\SecurityTableSeederDataService.cs" />
     <Compile Include="Utility\TradeExecutionService.cs" />
     <Compile Include="Utility\PortfolioManagementService.cs" />

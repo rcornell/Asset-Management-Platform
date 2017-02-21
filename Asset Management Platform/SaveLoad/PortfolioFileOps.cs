@@ -8,7 +8,7 @@ using System.IO;
 using Newtonsoft.Json;
 using Microsoft.Win32;
 
-namespace Asset_Management_Platform.Utility
+namespace Asset_Management_Platform.SaveLoad
 {
     public class PortfolioFileOps : IDisposable
     {
