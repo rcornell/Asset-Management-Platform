@@ -47,7 +47,7 @@ namespace Asset_Management_Platform.Utility
         void UploadAllDatabases();
         void TestLimitOrderMethods();
 
-        Task<bool> BuildPositionsFromTaxlots(IEnumerable<Taxlot> taxlots);
+        Task<bool> BuildPortfolioSecurities(IEnumerable<Taxlot> taxlots);
 
         bool IsLocalMode();
     }

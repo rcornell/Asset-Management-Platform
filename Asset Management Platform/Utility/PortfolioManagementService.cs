@@ -61,10 +61,7 @@ namespace Asset_Management_Platform.Utility
             //Get taxlots from SQL DB                
             //_portfolioTaxlots = await Task.Run(() => _portfolioDatabaseService.GetTaxlotsFromDatabase());
             _portfolioTaxlots = await _portfolioDatabaseService.GetTaxlotsFromDatabase();
-            await BuildPositionsFromTaxlots(_portfolioTaxlots);
-
-
-
+            await BuildLocalTaxlots(_portfolioTaxlots);
 
             //Gather all tickers and get pricing data
             var tickers = new List<string>();
@@ -96,21 +93,31 @@ namespace Asset_Management_Platform.Utility
             Messenger.Default.Send(new DatabaseMessage("Complete", true, false));
         }
 
-        public async Task<bool> BuildPositionsFromTaxlots(IEnumerable<Taxlot> taxlots)
+        public async Task<bool> BuildPortfolioSecurities(IEnumerable<Taxlot> taxlots)
         {
-            var taxlotList = new List<Taxlot>(taxlots);
+            _portfolioTaxlots =  await BuildLocalTaxlots(taxlots);
+            _portfolioPositions = _portfolioDatabaseService.GetPositionsFromTaxlots();
+            await _stockDataService.GetUpdatedPricing(_portfolioPositions);
+
+            //Get the mutual fund data now
+
+
+            Messenger.Default.Send(new DatabaseMessage("Success", true, false));
+            return true;
+        }
+
+        private async Task<List<Taxlot>> BuildLocalTaxlots(IEnumerable<Taxlot> localTaxlots)
+        {
+            var taxlotList = localTaxlots.ToList();
             try
             {
-                _portfolioTaxlots = _portfolioDatabaseService.BuildLocalTaxlots(taxlotList);
-                _portfolioPositions = _portfolioDatabaseService.GetPositionsFromTaxlots();
-                await _stockDataService.GetUpdatedPricing(_portfolioPositions);
-                Messenger.Default.Send(new DatabaseMessage("Success", true, false));
-                return true;
+                var taxlots = _portfolioDatabaseService.BuildLocalTaxlots(taxlotList);
+                return taxlots;                
             }
             catch (Exception ex)
             {
                 //Handle exception
-                return false;
+                return new List<Taxlot>();
             }
         }
 
