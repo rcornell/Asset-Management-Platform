@@ -60,20 +60,23 @@ namespace Asset_Management_Platform.Utility
         {
             //Calls PortfolioDatabaseService to create its List<Taxlot> then
             //a reference to that field
-            _portfolioTaxlots = await _portfolioDatabaseService.GetTaxlotsFromDatabase();
+            _portfolioTaxlots = await _portfolioDatabaseService.BuildDatabaseTaxlots();
 
             //Gather all tickers and get pricing data
-            var tickers = new List<string>();
-            foreach (var lot in _portfolioTaxlots)
-            {
-                if (!tickers.Contains(lot.Ticker))
-                    tickers.Add(lot.Ticker);
-            }
+            //var tickers = new List<string>();
+            //foreach (var lot in _portfolioTaxlots)
+            //{
+            //    if (!tickers.Contains(lot.Ticker))
+            //        tickers.Add(lot.Ticker);
+            //}
 
-            //Get updated security data then append Yahoo API data for Mutual Funds 
-            //with SQL DB's record of asset class & categories.
-            //Ideally a future API will provide this data in previous steps
+            var tickers = _portfolioTaxlots.Select(s => s.Ticker).Distinct().ToList();
+
+            //Get security data with market data API (currently YahooAPI)
             var rawSecurities = await _stockDataService.GetSecurityInfo(tickers);
+
+            //Get MutualFund category data from Db. 
+            //Ideally a future API will provide this functionality.
             _portfolioSecurities = _stockDataService.GetMutualFundExtraData(rawSecurities);
 
             //If taxlots exist, build positions with updated pricing data.

@@ -40,7 +40,7 @@ namespace Asset_Management_Platform
             _myTaxlots = new List<Taxlot>();
         }
 
-        public async Task<List<Taxlot>> GetTaxlotsFromDatabase()
+        public async Task<List<Taxlot>> BuildDatabaseTaxlots()
         {
             if (_localMode)
                 return _myTaxlots;

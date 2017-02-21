@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading;
 using Asset_Management_Platform.SecurityClasses;
 using System.Threading.Tasks;
+using System.Configuration;
 
 namespace Asset_Management_Platform
 {
@@ -605,7 +606,7 @@ namespace Asset_Management_Platform
             LimitOrderIsSelected = false;
             _canLoad = true;
             _canSave = true;
-            _localMode = _portfolioManagementService.IsLocalMode();
+            _localMode = ConfigurationManager.AppSettings["StorageConnectionString"] == null ? true : false;
 
             _portfolioManagementService = portfolioService;
             Messenger.Default.Register<DatabaseMessage>(this, RefreshCollection);
