@@ -27,10 +27,7 @@ namespace Asset_Management_Platform
         private readonly List<Position> _myPositions; //This is THE main position list
         private readonly List<Taxlot> _myTaxlots; //This is THE main taxlot list
         private IStockDataService _stockDatabaseService;
-
-        
-
-
+       
         public PortfolioDatabaseService(IStockDataService stockDatabaseService)
         {            
             _stockDatabaseService = stockDatabaseService;

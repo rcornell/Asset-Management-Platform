@@ -36,10 +36,7 @@ namespace Asset_Management_Platform.Utility
         {
             _stockDataService = stockDataService;
             _portfolioDatabaseService = portfolioDatabaseService;
-            _localMode = _portfolioDatabaseService.IsLocalMode();
-          
-            //Download limit orders from SQL DB
-            GetLimitOrderList();
+            _localMode = _portfolioDatabaseService.IsLocalMode();                     
                        
             _timer = new DispatcherTimer();
             _timer.Tick += _timer_Tick;
@@ -47,6 +44,9 @@ namespace Asset_Management_Platform.Utility
 
             //Load known security info from SQL DB
             _securityDatabaseList = _stockDataService.LoadSecurityDatabase();
+
+            //Download limit orders from SQL DB
+            GetLimitOrderList();
 
             //Create the core List<T>'s of taxlots, positions, and securities
             BuildPortfolioSecurities();
@@ -56,11 +56,15 @@ namespace Asset_Management_Platform.Utility
         /// <summary>
         /// Creates the list of taxlots, positions, and securities owned.
         /// </summary>
-        private async void BuildPortfolioSecurities()
+        private async Task BuildPortfolioSecurities()
         {
             //Get taxlots from SQL DB                
             //_portfolioTaxlots = await Task.Run(() => _portfolioDatabaseService.GetTaxlotsFromDatabase());
-            _portfolioTaxlots = await _portfolioDatabaseService.GetTaxlotsFromDatabase();           
+            _portfolioTaxlots = await _portfolioDatabaseService.GetTaxlotsFromDatabase();
+            await BuildPositionsFromTaxlots(_portfolioTaxlots);
+
+
+
 
             //Gather all tickers and get pricing data
             var tickers = new List<string>();
@@ -90,6 +94,24 @@ namespace Asset_Management_Platform.Utility
             }
 
             Messenger.Default.Send(new DatabaseMessage("Complete", true, false));
+        }
+
+        public async Task<bool> BuildPositionsFromTaxlots(IEnumerable<Taxlot> taxlots)
+        {
+            var taxlotList = new List<Taxlot>(taxlots);
+            try
+            {
+                _portfolioTaxlots = _portfolioDatabaseService.BuildLocalTaxlots(taxlotList);
+                _portfolioPositions = _portfolioDatabaseService.GetPositionsFromTaxlots();
+                await _stockDataService.GetUpdatedPricing(_portfolioPositions);
+                Messenger.Default.Send(new DatabaseMessage("Success", true, false));
+                return true;
+            }
+            catch (Exception ex)
+            {
+                //Handle exception
+                return false;
+            }
         }
 
         private void GetLimitOrderList()
@@ -600,24 +622,6 @@ namespace Asset_Management_Platform.Utility
             _portfolioSecurities.Clear();
             _portfolioTaxlots.Clear();
             _portfolioDatabaseService.DeletePortfolio(_portfolioPositions);
-        }
-
-        public async Task<bool> BuildLocalPositions(ObservableCollection<Taxlot> taxlots)
-        {
-            var taxlotList = new List<Taxlot>(taxlots);
-            try
-            {
-                _portfolioTaxlots = _portfolioDatabaseService.BuildLocalTaxlots(taxlotList);
-                _portfolioPositions = _portfolioDatabaseService.GetPositionsFromTaxlots();
-                await _stockDataService.GetUpdatedPricing(_portfolioPositions);
-                Messenger.Default.Send(new DatabaseMessage("Success", true, false));
-                return true;
-            }
-            catch (Exception ex)
-            {
-                //Handle exception
-                return false;   
-            }
         }
 
         /// <summary>

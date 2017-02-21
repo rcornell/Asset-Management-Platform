@@ -983,7 +983,7 @@ namespace Asset_Management_Platform
             using (var portFileOps = new PortfolioFileOps())
             {
                 var taxlots = await portFileOps.TryLoadPortfolio();
-                var result = _portfolioManagementService.BuildLocalPositions(taxlots);
+                var result = _portfolioManagementService.BuildPositionsFromTaxlots(taxlots);
             }
         }
 
