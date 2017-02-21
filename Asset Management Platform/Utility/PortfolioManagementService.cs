@@ -95,18 +95,17 @@ namespace Asset_Management_Platform.Utility
 
         public async Task<bool> BuildPortfolioSecurities(IEnumerable<Taxlot> taxlots)
         {
-            _portfolioTaxlots =  await BuildLocalTaxlots(taxlots);
+            _portfolioTaxlots = BuildLocalTaxlots(taxlots);
             _portfolioPositions = _portfolioDatabaseService.GetPositionsFromTaxlots();
             await _stockDataService.GetUpdatedPricing(_portfolioPositions);
 
-            //Get the mutual fund data now
-
+            //**No MutualFund extra data available in _localMode**
 
             Messenger.Default.Send(new DatabaseMessage("Success", true, false));
             return true;
         }
 
-        private async Task<List<Taxlot>> BuildLocalTaxlots(IEnumerable<Taxlot> localTaxlots)
+        private List<Taxlot> BuildLocalTaxlots(IEnumerable<Taxlot> localTaxlots)
         {
             var taxlotList = localTaxlots.ToList();
             try
