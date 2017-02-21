@@ -1036,7 +1036,8 @@ namespace Asset_Management_Platform
 
         private void SetAlertMessage(TradeMessage message)
         {
-
+            AlertBoxMessage = message.Message;
+            AlertBoxVisible = true;
         }
 
         private void SetAlertMessage(FileErrorMessage message)
