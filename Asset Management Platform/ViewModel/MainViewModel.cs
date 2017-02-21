@@ -42,9 +42,6 @@ namespace Asset_Management_Platform
         private string _showLimitButtonText;
         private string _previewButtonText;
         private bool _orderTermsOK;
-        private ListCollectionView _limitOrderCollectionView;
-        private ListCollectionView _positionCollectionView;
-        private ListCollectionView _taxlotsCollectionView;
         private Security _screenerStock;
         private string _stockScreenerTicker;
         private bool _alertBoxVisible;
@@ -127,33 +124,6 @@ namespace Asset_Management_Platform
             {
                 _orderTermsOK = value;
                 RaisePropertyChanged(() => OrderTermsOK);
-            }
-        }
-        public ListCollectionView LimitOrderCollectionView
-        {
-            get { return _limitOrderCollectionView; }
-            set
-            {
-                _limitOrderCollectionView = value;
-                RaisePropertyChanged(() => LimitOrderCollectionView);
-            }
-        }      
-        public ListCollectionView PositionCollectionView
-        {
-            get { return _positionCollectionView; }
-            set
-            {
-                _positionCollectionView = value;
-                RaisePropertyChanged(() => PositionCollectionView);
-            }
-        }        
-        public ListCollectionView TaxlotsCollectionView
-        {
-            get { return _taxlotsCollectionView; }
-            set
-            {
-                _taxlotsCollectionView = value;
-                RaisePropertyChanged(() => TaxlotsCollectionView);
             }
         }
         public Security ScreenerStock
@@ -615,15 +585,11 @@ namespace Asset_Management_Platform
             }
             else
             {
+                //Should be impossible to hit.
                 throw new NotImplementedException();
             }
 
             GetLimitOrders();
-
-            PositionCollectionView = new ListCollectionView(Positions);
-            PositionCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Ticker"));
-            TaxlotsCollectionView = new ListCollectionView(Taxlots);
-            TaxlotsCollectionView.GroupDescriptions.Add(new PropertyGroupDescription("Ticker"));
 
             //_portfolioManagementService.StartUpdates(); //TURNED OFF FOR TESTING
         }
@@ -906,7 +872,6 @@ namespace Asset_Management_Platform
         private void GetLimitOrders()
         {
             var limitOrders = _portfolioManagementService.GetLimitOrders();
-            LimitOrderCollectionView = new ListCollectionView(limitOrders);
             LimitOrderList = new ObservableCollection<LimitOrder>(limitOrders);
         }
 
