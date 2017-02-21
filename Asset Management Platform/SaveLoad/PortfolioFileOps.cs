@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using Asset_Management_Platform.Messages;
+using GalaSoft.MvvmLight.Messaging;
 using Newtonsoft.Json;
 using Microsoft.Win32;
 
@@ -52,6 +54,10 @@ namespace Asset_Management_Platform.SaveLoad
                 var jsonString = await Task.Factory.StartNew(() => JsonConvert.SerializeObject(taxlots));
                 File.WriteAllText(path, jsonString);
                 return true;
+            }
+            catch (JsonSerializationException ex)
+            {
+
             }
             catch (ArgumentException ex)
             {
@@ -105,23 +111,32 @@ namespace Asset_Management_Platform.SaveLoad
                 taxlotsToReturn = taxlotList;
                 return taxlotsToReturn;
             }
+            catch (JsonReaderException ex)
+            {
+                //var message = @"Problem reading your list of taxlots. Please check to see that the json is valid.";
+                Messenger.Default.Send(new FileErrorMessage(ex.Message));
+                return taxlotsToReturn;
+            }
             catch (ArgumentException ex)
             {
-
+                Messenger.Default.Send(new FileErrorMessage(ex.Message));
+                return taxlotsToReturn;
             }
             catch (FileNotFoundException ex)
             {
-
+                Messenger.Default.Send(new FileErrorMessage(ex.Message));
+                return taxlotsToReturn;
             }
             catch (IOException ex)
             {
-
+                Messenger.Default.Send(new FileErrorMessage(ex.Message));
+                return taxlotsToReturn;
             }
             catch (Exception ex)
             {
-                
+                Messenger.Default.Send(new FileErrorMessage(ex.Message));
+                return taxlotsToReturn;
             }
-            return taxlotsToReturn;
         }
 
         public void Dispose()
