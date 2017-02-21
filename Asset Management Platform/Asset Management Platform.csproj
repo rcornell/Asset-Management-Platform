@@ -121,6 +121,7 @@
     <Compile Include="Converters\DecimalToStringConverter.cs" />
     <Compile Include="Exceptions\LimitOrderException.cs" />
     <Compile Include="Exceptions\TruncateException.cs" />
+    <Compile Include="FileErrorMessage.cs" />
     <Compile Include="LimitOrder.cs" />
     <Compile Include="LimitOrderDBResult.cs" />
     <Compile Include="Messages\PortfolioSqlMessage.cs" />

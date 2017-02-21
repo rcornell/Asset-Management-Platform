@@ -92,12 +92,19 @@ namespace Asset_Management_Platform.Utility
         /// <returns></returns>
         public async Task<bool> BuildPortfolioSecurities(IEnumerable<Taxlot> taxlots)
         {
+            //Convert the IEnumerable to a List<Taxlot>
             var taxlotList = taxlots.ToList();
+
+            //Create the list of taxlots
             _portfolioTaxlots = _portfolioDatabaseService.BuildLocalTaxlots(taxlotList);
+
+            //If taxlots exist, build positions
             _portfolioPositions = _portfolioDatabaseService.GetPositionsFromTaxlots();
+
+            //Update prices for all positions
             await _stockDataService.GetUpdatedPricing(_portfolioPositions);
 
-            //**No MutualFund extra data available in _localMode**
+            //**No MutualFund extra data available in local mode**
 
             Messenger.Default.Send(new DatabaseMessage("Success", true, false));
             return true;

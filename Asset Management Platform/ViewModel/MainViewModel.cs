@@ -611,6 +611,7 @@ namespace Asset_Management_Platform
             _portfolioManagementService = portfolioService;
             Messenger.Default.Register<DatabaseMessage>(this, RefreshCollection);
             Messenger.Default.Register<TradeMessage>(this, SetAlertMessage);
+            Messenger.Default.Register<FileErrorMessage>(this, SetAlertMessage);
 
             GetLimitOrders();
 
@@ -1035,8 +1036,13 @@ namespace Asset_Management_Platform
 
         private void SetAlertMessage(TradeMessage message)
         {
+
+        }
+
+        private void SetAlertMessage(FileErrorMessage message)
+        {
             AlertBoxMessage = message.Message;
             AlertBoxVisible = true;
-        }     
+        }    
     }
 }
