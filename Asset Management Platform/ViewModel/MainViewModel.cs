@@ -521,7 +521,7 @@ namespace Asset_Management_Platform
 
         public RelayCommand CloseApplication
         {
-            get { return new RelayCommand(ExecuteCloseApplication); }
+            get { return new RelayCommand(async () => await ExecuteCloseApplication(), CanSave); }
         }
 
         public RelayCommand PreviewOrder
@@ -609,8 +609,15 @@ namespace Asset_Management_Platform
             LimitOrderIsSelected = false;
             _canLoad = true;
             _canSave = true;
-            _localMode = _portfolioManagementService.IsLocalMode();
-           
+            if (_portfolioManagementService != null)
+            {
+                _localMode = _portfolioManagementService.IsLocalMode();
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+
             GetLimitOrders();
 
             PositionCollectionView = new ListCollectionView(Positions);
@@ -1008,10 +1015,10 @@ namespace Asset_Management_Platform
             }
         }
 
-        private void ExecuteCloseApplication()
+        private async Task ExecuteCloseApplication()
         {
             if (_localMode)
-                ExecuteSavePortfolio();
+                await ExecuteSavePortfolio();
             else
                 _portfolioManagementService.UploadAllDatabases();
             System.Windows.Application.Current.Shutdown();
