@@ -62,17 +62,9 @@ namespace Asset_Management_Platform.Utility
             //a reference to that field
             _portfolioTaxlots = await _portfolioDatabaseService.BuildDatabaseTaxlots();
 
-            //Gather all tickers and get pricing data
-            //var tickers = new List<string>();
-            //foreach (var lot in _portfolioTaxlots)
-            //{
-            //    if (!tickers.Contains(lot.Ticker))
-            //        tickers.Add(lot.Ticker);
-            //}
-
-            var tickers = _portfolioTaxlots.Select(s => s.Ticker).Distinct().ToList();
-
+            _portfolioTaxlots = new List<Taxlot>();
             //Get security data with market data API (currently YahooAPI)
+            var tickers = _portfolioTaxlots.Select(s => s.Ticker).Distinct().ToList();
             var rawSecurities = await _stockDataService.GetSecurityInfo(tickers);
 
             //Get MutualFund category data from Db. 
@@ -80,10 +72,7 @@ namespace Asset_Management_Platform.Utility
             _portfolioSecurities = _stockDataService.GetMutualFundExtraData(rawSecurities);
 
             //If taxlots exist, build positions with updated pricing data.
-            if (_portfolioTaxlots.Count > 0)
-                _portfolioPositions = _portfolioDatabaseService.GetPositionsFromTaxlots(_portfolioSecurities);
-            else
-                _portfolioPositions = _portfolioDatabaseService.GetEmptyPositionsList();
+            _portfolioPositions = _portfolioDatabaseService.GetPositionsFromTaxlots(_portfolioSecurities);
 
             //Update all Positions' taxlot pricing
             foreach (var pos in _portfolioPositions)
