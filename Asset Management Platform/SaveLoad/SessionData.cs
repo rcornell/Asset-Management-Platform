@@ -9,17 +9,17 @@ namespace Asset_Management_Platform.SaveLoad
     public class SessionData
     {
         public List<LimitOrder> LimitOrders;
-        public List<Position> Positions;
+        public List<Taxlot> Taxlots;
 
         public SessionData()
         {
             
         }
 
-        public SessionData(List<LimitOrder> limitOrders, List<Position> positions)
+        public SessionData(List<LimitOrder> limitOrders, List<Taxlot> taxlots)
         {
             LimitOrders = limitOrders;
-            Positions = positions;
+            Taxlots = taxlots;
         }
     }
 }

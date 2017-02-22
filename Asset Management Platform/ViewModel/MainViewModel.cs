@@ -946,7 +946,7 @@ namespace Asset_Management_Platform
         {
             using (var portFileOps = new PortfolioFileOps())
             {
-                var saved = await portFileOps.TrySaveTaxlots(Taxlots);
+                var saved = await portFileOps.TrySaveSession(new SessionData(LimitOrderList.ToList(), Taxlots.ToList()));
             }
         }
 

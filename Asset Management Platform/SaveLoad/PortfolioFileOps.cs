@@ -28,7 +28,7 @@ namespace Asset_Management_Platform.SaveLoad
 
             return false;
         }
-        public async Task<bool> TrySaveTaxlots(ObservableCollection<Taxlot> taxlots)
+        public async Task<bool> TrySaveSession(SessionData sessionData)
         {
             var dialog = new SaveFileDialog
             {
@@ -51,7 +51,7 @@ namespace Asset_Management_Platform.SaveLoad
             var path = dialog.FileName;
             try
             {
-                var jsonString = await Task.Factory.StartNew(() => JsonConvert.SerializeObject(taxlots));
+                var jsonString = await Task.Factory.StartNew(() => JsonConvert.SerializeObject(sessionData));
                 File.WriteAllText(path, jsonString);
                 return true;
             }
