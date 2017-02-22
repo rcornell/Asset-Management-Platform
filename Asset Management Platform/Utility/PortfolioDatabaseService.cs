@@ -33,6 +33,9 @@ namespace Asset_Management_Platform
             //Register for LocalMode notification
             Messenger.Default.Register<LocalModeMessage>(this, SetLocalMode);
 
+            Messenger.Default.Register<TradeBuyMessage>(this, HandleBuy);
+            Messenger.Default.Register<TradeSellMessage>(this, HandleSell);
+
             _stockDatabaseService = stockDatabaseService;
 
 
@@ -542,6 +545,17 @@ namespace Asset_Management_Platform
         {
             _localMode = message.LocalMode;
         }
+
+        private void HandleBuy(TradeBuyMessage message)
+        {
+          
+        }
+
+        private void HandleSell(TradeSellMessage message)
+        {
+            
+        }
+
     }
 
 }
