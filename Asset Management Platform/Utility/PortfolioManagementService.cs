@@ -16,9 +16,9 @@ namespace Asset_Management_Platform.Utility
     {
         private readonly IStockDataService _stockDataService;
         private readonly IPortfolioDatabaseService _portfolioDatabaseService;
-        private readonly DispatcherTimer _timer;
-        private readonly List<Security> _securityDatabaseList;
+        private readonly DispatcherTimer _timer;        
         private readonly bool _localMode;
+        private List<Security> _securityDatabaseList;
         private List<LimitOrder> _limitOrderList;
         private List<Taxlot> _portfolioTaxlots;
         private List<Position> _portfolioPositions;
@@ -42,8 +42,8 @@ namespace Asset_Management_Platform.Utility
             _timer.Tick += _timer_Tick;
             _timer.Interval = new TimeSpan(0, 0, 10);
 
-            //Load known security info from SQL DB
-            _securityDatabaseList = _stockDataService.LoadSecurityDatabase();
+            //Register for IStockDataService creating is List<Security>
+            Messenger.Default.Register<SecurityDatabaseMessage>(this, LoadSecurityDatabase);
 
             //Download limit orders from SQL DB
             GetLimitOrderList();
@@ -52,6 +52,10 @@ namespace Asset_Management_Platform.Utility
             BuildPortfolioSecurities();
         }
 
+        private void LoadSecurityDatabase(SecurityDatabaseMessage message)
+        {
+            _securityDatabaseList = message.SecurityList;
+        }
 
         /// <summary>
         /// Creates the list of taxlots, positions, and securities owned.

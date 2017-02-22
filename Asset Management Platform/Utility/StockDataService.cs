@@ -31,16 +31,22 @@ namespace Asset_Management_Platform.Utility
             if (!_localMode) { 
                 CheckDatabases();
             }
+
+            LoadSecurityDatabase();
         }
 
         /// <summary>
-        /// Reads the SQL database and returns a List<Security>
+        /// Reads the SQL database and sends a message with the List<Security>
         /// of known securities
         /// </summary>
-        public List<Security> LoadSecurityDatabase()
+        private void LoadSecurityDatabase()
         {
-            if (_localMode)
-                return _securityDatabaseList;
+            var securityDatabaseList = new List<Security>();
+
+            if (_localMode) { 
+                Messenger.Default.Send(new SecurityDatabaseMessage(securityDatabaseList));
+                return;
+            }
 
             using (var connection = new SqlConnection(_storageString))
             {
@@ -51,7 +57,7 @@ namespace Asset_Management_Platform.Utility
                 _securityDatabaseList.AddRange(stocks);
                 _securityDatabaseList.AddRange(funds);
             }
-            return _securityDatabaseList;
+            Messenger.Default.Send<SecurityDatabaseMessage>(new SecurityDatabaseMessage(securityDatabaseList));
         }
 
         /// <summary>

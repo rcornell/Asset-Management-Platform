@@ -8,7 +8,6 @@ namespace Asset_Management_Platform.Utility
 {
     public interface IStockDataService
     {
-        List<Security> LoadSecurityDatabase();
 
         void TryDatabaseInsert(Security securitiesToInsert);
 
