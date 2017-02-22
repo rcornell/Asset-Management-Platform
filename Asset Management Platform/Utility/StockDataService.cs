@@ -227,7 +227,7 @@ namespace Asset_Management_Platform.Utility
                 {
                     var result = await yahooAPI.GetSingleSecurity(ticker, _securityDatabaseList);
                     TryDatabaseInsert(result);
-
+                    Messenger.Default.Send<StockDataResponseMessage>(new StockDataResponseMessage(result));
                 }
             }
         }
