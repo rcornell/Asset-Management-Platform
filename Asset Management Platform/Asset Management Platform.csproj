@@ -128,7 +128,9 @@
     <Compile Include="Messages\PortfolioSqlMessage.cs" />
     <Compile Include="Messages\SecurityDatabaseMessage.cs" />
     <Compile Include="Messages\TaxlotMessage.cs" />
+    <Compile Include="Messages\TradeBuyMessage.cs" />
     <Compile Include="Messages\TradeMessage.cs" />
+    <Compile Include="Messages\TradeSellMessage.cs" />
     <Compile Include="PositionByWeight.cs" />
     <Compile Include="SaveLoad\SessionData.cs" />
     <Compile Include="Taxlot.cs" />
