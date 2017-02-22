@@ -127,6 +127,7 @@
     <Compile Include="Messages\PortfolioSqlMessage.cs" />
     <Compile Include="Messages\TradeMessage.cs" />
     <Compile Include="PositionByWeight.cs" />
+    <Compile Include="SaveLoad\SessionData.cs" />
     <Compile Include="Taxlot.cs" />
     <Compile Include="Trade.cs" />
     <Compile Include="Utility\IPortfolioDatabaseService.cs" />
