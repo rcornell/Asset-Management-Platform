@@ -555,6 +555,7 @@ namespace Asset_Management_Platform
             Messenger.Default.Register<LocalModeMessage>(this, SetLocalMode);
             Messenger.Default.Register<TaxlotMessage>(this, CreateTaxlots);
             Messenger.Default.Register<TradeCompleteMessage>(this, ProcessTradeComplete);
+            Messenger.Default.Register<LimitOrderMessage>(this, ProcessLimitOrderCreated);
             _portfolioManagementService = portfolioService;
 
             TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
@@ -602,6 +603,11 @@ namespace Asset_Management_Platform
         {
             Taxlots = new ObservableCollection<Taxlot>(message.Taxlots);
             Positions = new ObservableCollection<Position>(message.Positions);
+        }
+
+        private void ProcessLimitOrderCreated(LimitOrderMessage message)
+        {
+            LimitOrderList = new ObservableCollection<LimitOrder>(message.LimitOrders);
         }
 
         private void GetValueTotals()

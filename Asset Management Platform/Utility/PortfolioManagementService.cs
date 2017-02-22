@@ -224,6 +224,7 @@ namespace Asset_Management_Platform.Utility
                 _limitOrderList = new List<LimitOrder>();
 
             _limitOrderList.Add(newLimitOrder);
+            Messenger.Default.Send<LimitOrderMessage>(new LimitOrderMessage(_limitOrderList));
         }
 
         private bool CheckOrderTerms(Trade trade)
@@ -369,6 +370,7 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         private void CheckLimitOrdersForActive()
         {
+            var orderWasExecuted = false;
             var securitiesToCheck = new List<Security>();
             var completedLimitOrders = new List<LimitOrder>();
 
@@ -398,6 +400,7 @@ namespace Asset_Management_Platform.Utility
                         var newTrade = new Trade(match.TradeType, securityToTrade, match.Ticker, match.Shares, "Limit", match.Limit, match.OrderDuration);
                         SellPosition(newTrade);
                         completedLimitOrders.Add(match);
+                        orderWasExecuted = true;
                     }
                     else if (isActive && match.TradeType == "Buy" && securityType is Stock)
                     {
@@ -405,6 +408,7 @@ namespace Asset_Management_Platform.Utility
                         var newTrade = new Trade(match.TradeType, securityToTrade, match.Ticker, match.Shares, "Limit", match.Limit, match.OrderDuration);                        
                         AddPosition(newTrade);
                         completedLimitOrders.Add(match);
+                        orderWasExecuted = true;
                     }
                     else if (isActive && match.TradeType == "Sell" && securityType is MutualFund)
                     {
@@ -412,6 +416,7 @@ namespace Asset_Management_Platform.Utility
                         var newTrade = new Trade(match.TradeType, securityToTrade, match.Ticker, match.Shares, "Limit", match.Limit, match.OrderDuration);
                         SellPosition(newTrade);
                         completedLimitOrders.Add(match);
+                        orderWasExecuted = true;
                     }
                     else if (isActive && match.TradeType == "Buy" && securityType is MutualFund)
                     {
@@ -419,6 +424,7 @@ namespace Asset_Management_Platform.Utility
                         var newTrade = new Trade(match.TradeType, securityToTrade, match.Ticker, match.Shares, "Limit", match.Limit, match.OrderDuration);
                         AddPosition(newTrade);
                         completedLimitOrders.Add(match);
+                        orderWasExecuted = true;
                     }
                 }
             }
@@ -426,6 +432,11 @@ namespace Asset_Management_Platform.Utility
             foreach (var order in completedLimitOrders)
             {
                 LimitOrderList.Remove(order);
+            }
+
+            if (orderWasExecuted)
+            {
+                Messenger.Default.Send<LimitOrderMessage>(new LimitOrderMessage(_limitOrderList));
             }
         }
 
