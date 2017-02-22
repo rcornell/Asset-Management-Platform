@@ -41,10 +41,7 @@ namespace Asset_Management_Platform.Utility
 
         void UpdatePortfolioPrices();
 
-        void UploadPortfolio();
-
         void DeletePortfolio();
-        void UploadAllDatabases();
         void TestLimitOrderMethods();
 
         Task<bool> BuildPortfolioSecurities(IEnumerable<Taxlot> taxlots);

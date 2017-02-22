@@ -1030,7 +1030,7 @@ namespace Asset_Management_Platform
             if (_localMode)
                 await ExecuteSavePortfolio();
             else
-                _portfolioManagementService.UploadAllDatabases();
+                Messenger.Default.Send<ShutdownMessage>(new ShutdownMessage(true));
             System.Windows.Application.Current.Shutdown();
         }
 

@@ -657,29 +657,7 @@ namespace Asset_Management_Platform.Utility
         public async Task GetSecurityType(string ticker, string tradeType)
         {
             Messenger.Default.Send(new SecurityTypeRequestMessage(ticker));
-        }
-
-        public void UploadAllDatabases()
-        {
-            UploadSecurityDatabase();
-            UploadPortfolio();
-            UploadLimitOrdersToDatabase();
-        }
-
-        private void UploadSecurityDatabase()
-        {
-            _stockDataService.UploadSecuritiesToDatabase();
-        }
-
-        public void UploadPortfolio()
-        {
-            _portfolioDatabaseService.SavePortfolioToDatabase();
-        }
-
-        public void UploadLimitOrdersToDatabase()
-        {
-            _portfolioDatabaseService.UploadLimitOrdersToDatabase(LimitOrderList);
-        }
+        }       
 
         public void DeletePortfolio()
         {
