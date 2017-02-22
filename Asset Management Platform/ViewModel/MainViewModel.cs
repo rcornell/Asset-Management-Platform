@@ -954,8 +954,9 @@ namespace Asset_Management_Platform
         {
             using (var portFileOps = new PortfolioFileOps())
             {
-                var taxlots = await portFileOps.TryLoadPortfolio();
-                var result = await _portfolioManagementService.BuildPortfolioSecurities(taxlots);
+                var sessionData = await portFileOps.TryLoadSession();
+                var taxlotsLoaded = await _portfolioManagementService.BuildPortfolioSecurities(sessionData.Taxlots);
+                LimitOrderList = new ObservableCollection<LimitOrder>(sessionData.LimitOrders);                
             }
         }
 

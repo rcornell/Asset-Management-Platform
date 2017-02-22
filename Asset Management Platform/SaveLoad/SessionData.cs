@@ -13,7 +13,8 @@ namespace Asset_Management_Platform.SaveLoad
 
         public SessionData()
         {
-            
+            LimitOrders = new List<LimitOrder>();
+            Taxlots = new List<Taxlot>();
         }
 
         public SessionData(List<LimitOrder> limitOrders, List<Taxlot> taxlots)

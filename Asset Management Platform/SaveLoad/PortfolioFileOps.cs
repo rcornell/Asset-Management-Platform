@@ -80,8 +80,6 @@ namespace Asset_Management_Platform.SaveLoad
 
         public async Task<SessionData> TryLoadSession()
         {
-            var taxlotsToReturn = new ObservableCollection<Taxlot>();
-
             var dialog = new OpenFileDialog()
             {
                 InitialDirectory = documentsPath,
@@ -97,45 +95,44 @@ namespace Asset_Management_Platform.SaveLoad
             bool? loadPathConfirmed = dialog.ShowDialog();
 
             if (loadPathConfirmed == null || !loadPathConfirmed.Value)
-                return taxlotsToReturn;
+                return new SessionData();
 
             var path = dialog.FileName;
 
             try
             {
                 var result = File.ReadAllText(path);
-                var taxlotList =
+                var sessionData =
                     await Task.Factory.StartNew(
-                        () => JsonConvert.DeserializeObject<ObservableCollection<Taxlot>>(result));
+                        () => JsonConvert.DeserializeObject<SessionData>(result));
 
-                taxlotsToReturn = taxlotList;
-                return taxlotsToReturn;
+                return sessionData;
             }
             catch (JsonReaderException ex)
             {
                 //var message = @"Problem reading your list of taxlots. Please check to see that the json is valid.";
                 Messenger.Default.Send(new FileErrorMessage(ex.Message));
-                return taxlotsToReturn;
+                return new SessionData();
             }
             catch (ArgumentException ex)
             {
                 Messenger.Default.Send(new FileErrorMessage(ex.Message));
-                return taxlotsToReturn;
+                return new SessionData();
             }
             catch (FileNotFoundException ex)
             {
                 Messenger.Default.Send(new FileErrorMessage(ex.Message));
-                return taxlotsToReturn;
+                return new SessionData();
             }
             catch (IOException ex)
             {
                 Messenger.Default.Send(new FileErrorMessage(ex.Message));
-                return taxlotsToReturn;
+                return new SessionData();
             }
             catch (Exception ex)
             {
                 Messenger.Default.Send(new FileErrorMessage(ex.Message));
-                return taxlotsToReturn;
+                return new SessionData();
             }
         }
 
