@@ -24,6 +24,8 @@ namespace Asset_Management_Platform.Utility
 
         public StockDataService()
         {
+            Messenger.Default.Register<StockDataRequestMessage>(this, HandleStockDataRequest);
+
             _securityDatabaseList = new List<Security>();
             _storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             _localMode = _storageString == null ? true : false;
@@ -34,6 +36,14 @@ namespace Asset_Management_Platform.Utility
             }
 
             LoadSecurityDatabase();
+        }
+
+        private async void HandleStockDataRequest(StockDataRequestMessage message)
+        {
+            if (message.Tickers != null)
+                await GetSecurityInfo(message.Tickers);
+            if (!string.IsNullOrEmpty(message.Ticker))
+                await GetSecurityInfo(message.Ticker);
         }
 
         /// <summary>
@@ -198,7 +208,7 @@ namespace Asset_Management_Platform.Utility
                 }
             }
         }
-
+    
         public List<Security> GetSecurityList()
         {
             return _securityDatabaseList;
