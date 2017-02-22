@@ -39,12 +39,13 @@ namespace Asset_Management_Platform.Utility
             //Register for LocalMode notification
             Messenger.Default.Register<LocalModeMessage>(this, SetLocalMode);
 
-            //Register for IStockDataService creating is List<Security>
+            //Register for IStockDataService creating its *database* of List<Security>
             Messenger.Default.Register<SecurityDatabaseMessage>(this, LoadSecurityDatabase);
 
             //Register for IPortfolioDatabaseService creating its List<Taxlot>
             Messenger.Default.Register<TaxlotMessage>(this, CreateTaxlots);
 
+            //Register for IStockDataService returning Security/Securities information
             Messenger.Default.Register<StockDataResponseMessage>(this, HandleStockDataResponse);
 
             _stockDataService = stockDataService;
@@ -87,6 +88,7 @@ namespace Asset_Management_Platform.Utility
             if (!message.IsStartup && message.Security != null)
             {
                 _requestedSecurity = message.Security;
+                return;
             }
 
             if (!message.IsStartup && message.Securities != null)
@@ -245,7 +247,9 @@ namespace Asset_Management_Platform.Utility
                 _limitOrderList = new List<LimitOrder>();
 
             _limitOrderList.Add(newLimitOrder);
-            Messenger.Default.Send<LimitOrderMessage>(new LimitOrderMessage(_limitOrderList));
+
+            //Send updated List<LimitOrder> to listeners in MainViewModel
+            Messenger.Default.Send<LimitOrderMessage>(new LimitOrderMessage(_limitOrderList, false));
         }
 
         private bool CheckOrderTerms(Trade trade)
@@ -457,7 +461,7 @@ namespace Asset_Management_Platform.Utility
 
             if (orderWasExecuted)
             {
-                Messenger.Default.Send<LimitOrderMessage>(new LimitOrderMessage(_limitOrderList));
+                Messenger.Default.Send<LimitOrderMessage>(new LimitOrderMessage(_limitOrderList, false));
             }
         }
 
@@ -469,10 +473,11 @@ namespace Asset_Management_Platform.Utility
         public async Task<Security> GetTradePreviewSecurity(string ticker)
         {
             var securityToReturn = await _stockDataService.GetSecurityInfo(ticker);
-            if (securityToReturn is Stock)
-                return (Stock)securityToReturn;
-            if (securityToReturn is MutualFund)
-                return (MutualFund)securityToReturn;
+
+            //if (securityToReturn is Stock)
+            //    return (Stock)securityToReturn;
+            //if (securityToReturn is MutualFund)
+            //    return (MutualFund)securityToReturn;
 
             //Should not hit this.
             return new Stock("", "XXX", "Unknown Stock", 0, 0.00);
@@ -488,10 +493,10 @@ namespace Asset_Management_Platform.Utility
         public async Task<Security> GetTradePreviewSecurity(string ticker, Security securityType)
         {
             var securityToReturn = await _stockDataService.GetSecurityInfo(ticker);
-            if (securityToReturn is Stock)
-                return (Stock)securityToReturn;
-            if (securityToReturn is MutualFund)
-                return (MutualFund)securityToReturn;
+            //if (securityToReturn is Stock)
+            //    return (Stock)securityToReturn;
+            //if (securityToReturn is MutualFund)
+            //    return (MutualFund)securityToReturn;
 
             //Should not hit this.
             return new Stock("", "XXX", "Unknown Stock", 0, 0.00);
@@ -639,18 +644,9 @@ namespace Asset_Management_Platform.Utility
         /// <param name="ticker"></param>
         /// <param name="tradeType"></param>
         /// <returns></returns>
-        public async Task<Security> GetSecurityType(string ticker, string tradeType)
+        public async Task GetSecurityType(string ticker, string tradeType)
         {
-            Security secType;
-
-            if (tradeType == "Sell")
-                secType = _portfolioPositions.Find(s => s.Ticker == ticker).GetSecurityType();
-            else
-            {
-                secType = await _stockDataService.GetSecurityInfo(ticker);
-            }
-
-            return secType;
+            Messenger.Default.Send(new SecurityTypeRequestMessage(ticker));
         }
 
         public void UploadAllDatabases()

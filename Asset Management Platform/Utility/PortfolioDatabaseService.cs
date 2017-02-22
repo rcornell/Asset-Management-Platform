@@ -25,6 +25,7 @@ namespace Asset_Management_Platform
         private readonly List<Position> _portfolioOriginalState;
         private readonly List<Position> _myPositions; //This is THE main position list
         private readonly List<Taxlot> _myTaxlots; //This is THE main taxlot list
+        private List<LimitOrder>  _myLimitOrders;
         private bool _localMode;
         private IStockDataService _stockDatabaseService;    
        
@@ -35,6 +36,7 @@ namespace Asset_Management_Platform
 
             Messenger.Default.Register<TradeBuyMessage>(this, HandleBuy);
             Messenger.Default.Register<TradeSellMessage>(this, HandleSell);
+            Messenger.Default.Register<LimitOrderMessage>(this, HandleLimitOrderList);
 
             _stockDatabaseService = stockDatabaseService;
 
@@ -43,6 +45,11 @@ namespace Asset_Management_Platform
             _portfolioOriginalState = new List<Position>();
             _myPositions = new List<Position>();
             _myTaxlots = new List<Taxlot>();
+        }
+
+        private void HandleLimitOrderList(LimitOrderMessage message)
+        {
+            
         }
 
         public async Task BuildDatabaseTaxlots()

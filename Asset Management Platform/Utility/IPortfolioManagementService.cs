@@ -23,7 +23,7 @@ namespace Asset_Management_Platform.Utility
 
         Task<Security> GetTradePreviewSecurity(string ticker, Security SelectedSecurityType);
 
-        Task<Security> GetSecurityType(string ticker, string tradeType);
+        Task GetSecurityType(string ticker, string tradeType);
 
         List<Position> GetPositions();
 
