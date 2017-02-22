@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Asset_Management_Platform.Messages;
 
 namespace Asset_Management_Platform.Utility
 {
@@ -13,11 +14,9 @@ namespace Asset_Management_Platform.Utility
 
         void UploadSecuritiesToDatabase();
 
-        List<Security> GetSecurityList();
-
         Task GetSecurityInfo(string ticker);
 
-        Task GetSecurityInfo(List<string> tickers);
+        Task GetSecurityInfo(StockDataRequestMessage message);
 
         Task GetUpdatedPricing(List<Security> securities);
 

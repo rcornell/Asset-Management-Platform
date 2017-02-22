@@ -89,7 +89,7 @@ namespace Asset_Management_Platform.Utility
 
             //Get security data with market data API (currently YahooAPI)
             var tickers = _portfolioTaxlots.Select(s => s.Ticker).Distinct().ToList();
-            var rawSecurities = await _stockDataService.GetSecurityInfo(tickers);
+            Messenger.Default.Send<StockDataRequestMessage>(new StockDataRequestMessage(tickers, true));
 
             //Get MutualFund category data from Db. 
             //Ideally a future API will provide this functionality.

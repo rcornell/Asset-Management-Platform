@@ -10,10 +10,12 @@ namespace Asset_Management_Platform.Messages
     {
         public List<string> Tickers;
         public string Ticker;
+        public bool IsStartup;
 
-        public StockDataRequestMessage(List<string> tickers)
+        public StockDataRequestMessage(List<string> tickers, bool isStartup)
         {
             Tickers = tickers;
+            IsStartup = isStartup;
         }
 
         public StockDataRequestMessage(string ticker)

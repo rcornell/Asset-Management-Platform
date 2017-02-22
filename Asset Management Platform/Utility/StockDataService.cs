@@ -41,7 +41,7 @@ namespace Asset_Management_Platform.Utility
         private async void HandleStockDataRequest(StockDataRequestMessage message)
         {
             if (message.Tickers != null)
-                await GetSecurityInfo(message.Tickers);
+                await GetSecurityInfo(message);
             if (!string.IsNullOrEmpty(message.Ticker))
                 await GetSecurityInfo(message.Ticker);
         }
@@ -68,6 +68,10 @@ namespace Asset_Management_Platform.Utility
                 _securityDatabaseList.AddRange(stocks);
                 _securityDatabaseList.AddRange(funds);
             }
+
+            securityDatabaseList = GetMutualFundExtraData(securityDatabaseList);
+            
+            //Listener is PortfolioManagementService
             Messenger.Default.Send<SecurityDatabaseMessage>(new SecurityDatabaseMessage(securityDatabaseList));
         }
 
@@ -208,11 +212,6 @@ namespace Asset_Management_Platform.Utility
                 }
             }
         }
-    
-        public List<Security> GetSecurityList()
-        {
-            return _securityDatabaseList;
-        }
 
         /// <summary>
         /// Get pricing and security info for a single ticker.
@@ -232,15 +231,19 @@ namespace Asset_Management_Platform.Utility
             }
         }
 
-        public async Task GetSecurityInfo(List<string> tickers)
+        public async Task GetSecurityInfo(StockDataRequestMessage message)
         {
-            var resultList = new List<Security>();
-            if (tickers != null && tickers.Count > 0)
+            if (message.Tickers != null && message.Tickers.Count > 0)
             {
                 using (var yahooAPI = new YahooAPIService())
                 {
-                    resultList = await yahooAPI.GetMultipleSecurities(tickers);
-                    Messenger.Default.Send<StockDataResponseMessage>(new StockDataResponseMessage(resultList));
+                    var resultList = await yahooAPI.GetMultipleSecurities(message.Tickers);
+                    
+                    //Return response. Message's boolean is True if this is a startup call of this method.
+                    if (message.IsStartup)
+                        Messenger.Default.Send<StockDataResponseMessage>(new StockDataResponseMessage(resultList, true));
+                    else
+                        Messenger.Default.Send<StockDataResponseMessage>(new StockDataResponseMessage(resultList, false));
                 }
             }
         }
