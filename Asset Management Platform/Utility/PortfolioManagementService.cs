@@ -43,6 +43,8 @@ namespace Asset_Management_Platform.Utility
             //Register for IPortfolioDatabaseService creating its List<Taxlot>
             Messenger.Default.Register<TaxlotMessage>(this, CreateTaxlots);
 
+            Messenger.Default.Register<StockDataResponseMessage>(this, HandleStockDataResponse);
+
             _stockDataService = stockDataService;
             _portfolioDatabaseService = portfolioDatabaseService;                 
                        
@@ -72,7 +74,17 @@ namespace Asset_Management_Platform.Utility
             _portfolioTaxlots = message.Taxlots;
         }
 
+        private void HandleStockDataResponse(StockDataResponseMessage message)
+        {
+            if (message.IsStartup && message.Securities != null)
+            {
+                _portfolioSecurities = message.Securities;
+                return;
+            }
 
+            //Do something when other methods request a list of stock data.
+            return;
+        }
 
 
 
@@ -90,10 +102,6 @@ namespace Asset_Management_Platform.Utility
             //Get security data with market data API (currently YahooAPI)
             var tickers = _portfolioTaxlots.Select(s => s.Ticker).Distinct().ToList();
             Messenger.Default.Send<StockDataRequestMessage>(new StockDataRequestMessage(tickers, true));
-
-            //Get MutualFund category data from Db. 
-            //Ideally a future API will provide this functionality.
-            _portfolioSecurities = _stockDataService.GetMutualFundExtraData(rawSecurities);
 
             //If taxlots exist, build positions with updated pricing data.
             _portfolioPositions = _portfolioDatabaseService.GetPositionsFromTaxlots(_portfolioSecurities);
@@ -236,7 +244,7 @@ namespace Asset_Management_Platform.Utility
             var limit = trade.Limit;
             var orderDuration = trade.OrderDuration;
 
-            if (trade.Terms == "Limit" || trade.Terms == "Stop Limit" || trade.Terms == "Stop" && limit <= 0)
+            if (trade.Terms == "Limit" || trade.Terms == "Stop Limit" || trade.Terms == "Stop" || limit <= 0)
                 return false;
 
             if (security != null && !string.IsNullOrEmpty(ticker) && shares > 0 
