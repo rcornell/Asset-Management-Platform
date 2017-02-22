@@ -589,7 +589,7 @@ namespace Asset_Management_Platform
                 throw new NotImplementedException();
             }
 
-            GetLimitOrders(); //Make this save locally as well.
+            GetLimitOrders();
 
             //_portfolioManagementService.StartUpdates(); //TURNED OFF FOR TESTING
         }

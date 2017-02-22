@@ -111,10 +111,10 @@ namespace Asset_Management_Platform.Utility
 
         private void GetLimitOrderList()
         {
-            if (!_portfolioDatabaseService.IsLocalMode())
-                _limitOrderList = _portfolioDatabaseService.LoadLimitOrdersFromDatabase();
-            else
+            if (_portfolioDatabaseService.IsLocalMode())
                 _limitOrderList = new List<LimitOrder>();
+            else
+                _limitOrderList = _portfolioDatabaseService.LoadLimitOrdersFromDatabase();
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace Asset_Management_Platform.Utility
                 return;
             }
 
-            if (validOrder && limitType && activeLimitOrder)
+            if (validOrder && limitType)
             {
                 //Order is valid and a limit-type and is active
                 AddPosition(trade);
