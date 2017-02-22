@@ -19,7 +19,7 @@ namespace Asset_Management_Platform.Utility
 
         void SavePortfolioToDatabase();
 
-        void UploadLimitOrdersToDatabase(List<LimitOrder> limitOrders);
+        void UploadLimitOrdersToDatabase();
 
         Task LoadLimitOrdersFromDatabase();
 

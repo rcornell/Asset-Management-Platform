@@ -373,12 +373,12 @@ namespace Asset_Management_Platform
             }
         }
 
-        public void UploadLimitOrdersToDatabase(List<LimitOrder> limitOrders)
+        public void UploadLimitOrdersToDatabase()
         {
             var insertString = @"INSERT INTO dbo.MyLimitOrders (TradeType, Ticker, Shares, Limit, SecurityType, OrderDuration) VALUES ";
 
-            var final = limitOrders.Last();
-            foreach (var order in limitOrders)
+            var final = _myLimitOrders.Last();
+            foreach (var order in _myLimitOrders)
             {
                 insertString += string.Format(@"('{0}', '{1}', {2}, {3}, '{4}', '{5}')", order.TradeType, order.Ticker, order.Shares, order.Limit, order.SecurityType, order.OrderDuration);
                 if (order != final)
