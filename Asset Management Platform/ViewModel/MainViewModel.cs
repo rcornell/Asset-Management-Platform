@@ -87,6 +87,8 @@ namespace Asset_Management_Platform
         private bool _canSave;
         private bool _canLoad;
         private bool _localMode;
+        private Security _requestedSecurity;
+        private List<Security> _requestedSecurityList;
         #endregion
 
         #region All Properties
@@ -556,6 +558,7 @@ namespace Asset_Management_Platform
             Messenger.Default.Register<TaxlotMessage>(this, CreateTaxlots);
             Messenger.Default.Register<TradeCompleteMessage>(this, ProcessTradeComplete);
             Messenger.Default.Register<LimitOrderMessage>(this, ProcessLimitOrderCreated);
+            Messenger.Default.Register<StockDataResponseMessage>(this, ProcessStockDataResponse);
             _portfolioManagementService = portfolioService;
 
             TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
@@ -608,6 +611,22 @@ namespace Asset_Management_Platform
         private void ProcessLimitOrderCreated(LimitOrderMessage message)
         {
             LimitOrderList = new ObservableCollection<LimitOrder>(message.LimitOrders);
+        }
+
+        private void ProcessStockDataResponse(StockDataResponseMessage message)
+        {
+            if (message.IsStartup)
+                return;
+
+            if (message.Securities != null)
+            {
+                _requestedSecurityList = message.Securities;
+            }
+
+            if (message.Security != null)
+            {
+                _requestedSecurity = message.Security;
+            }
         }
 
         private void GetValueTotals()
