@@ -553,6 +553,7 @@ namespace Asset_Management_Platform
         public MainViewModel(IPortfolioManagementService portfolioService)
         {
             Messenger.Default.Register<LocalModeMessage>(this, SetLocalMode);
+            Messenger.Default.Register<TaxlotMessage>(this, CreateTaxlots);
             _portfolioManagementService = portfolioService;
 
             TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
@@ -589,6 +590,11 @@ namespace Asset_Management_Platform
         private void SetLocalMode(LocalModeMessage message)
         {
             _localMode = message.LocalMode;
+        }
+
+        private void CreateTaxlots(TaxlotMessage message)
+        {
+            Taxlots = new ObservableCollection<Taxlot>(message.Taxlots);
         }
 
         private void GetValueTotals()

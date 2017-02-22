@@ -42,10 +42,12 @@ namespace Asset_Management_Platform
             _myTaxlots = new List<Taxlot>();
         }
 
-        public async Task<List<Taxlot>> BuildDatabaseTaxlots()
+        public async Task BuildDatabaseTaxlots()
         {
+            var downloadedTaxlots = new List<Taxlot>();
+
             if (_localMode)
-                return _myTaxlots;
+                Messenger.Default.Send<TaxlotMessage>(new TaxlotMessage(downloadedTaxlots));
 
             using (var connection = new SqlConnection(_storageString))
             {
@@ -74,7 +76,7 @@ namespace Asset_Management_Platform
                     }
                 }
             }
-            return _myTaxlots;
+            Messenger.Default.Send<TaxlotMessage>(new TaxlotMessage(downloadedTaxlots));
         }
 
         public List<Taxlot> BuildLocalTaxlots(List<Taxlot> taxlots)

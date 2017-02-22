@@ -40,20 +40,21 @@ namespace Asset_Management_Platform.Utility
             //Register for IStockDataService creating is List<Security>
             Messenger.Default.Register<SecurityDatabaseMessage>(this, LoadSecurityDatabase);
 
+            //Register for IPortfolioDatabaseService creating its List<Taxlot>
+            Messenger.Default.Register<TaxlotMessage>(this, CreateTaxlots);
+
             _stockDataService = stockDataService;
             _portfolioDatabaseService = portfolioDatabaseService;                 
                        
-            _timer = new DispatcherTimer();
-            _timer.Tick += _timer_Tick;
-            _timer.Interval = new TimeSpan(0, 0, 10);
-
-            
-
             //Download limit orders from SQL DB
             GetLimitOrderList();
 
             //Create the core List<T>'s of taxlots, positions, and securities
             BuildPortfolioSecurities();
+
+            _timer = new DispatcherTimer();
+            _timer.Tick += _timer_Tick;
+            _timer.Interval = new TimeSpan(0, 0, 10);
         }
 
         private void LoadSecurityDatabase(SecurityDatabaseMessage message)
@@ -66,14 +67,25 @@ namespace Asset_Management_Platform.Utility
             _localMode = message.LocalMode;
         }
 
+        private void CreateTaxlots(TaxlotMessage message)
+        {
+            _portfolioTaxlots = message.Taxlots;
+        }
+
+
+
+
+
+
         /// <summary>
+        /// Called when NOT in local mode.
         /// Creates the list of taxlots, positions, and securities owned.
         /// </summary>
         private async Task BuildPortfolioSecurities()
         {
             //Calls PortfolioDatabaseService to create its List<Taxlot> then
             //a reference to that field
-            _portfolioTaxlots = await _portfolioDatabaseService.BuildDatabaseTaxlots();
+            await _portfolioDatabaseService.BuildDatabaseTaxlots();
 
             //Get security data with market data API (currently YahooAPI)
             var tickers = _portfolioTaxlots.Select(s => s.Ticker).Distinct().ToList();
