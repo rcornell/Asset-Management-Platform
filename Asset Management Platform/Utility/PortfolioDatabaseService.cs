@@ -25,7 +25,7 @@ namespace Asset_Management_Platform
         private readonly List<Position> _portfolioOriginalState;
         private readonly List<Position> _myPositions; //This is THE main position list
         private readonly List<Taxlot> _myTaxlots; //This is THE main taxlot list
-        private List<LimitOrder>  _myLimitOrders;
+        private List<LimitOrder> _myLimitOrders;
         private bool _localMode;
         private IStockDataService _stockDatabaseService;    
        
@@ -40,16 +40,21 @@ namespace Asset_Management_Platform
 
             _stockDatabaseService = stockDatabaseService;
 
-
-
             _portfolioOriginalState = new List<Position>();
             _myPositions = new List<Position>();
             _myTaxlots = new List<Taxlot>();
+            _myLimitOrders = new List<LimitOrder>();
+
+            LoadLimitOrdersFromDatabase();
+
         }
 
         private void HandleLimitOrderList(LimitOrderMessage message)
         {
-            
+            if (!message.IsStartup)
+            {
+                _myLimitOrders = message.LimitOrders;
+            }
         }
 
         public async Task BuildDatabaseTaxlots()
@@ -451,9 +456,8 @@ namespace Asset_Management_Platform
         /// Downloads and parses the list of limit orders from SQL table
         /// </summary>
         /// <returns></returns>
-        public List<LimitOrder> LoadLimitOrdersFromDatabase()
+        public async Task LoadLimitOrdersFromDatabase()
         {
-            var limitOrders = new List<LimitOrder>();
             var downloadString = @"SELECT * FROM dbo.MyLimitOrders;";
             var limitDBResults = new List<LimitOrderDbResult>();
 
@@ -503,10 +507,11 @@ namespace Asset_Management_Platform
 
                 var newTrade = new Trade(result.TradeType, newSecurity, result.Ticker, result.Shares, "Limit", result.Limit, result.OrderDuration);
                 var newLimitOrder = new LimitOrder(newTrade);
-                limitOrders.Add(newLimitOrder);
+                _myLimitOrders.Add(newLimitOrder);
             }
-
-            return limitOrders;
+            
+            //Send List<LimitOrder> to all startup listeners
+            Messenger.Default.Send<LimitOrderMessage>(new LimitOrderMessage(_myLimitOrders, true));
         }      
 
         /// <summary>
@@ -529,8 +534,7 @@ namespace Asset_Management_Platform
                 {
                     pos.Taxlots.Add(taxlotToAdd);
                 }
-            }
-            
+            }            
         }
 
         /// <summary>
