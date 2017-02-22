@@ -78,7 +78,7 @@ namespace Asset_Management_Platform.SaveLoad
             return false;
         }
 
-        public async Task<ObservableCollection<Taxlot>> TryLoadPortfolio()
+        public async Task<SessionData> TryLoadSession()
         {
             var taxlotsToReturn = new ObservableCollection<Taxlot>();
 
