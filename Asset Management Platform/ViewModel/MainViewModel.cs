@@ -86,7 +86,7 @@ namespace Asset_Management_Platform
         private bool _previewOrderIsBusy;
         private bool _canSave;
         private bool _canLoad;
-        private readonly bool _localMode;
+        private bool _localMode;
         #endregion
 
         #region All Properties
@@ -552,6 +552,7 @@ namespace Asset_Management_Platform
 
         public MainViewModel(IPortfolioManagementService portfolioService)
         {
+            Messenger.Default.Register<LocalModeMessage>(this, SetLocalMode);
             _portfolioManagementService = portfolioService;
 
             TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
@@ -579,21 +580,16 @@ namespace Asset_Management_Platform
             LimitOrderIsSelected = false;
             _canLoad = true;
             _canSave = true;
-            if (_portfolioManagementService != null)
-            {
-                _localMode = _portfolioManagementService.IsLocalMode();
-            }
-            else
-            {
-                //Should be impossible to hit.
-                throw new NotImplementedException();
-            }
 
             GetLimitOrders();
 
             //_portfolioManagementService.StartUpdates(); //TURNED OFF FOR TESTING
         }
 
+        private void SetLocalMode(LocalModeMessage message)
+        {
+            _localMode = message.LocalMode;
+        }
 
         private void GetValueTotals()
         {

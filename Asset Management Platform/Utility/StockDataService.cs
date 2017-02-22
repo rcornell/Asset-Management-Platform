@@ -27,6 +27,7 @@ namespace Asset_Management_Platform.Utility
             _securityDatabaseList = new List<Security>();
             _storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
             _localMode = _storageString == null ? true : false;
+            Messenger.Default.Send<LocalModeMessage>(new LocalModeMessage(_localMode));
 
             if (!_localMode) { 
                 CheckDatabases();

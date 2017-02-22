@@ -22,18 +22,20 @@ namespace Asset_Management_Platform
     public class PortfolioDatabaseService : IPortfolioDatabaseService
     {
         private readonly string _storageString;
-        private readonly bool _localMode;
         private readonly List<Position> _portfolioOriginalState;
         private readonly List<Position> _myPositions; //This is THE main position list
         private readonly List<Taxlot> _myTaxlots; //This is THE main taxlot list
-        private IStockDataService _stockDatabaseService;
+        private bool _localMode;
+        private IStockDataService _stockDatabaseService;    
        
         public PortfolioDatabaseService(IStockDataService stockDatabaseService)
-        {            
+        {
+            //Register for LocalMode notification
+            Messenger.Default.Register<LocalModeMessage>(this, SetLocalMode);
+
             _stockDatabaseService = stockDatabaseService;
 
-            _storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
-            _localMode = _storageString == null ? true : false;
+
 
             _portfolioOriginalState = new List<Position>();
             _myPositions = new List<Position>();
@@ -534,9 +536,9 @@ namespace Asset_Management_Platform
             return _myPositions;
         }
 
-        public bool IsLocalMode()
+        private void SetLocalMode(LocalModeMessage message)
         {
-            return _localMode;
+            _localMode = message.LocalMode;
         }
     }
 

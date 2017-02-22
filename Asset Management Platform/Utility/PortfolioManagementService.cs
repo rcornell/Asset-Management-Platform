@@ -17,7 +17,7 @@ namespace Asset_Management_Platform.Utility
         private readonly IStockDataService _stockDataService;
         private readonly IPortfolioDatabaseService _portfolioDatabaseService;
         private readonly DispatcherTimer _timer;        
-        private readonly bool _localMode;
+        private bool _localMode;
         private List<Security> _securityDatabaseList;
         private List<LimitOrder> _limitOrderList;
         private List<Taxlot> _portfolioTaxlots;
@@ -34,16 +34,20 @@ namespace Asset_Management_Platform.Utility
         
         public PortfolioManagementService(IStockDataService stockDataService, IPortfolioDatabaseService portfolioDatabaseService)
         {
+            //Register for LocalMode notification
+            Messenger.Default.Register<LocalModeMessage>(this, SetLocalMode);
+
+            //Register for IStockDataService creating is List<Security>
+            Messenger.Default.Register<SecurityDatabaseMessage>(this, LoadSecurityDatabase);
+
             _stockDataService = stockDataService;
-            _portfolioDatabaseService = portfolioDatabaseService;
-            _localMode = _portfolioDatabaseService.IsLocalMode();                     
+            _portfolioDatabaseService = portfolioDatabaseService;                 
                        
             _timer = new DispatcherTimer();
             _timer.Tick += _timer_Tick;
             _timer.Interval = new TimeSpan(0, 0, 10);
 
-            //Register for IStockDataService creating is List<Security>
-            Messenger.Default.Register<SecurityDatabaseMessage>(this, LoadSecurityDatabase);
+            
 
             //Download limit orders from SQL DB
             GetLimitOrderList();
@@ -55,6 +59,11 @@ namespace Asset_Management_Platform.Utility
         private void LoadSecurityDatabase(SecurityDatabaseMessage message)
         {
             _securityDatabaseList = message.SecurityList;
+        }
+
+        private void SetLocalMode(LocalModeMessage message)
+        {
+            _localMode = message.LocalMode;
         }
 
         /// <summary>
@@ -115,7 +124,7 @@ namespace Asset_Management_Platform.Utility
 
         private void GetLimitOrderList()
         {
-            if (_portfolioDatabaseService.IsLocalMode())
+            if (_localMode)
                 _limitOrderList = new List<LimitOrder>();
             else
                 _limitOrderList = _portfolioDatabaseService.LoadLimitOrdersFromDatabase();

@@ -31,7 +31,5 @@ namespace Asset_Management_Platform.Utility
 
         List<Taxlot> BuildLocalTaxlots(List<Taxlot> taxlots);
 
-        bool IsLocalMode();
-
     }
 }
