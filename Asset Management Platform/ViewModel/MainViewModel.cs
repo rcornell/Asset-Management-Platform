@@ -554,6 +554,7 @@ namespace Asset_Management_Platform
         {
             Messenger.Default.Register<LocalModeMessage>(this, SetLocalMode);
             Messenger.Default.Register<TaxlotMessage>(this, CreateTaxlots);
+            Messenger.Default.Register<TradeCompleteMessage>(this, ProcessTradeComplete);
             _portfolioManagementService = portfolioService;
 
             TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
@@ -595,6 +596,12 @@ namespace Asset_Management_Platform
         private void CreateTaxlots(TaxlotMessage message)
         {
             Taxlots = new ObservableCollection<Taxlot>(message.Taxlots);
+        }
+
+        private void ProcessTradeComplete(TradeCompleteMessage message)
+        {
+            Taxlots = new ObservableCollection<Taxlot>(message.Taxlots);
+            Positions = new ObservableCollection<Position>(message.Positions);
         }
 
         private void GetValueTotals()

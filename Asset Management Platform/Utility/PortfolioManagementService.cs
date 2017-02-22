@@ -189,28 +189,31 @@ namespace Asset_Management_Platform.Utility
             {
                 //Create taxlot and position, then add to position list
                 var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security, trade.Security.LastPrice);
-                _portfolioDatabaseService.AddToPortfolioDatabase(taxlot);
+                Messenger.Default.Send<TradeBuyMessage>(new TradeBuyMessage(trade, taxlot));
             }
             //Ticker exists in portfolio and security is stock
             else if (trade.Security is Stock && _portfolioPositions.Any(s => s.Ticker == trade.Ticker))
             {
                 //Create new taxlot and add to existing position
                 var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security, trade.Security.LastPrice);
-                _portfolioDatabaseService.AddToPortfolioDatabase(taxlot);
+                Messenger.Default.Send<TradeBuyMessage>(new TradeBuyMessage(trade, taxlot));
             }
             //Ticker is not already owned and is a MutualFund
             else if (trade.Security is MutualFund && !_portfolioPositions.Any(s => s.Ticker == trade.Ticker))
             {
                 //Create new taxlot and add to existing position
                 var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security, trade.Security.LastPrice);
-                _portfolioDatabaseService.AddToPortfolioDatabase(taxlot);
+                Messenger.Default.Send<TradeBuyMessage>(new TradeBuyMessage(trade, taxlot));
             }
             else if (trade.Security is MutualFund && _portfolioPositions.Any(s => s.Ticker == trade.Ticker))
             {
                 //Create new taxlot and add to existing position
                 var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security, trade.Security.LastPrice);
-                _portfolioDatabaseService.AddToPortfolioDatabase(taxlot);
+                Messenger.Default.Send<TradeBuyMessage>(new TradeBuyMessage(trade, taxlot));
             }
+            
+            //Sends updated List<Taxlot> and List<Position>
+            Messenger.Default.Send<TradeCompleteMessage>(new TradeCompleteMessage(_portfolioPositions, _portfolioTaxlots));
         }
 
         private void CreateLimitOrder(Trade trade)
@@ -316,6 +319,9 @@ namespace Asset_Management_Platform.Utility
                 //User selling partial position
                 position.SellShares(shares);
             }
+
+            //Sends updated List<Taxlot> and List<Position>
+            Messenger.Default.Send<TradeCompleteMessage>(new TradeCompleteMessage(_portfolioPositions, _portfolioTaxlots));
         }
 
         /// <summary>

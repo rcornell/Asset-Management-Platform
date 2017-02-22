@@ -129,6 +129,7 @@
     <Compile Include="Messages\SecurityDatabaseMessage.cs" />
     <Compile Include="Messages\TaxlotMessage.cs" />
     <Compile Include="Messages\TradeBuyMessage.cs" />
+    <Compile Include="Messages\TradeCompleteMessage.cs" />
     <Compile Include="Messages\TradeMessage.cs" />
     <Compile Include="Messages\TradeSellMessage.cs" />
     <Compile Include="PositionByWeight.cs" />

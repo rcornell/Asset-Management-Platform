@@ -548,7 +548,7 @@ namespace Asset_Management_Platform
 
         private void HandleBuy(TradeBuyMessage message)
         {
-          
+            AddToPortfolioDatabase(message.Taxlot);
         }
 
         private void HandleSell(TradeSellMessage message)
