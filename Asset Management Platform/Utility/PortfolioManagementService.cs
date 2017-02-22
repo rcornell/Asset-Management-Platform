@@ -23,6 +23,8 @@ namespace Asset_Management_Platform.Utility
         private List<Taxlot> _portfolioTaxlots;
         private List<Position> _portfolioPositions;
         private List<Security> _portfolioSecurities;
+        private Security _requestedSecurity;
+        private List<Security> _requestedSecurityList;
 
         public List<LimitOrder> LimitOrderList //used to display in MainViewModel
         {
@@ -82,8 +84,15 @@ namespace Asset_Management_Platform.Utility
                 return;
             }
 
-            //Do something when other methods request a list of stock data.
-            return;
+            if (!message.IsStartup && message.Security != null)
+            {
+                _requestedSecurity = message.Security;
+            }
+
+            if (!message.IsStartup && message.Securities != null)
+            {
+                _requestedSecurityList = message.Securities;
+            }
         }
 
 
@@ -102,6 +111,10 @@ namespace Asset_Management_Platform.Utility
             //Get security data with market data API (currently YahooAPI)
             var tickers = _portfolioTaxlots.Select(s => s.Ticker).Distinct().ToList();
             Messenger.Default.Send<StockDataRequestMessage>(new StockDataRequestMessage(tickers, true));
+
+
+            //YOU GOT THIS FAR WITH THE MESSAGES
+
 
             //If taxlots exist, build positions with updated pricing data.
             _portfolioPositions = _portfolioDatabaseService.GetPositionsFromTaxlots(_portfolioSecurities);
