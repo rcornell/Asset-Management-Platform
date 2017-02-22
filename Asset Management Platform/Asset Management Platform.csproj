@@ -127,6 +127,7 @@
     <Compile Include="Messages\LimitOrderMessage.cs" />
     <Compile Include="Messages\LocalModeMessage.cs" />
     <Compile Include="Messages\PortfolioSqlMessage.cs" />
+    <Compile Include="Messages\PositionMessage.cs" />
     <Compile Include="Messages\SecurityDatabaseMessage.cs" />
     <Compile Include="Messages\SecurityTypeRequestMessage.cs" />
     <Compile Include="Messages\SecurityTypeResponseMessage.cs" />

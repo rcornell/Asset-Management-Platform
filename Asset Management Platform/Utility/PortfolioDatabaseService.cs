@@ -46,6 +46,7 @@ namespace Asset_Management_Platform
             _myLimitOrders = new List<LimitOrder>();
 
             LoadLimitOrdersFromDatabase();
+            BuildDatabaseTaxlots();
 
         }
 
@@ -148,7 +149,7 @@ namespace Asset_Management_Platform
         /// This method is called if in local mode.
         /// </summary>
         /// <returns></returns>
-        public List<Position> GetPositionsFromTaxlots()
+        public void GetPositionsFromTaxlots()
         {
             foreach (var lot in _myTaxlots)
             {
@@ -177,7 +178,8 @@ namespace Asset_Management_Platform
                 _portfolioOriginalState.Add(new Position(pos.Taxlots));
             }
 
-            return _myPositions;
+            //Return new List<Position> to all Startup listeners
+            Messenger.Default.Send<PositionMessage>(new PositionMessage(_myPositions, true));
         }
 
         /// <summary>

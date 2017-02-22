@@ -13,7 +13,7 @@ namespace Asset_Management_Platform.Utility
 
         List<Position> GetPositionsFromTaxlots(List<Security> portfolioSecurities);
 
-        List<Position> GetPositionsFromTaxlots();
+        void GetPositionsFromTaxlots();
 
         List<Position> GetEmptyPositionsList();
 

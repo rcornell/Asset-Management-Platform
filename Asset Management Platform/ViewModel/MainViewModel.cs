@@ -556,6 +556,7 @@ namespace Asset_Management_Platform
         {
             Messenger.Default.Register<LocalModeMessage>(this, SetLocalMode);
             Messenger.Default.Register<TaxlotMessage>(this, CreateTaxlots);
+            Messenger.Default.Register<PositionMessage>(this, CreatePositions);
             Messenger.Default.Register<TradeCompleteMessage>(this, ProcessTradeComplete);
             Messenger.Default.Register<LimitOrderMessage>(this, ProcessLimitOrderCreated);
             Messenger.Default.Register<StockDataResponseMessage>(this, ProcessStockDataResponse);
@@ -627,6 +628,15 @@ namespace Asset_Management_Platform
             {
                 _requestedSecurity = message.Security;
             }
+        }
+
+        private void CreatePositions(PositionMessage message)
+        {
+            if (message.IsStartup)
+            {
+                Positions = new ObservableCollection<Position>(message.Positions);
+            }
+
         }
 
         private void GetValueTotals()

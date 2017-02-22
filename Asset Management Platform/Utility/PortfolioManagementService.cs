@@ -45,6 +45,8 @@ namespace Asset_Management_Platform.Utility
             //Register for IPortfolioDatabaseService creating its List<Taxlot>
             Messenger.Default.Register<TaxlotMessage>(this, CreateTaxlots);
 
+            Messenger.Default.Register<PositionMessage>(this, CreatePositions);
+
             //Register for IStockDataService returning Security/Securities information
             Messenger.Default.Register<StockDataResponseMessage>(this, HandleStockDataResponse);
 
@@ -77,6 +79,15 @@ namespace Asset_Management_Platform.Utility
             _portfolioTaxlots = message.Taxlots;
         }
 
+        private void CreatePositions(PositionMessage message)
+        {
+            if (message.IsStartup)
+            {
+                _portfolioPositions = message.Positions;
+            }
+
+        }
+
         private void HandleStockDataResponse(StockDataResponseMessage message)
         {
             if (message.IsStartup && message.Securities != null)
@@ -106,9 +117,8 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         private async Task BuildPortfolioSecurities()
         {
-            //Calls PortfolioDatabaseService to create its List<Taxlot> then
-            //a reference to that field
-            await _portfolioDatabaseService.BuildDatabaseTaxlots();
+
+            //NO MORE CALL TO PDS TO BUILD TAXLOTs
 
             //Get security data with market data API (currently YahooAPI)
             var tickers = _portfolioTaxlots.Select(s => s.Ticker).Distinct().ToList();
