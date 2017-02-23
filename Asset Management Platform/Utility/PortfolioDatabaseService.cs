@@ -45,8 +45,6 @@ namespace Asset_Management_Platform
             //Register for handling of LOCAL MODE taxlot creation
             Messenger.Default.Register<TaxlotMessage>(this, HandleTaxlotMessage);
 
-            _stockDatabaseService = stockDatabaseService;
-
             _portfolioOriginalState = new List<Position>();
             _myPositions = new List<Position>();
             _myTaxlots = new List<Taxlot>();

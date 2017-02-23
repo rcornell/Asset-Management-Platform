@@ -55,10 +55,7 @@ namespace Asset_Management_Platform.Utility
             Messenger.Default.Register<TimerMessage>(this, HandleTimerMessage);
 
             //Register method to handle trades from View
-            Messenger.Default.Register<TradeMessage>(this, HandleTradeMessage);
-
-            _stockDataService = stockDataService;
-            _portfolioDatabaseService = portfolioDatabaseService;                                       
+            Messenger.Default.Register<TradeMessage>(this, HandleTradeMessage);                                  
 
             //Sends a message to update portfolio securities
             UpdatePortfolioSecuritiesStartup();
@@ -648,7 +645,7 @@ namespace Asset_Management_Platform.Utility
         {
             _portfolioSecurities.Clear();
             _portfolioTaxlots.Clear();
-            _portfolioDatabaseService.DeletePortfolio(_portfolioPositions);
+            //Delete portfolio message
         }
 
         /// <summary>
