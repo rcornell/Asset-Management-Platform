@@ -466,36 +466,9 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         /// <param name="ticker"></param>
         /// <returns></returns>
-        public async Task<Security> GetTradePreviewSecurity(string ticker)
+        public void GetTradePreviewSecurity(string ticker)
         {
-            var securityToReturn = await _stockDataService.GetSecurityInfo(ticker);
-
-            //if (securityToReturn is Stock)
-            //    return (Stock)securityToReturn;
-            //if (securityToReturn is MutualFund)
-            //    return (MutualFund)securityToReturn;
-
-            //Should not hit this.
-            return new Stock("", "XXX", "Unknown Stock", 0, 0.00);
-        }
-
-        /// <summary>
-        /// Will be called through the order entry system, where a security type
-        /// must be selected to proceed
-        /// </summary>
-        /// <param name="ticker"></param>
-        /// <param name="securityType"></param>
-        /// <returns></returns>
-        public async Task<Security> GetTradePreviewSecurity(string ticker, Security securityType)
-        {
-            var securityToReturn = await _stockDataService.GetSecurityInfo(ticker);
-            //if (securityToReturn is Stock)
-            //    return (Stock)securityToReturn;
-            //if (securityToReturn is MutualFund)
-            //    return (MutualFund)securityToReturn;
-
-            //Should not hit this.
-            return new Stock("", "XXX", "Unknown Stock", 0, 0.00);
+            Messenger.Default.Send<StockDataRequestMessage>(new StockDataRequestMessage(ticker, false, true));
         }
 
         /// <summary>

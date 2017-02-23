@@ -13,6 +13,7 @@ namespace Asset_Management_Platform.Messages
         public Position Position;
         public string Ticker;
         public bool IsStartup;
+        public bool IsTradePreview;
 
         public StockDataRequestMessage(List<string> tickers, bool isStartup)
         {
@@ -20,10 +21,11 @@ namespace Asset_Management_Platform.Messages
             IsStartup = isStartup;
         }
 
-        public StockDataRequestMessage(string ticker, bool isStartup)
+        public StockDataRequestMessage(string ticker, bool isStartup, bool isPreview)
         {
             Ticker = ticker;
             IsStartup = isStartup;
+            IsTradePreview = isPreview;
         }
 
         public StockDataRequestMessage(List<Position> positions, bool isStartup)

@@ -19,9 +19,7 @@ namespace Asset_Management_Platform.Utility
 
         void Sell(Trade trade);
 
-        Task<Security> GetTradePreviewSecurity(string ticker);
-
-        Task<Security> GetTradePreviewSecurity(string ticker, Security SelectedSecurityType);
+        void GetTradePreviewSecurity(string ticker);
 
         Task GetSecurityType(string ticker, string tradeType);
 

@@ -798,7 +798,24 @@ namespace Asset_Management_Platform
             var orderOk = await CheckOrderTerms();
             if (orderOk)
             {
-                PreviewSecurity = await _portfolioManagementService.GetTradePreviewSecurity(_orderTickerText, SelectedSecurityType);
+                //Send stock preview request
+                Messenger.Default.Send<StockDataRequestMessage>(new StockDataRequestMessage(_orderTickerText, false,
+                    true));                
+            }
+            else
+            {
+                SetAlertMessage(new TradeMessage(_orderTickerText, _orderShareQuantity));
+                AlertBoxVisible = true;
+                OrderTermsOK = false;
+            }
+            _previewOrderIsBusy = false;
+        }
+
+        private void HandleStockDataResponse(StockDataResponseMessage message)
+        {
+            if (message.IsPreview)
+            {
+                PreviewSecurity = message.Security;
 
                 if (PreviewSecurity is Stock)
                 {
@@ -824,13 +841,6 @@ namespace Asset_Management_Platform
                 AlertBoxVisible = false;
                 ExecuteButtonEnabled = true;
             }
-            else
-            {
-                SetAlertMessage(new TradeMessage(_orderTickerText, _orderShareQuantity));
-                AlertBoxVisible = true;
-                OrderTermsOK = false;
-            }
-            _previewOrderIsBusy = false;
         }
 
         private async Task<bool> CheckOrderTerms()
@@ -1005,7 +1015,7 @@ namespace Asset_Management_Platform
                 //Is considered a startup process
                 Messenger.Default.Send<TaxlotMessage>(new TaxlotMessage(sessionData.Taxlots, true, true));
 
-
+                //Create the List<LimitOrder> from saved file
                 LimitOrderList = new ObservableCollection<LimitOrder>(sessionData.LimitOrders);
 
                 //Send list of LimitOrders to startup listeners

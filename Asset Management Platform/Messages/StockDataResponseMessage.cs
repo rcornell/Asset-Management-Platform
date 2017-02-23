@@ -13,6 +13,7 @@ namespace Asset_Management_Platform.Messages
         public List<Position> Positions;
         public Position Position;
         public bool IsStartup;
+        public bool IsPreview;
 
         public StockDataResponseMessage(List<Security> securities, bool isStartup)
         {
@@ -20,9 +21,10 @@ namespace Asset_Management_Platform.Messages
             IsStartup = isStartup;
         }
 
-        public StockDataResponseMessage(Security security)
+        public StockDataResponseMessage(Security security, bool isPreview)
         {
             Security = security;
+            IsPreview = isPreview;
         }
 
         public StockDataResponseMessage(List<Position> positions, bool isStartup)
