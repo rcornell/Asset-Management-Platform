@@ -53,6 +53,8 @@ namespace Asset_Management_Platform.Utility
             //Register for List<LimitOrder> creation
             Messenger.Default.Register<LimitOrderMessage>(this, CreateLimitOrders);
 
+            Messenger.Default.Register<TimerMessage>(this, HandleTimerMessage);
+
             _stockDataService = stockDataService;
             _portfolioDatabaseService = portfolioDatabaseService;                                       
 
@@ -108,7 +110,18 @@ namespace Asset_Management_Platform.Utility
             }
         }
 
-
+        private void HandleTimerMessage(TimerMessage message)
+        {
+            _timer.Interval = message.Span;
+            if (_timer.IsEnabled && message.StopTimer)
+            {
+                _timer.Stop();
+            }
+            if (!_timer.IsEnabled && message.StartTimer)
+            {
+                _timer.Start();
+            }
+        }
 
 
         /// <summary>

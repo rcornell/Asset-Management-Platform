@@ -926,25 +926,25 @@ namespace Asset_Management_Platform
         private void ExecuteSetIntervalTenSeconds()
         {
             var span = new TimeSpan(0, 0, 10);
-            _portfolioManagementService.UpdateTimerInterval(span);
+            Messenger.Default.Send<TimerMessage>(new TimerMessage(span, false, false));
         }
 
         private void ExecuteSetIntervalThirtySeconds()
         {
             var span = new TimeSpan(0, 0, 30);
-            _portfolioManagementService.UpdateTimerInterval(span);
+            Messenger.Default.Send<TimerMessage>(new TimerMessage(span, false, false));
         }
 
         private void ExecuteSetIntervalSixtySeconds()
         {
             var span = new TimeSpan(0, 0, 60);
-            _portfolioManagementService.UpdateTimerInterval(span);
+            Messenger.Default.Send<TimerMessage>(new TimerMessage(span, false, false));
         }
 
         private void ExecuteSetIntervalFiveMinutes()
         {
             var span = new TimeSpan(0, 5, 0);
-            _portfolioManagementService.UpdateTimerInterval(span);
+            Messenger.Default.Send<TimerMessage>(new TimerMessage(span, false, false));
         }
 
         private void ExecuteToggleLimitDatagrid()
