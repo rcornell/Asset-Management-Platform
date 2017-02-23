@@ -815,32 +815,41 @@ namespace Asset_Management_Platform
         {
             if (message.IsPreviewResponse)
             {
-                PreviewSecurity = message.Security;
-
-                if (PreviewSecurity is Stock)
-                {
-                    PreviewPrice = PreviewSecurity.LastPrice;
-                    PreviewDescription = PreviewSecurity.Description;
-                    PreviewVolume = ((Stock)PreviewSecurity).Volume.ToString();
-                    PreviewAsk = ((Stock)PreviewSecurity).Ask.ToString();
-                    PreviewAskSize = ((Stock)PreviewSecurity).AskSize.ToString();
-                    PreviewBid = ((Stock)PreviewSecurity).Bid.ToString();
-                    PreviewBidSize = ((Stock)PreviewSecurity).BidSize.ToString();
-                }
-                else if (PreviewSecurity is MutualFund)
-                {
-                    PreviewPrice = PreviewSecurity.LastPrice;
-                    PreviewDescription = PreviewSecurity.Description;
-                    PreviewVolume = "Mutual Fund: No Volume";
-                    PreviewAsk = "-";
-                    PreviewAskSize = "-";
-                    PreviewBid = "-";
-                    PreviewBidSize = "-";
-                }
-
-                AlertBoxVisible = false;
-                ExecuteButtonEnabled = true;
+                BuildPreviewSecurity(message);
             }
+            if (message.IsScreenerResponse)
+            {
+                ScreenerSecurity = message.Security;
+            }
+        }
+
+        private void BuildPreviewSecurity(StockDataResponseMessage message)
+        {
+            PreviewSecurity = message.Security;
+
+            if (PreviewSecurity is Stock)
+            {
+                PreviewPrice = PreviewSecurity.LastPrice;
+                PreviewDescription = PreviewSecurity.Description;
+                PreviewVolume = ((Stock)PreviewSecurity).Volume.ToString();
+                PreviewAsk = ((Stock)PreviewSecurity).Ask.ToString();
+                PreviewAskSize = ((Stock)PreviewSecurity).AskSize.ToString();
+                PreviewBid = ((Stock)PreviewSecurity).Bid.ToString();
+                PreviewBidSize = ((Stock)PreviewSecurity).BidSize.ToString();
+            }
+            else if (PreviewSecurity is MutualFund)
+            {
+                PreviewPrice = PreviewSecurity.LastPrice;
+                PreviewDescription = PreviewSecurity.Description;
+                PreviewVolume = "Mutual Fund: No Volume";
+                PreviewAsk = "-";
+                PreviewAskSize = "-";
+                PreviewBid = "-";
+                PreviewBidSize = "-";
+            }
+
+            AlertBoxVisible = false;
+            ExecuteButtonEnabled = true;
         }
 
         private async Task<bool> CheckOrderTerms()
@@ -887,8 +896,8 @@ namespace Asset_Management_Platform
         {
             if (!string.IsNullOrEmpty(screenerTicker))
             {
-                var resultSecurity = await _portfolioManagementService.GetTradePreviewSecurity(screenerTicker);
-                ScreenerSecurity = resultSecurity;
+                Messenger.Default.Send<StockDataRequestMessage>(new StockDataRequestMessage(screenerTicker, false, false,
+                    true));
             }
         }
 
