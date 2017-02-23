@@ -25,13 +25,22 @@ namespace Asset_Management_Platform.Utility
         public StockDataService()
         {
             Messenger.Default.Register<StockDataRequestMessage>(this, HandleStockDataRequest);
+            Messenger.Default.Register<StartupCompleteMessage>(this, HandleStartupComplete);
 
             _securityDatabaseList = new List<Security>();
             _storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
-            _localMode = _storageString == null ? true : false;
+            _localMode = _storageString == null ? true : false;            
+        }
+
+        private void HandleStartupComplete(StartupCompleteMessage message)
+        {
+            if (!message.IsComplete)
+                return;
+
             Messenger.Default.Send<LocalModeMessage>(new LocalModeMessage(_localMode));
 
-            if (!_localMode) { 
+            if (!_localMode)
+            {
                 CheckDatabases();
             }
 
