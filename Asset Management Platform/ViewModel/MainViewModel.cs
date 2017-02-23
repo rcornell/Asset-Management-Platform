@@ -779,13 +779,15 @@ namespace Asset_Management_Platform
         {
             _previewOrderIsBusy = true;
 
+            //Send stock preview request
+            Messenger.Default.Send<StockDataRequestMessage>(new StockDataRequestMessage(_orderTickerText, false,
+                true, false));
+
             var orderOk = await CheckOrderTerms();
             if (orderOk)
             {
 
-                //Send stock preview request
-                Messenger.Default.Send<StockDataRequestMessage>(new StockDataRequestMessage(_orderTickerText, false,
-                    true, false));                
+                            
             }
             else
             {
@@ -859,19 +861,17 @@ namespace Asset_Management_Platform
 
             //Check to see that selected security type matches the ticker
             bool secTypeMatch;
-            var tickerSecType = await _portfolioManagementService.GetSecurityType(_orderTickerText, _selectedTradeType);
 
-            if (tickerSecType == null)
+            if (PreviewSecurity == null)
             {
-                var errorMessage = @"Your selected security type does not match the ticker's security type.";
+                var errorMessage = @"There is a problem with your trade. The security data request was not returned.";
                 Messenger.Default.Send(new TradeErrorMessage(_orderTickerText,_orderShareQuantity, errorMessage));
                 return false;
-            }
-                
+            }                
 
-            if (_selectedSecurityType is Stock && tickerSecType is Stock)
+            if (_selectedSecurityType is Stock && PreviewSecurity is Stock)
                 secTypeMatch = true;
-            else if (_selectedSecurityType is MutualFund && tickerSecType is MutualFund)
+            else if (_selectedSecurityType is MutualFund && PreviewSecurity is MutualFund)
                 secTypeMatch = true;
             else
                 secTypeMatch = false;
