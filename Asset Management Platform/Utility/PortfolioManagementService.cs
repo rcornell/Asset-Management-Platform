@@ -55,7 +55,9 @@ namespace Asset_Management_Platform.Utility
             Messenger.Default.Register<TimerMessage>(this, HandleTimerMessage);
 
             //Register method to handle trades from View
-            Messenger.Default.Register<TradeMessage>(this, HandleTradeMessage);                                  
+            Messenger.Default.Register<TradeMessage>(this, HandleTradeMessage);
+
+            Messenger.Default.Register<LimitOrderUpdateResponseMessage>(this, HandleLimitOrderUpdateResponse);
 
             //Sends a message to update portfolio securities
             UpdatePortfolioSecuritiesStartup();
@@ -138,10 +140,6 @@ namespace Asset_Management_Platform.Utility
 
 
             //YOU GOT THIS FAR WITH THE MESSAGES
-
-
-            //If taxlots exist, build positions with updated pricing data.
-            _portfolioPositions = _portfolioDatabaseService.GetPositionsFromTaxlots(_portfolioSecurities);
 
             //Update all Positions' taxlot pricing
             foreach (var pos in _portfolioPositions)
@@ -413,11 +411,9 @@ namespace Asset_Management_Platform.Utility
         /// If last price is valid vs. the limit, proceed with trade.
         /// </summary>
         private void CheckLimitOrdersForActive()
-        {
-            var orderWasExecuted = false;
+        {            
             var securitiesToCheck = new List<Security>();
-            var completedLimitOrders = new List<LimitOrder>();
-
+            
             foreach (var order in LimitOrderList)
             {
                 if(order.SecurityType is Stock)
@@ -426,13 +422,20 @@ namespace Asset_Management_Platform.Utility
                     securitiesToCheck.Add(new MutualFund("", order.Ticker, "", 0, 0));
             }
 
-            _stockDataService.GetUpdatedPricing(securitiesToCheck);
+            Messenger.Default.Send<LimitOrderUpdateRequestMessage>(new LimitOrderUpdateRequestMessage(
+                securitiesToCheck, false));
+        }
 
-            foreach (var sec in securitiesToCheck)
+        private void HandleLimitOrderUpdateResponse(LimitOrderUpdateResponseMessage message)
+        {
+            var orderWasExecuted = false;
+            var completedLimitOrders = new List<LimitOrder>();
+
+            foreach (var sec in message.SecuritiesToCheck)
             {
                 //Get all limit orders for the security being iterated
                 var matches = LimitOrderList.Where(s => s.Ticker == sec.Ticker);
-                
+
                 foreach (var match in matches)
                 {
                     var securityType = match.SecurityType;
@@ -449,7 +452,7 @@ namespace Asset_Management_Platform.Utility
                     else if (isActive && match.TradeType == "Buy" && securityType is Stock)
                     {
                         var securityToTrade = new Stock("", sec.Ticker, sec.Description, sec.LastPrice, sec.Yield);
-                        var newTrade = new Trade(match.TradeType, securityToTrade, match.Ticker, match.Shares, "Limit", match.Limit, match.OrderDuration);                        
+                        var newTrade = new Trade(match.TradeType, securityToTrade, match.Ticker, match.Shares, "Limit", match.Limit, match.OrderDuration);
                         AddPosition(newTrade);
                         completedLimitOrders.Add(match);
                         orderWasExecuted = true;

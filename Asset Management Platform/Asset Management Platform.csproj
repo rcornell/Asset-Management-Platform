@@ -124,7 +124,9 @@
     <Compile Include="Messages\FileErrorMessage.cs" />
     <Compile Include="LimitOrder.cs" />
     <Compile Include="LimitOrderDBResult.cs" />
+    <Compile Include="Messages\LimitOrderUpdateRequestMessage.cs" />
     <Compile Include="Messages\LimitOrderMessage.cs" />
+    <Compile Include="Messages\LimitOrderUpdateResponseMessage.cs" />
     <Compile Include="Messages\LocalModeMessage.cs" />
     <Compile Include="Messages\PortfolioSqlMessage.cs" />
     <Compile Include="Messages\PositionMessage.cs" />
