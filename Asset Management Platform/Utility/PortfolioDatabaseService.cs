@@ -26,17 +26,23 @@ namespace Asset_Management_Platform
         private readonly List<Position> _myPositions;
         private List<Taxlot> _myTaxlots; 
         private List<LimitOrder> _myLimitOrders;
-        private bool _localMode;
-        private IStockDataService _stockDatabaseService;    
+        private bool _localMode; 
        
-        public PortfolioDatabaseService(IStockDataService stockDatabaseService)
+        public PortfolioDatabaseService()
         {
             //Register for LocalMode notification
             Messenger.Default.Register<LocalModeMessage>(this, SetLocalMode);
 
+            //Register for handling of Buy orders
             Messenger.Default.Register<TradeBuyMessage>(this, HandleBuy);
+
+            //Register for handling of Sell orders
             Messenger.Default.Register<TradeSellMessage>(this, HandleSell);
+
+            //Register for handling of updates to list of limit orders
             Messenger.Default.Register<LimitOrderMessage>(this, HandleLimitOrderList);
+
+            //Register for handling of LOCAL MODE taxlot creation
             Messenger.Default.Register<TaxlotMessage>(this, HandleTaxlotMessage);
 
             _stockDatabaseService = stockDatabaseService;

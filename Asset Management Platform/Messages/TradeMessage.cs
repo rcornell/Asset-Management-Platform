@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace Asset_Management_Platform.Messages
 {
+
+    //This class is created in the ViewModel and Sent to PortfolioManagementService
     public class TradeMessage
     {
         public Trade Trade;

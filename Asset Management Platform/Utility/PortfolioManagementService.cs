@@ -14,8 +14,6 @@ namespace Asset_Management_Platform.Utility
 {
     public class PortfolioManagementService : IPortfolioManagementService
     {
-        private readonly IStockDataService _stockDataService;
-        private readonly IPortfolioDatabaseService _portfolioDatabaseService;
         private readonly DispatcherTimer _timer;        
         private bool _localMode;
         private List<Security> _securityDatabaseList;
@@ -34,7 +32,7 @@ namespace Asset_Management_Platform.Utility
             }
         }
         
-        public PortfolioManagementService(IStockDataService stockDataService, IPortfolioDatabaseService portfolioDatabaseService)
+        public PortfolioManagementService()
         {
             //Register for LocalMode notification
             Messenger.Default.Register<LocalModeMessage>(this, SetLocalMode);

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Asset_Management_Platform.Messages
 {
+    //This class is created in PortfolioManagementService and sent to PortfolioDatabaseService
     public class TradeSellMessage
     {
         public Trade Trade;

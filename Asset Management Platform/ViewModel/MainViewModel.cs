@@ -89,6 +89,8 @@ namespace Asset_Management_Platform
         private bool _localMode;
         private Security _requestedSecurity;
         private List<Security> _requestedSecurityList;
+        private readonly IStockDataService _stockDataService;
+        private readonly IPortfolioDatabaseService _portfolioDatabaseService;
         #endregion
 
         #region All Properties
@@ -552,7 +554,7 @@ namespace Asset_Management_Platform
         }
         #endregion
 
-        public MainViewModel(IPortfolioManagementService portfolioService)
+        public MainViewModel(IPortfolioManagementService portfolioService, IStockDataService stockDataService, IPortfolioDatabaseService portfolioDatabaseService)
         {
             Messenger.Default.Register<LocalModeMessage>(this, SetLocalMode);
             Messenger.Default.Register<TaxlotMessage>(this, CreateTaxlots);
@@ -560,6 +562,9 @@ namespace Asset_Management_Platform
             Messenger.Default.Register<TradeCompleteMessage>(this, HandleTradeCompleteMessage);
             Messenger.Default.Register<LimitOrderMessage>(this, ProcessLimitOrderCreated);
             Messenger.Default.Register<StockDataResponseMessage>(this, HandleStockDataResponse);
+
+            _stockDataService = stockDataService;
+            _portfolioDatabaseService = portfolioDatabaseService;            
             _portfolioManagementService = portfolioService;
 
             TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
