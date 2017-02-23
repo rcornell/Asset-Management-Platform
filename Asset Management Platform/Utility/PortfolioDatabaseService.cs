@@ -33,6 +33,9 @@ namespace Asset_Management_Platform
             //Register for LocalMode notification
             Messenger.Default.Register<LocalModeMessage>(this, SetLocalMode);
 
+            //Register for StartupCompleteMessages
+            Messenger.Default.Register<StartupCompleteMessage>(this, HandleStartupComplete);
+
             //Register for handling of Buy orders
             Messenger.Default.Register<TradeBuyMessage>(this, HandleBuy);
 
@@ -49,10 +52,15 @@ namespace Asset_Management_Platform
             _myPositions = new List<Position>();
             _myTaxlots = new List<Taxlot>();
             _myLimitOrders = new List<LimitOrder>();
+        }
+
+        private void HandleStartupComplete(StartupCompleteMessage message)
+        {
+            if (!message.IsComplete)
+                return;
 
             LoadLimitOrdersFromDatabase();
             BuildDatabaseTaxlots();
-
         }
 
         private void HandleLimitOrderList(LimitOrderMessage message)
