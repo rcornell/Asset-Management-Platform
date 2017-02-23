@@ -44,7 +44,7 @@ namespace Asset_Management_Platform.Utility
         void DeletePortfolio();
         void TestLimitOrderMethods();
 
-        Task<bool> BuildPortfolioSecurities(IEnumerable<Taxlot> taxlots);
+        Task<bool> UpdatePortfolioSecuritiesStartup(IEnumerable<Taxlot> taxlots);
 
         bool IsLocalMode();
     }

@@ -999,7 +999,7 @@ namespace Asset_Management_Platform
             using (var portFileOps = new PortfolioFileOps())
             {
                 var sessionData = await portFileOps.TryLoadSession();
-                var taxlotsLoaded = await _portfolioManagementService.BuildPortfolioSecurities(sessionData.Taxlots);
+                var taxlotsLoaded = await _portfolioManagementService.UpdatePortfolioSecuritiesStartup(sessionData.Taxlots);
                 LimitOrderList = new ObservableCollection<LimitOrder>(sessionData.LimitOrders);
 
                 //Send list of LimitOrders to startup listeners

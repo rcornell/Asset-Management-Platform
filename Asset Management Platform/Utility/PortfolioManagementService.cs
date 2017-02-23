@@ -56,8 +56,8 @@ namespace Asset_Management_Platform.Utility
             _stockDataService = stockDataService;
             _portfolioDatabaseService = portfolioDatabaseService;                                       
 
-            //Create the core List<T>'s of taxlots, positions, and securities
-            BuildPortfolioSecurities();
+            //Sends a message to update portfolio securities
+            UpdatePortfolioSecuritiesStartup();
 
             _timer = new DispatcherTimer();
             _timer.Tick += _timer_Tick;
@@ -115,7 +115,7 @@ namespace Asset_Management_Platform.Utility
         /// Called when NOT in local mode.
         /// Creates the list of taxlots, positions, and securities owned.
         /// </summary>
-        private async Task BuildPortfolioSecurities()
+        private async Task UpdatePortfolioSecuritiesStartup()
         {
 
             //NO MORE CALL TO PDS TO BUILD TAXLOTs
@@ -147,20 +147,11 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         /// <param name="taxlots"></param>
         /// <returns></returns>
-        public async Task<bool> BuildPortfolioSecurities(IEnumerable<Taxlot> taxlots)
+        public async Task<bool> UpdatePortfolioSecuritiesStartup(IEnumerable<Taxlot> taxlots)
         {
-            //Convert the IEnumerable to a List<Taxlot>
-            var taxlotList = taxlots.ToList();
-
-            //Create the list of taxlots
-            _portfolioTaxlots = _portfolioDatabaseService.BuildLocalTaxlots(taxlotList);
-
-            //If taxlots exist, build positions
-            _portfolioPositions = _portfolioDatabaseService.GetPositionsFromTaxlots();
 
             //Update prices for all positions
             await _stockDataService.GetUpdatedPricing(_portfolioPositions);
-
 
             Messenger.Default.Send(new DatabaseMessage("Success", true, false));
             return true;
