@@ -232,7 +232,7 @@ namespace Asset_Management_Platform.Utility
             }
             
             //Sends updated List<Taxlot> and List<Position>
-            Messenger.Default.Send<TradeCompleteMessage>(new TradeCompleteMessage(_portfolioPositions, _portfolioTaxlots));
+            Messenger.Default.Send<TradeCompleteMessage>(new TradeCompleteMessage(_portfolioPositions, _portfolioTaxlots, true));
         }
 
         private void CreateLimitOrder(Trade trade)
@@ -343,7 +343,7 @@ namespace Asset_Management_Platform.Utility
             }
 
             //Sends updated List<Taxlot> and List<Position>
-            Messenger.Default.Send<TradeCompleteMessage>(new TradeCompleteMessage(_portfolioPositions, _portfolioTaxlots));
+            Messenger.Default.Send<TradeCompleteMessage>(new TradeCompleteMessage(_portfolioPositions, _portfolioTaxlots, true));
         }
 
         /// <summary>

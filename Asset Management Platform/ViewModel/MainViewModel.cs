@@ -557,7 +557,7 @@ namespace Asset_Management_Platform
             Messenger.Default.Register<LocalModeMessage>(this, SetLocalMode);
             Messenger.Default.Register<TaxlotMessage>(this, CreateTaxlots);
             Messenger.Default.Register<PositionMessage>(this, CreatePositions);
-            Messenger.Default.Register<TradeCompleteMessage>(this, ProcessTradeComplete);
+            Messenger.Default.Register<TradeCompleteMessage>(this, HandleTradeCompleteMessage);
             Messenger.Default.Register<LimitOrderMessage>(this, ProcessLimitOrderCreated);
             Messenger.Default.Register<StockDataResponseMessage>(this, HandleStockDataResponse);
             _portfolioManagementService = portfolioService;
@@ -601,12 +601,6 @@ namespace Asset_Management_Platform
         private void CreateTaxlots(TaxlotMessage message)
         {
             Taxlots = new ObservableCollection<Taxlot>(message.Taxlots);
-        }
-
-        private void ProcessTradeComplete(TradeCompleteMessage message)
-        {
-            Taxlots = new ObservableCollection<Taxlot>(message.Taxlots);
-            Positions = new ObservableCollection<Position>(message.Positions);
         }
 
         private void ProcessLimitOrderCreated(LimitOrderMessage message)
@@ -654,25 +648,6 @@ namespace Asset_Management_Platform
             TotalValue = totalValue;
             TotalCostBasis = totalCostBasis;
             TotalGainLoss = totalGainLoss;
-        }
-
-        private void GetPositions() //Don't put async here...
-        {
-            var positions = _portfolioManagementService.GetPositions();
-
-            if(positions != null)            
-                Positions = new ObservableCollection<Position>(positions);
-            
-        }
-
-        private void GetTaxlots()
-        {
-            var lots = _portfolioManagementService.GetTaxlots();
-
-            if (lots != null)
-            {
-                Taxlots = new ObservableCollection<Taxlot>(lots);
-            }
         }
 
         private void ExecuteShowAllSecurities()
@@ -764,8 +739,7 @@ namespace Asset_Management_Platform
         {
             if (message.PositionsSuccessful)
             {
-                GetPositions();
-                GetTaxlots();
+                //Reimplement
                 GetValueTotals();
             }
 
@@ -807,6 +781,33 @@ namespace Asset_Management_Platform
             {
                 ScreenerSecurity = message.Security;
             }
+        }
+
+        private void HandleTradeCompleteMessage(TradeCompleteMessage message)
+        {
+            Taxlots = new ObservableCollection<Taxlot>(message.Taxlots);
+            Positions = new ObservableCollection<Position>(message.Positions);
+
+            GetLimitOrders();
+            ExecuteShowAllSecurities();
+
+            OrderTickerText = "";
+            OrderShareQuantity = 0;
+            SelectedTradeType = TradeTypeStrings[0];
+            SelectedTermType = TradeTermStrings[0];
+            SelectedDurationType = TradeDurationStrings[0];
+            LimitPrice = 0;
+            PreviewPrice = 0;
+            PreviewBid = "";
+            PreviewAsk = "";
+            PreviewAskSize = "";
+            PreviewBidSize = "";
+            PreviewDescription = "";
+            PreviewVolume = "";
+            SelectedSecurityType = SecurityTypes[0];
+
+            OrderTermsOK = false;
+            ExecuteButtonEnabled = false;
         }
 
         private void BuildPreviewSecurity(StockDataResponseMessage message)
@@ -892,37 +893,8 @@ namespace Asset_Management_Platform
 
         private void ExecuteExecuteOrder()
         {
-    //        var trade = new Trade(_selectedTradeType, PreviewSecurity, _orderTickerText, _orderShareQuantity,
-    //_selectedTermType, _limitPrice, _selectedDurationType);
-    //        Messenger.Default.Send<TradeMessage>(new TradeMessage(trade));
-
             var newTrade = new Trade(SelectedTradeType, _previewSecurity, _orderTickerText, _orderShareQuantity, _selectedTermType, _limitPrice, _selectedDurationType);
-            if (SelectedTradeType == "Buy")
-                _portfolioManagementService.Buy(newTrade);
-            else if (SelectedTradeType == "Sell")
-                _portfolioManagementService.Sell(newTrade);
-            GetPositions();
-            GetTaxlots();
-            GetLimitOrders();
-            ExecuteShowAllSecurities();
-
-            OrderTickerText = "";
-            OrderShareQuantity = 0;
-            SelectedTradeType = TradeTypeStrings[0];
-            SelectedTermType = TradeTermStrings[0];
-            SelectedDurationType = TradeDurationStrings[0];
-            LimitPrice = 0;
-            PreviewPrice = 0;
-            PreviewBid = "";
-            PreviewAsk = "";
-            PreviewAskSize = "";
-            PreviewBidSize = "";
-            PreviewDescription = "";
-            PreviewVolume = "";
-            SelectedSecurityType = SecurityTypes[0];
-
-            OrderTermsOK = false;           
-            ExecuteButtonEnabled = false;
+            Messenger.Default.Send<TradeMessage>(new TradeMessage(newTrade));
         }
 
         private void GetLimitOrders()
@@ -991,10 +963,7 @@ namespace Asset_Management_Platform
         }
 
         private void ExecuteDeletePortfolio()
-        {
-            _portfolioManagementService.DeletePortfolio();
-            GetPositions();
-            GetTaxlots();
+        {           
             ExecuteShowAllSecurities();
         }
 
@@ -1028,8 +997,7 @@ namespace Asset_Management_Platform
         private void ExecuteUpdatePrices()
         {
             _portfolioManagementService.TestLimitOrderMethods();
-            GetPositions();
-            GetTaxlots();
+            //Reimplement
         }
 
         private void ExecuteDeleteLimitOrder()
