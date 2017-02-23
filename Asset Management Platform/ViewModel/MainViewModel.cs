@@ -559,7 +559,7 @@ namespace Asset_Management_Platform
             Messenger.Default.Register<PositionMessage>(this, CreatePositions);
             Messenger.Default.Register<TradeCompleteMessage>(this, ProcessTradeComplete);
             Messenger.Default.Register<LimitOrderMessage>(this, ProcessLimitOrderCreated);
-            Messenger.Default.Register<StockDataResponseMessage>(this, ProcessStockDataResponse);
+            Messenger.Default.Register<StockDataResponseMessage>(this, HandleStockDataResponse);
             _portfolioManagementService = portfolioService;
 
             TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
@@ -612,22 +612,6 @@ namespace Asset_Management_Platform
         private void ProcessLimitOrderCreated(LimitOrderMessage message)
         {
             LimitOrderList = new ObservableCollection<LimitOrder>(message.LimitOrders);
-        }
-
-        private void ProcessStockDataResponse(StockDataResponseMessage message)
-        {
-            if (message.IsStartupResponse)
-                return;
-
-            if (message.Securities != null)
-            {
-                _requestedSecurityList = message.Securities;
-            }
-
-            if (message.Security != null)
-            {
-                _requestedSecurity = message.Security;
-            }
         }
 
         private void CreatePositions(PositionMessage message)
@@ -813,6 +797,19 @@ namespace Asset_Management_Platform
 
         private void HandleStockDataResponse(StockDataResponseMessage message)
         {
+            if (message.IsStartupResponse)
+                return;
+
+            if (message.Securities != null)
+            {
+                _requestedSecurityList = message.Securities;
+            }
+
+            if (message.Security != null)
+            {
+                _requestedSecurity = message.Security;
+            }
+
             if (message.IsPreviewResponse)
             {
                 BuildPreviewSecurity(message);
