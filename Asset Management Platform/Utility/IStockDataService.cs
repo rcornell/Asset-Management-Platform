@@ -9,12 +9,11 @@ namespace Asset_Management_Platform.Utility
 {
     public interface IStockDataService
     {
-
         void TryDatabaseInsert(Security securitiesToInsert);
 
         void UploadSecuritiesToDatabase();
 
-        Task GetSecurityInfo(string ticker);
+        Task GetSecurityInfo(string ticker, bool isScreener, bool isPreview);
 
         Task GetSecurityInfo(StockDataRequestMessage message);
 

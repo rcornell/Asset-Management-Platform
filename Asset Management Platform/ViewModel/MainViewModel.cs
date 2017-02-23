@@ -795,12 +795,10 @@ namespace Asset_Management_Platform
             {
                 _requestedSecurityList = message.Securities;
             }
-
             if (message.Security != null)
             {
                 _requestedSecurity = message.Security;
-            }
-
+            }        
             if (message.IsPreviewResponse)
             {
                 BuildPreviewSecurity(message);
@@ -813,7 +811,6 @@ namespace Asset_Management_Platform
 
         private void BuildPreviewSecurity(StockDataResponseMessage message)
         {
-
             var orderOk = CheckOrderTerms();
             if (orderOk && PreviewSecurity is Stock)
             {

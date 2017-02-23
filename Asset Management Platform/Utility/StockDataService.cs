@@ -40,10 +40,14 @@ namespace Asset_Management_Platform.Utility
 
         private async void HandleStockDataRequest(StockDataRequestMessage message)
         {
-            if (message.Tickers != null)
+            if (message.Tickers != null) //List<string> tickers is not null, request for multiple securities
                 await GetSecurityInfo(message);
-            if (!string.IsNullOrEmpty(message.Ticker))
-                await GetSecurityInfo(message.Ticker);
+            if (!string.IsNullOrEmpty(message.Ticker)) //ticker property is not null, request for one security
+            {
+                var isScreener = message.IsScreenerRequest;
+                var isPreview = message.IsTradePreviewRequest;
+                await GetSecurityInfo(message.Ticker, isScreener,  isPreview);                
+            }
         }
 
         /// <summary>
@@ -218,7 +222,7 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         /// <param name="ticker"></param>
         /// <returns></returns>
-        public async Task GetSecurityInfo(string ticker)
+        public async Task GetSecurityInfo(string ticker, bool isScreener, bool isPreview)
         {
             if (!string.IsNullOrEmpty(ticker))
             {
@@ -226,7 +230,9 @@ namespace Asset_Management_Platform.Utility
                 {
                     var result = await yahooAPI.GetSingleSecurity(ticker, _securityDatabaseList);
                     TryDatabaseInsert(result);
-                    Messenger.Default.Send<StockDataResponseMessage>(new StockDataResponseMessage(result));
+
+                    var responseMessage = new StockDataResponseMessage(result, isPreview, isScreener);
+                    Messenger.Default.Send<StockDataResponseMessage>(responseMessage);
                 }
             }
         }
