@@ -108,18 +108,6 @@ namespace Asset_Management_Platform
             Messenger.Default.Send<TaxlotMessage>(new TaxlotMessage(downloadedTaxlots, true, false));
         }
 
-        public List<Taxlot> BuildLocalTaxlots(List<Taxlot> taxlots)
-        {
-            if (taxlots == null)
-                return new List<Taxlot>(); //Should not hit this
-
-            foreach (var lot in taxlots)
-            {
-                _myTaxlots.Add(new Taxlot(lot.Ticker, lot.Shares, lot.PurchasePrice, lot.DatePurchased, lot.SecurityType));
-            }
-            return _myTaxlots;
-        }
-
         /// <summary>
         /// This method is called if NOT in local mode.
         /// </summary>

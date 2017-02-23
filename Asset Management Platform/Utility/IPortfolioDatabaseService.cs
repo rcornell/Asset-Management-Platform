@@ -28,8 +28,5 @@ namespace Asset_Management_Platform.Utility
         void AddToPortfolioDatabase(Taxlot taxlotToAdd);
 
         void DeletePortfolio(List<Position> positions);
-
-        List<Taxlot> BuildLocalTaxlots(List<Taxlot> taxlots);
-
     }
 }
