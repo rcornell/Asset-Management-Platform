@@ -1001,7 +1001,9 @@ namespace Asset_Management_Platform
                 var sessionData = await portFileOps.TryLoadSession();
                 
                 //Send locally loaded List<Taxlot> to PortfolioDatabaseService to listen for List<Position>
-                Messenger.Default.Send<TaxlotMessage>(new TaxlotMessage(sessionData.Taxlots, false, true));
+                //In this case, the message's "IsStartup" boolean is true because loading the Positions
+                //Is considered a startup process
+                Messenger.Default.Send<TaxlotMessage>(new TaxlotMessage(sessionData.Taxlots, true, true));
 
 
                 LimitOrderList = new ObservableCollection<LimitOrder>(sessionData.LimitOrders);

@@ -23,8 +23,8 @@ namespace Asset_Management_Platform
     {
         private readonly string _storageString;
         private readonly List<Position> _portfolioOriginalState;
-        private readonly List<Position> _myPositions; //This is THE main position list
-        private readonly List<Taxlot> _myTaxlots; //This is THE main taxlot list
+        private readonly List<Position> _myPositions;
+        private List<Taxlot> _myTaxlots; 
         private List<LimitOrder> _myLimitOrders;
         private bool _localMode;
         private IStockDataService _stockDatabaseService;    
@@ -37,6 +37,7 @@ namespace Asset_Management_Platform
             Messenger.Default.Register<TradeBuyMessage>(this, HandleBuy);
             Messenger.Default.Register<TradeSellMessage>(this, HandleSell);
             Messenger.Default.Register<LimitOrderMessage>(this, HandleLimitOrderList);
+            Messenger.Default.Register<TaxlotMessage>(this, HandleTaxlotMessage);
 
             _stockDatabaseService = stockDatabaseService;
 
@@ -57,6 +58,16 @@ namespace Asset_Management_Platform
             if (!message.IsStartup)
             {
                 _myLimitOrders = message.LimitOrders;
+            }
+        }
+
+        private void HandleTaxlotMessage(TaxlotMessage message)
+        {
+            //Determine if this is being sent in LocalMode and at Startup
+            if (message.IsLocalMode && message.IsStartup)
+            {
+                _myTaxlots = message.Taxlots;
+                GetPositionsFromTaxlots();
             }
         }
 
