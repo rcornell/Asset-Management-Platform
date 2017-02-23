@@ -106,6 +106,16 @@ namespace Asset_Management_Platform.Utility
             if (message.IsStartupResponse && message.Securities != null)
             {
                 _portfolioSecurities = message.Securities;
+
+                if (_portfolioPositions != null && _portfolioTaxlots != null)
+                {
+                    foreach (var pos in _portfolioPositions)
+                    {
+                        var security = _portfolioSecurities.Find(s => s.Ticker == pos.Ticker);
+                        pos.UpdateTaxlotPrices(security.LastPrice);
+                    }
+                }
+
                 return;
             }
 
@@ -152,11 +162,7 @@ namespace Asset_Management_Platform.Utility
 
 
             //Update all Positions' taxlot pricing
-            foreach (var pos in _portfolioPositions)
-            {
-                var security = _portfolioSecurities.Find(s => s.Ticker == pos.Ticker);
-                pos.UpdateTaxlotPrices(security.LastPrice);
-            }
+ 
 
             Messenger.Default.Send(new DatabaseMessage("Complete", true, false));
         }

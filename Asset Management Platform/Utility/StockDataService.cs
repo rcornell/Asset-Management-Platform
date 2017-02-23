@@ -75,8 +75,8 @@ namespace Asset_Management_Platform.Utility
             using (var connection = new SqlConnection(_storageString))
             {
                 connection.Open();
-                var stocks = LoadStocksFromDB(connection);
-                var funds = LoadMutualFundsFromDB(connection);
+                var stocks = await LoadStocksFromDB(connection);
+                var funds = await LoadMutualFundsFromDB(connection);
 
                 _securityDatabaseList.AddRange(stocks);
                 _securityDatabaseList.AddRange(funds);
@@ -339,7 +339,7 @@ namespace Asset_Management_Platform.Utility
             }
         }
 
-        private List<Security> LoadMutualFundsFromDB(SqlConnection connection)
+        private async Task<List<Security>> LoadMutualFundsFromDB(SqlConnection connection)
         {
             var securityList = new List<Security>();
             var commandText = @"SELECT * FROM MUTUALFUNDS";
@@ -355,7 +355,7 @@ namespace Asset_Management_Platform.Utility
                 string category = "";
                 string subCategory = "";
 
-                var reader = command.ExecuteReader();
+                var reader = await command.ExecuteReaderAsync();
                 while (reader.Read())
                 {
                     if (!reader.IsDBNull(0))
@@ -381,7 +381,7 @@ namespace Asset_Management_Platform.Utility
             return securityList;
         }
 
-        private List<Security> LoadStocksFromDB(SqlConnection connection)
+        private async Task<List<Security>> LoadStocksFromDB(SqlConnection connection)
         {
             var securityList = new List<Security>();
             var commandText = @"SELECT * FROM STOCKS";
@@ -394,7 +394,7 @@ namespace Asset_Management_Platform.Utility
                 decimal lastPrice = 0;
                 double yield = 0;
 
-                var reader = command.ExecuteReader();
+                var reader = await command.ExecuteReaderAsync();
                 while (reader.Read())
                 {
                     if (!reader.IsDBNull(0))
