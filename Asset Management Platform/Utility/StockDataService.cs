@@ -40,7 +40,7 @@ namespace Asset_Management_Platform.Utility
 
         private async void HandleStockDataRequest(StockDataRequestMessage message)
         {
-            if (message.Tickers != null) //List<string> tickers is not null, request for multiple securities
+            if (message.Tickers != null || message.Positions != null) //Request for multiple securities
                 await GetSecurityInfo(message);
             if (!string.IsNullOrEmpty(message.Ticker)) //ticker property is not null, request for one security
             {
@@ -237,21 +237,35 @@ namespace Asset_Management_Platform.Utility
             }
         }
 
+        /// <summary>
+        /// Method takes a request for multiple tickers or multiple positions
+        /// and sends a listed of updated data
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public async Task GetSecurityInfo(StockDataRequestMessage message)
         {
+            var tickersToQuery = new List<string>();
+
             if (message.Tickers != null && message.Tickers.Count > 0)
-            {
-                using (var yahooAPI = new YahooAPIService())
-                {
-                    var resultList = await yahooAPI.GetMultipleSecurities(message.Tickers);
-                    
-                    //Return response. Message's boolean is True if this is a startup call of this method.
-                    if (message.IsStartupRequest)
-                        Messenger.Default.Send<StockDataResponseMessage>(new StockDataResponseMessage(resultList, true));
-                    else
-                        Messenger.Default.Send<StockDataResponseMessage>(new StockDataResponseMessage(resultList, false));
-                }
+            { 
+                tickersToQuery = message.Tickers;
             }
+            else if (message.Positions != null && message.Positions.Count > 0)
+            {
+                tickersToQuery = message.Positions.Select(s => s.Ticker).Distinct().ToList();
+            }
+
+            using (var yahooAPI = new YahooAPIService())
+            {
+                var resultList = await yahooAPI.GetMultipleSecurities(tickersToQuery);
+                    
+                //Return response. Message's boolean is True if this is a startup call of this method.
+                if (message.IsStartupRequest)
+                    Messenger.Default.Send<StockDataResponseMessage>(new StockDataResponseMessage(resultList, true));
+                else
+                    Messenger.Default.Send<StockDataResponseMessage>(new StockDataResponseMessage(resultList, false));
+            }            
         }
 
         public List<Security> GetMutualFundExtraData(List<Security> rawSecurities)

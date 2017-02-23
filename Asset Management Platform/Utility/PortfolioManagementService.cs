@@ -593,8 +593,8 @@ namespace Asset_Management_Platform.Utility
 
         public void UpdatePortfolioPrices()
         {
-            //Update securities' pricing data
-            _stockDataService.GetUpdatedPricing(_portfolioSecurities);
+            //Update Positions' pricing data
+            Messenger.Default.Send<StockDataRequestMessage>(new StockDataRequestMessage(_portfolioPositions,false));
         }
 
         /// <summary>
