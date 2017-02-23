@@ -134,6 +134,7 @@
     <Compile Include="Messages\SecurityTypeRequestMessage.cs" />
     <Compile Include="Messages\SecurityTypeResponseMessage.cs" />
     <Compile Include="Messages\ShutdownMessage.cs" />
+    <Compile Include="Messages\StartupCompleteMessage.cs" />
     <Compile Include="Messages\StockDataRequestMessage.cs" />
     <Compile Include="Messages\StockDataResponseMessage.cs" />
     <Compile Include="Messages\TaxlotMessage.cs" />

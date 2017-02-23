@@ -554,7 +554,7 @@ namespace Asset_Management_Platform
         }
         #endregion
 
-        public MainViewModel(IPortfolioManagementService portfolioService, IStockDataService stockDataService, IPortfolioDatabaseService portfolioDatabaseService)
+        public MainViewModel()
         {
             Messenger.Default.Register<LocalModeMessage>(this, SetLocalMode);
             Messenger.Default.Register<TaxlotMessage>(this, CreateTaxlots);
@@ -563,10 +563,6 @@ namespace Asset_Management_Platform
             Messenger.Default.Register<LimitOrderMessage>(this, ProcessLimitOrderCreated);
             Messenger.Default.Register<StockDataResponseMessage>(this, HandleStockDataResponse);
 
-            _stockDataService = stockDataService;
-            _portfolioDatabaseService = portfolioDatabaseService;            
-            _portfolioManagementService = portfolioService;
-
             TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
             TradeTermStrings = new ObservableCollection<string>() { " ", "Market", "Limit", "Stop", "Stop Limit" };
             TradeDurationStrings = new ObservableCollection<string> { " ", "Day", "GTC", "Market Close", "Market Open", "Overnight" };
@@ -574,6 +570,17 @@ namespace Asset_Management_Platform
 
             Positions = new ObservableCollection<Position>();
             Taxlots = new ObservableCollection<Taxlot>();
+
+            //_stockDataService = stockDataService;
+            //_portfolioDatabaseService = portfolioDatabaseService;
+            //_portfolioManagementService = portfolioService;
+            _portfolioManagementService = SimpleIoc.Default.GetInstance<IPortfolioManagementService>();
+            _portfolioDatabaseService = SimpleIoc.Default.GetInstance<IPortfolioDatabaseService>();
+            _stockDataService = SimpleIoc.Default.GetInstance<IStockDataService>();
+            
+            //Create message to send when all classes are loaded and listening to each other?
+
+            
 
             SelectedTradeType = TradeTypeStrings[0];
             SelectedTermType = TradeTermStrings[0];
@@ -592,6 +599,9 @@ namespace Asset_Management_Platform
             LimitOrderIsSelected = false;
             _canLoad = true;
             _canSave = true;
+
+            //Notify other classes that startup is complete.
+            Messenger.Default.Send<StartupCompleteMessage>(new StartupCompleteMessage(true));
         }
 
         private void SetLocalMode(LocalModeMessage message)
