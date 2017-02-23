@@ -42,7 +42,7 @@ namespace Asset_Management_Platform
         private string _showLimitButtonText;
         private string _previewButtonText;
         private bool _orderTermsOK;
-        private Security _screenerStock;
+        private Security _screenerSecurity;
         private string _stockScreenerTicker;
         private bool _alertBoxVisible;
         private string _alertBoxMessage;
@@ -128,11 +128,11 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => OrderTermsOK);
             }
         }
-        public Security ScreenerStock
+        public Security ScreenerSecurity
         {
-            get { return _screenerStock; }
-            set { _screenerStock = value;
-                RaisePropertyChanged(() => ScreenerStock);
+            get { return _screenerSecurity; }
+            set { _screenerSecurity = value;
+                RaisePropertyChanged(() => ScreenerSecurity);
             }
         }
         public string StockScreenerTicker
@@ -888,7 +888,7 @@ namespace Asset_Management_Platform
             if (!string.IsNullOrEmpty(screenerTicker))
             {
                 var resultSecurity = await _portfolioManagementService.GetTradePreviewSecurity(screenerTicker);
-                ScreenerStock = resultSecurity;
+                ScreenerSecurity = resultSecurity;
             }
         }
 
