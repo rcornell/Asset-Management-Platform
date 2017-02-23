@@ -592,8 +592,9 @@ namespace Asset_Management_Platform
             _canSave = true;
 
             _stockDataService = SimpleIoc.Default.GetInstance<IStockDataService>();
-            _portfolioManagementService = SimpleIoc.Default.GetInstance<IPortfolioManagementService>();
             _portfolioDatabaseService = SimpleIoc.Default.GetInstance<IPortfolioDatabaseService>();
+            _portfolioManagementService = SimpleIoc.Default.GetInstance<IPortfolioManagementService>();
+            
 
             //Notify other classes that startup is complete.
             Messenger.Default.Send<StartupCompleteMessage>(new StartupCompleteMessage(true));

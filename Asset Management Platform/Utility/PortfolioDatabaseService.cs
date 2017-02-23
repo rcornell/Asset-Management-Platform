@@ -48,6 +48,8 @@ namespace Asset_Management_Platform
             //Register for handling of LOCAL MODE taxlot creation
             Messenger.Default.Register<TaxlotMessage>(this, HandleTaxlotMessage);
 
+            _storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
+
             _portfolioOriginalState = new List<Position>();
             _myPositions = new List<Position>();
             _myTaxlots = new List<Taxlot>();
@@ -85,10 +87,8 @@ namespace Asset_Management_Platform
 
         public async Task BuildDatabaseTaxlots()
         {
-            var downloadedTaxlots = new List<Taxlot>();
-
             if (_localMode)
-                Messenger.Default.Send<TaxlotMessage>(new TaxlotMessage(downloadedTaxlots, true, true));
+                Messenger.Default.Send<TaxlotMessage>(new TaxlotMessage(_myTaxlots, true, true));
 
             using (var connection = new SqlConnection(_storageString))
             {
@@ -117,7 +117,7 @@ namespace Asset_Management_Platform
                     }
                 }
             }
-            Messenger.Default.Send<TaxlotMessage>(new TaxlotMessage(downloadedTaxlots, true, false));
+            Messenger.Default.Send<TaxlotMessage>(new TaxlotMessage(_myTaxlots, true, false));
         }
 
         /// <summary>
@@ -478,10 +478,10 @@ namespace Asset_Management_Platform
 
             using (var connection = new SqlConnection(_storageString))
             {
+                connection.Open();
                 using (var command = new SqlCommand(downloadString, connection))
-                {
-                    connection.Open();
-                    var reader = command.ExecuteReader();
+                {                    
+                    var reader = await command.ExecuteReaderAsync();
 
                     if (reader != null && reader.HasRows)
                     {
