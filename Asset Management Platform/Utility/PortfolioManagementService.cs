@@ -301,31 +301,26 @@ namespace Asset_Management_Platform.Utility
             
             if (shares == position.SharesOwned)
             {
-                //User selling all shares, so find and remove the security from portfolio
-                var securityToRemove = _portfolioSecurities.Find(s => s.Ticker == ticker);
-                _portfolioSecurities.Remove(securityToRemove);
+                _portfolioSecurities.RemoveAll(s => s.Ticker == trade.Ticker);
+                _portfolioTaxlots.RemoveAll(s => s.Ticker == trade.Ticker);
+                _portfolioPositions.RemoveAll(s => s.Ticker == trade.Ticker);
 
-                //Find and remove all taxlots
-                var originalTaxLots = new List<Taxlot>(_portfolioTaxlots);
-                var taxlotsToRemove = originalTaxLots.Where(t => t.Ticker == ticker);
-                foreach (var lot in taxlotsToRemove)
-                {
-                    _portfolioTaxlots.Remove(lot);
-                }
-
-                //Remove the position
-                _portfolioPositions.Remove(position);
+                //Send message to PortfolioDatabaseService
+                Messenger.Default.Send<TradeSellMessage>(new TradeSellMessage(trade, true, false));
             }            
             else if (shares > position.SharesOwned)
             {
                 //User trying to sell too many shares
                 var message = new TradeErrorMessage() { Shares = shares, Ticker = ticker, Message = "Order quantity exceeds shares owned!" };
-                Messenger.Default.Send(message);
+                Messenger.Default.Send<TradeErrorMessage>(message);
             }
             else 
             {
                 //User selling partial position
                 position.SellShares(shares);
+
+                //Send message to PortfolioDatabaseService
+                Messenger.Default.Send<TradeSellMessage>(new TradeSellMessage(trade, false, true));
             }
 
             //Sends updated List<Taxlot> and List<Position>

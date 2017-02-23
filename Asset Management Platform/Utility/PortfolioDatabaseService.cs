@@ -571,9 +571,17 @@ namespace Asset_Management_Platform
 
         private void HandleSell(TradeSellMessage message)
         {
-            
+            if (message.SellingPartialShares)
+            {
+                var position = _myPositions.Find(s => s.Ticker == message.Trade.Ticker);
+                position.SellShares(message.Trade.Shares);
+            }
+            if (message.SellingAllShares)
+            {               
+                _myPositions.RemoveAll(s => s.Ticker == message.Trade.Ticker);
+                _myTaxlots.RemoveAll(s => s.Ticker == message.Trade.Ticker);
+            }
         }
-
     }
 
 }

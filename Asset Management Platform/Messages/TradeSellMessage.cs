@@ -11,11 +11,29 @@ namespace Asset_Management_Platform.Messages
     {
         public Trade Trade;
         public Taxlot Taxlot;
+        public bool SellingAllShares;
+        public bool SellingPartialShares;
 
-        public TradeSellMessage(Trade trade, Taxlot taxlot)
+        public TradeSellMessage(Trade trade, Taxlot taxlot, bool allShares, bool partialShares)
         {
             Trade = trade;
             Taxlot = taxlot;
+            SellingAllShares = allShares;
+            SellingPartialShares = partialShares;
+        }
+
+        public TradeSellMessage(Taxlot taxlot, bool allShares, bool partialShares)
+        {
+            Taxlot = taxlot;
+            SellingAllShares = allShares;
+            SellingPartialShares = partialShares;
+        }
+
+        public TradeSellMessage(Trade trade, bool allShares, bool partialShares)
+        {
+            Trade = trade;
+            SellingAllShares = allShares;
+            SellingPartialShares = partialShares;
         }
     }
 }
