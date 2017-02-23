@@ -12,32 +12,34 @@ namespace Asset_Management_Platform.Messages
         public List<Position> Positions;
         public Position Position;
         public string Ticker;
-        public bool IsStartup;
-        public bool IsTradePreview;
+        public bool IsStartupRequest;
+        public bool IsTradePreviewRequest;
+        public bool IsScreenerRequest;
 
         public StockDataRequestMessage(List<string> tickers, bool isStartup)
         {
             Tickers = tickers;
-            IsStartup = isStartup;
+            IsStartupRequest = isStartup;
         }
 
-        public StockDataRequestMessage(string ticker, bool isStartup, bool isPreview)
+        public StockDataRequestMessage(string ticker, bool isStartup, bool isPreview, bool isScreener)
         {
             Ticker = ticker;
-            IsStartup = isStartup;
-            IsTradePreview = isPreview;
+            IsStartupRequest = isStartup;
+            IsTradePreviewRequest = isPreview;
+            IsScreenerRequest = isScreener;
         }
 
         public StockDataRequestMessage(List<Position> positions, bool isStartup)
         {
             Positions = positions;
-            IsStartup = isStartup;
+            IsStartupRequest = isStartup;
         }
 
         public StockDataRequestMessage(Position position, bool isStartup)
         {
             Position = position;
-            IsStartup = isStartup;
+            IsStartupRequest = isStartup;
         }
     }
 }

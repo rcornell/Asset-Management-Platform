@@ -800,7 +800,7 @@ namespace Asset_Management_Platform
             {
                 //Send stock preview request
                 Messenger.Default.Send<StockDataRequestMessage>(new StockDataRequestMessage(_orderTickerText, false,
-                    true));                
+                    true, false));                
             }
             else
             {

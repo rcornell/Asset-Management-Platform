@@ -240,7 +240,7 @@ namespace Asset_Management_Platform.Utility
                     var resultList = await yahooAPI.GetMultipleSecurities(message.Tickers);
                     
                     //Return response. Message's boolean is True if this is a startup call of this method.
-                    if (message.IsStartup)
+                    if (message.IsStartupRequest)
                         Messenger.Default.Send<StockDataResponseMessage>(new StockDataResponseMessage(resultList, true));
                     else
                         Messenger.Default.Send<StockDataResponseMessage>(new StockDataResponseMessage(resultList, false));

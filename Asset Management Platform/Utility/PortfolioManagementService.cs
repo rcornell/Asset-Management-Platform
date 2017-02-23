@@ -468,7 +468,7 @@ namespace Asset_Management_Platform.Utility
         /// <returns></returns>
         public void GetTradePreviewSecurity(string ticker)
         {
-            Messenger.Default.Send<StockDataRequestMessage>(new StockDataRequestMessage(ticker, false, true));
+            Messenger.Default.Send<StockDataRequestMessage>(new StockDataRequestMessage(ticker, false, true, false));
         }
 
         /// <summary>
