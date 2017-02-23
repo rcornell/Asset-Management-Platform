@@ -999,7 +999,11 @@ namespace Asset_Management_Platform
             using (var portFileOps = new PortfolioFileOps())
             {
                 var sessionData = await portFileOps.TryLoadSession();
-                var taxlotsLoaded = await _portfolioManagementService.UpdatePortfolioSecuritiesStartup(sessionData.Taxlots);
+                
+                //Send locally loaded List<Taxlot> to PortfolioDatabaseService to listen for List<Position>
+                Messenger.Default.Send<TaxlotMessage>(new TaxlotMessage(sessionData.Taxlots, false, true));
+
+
                 LimitOrderList = new ObservableCollection<LimitOrder>(sessionData.LimitOrders);
 
                 //Send list of LimitOrders to startup listeners

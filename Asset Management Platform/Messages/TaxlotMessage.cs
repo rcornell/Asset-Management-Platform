@@ -9,10 +9,14 @@ namespace Asset_Management_Platform.Messages
     public class TaxlotMessage
     {
         public List<Taxlot> Taxlots;
+        public bool IsStartup;
+        public bool IsLocalMode;
 
-        public TaxlotMessage(List<Taxlot> taxlots)
+        public TaxlotMessage(List<Taxlot> taxlots, bool isStartup, bool isLocalMode)
         {
             Taxlots = taxlots;
+            IsStartup = isStartup;
+            IsLocalMode = isLocalMode;
         }
     }
 }

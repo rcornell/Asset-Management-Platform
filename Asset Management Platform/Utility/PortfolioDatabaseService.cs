@@ -65,7 +65,7 @@ namespace Asset_Management_Platform
             var downloadedTaxlots = new List<Taxlot>();
 
             if (_localMode)
-                Messenger.Default.Send<TaxlotMessage>(new TaxlotMessage(downloadedTaxlots));
+                Messenger.Default.Send<TaxlotMessage>(new TaxlotMessage(downloadedTaxlots, true, true));
 
             using (var connection = new SqlConnection(_storageString))
             {
@@ -94,7 +94,7 @@ namespace Asset_Management_Platform
                     }
                 }
             }
-            Messenger.Default.Send<TaxlotMessage>(new TaxlotMessage(downloadedTaxlots));
+            Messenger.Default.Send<TaxlotMessage>(new TaxlotMessage(downloadedTaxlots, true, false));
         }
 
         public List<Taxlot> BuildLocalTaxlots(List<Taxlot> taxlots)
