@@ -562,6 +562,7 @@ namespace Asset_Management_Platform
             Messenger.Default.Register<TradeCompleteMessage>(this, HandleTradeCompleteMessage);
             Messenger.Default.Register<LimitOrderMessage>(this, ProcessLimitOrderCreated);
             Messenger.Default.Register<StockDataResponseMessage>(this, HandleStockDataResponse);
+            Messenger.Default.Register<PositionPricingMessage>(this, HandlePositionPricingMessage);
 
             TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
             TradeTermStrings = new ObservableCollection<string>() { " ", "Market", "Limit", "Stop", "Stop Limit" };
@@ -598,6 +599,11 @@ namespace Asset_Management_Platform
 
             //Notify other classes that startup is complete.
             Messenger.Default.Send<StartupCompleteMessage>(new StartupCompleteMessage(true));
+        }
+
+        private void HandlePositionPricingMessage(PositionPricingMessage message)
+        {
+
         }
 
         private void SetLocalMode(LocalModeMessage message)

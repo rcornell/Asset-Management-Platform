@@ -256,13 +256,18 @@ namespace Asset_Management_Platform.Utility
         {
             var tickersToQuery = new List<string>();
 
+            var positionsQuery = false;
+            var tickersQuery = false;
+
             if (message.Tickers != null && message.Tickers.Count > 0)
             { 
                 tickersToQuery = message.Tickers;
+                tickersQuery = true;
             }
             else if (message.Positions != null && message.Positions.Count > 0)
             {
                 tickersToQuery = message.Positions.Select(s => s.Ticker).Distinct().ToList();
+                positionsQuery = true;
             }
 
             using (var yahooAPI = new YahooAPIService())
@@ -270,7 +275,9 @@ namespace Asset_Management_Platform.Utility
                 var resultList = await yahooAPI.GetMultipleSecurities(tickersToQuery);
                     
                 //Return response. Message's boolean is True if this is a startup call of this method.
-                if (message.IsStartupRequest)
+                if (message.IsStartupRequest && positionsQuery)
+                    Messenger.Default.Send<PositionPricingMessage>(new PositionPricingMessage(resultList));
+                else if(message.IsStartupRequest && tickersQuery)
                     Messenger.Default.Send<StockDataResponseMessage>(new StockDataResponseMessage(resultList, true));
                 else
                     Messenger.Default.Send<StockDataResponseMessage>(new StockDataResponseMessage(resultList, false));

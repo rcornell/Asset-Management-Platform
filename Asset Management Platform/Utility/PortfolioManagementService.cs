@@ -62,18 +62,24 @@ namespace Asset_Management_Platform.Utility
 
             Messenger.Default.Register<LimitOrderUpdateResponseMessage>(this, HandleLimitOrderUpdateResponse);
 
+            Messenger.Default.Register<PositionPricingMessage>(this, HandlePositionPricingMessage);
+
             _timer = new DispatcherTimer();
             _timer.Tick += _timer_Tick;
             _timer.Interval = new TimeSpan(0, 0, 10);
+        }
+
+        private void HandlePositionPricingMessage(PositionPricingMessage message)
+        {
+            
         }
 
         private async void HandleStartupComplete(StartupCompleteMessage message)
         {
             if (!message.IsComplete)
                 return;
-
-            //Sends a message to update portfolio securities
-            //await UpdatePortfolioSecuritiesStartup();
+            
+            //No code currently needed here            
         }
 
         private void LoadSecurityDatabase(SecurityDatabaseMessage message)
@@ -96,10 +102,11 @@ namespace Asset_Management_Platform.Utility
             if (message.IsStartup)
             {
                 _portfolioPositions = message.Positions;
+
+                //Positions have been downloaded. Update pricing.
+                Messenger.Default.Send<StockDataRequestMessage>(new StockDataRequestMessage(_portfolioPositions, true));
             }
         }
-
-       
 
         private void HandleStockDataResponse(StockDataResponseMessage message)
         {
@@ -151,20 +158,12 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         public async Task UpdatePortfolioSecuritiesStartup()
         {
-
-            //NO MORE CALL TO PDS TO BUILD TAXLOTs
-
-            
             //If _portfolioTaxlots is not null, return all of its unique tickers
             var tickers =  _portfolioTaxlots?.Select(s => s.Ticker).Distinct().ToList() ?? new List<string>();
-
             Messenger.Default.Send<StockDataRequestMessage>(new StockDataRequestMessage(tickers, true));
 
 
             //Update all Positions' taxlot pricing
- 
-
-            Messenger.Default.Send(new DatabaseMessage("Complete", true, false));
         }
 
         /// <summary>
