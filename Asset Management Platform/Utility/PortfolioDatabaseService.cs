@@ -63,6 +63,7 @@ namespace Asset_Management_Platform
 
             await LoadLimitOrdersFromDatabase();
             await BuildDatabaseTaxlots();
+            GetPositionsFromTaxlots();
         }
 
         private void HandleLimitOrderList(LimitOrderMessage message)

@@ -73,7 +73,7 @@ namespace Asset_Management_Platform.Utility
                 return;
 
             //Sends a message to update portfolio securities
-            await UpdatePortfolioSecuritiesStartup();
+            //await UpdatePortfolioSecuritiesStartup();
         }
 
         private void LoadSecurityDatabase(SecurityDatabaseMessage message)
