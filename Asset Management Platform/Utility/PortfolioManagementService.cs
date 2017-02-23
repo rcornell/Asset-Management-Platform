@@ -37,6 +37,9 @@ namespace Asset_Management_Platform.Utility
             //Register for LocalMode notification
             Messenger.Default.Register<LocalModeMessage>(this, SetLocalMode);
 
+            //Register for StartupCompleteMessage notification
+            Messenger.Default.Register<StartupCompleteMessage>(this, HandleStartupComplete);
+
             //Register for IStockDataService creating its *database* of List<Security>
             Messenger.Default.Register<SecurityDatabaseMessage>(this, LoadSecurityDatabase);
 
@@ -59,12 +62,18 @@ namespace Asset_Management_Platform.Utility
 
             Messenger.Default.Register<LimitOrderUpdateResponseMessage>(this, HandleLimitOrderUpdateResponse);
 
-            //Sends a message to update portfolio securities
-            UpdatePortfolioSecuritiesStartup();
-
             _timer = new DispatcherTimer();
             _timer.Tick += _timer_Tick;
             _timer.Interval = new TimeSpan(0, 0, 10);
+        }
+
+        private void HandleStartupComplete(StartupCompleteMessage message)
+        {
+            if (!message.IsComplete)
+                return;
+
+            //Sends a message to update portfolio securities
+            UpdatePortfolioSecuritiesStartup();
         }
 
         private void LoadSecurityDatabase(SecurityDatabaseMessage message)
@@ -88,8 +97,9 @@ namespace Asset_Management_Platform.Utility
             {
                 _portfolioPositions = message.Positions;
             }
-
         }
+
+       
 
         private void HandleStockDataResponse(StockDataResponseMessage message)
         {
