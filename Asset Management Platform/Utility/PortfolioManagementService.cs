@@ -115,7 +115,7 @@ namespace Asset_Management_Platform.Utility
         /// Called when NOT in local mode.
         /// Creates the list of taxlots, positions, and securities owned.
         /// </summary>
-        private async Task UpdatePortfolioSecuritiesStartup()
+        public async Task UpdatePortfolioSecuritiesStartup()
         {
 
             //NO MORE CALL TO PDS TO BUILD TAXLOTs
@@ -147,11 +147,10 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         /// <param name="taxlots"></param>
         /// <returns></returns>
-        public async Task<bool> UpdatePortfolioSecuritiesStartup(IEnumerable<Taxlot> taxlots)
+        public async Task<bool> UpdatePortfolioSecuritiesStartupLocal()
         {
-
-            //Update prices for all positions
-            await _stockDataService.GetUpdatedPricing(_portfolioPositions);
+            //Request updated pricing for portfolio positions
+            Messenger.Default.Send<StockDataRequestMessage>(new StockDataRequestMessage(_portfolioPositions, false));
 
             Messenger.Default.Send(new DatabaseMessage("Success", true, false));
             return true;
