@@ -54,13 +54,13 @@ namespace Asset_Management_Platform
             _myLimitOrders = new List<LimitOrder>();
         }
 
-        private void HandleStartupComplete(StartupCompleteMessage message)
+        private async void HandleStartupComplete(StartupCompleteMessage message)
         {
             if (!message.IsComplete)
                 return;
 
-            LoadLimitOrdersFromDatabase();
-            BuildDatabaseTaxlots();
+            await LoadLimitOrdersFromDatabase();
+            await BuildDatabaseTaxlots();
         }
 
         private void HandleLimitOrderList(LimitOrderMessage message)

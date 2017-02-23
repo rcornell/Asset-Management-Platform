@@ -32,7 +32,7 @@ namespace Asset_Management_Platform.Utility
             _localMode = _storageString == null ? true : false;            
         }
 
-        private void HandleStartupComplete(StartupCompleteMessage message)
+        private async void HandleStartupComplete(StartupCompleteMessage message)
         {
             if (!message.IsComplete)
                 return;
@@ -41,10 +41,10 @@ namespace Asset_Management_Platform.Utility
 
             if (!_localMode)
             {
-                CheckDatabases();
+                await CheckDatabases();
             }
 
-            LoadSecurityDatabase();
+            await LoadSecurityDatabase();
         }
 
         private async void HandleStockDataRequest(StockDataRequestMessage message)
@@ -63,7 +63,7 @@ namespace Asset_Management_Platform.Utility
         /// Reads the SQL database and sends a message with the List<Security>
         /// of known securities
         /// </summary>
-        private void LoadSecurityDatabase()
+        private async Task LoadSecurityDatabase()
         {
             var securityDatabaseList = new List<Security>();
 

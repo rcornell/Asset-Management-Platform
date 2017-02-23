@@ -67,13 +67,13 @@ namespace Asset_Management_Platform.Utility
             _timer.Interval = new TimeSpan(0, 0, 10);
         }
 
-        private void HandleStartupComplete(StartupCompleteMessage message)
+        private async void HandleStartupComplete(StartupCompleteMessage message)
         {
             if (!message.IsComplete)
                 return;
 
             //Sends a message to update portfolio securities
-            UpdatePortfolioSecuritiesStartup();
+            await UpdatePortfolioSecuritiesStartup();
         }
 
         private void LoadSecurityDatabase(SecurityDatabaseMessage message)
@@ -144,12 +144,12 @@ namespace Asset_Management_Platform.Utility
 
             //NO MORE CALL TO PDS TO BUILD TAXLOTs
 
-            //Get security data with market data API (currently YahooAPI)
-            var tickers = _portfolioTaxlots.Select(s => s.Ticker).Distinct().ToList();
+            
+            //If _portfolioTaxlots is not null, return all of its unique tickers
+            var tickers =  _portfolioTaxlots?.Select(s => s.Ticker).Distinct().ToList() ?? new List<string>();
+
             Messenger.Default.Send<StockDataRequestMessage>(new StockDataRequestMessage(tickers, true));
 
-
-            //YOU GOT THIS FAR WITH THE MESSAGES
 
             //Update all Positions' taxlot pricing
             foreach (var pos in _portfolioPositions)

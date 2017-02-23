@@ -571,16 +571,7 @@ namespace Asset_Management_Platform
             Positions = new ObservableCollection<Position>();
             Taxlots = new ObservableCollection<Taxlot>();
 
-            //_stockDataService = stockDataService;
-            //_portfolioDatabaseService = portfolioDatabaseService;
-            //_portfolioManagementService = portfolioService;
-            _portfolioManagementService = SimpleIoc.Default.GetInstance<IPortfolioManagementService>();
-            _portfolioDatabaseService = SimpleIoc.Default.GetInstance<IPortfolioDatabaseService>();
-            _stockDataService = SimpleIoc.Default.GetInstance<IStockDataService>();
-            
-            //Create message to send when all classes are loaded and listening to each other?
-
-            
+                     
 
             SelectedTradeType = TradeTypeStrings[0];
             SelectedTermType = TradeTermStrings[0];
@@ -599,6 +590,10 @@ namespace Asset_Management_Platform
             LimitOrderIsSelected = false;
             _canLoad = true;
             _canSave = true;
+
+            _stockDataService = SimpleIoc.Default.GetInstance<IStockDataService>();
+            _portfolioManagementService = SimpleIoc.Default.GetInstance<IPortfolioManagementService>();
+            _portfolioDatabaseService = SimpleIoc.Default.GetInstance<IPortfolioDatabaseService>();
 
             //Notify other classes that startup is complete.
             Messenger.Default.Send<StartupCompleteMessage>(new StartupCompleteMessage(true));
