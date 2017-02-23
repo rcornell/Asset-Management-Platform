@@ -52,6 +52,8 @@ namespace Asset_Management_Platform
 
         private void HandleLimitOrderList(LimitOrderMessage message)
         {
+            //Only update the List<LimitOrder> field in this class
+            //If a LimitOrderMessage is sent during runtime
             if (!message.IsStartup)
             {
                 _myLimitOrders = message.LimitOrders;

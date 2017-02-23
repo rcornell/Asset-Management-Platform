@@ -1000,7 +1000,10 @@ namespace Asset_Management_Platform
             {
                 var sessionData = await portFileOps.TryLoadSession();
                 var taxlotsLoaded = await _portfolioManagementService.BuildPortfolioSecurities(sessionData.Taxlots);
-                LimitOrderList = new ObservableCollection<LimitOrder>(sessionData.LimitOrders);                
+                LimitOrderList = new ObservableCollection<LimitOrder>(sessionData.LimitOrders);
+
+                //Send list of LimitOrders to startup listeners
+                Messenger.Default.Send<LimitOrderMessage>(new LimitOrderMessage(sessionData.LimitOrders, true));
             }
         }
 

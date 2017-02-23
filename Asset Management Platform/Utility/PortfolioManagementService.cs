@@ -50,11 +50,11 @@ namespace Asset_Management_Platform.Utility
             //Register for IStockDataService returning Security/Securities information
             Messenger.Default.Register<StockDataResponseMessage>(this, HandleStockDataResponse);
 
+            //Register for List<LimitOrder> creation
+            Messenger.Default.Register<LimitOrderMessage>(this, CreateLimitOrders);
+
             _stockDataService = stockDataService;
-            _portfolioDatabaseService = portfolioDatabaseService;                 
-                       
-            //Download limit orders from SQL DB
-            GetLimitOrderList();
+            _portfolioDatabaseService = portfolioDatabaseService;                                       
 
             //Create the core List<T>'s of taxlots, positions, and securities
             BuildPortfolioSecurities();
@@ -161,18 +161,14 @@ namespace Asset_Management_Platform.Utility
             //Update prices for all positions
             await _stockDataService.GetUpdatedPricing(_portfolioPositions);
 
-            //**No MutualFund extra data available in local mode**
 
             Messenger.Default.Send(new DatabaseMessage("Success", true, false));
             return true;
         }
 
-        private void GetLimitOrderList()
+        private void CreateLimitOrders(LimitOrderMessage message)
         {
-            if (_localMode)
-                _limitOrderList = new List<LimitOrder>();
-            else
-                _limitOrderList = _portfolioDatabaseService.LoadLimitOrdersFromDatabase();
+            _limitOrderList = message.LimitOrders;
         }
 
         /// <summary>
