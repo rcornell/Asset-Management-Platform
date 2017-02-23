@@ -780,21 +780,9 @@ namespace Asset_Management_Platform
             _previewOrderIsBusy = true;
 
             //Send stock preview request
-            Messenger.Default.Send<StockDataRequestMessage>(new StockDataRequestMessage(_orderTickerText, false,
-                true, false));
-
-            var orderOk = await CheckOrderTerms();
-            if (orderOk)
-            {
-
-                            
-            }
-            else
-            {
-                SetAlertMessage(new TradeErrorMessage(_orderTickerText, _orderShareQuantity));
-                AlertBoxVisible = true;
-                OrderTermsOK = false;
-            }
+            Messenger.Default.Send<StockDataRequestMessage>(
+                new StockDataRequestMessage(_orderTickerText, false, true, false));
+            
             _previewOrderIsBusy = false;
         }
 
@@ -825,9 +813,9 @@ namespace Asset_Management_Platform
 
         private void BuildPreviewSecurity(StockDataResponseMessage message)
         {
-            PreviewSecurity = message.Security;
 
-            if (PreviewSecurity is Stock)
+            var orderOk = CheckOrderTerms();
+            if (orderOk && PreviewSecurity is Stock)
             {
                 PreviewPrice = PreviewSecurity.LastPrice;
                 PreviewDescription = PreviewSecurity.Description;
@@ -837,7 +825,7 @@ namespace Asset_Management_Platform
                 PreviewBid = ((Stock)PreviewSecurity).Bid.ToString();
                 PreviewBidSize = ((Stock)PreviewSecurity).BidSize.ToString();
             }
-            else if (PreviewSecurity is MutualFund)
+            else if (orderOk && PreviewSecurity is MutualFund)
             {
                 PreviewPrice = PreviewSecurity.LastPrice;
                 PreviewDescription = PreviewSecurity.Description;
@@ -847,12 +835,18 @@ namespace Asset_Management_Platform
                 PreviewBid = "-";
                 PreviewBidSize = "-";
             }
+            else
+            {
+                SetAlertMessage(new TradeErrorMessage(_orderTickerText, _orderShareQuantity));
+                AlertBoxVisible = true;
+                OrderTermsOK = false;
+            }
 
             AlertBoxVisible = false;
             ExecuteButtonEnabled = true;
         }
 
-        private async Task<bool> CheckOrderTerms()
+        private bool CheckOrderTerms()
         {
             //Check ticker, share, and secType to see if they are valid
             var tickerNotEmpty = !string.IsNullOrEmpty(_orderTickerText);
@@ -901,6 +895,10 @@ namespace Asset_Management_Platform
 
         private void ExecuteExecuteOrder()
         {
+    //        var trade = new Trade(_selectedTradeType, PreviewSecurity, _orderTickerText, _orderShareQuantity,
+    //_selectedTermType, _limitPrice, _selectedDurationType);
+    //        Messenger.Default.Send<TradeMessage>(new TradeMessage(trade));
+
             var newTrade = new Trade(SelectedTradeType, _previewSecurity, _orderTickerText, _orderShareQuantity, _selectedTermType, _limitPrice, _selectedDurationType);
             if (SelectedTradeType == "Buy")
                 _portfolioManagementService.Buy(newTrade);
