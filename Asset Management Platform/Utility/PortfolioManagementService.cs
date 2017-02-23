@@ -53,7 +53,11 @@ namespace Asset_Management_Platform.Utility
             //Register for List<LimitOrder> creation
             Messenger.Default.Register<LimitOrderMessage>(this, CreateLimitOrders);
 
+            //Register for handling of timer settings from UI
             Messenger.Default.Register<TimerMessage>(this, HandleTimerMessage);
+
+            //Register method to handle trades from View
+            Messenger.Default.Register<TradeMessage>(this, HandleTradeMessage);
 
             _stockDataService = stockDataService;
             _portfolioDatabaseService = portfolioDatabaseService;                                       
@@ -169,9 +173,16 @@ namespace Asset_Management_Platform.Utility
             return true;
         }
 
-        private void CreateLimitOrders(LimitOrderMessage message)
+        private void HandleTradeMessage(TradeMessage message)
         {
-            _limitOrderList = message.LimitOrders;
+            if (message.Trade.BuyOrSell == "Buy")
+            { 
+                Buy(message.Trade);
+            }
+            if (message.Trade.BuyOrSell == "Sell")
+            { 
+                Sell(message.Trade);
+            }
         }
 
         /// <summary>
@@ -246,37 +257,6 @@ namespace Asset_Management_Platform.Utility
             
             //Sends updated List<Taxlot> and List<Position>
             Messenger.Default.Send<TradeCompleteMessage>(new TradeCompleteMessage(_portfolioPositions, _portfolioTaxlots, true));
-        }
-
-        private void CreateLimitOrder(Trade trade)
-        {
-            var newLimitOrder = new LimitOrder(trade);
-
-            if (_limitOrderList == null)
-                _limitOrderList = new List<LimitOrder>();
-
-            _limitOrderList.Add(newLimitOrder);
-
-            //Send updated List<LimitOrder> to listeners in MainViewModel
-            Messenger.Default.Send<LimitOrderMessage>(new LimitOrderMessage(_limitOrderList, false));
-        }
-
-        private bool CheckOrderTerms(Trade trade)
-        {
-            var security = trade.Security;
-            var ticker = trade.Ticker;
-            var shares = trade.Shares;
-            var terms = trade.Terms;
-            var limit = trade.Limit;
-            var orderDuration = trade.OrderDuration;
-
-            if (trade.Terms == "Limit" || trade.Terms == "Stop Limit" || trade.Terms == "Stop" || limit <= 0)
-                return false;
-
-            if (security != null && !string.IsNullOrEmpty(ticker) && shares > 0 
-                && !string.IsNullOrEmpty(terms) && !string.IsNullOrEmpty(orderDuration))
-                return true;
-            return false;
         }
 
         /// <summary>
@@ -357,6 +337,41 @@ namespace Asset_Management_Platform.Utility
 
             //Sends updated List<Taxlot> and List<Position>
             Messenger.Default.Send<TradeCompleteMessage>(new TradeCompleteMessage(_portfolioPositions, _portfolioTaxlots, true));
+        }
+
+        private void CreateLimitOrders(LimitOrderMessage message)
+        {
+            _limitOrderList = message.LimitOrders;
+        }
+        private void CreateLimitOrder(Trade trade)
+        {
+            var newLimitOrder = new LimitOrder(trade);
+
+            if (_limitOrderList == null)
+                _limitOrderList = new List<LimitOrder>();
+
+            _limitOrderList.Add(newLimitOrder);
+
+            //Send updated List<LimitOrder> to listeners in MainViewModel
+            Messenger.Default.Send<LimitOrderMessage>(new LimitOrderMessage(_limitOrderList, false));
+        }
+
+        private bool CheckOrderTerms(Trade trade)
+        {
+            var security = trade.Security;
+            var ticker = trade.Ticker;
+            var shares = trade.Shares;
+            var terms = trade.Terms;
+            var limit = trade.Limit;
+            var orderDuration = trade.OrderDuration;
+
+            if (trade.Terms == "Limit" || trade.Terms == "Stop Limit" || trade.Terms == "Stop" || limit <= 0)
+                return false;
+
+            if (security != null && !string.IsNullOrEmpty(ticker) && shares > 0
+                && !string.IsNullOrEmpty(terms) && !string.IsNullOrEmpty(orderDuration))
+                return true;
+            return false;
         }
 
         /// <summary>
