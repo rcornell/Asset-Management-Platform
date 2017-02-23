@@ -592,10 +592,6 @@ namespace Asset_Management_Platform
             LimitOrderIsSelected = false;
             _canLoad = true;
             _canSave = true;
-
-            GetLimitOrders();
-
-            //_portfolioManagementService.StartUpdates(); //TURNED OFF FOR TESTING
         }
 
         private void SetLocalMode(LocalModeMessage message)
@@ -793,7 +789,6 @@ namespace Asset_Management_Platform
             Taxlots = new ObservableCollection<Taxlot>(message.Taxlots);
             Positions = new ObservableCollection<Position>(message.Positions);
 
-            GetLimitOrders();
             ExecuteShowAllSecurities();
 
             OrderTickerText = "";
@@ -900,12 +895,6 @@ namespace Asset_Management_Platform
         {
             var newTrade = new Trade(SelectedTradeType, _previewSecurity, _orderTickerText, _orderShareQuantity, _selectedTermType, _limitPrice, _selectedDurationType);
             Messenger.Default.Send<TradeMessage>(new TradeMessage(newTrade));
-        }
-
-        private void GetLimitOrders()
-        {
-            var limitOrders = _portfolioManagementService.GetLimitOrders();
-            LimitOrderList = new ObservableCollection<LimitOrder>(limitOrders);
         }
 
         private void PopulateSelectedSecurityTerms()
