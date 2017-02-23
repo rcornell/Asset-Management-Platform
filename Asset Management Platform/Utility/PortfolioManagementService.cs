@@ -333,7 +333,7 @@ namespace Asset_Management_Platform.Utility
             else if (shares > position.SharesOwned)
             {
                 //User trying to sell too many shares
-                var message = new TradeMessage() { Shares = shares, Ticker = ticker, Message = "Order quantity exceeds shares owned!" };
+                var message = new TradeErrorMessage() { Shares = shares, Ticker = ticker, Message = "Order quantity exceeds shares owned!" };
                 Messenger.Default.Send(message);
             }
             else 

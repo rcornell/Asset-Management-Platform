@@ -782,13 +782,14 @@ namespace Asset_Management_Platform
             var orderOk = await CheckOrderTerms();
             if (orderOk)
             {
+
                 //Send stock preview request
                 Messenger.Default.Send<StockDataRequestMessage>(new StockDataRequestMessage(_orderTickerText, false,
                     true, false));                
             }
             else
             {
-                SetAlertMessage(new TradeMessage(_orderTickerText, _orderShareQuantity));
+                SetAlertMessage(new TradeErrorMessage(_orderTickerText, _orderShareQuantity));
                 AlertBoxVisible = true;
                 OrderTermsOK = false;
             }
@@ -863,7 +864,7 @@ namespace Asset_Management_Platform
             if (tickerSecType == null)
             {
                 var errorMessage = @"Your selected security type does not match the ticker's security type.";
-                Messenger.Default.Send(new TradeMessage(_orderTickerText,_orderShareQuantity, errorMessage));
+                Messenger.Default.Send(new TradeErrorMessage(_orderTickerText,_orderShareQuantity, errorMessage));
                 return false;
             }
                 
@@ -1046,7 +1047,7 @@ namespace Asset_Management_Platform
             else
             {
                 var errorMessage = @"Notification: Please select a limit order to delete.";
-                Messenger.Default.Send(new TradeMessage("X", 0, errorMessage));                
+                Messenger.Default.Send(new TradeErrorMessage("X", 0, errorMessage));                
             }
         }
 
@@ -1074,7 +1075,7 @@ namespace Asset_Management_Platform
             return _canSave;
         }
 
-        private void SetAlertMessage(TradeMessage message)
+        private void SetAlertMessage(TradeErrorMessage message)
         {
             AlertBoxMessage = message.Message;
             AlertBoxVisible = true;
