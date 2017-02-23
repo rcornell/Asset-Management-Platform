@@ -135,6 +135,7 @@
     <Compile Include="Messages\StockDataRequestMessage.cs" />
     <Compile Include="Messages\StockDataResponseMessage.cs" />
     <Compile Include="Messages\TaxlotMessage.cs" />
+    <Compile Include="Messages\TimerMessage.cs" />
     <Compile Include="Messages\TradeBuyMessage.cs" />
     <Compile Include="Messages\TradeCompleteMessage.cs" />
     <Compile Include="Messages\TradeErrorMessage.cs" />
