@@ -12,31 +12,33 @@ namespace Asset_Management_Platform.Messages
         public Security Security;
         public List<Position> Positions;
         public Position Position;
-        public bool IsStartup;
-        public bool IsPreview;
+        public bool IsStartupResponse;
+        public bool IsScreenerResponse;
+        public bool IsPreviewResponse;
 
         public StockDataResponseMessage(List<Security> securities, bool isStartup)
         {
             Securities = securities;
-            IsStartup = isStartup;
+            IsStartupResponse = isStartup;
         }
 
-        public StockDataResponseMessage(Security security, bool isPreview)
+        public StockDataResponseMessage(Security security, bool isPreview, bool isScreener)
         {
             Security = security;
-            IsPreview = isPreview;
+            IsPreviewResponse = isPreview;
+            IsScreenerResponse = isScreener;
         }
 
         public StockDataResponseMessage(List<Position> positions, bool isStartup)
         {
             Positions = positions;
-            IsStartup = isStartup;
+            IsStartupResponse = isStartup;
         }
 
         public StockDataResponseMessage(Position position, bool isStartup)
         {
             Position = position;
-            IsStartup = isStartup;
+            IsStartupResponse = isStartup;
         }
     }
 }

@@ -616,7 +616,7 @@ namespace Asset_Management_Platform
 
         private void ProcessStockDataResponse(StockDataResponseMessage message)
         {
-            if (message.IsStartup)
+            if (message.IsStartupResponse)
                 return;
 
             if (message.Securities != null)
@@ -813,7 +813,7 @@ namespace Asset_Management_Platform
 
         private void HandleStockDataResponse(StockDataResponseMessage message)
         {
-            if (message.IsPreview)
+            if (message.IsPreviewResponse)
             {
                 PreviewSecurity = message.Security;
 

@@ -90,19 +90,19 @@ namespace Asset_Management_Platform.Utility
 
         private void HandleStockDataResponse(StockDataResponseMessage message)
         {
-            if (message.IsStartup && message.Securities != null)
+            if (message.IsStartupResponse && message.Securities != null)
             {
                 _portfolioSecurities = message.Securities;
                 return;
             }
 
-            if (!message.IsStartup && message.Security != null)
+            if (!message.IsStartupResponse && message.Security != null)
             {
                 _requestedSecurity = message.Security;
                 return;
             }
 
-            if (!message.IsStartup && message.Securities != null)
+            if (!message.IsStartupResponse && message.Securities != null)
             {
                 _requestedSecurityList = message.Securities;
             }
