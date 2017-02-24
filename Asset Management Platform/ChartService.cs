@@ -41,7 +41,7 @@ namespace Asset_Management_Platform
             decimal totalValue = 0;
 
             if (_portfolioPositions == null || !PositionsHaveValue())
-                Messenger.Default.Send<ChartResponseMessage>(new ChartResponseMessage(positionsByWeight));                     
+                Messenger.Default.Send<ChartResponseMessage>(new ChartResponseMessage(positionsByWeight, true, false, false));                     
 
             foreach (var pos in _portfolioPositions)
             {
@@ -55,7 +55,7 @@ namespace Asset_Management_Platform
                 positionsByWeight.Add(new PositionByWeight(pos.Ticker, Math.Round(weight, 2)));
             }
 
-            Messenger.Default.Send<ChartResponseMessage>(new ChartResponseMessage(positionsByWeight));
+            Messenger.Default.Send<ChartResponseMessage>(new ChartResponseMessage(positionsByWeight, true, false, false));
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Asset_Management_Platform
             var positionsByWeight = new ObservableCollection<PositionByWeight>();
 
             if (_portfolioPositions == null || !PositionsHaveValue())
-                Messenger.Default.Send<ChartResponseMessage>(new ChartResponseMessage(positionsByWeight));
+                Messenger.Default.Send<ChartResponseMessage>(new ChartResponseMessage(positionsByWeight, false, true, false));
 
             foreach (var pos in _portfolioPositions.Where(s => s.Security is Stock))
             {
@@ -81,7 +81,7 @@ namespace Asset_Management_Platform
                 positionsByWeight.Add(new PositionByWeight(pos.Ticker, Math.Round(weight, 2)));
             }
 
-            Messenger.Default.Send<ChartResponseMessage>(new ChartResponseMessage(positionsByWeight));
+            Messenger.Default.Send<ChartResponseMessage>(new ChartResponseMessage(positionsByWeight, false, true, false));
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace Asset_Management_Platform
             var positionsByWeight = new ObservableCollection<PositionByWeight>();
 
             if (_portfolioPositions == null || !PositionsHaveValue())
-                Messenger.Default.Send<ChartResponseMessage>(new ChartResponseMessage(positionsByWeight));
+                Messenger.Default.Send<ChartResponseMessage>(new ChartResponseMessage(positionsByWeight, false, false, true));
 
             foreach (var pos in _portfolioPositions.Where(s => s.Security is MutualFund))
             {
@@ -107,7 +107,7 @@ namespace Asset_Management_Platform
                 positionsByWeight.Add(new PositionByWeight(pos.Ticker, Math.Round(weight, 2)));
             }
 
-            Messenger.Default.Send<ChartResponseMessage>(new ChartResponseMessage(positionsByWeight));
+            Messenger.Default.Send<ChartResponseMessage>(new ChartResponseMessage(positionsByWeight, false, false, true));
         }
 
         private bool PositionsHaveValue()
