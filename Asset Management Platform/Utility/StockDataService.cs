@@ -17,10 +17,10 @@ namespace Asset_Management_Platform.Utility
     /// this application.
     /// </summary>
     public class StockDataService : IStockDataService
-    {
-        private readonly List<Security> _securityDatabaseList;
+    {        
         private readonly string _storageString;
         private readonly bool _localMode;
+        private List<Security> _securityDatabaseList;
 
         public StockDataService()
         {
@@ -65,10 +65,9 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         private async Task LoadSecurityDatabase()
         {
-            var securityDatabaseList = new List<Security>();
 
             if (_localMode) { 
-                Messenger.Default.Send(new SecurityDatabaseMessage(securityDatabaseList));
+                Messenger.Default.Send(new SecurityDatabaseMessage(_securityDatabaseList));
                 return;
             }
 
@@ -82,10 +81,10 @@ namespace Asset_Management_Platform.Utility
                 _securityDatabaseList.AddRange(funds);
             }
 
-            securityDatabaseList = GetMutualFundExtraData(securityDatabaseList);
+            _securityDatabaseList = GetMutualFundExtraData(_securityDatabaseList);
             
             //Listener is PortfolioManagementService
-            Messenger.Default.Send<SecurityDatabaseMessage>(new SecurityDatabaseMessage(securityDatabaseList));
+            Messenger.Default.Send<SecurityDatabaseMessage>(new SecurityDatabaseMessage(_securityDatabaseList));
         }
 
         /// <summary>

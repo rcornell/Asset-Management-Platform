@@ -592,7 +592,7 @@ namespace Asset_Management_Platform
             _canLoad = true;
             _canSave = true;
 
-            _chartService = SimpleIoc.Default.GetInstance<ChartService>();
+            _chartService = SimpleIoc.Default.GetInstance<IChartService>();
             _stockDataService = SimpleIoc.Default.GetInstance<IStockDataService>();
             _portfolioDatabaseService = SimpleIoc.Default.GetInstance<IPortfolioDatabaseService>();
             _portfolioManagementService = SimpleIoc.Default.GetInstance<IPortfolioManagementService>();
@@ -601,6 +601,7 @@ namespace Asset_Management_Platform
 
             //Notify other classes that startup is complete.
             Messenger.Default.Send<StartupCompleteMessage>(new StartupCompleteMessage(true));
+            ExecuteShowAllSecurities();
         }
 
         private void HandleChartResponseMessage(ChartResponseMessage message)
