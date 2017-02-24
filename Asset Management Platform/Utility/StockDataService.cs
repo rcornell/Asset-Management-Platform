@@ -128,8 +128,7 @@ namespace Asset_Management_Platform.Utility
                     insertString += securityInfo;
 
                     using (var command = new SqlCommand(insertString, connection))
-                    {
-                       
+                    {                       
                         connection.Open();
                         await command.ExecuteNonQueryAsync();
                     }                    
