@@ -339,6 +339,8 @@ namespace Asset_Management_Platform
                 lot.SecurityType = updatedSecurity;
                 lot.LastPrice = updatedSecurity.LastPrice;
             }
+
+            Security = updatedSecurity;
         }
 
         public Security GetSecurityType()

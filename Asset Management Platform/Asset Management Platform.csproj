@@ -115,12 +115,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ChartService.cs" />
     <Compile Include="Chart\SecurityChart.cs" />
     <Compile Include="Converters\BoolToCollapsedConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\DecimalToStringConverter.cs" />
     <Compile Include="Exceptions\LimitOrderException.cs" />
     <Compile Include="Exceptions\TruncateException.cs" />
+    <Compile Include="IChartService.cs" />
+    <Compile Include="Messages\ChartRequestMessage.cs" />
+    <Compile Include="Messages\ChartResponseMessage.cs" />
     <Compile Include="Messages\FileErrorMessage.cs" />
     <Compile Include="LimitOrder.cs" />
     <Compile Include="LimitOrderDBResult.cs" />

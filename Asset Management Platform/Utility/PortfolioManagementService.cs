@@ -512,79 +512,6 @@ namespace Asset_Management_Platform.Utility
         }
 
         /// <summary>
-        /// Returns PositionsByWeight for all securities
-        /// </summary>
-        /// <returns></returns>
-        public ObservableCollection<PositionByWeight> GetChartAllSecurities()
-        {
-            if (_portfolioPositions == null || !PositionsHaveValue())
-                return new ObservableCollection<PositionByWeight>();
-
-            decimal totalValue = 0;
-            var positionsByWeight = new ObservableCollection<PositionByWeight>();
-
-            foreach (var pos in _portfolioPositions)
-            {
-                //make this tolerate divide by zero
-                totalValue += pos.MarketValue;
-            }
-
-            foreach (var pos in _portfolioPositions)
-            {
-                var weight = (pos.MarketValue / totalValue) * 100;
-                positionsByWeight.Add(new PositionByWeight(pos.Ticker, Math.Round(weight, 2)));
-            }
-
-            return positionsByWeight;
-        }
-
-        /// <summary>
-        /// Returns PositionsByWeight for stocks only
-        /// </summary>
-        /// <returns></returns>
-        public ObservableCollection<PositionByWeight> GetChartStocksOnly()
-        {
-            decimal totalValue = 0;
-            var positionsByWeight = new ObservableCollection<PositionByWeight>();
-
-            foreach (var pos in _portfolioPositions.Where(s => s.Security is Stock))
-            {
-                totalValue += pos.MarketValue;
-            }
-
-            foreach (var pos in _portfolioPositions.Where(s => s.Security is Stock))
-            {
-                var weight = (pos.MarketValue / totalValue) * 100;
-                positionsByWeight.Add(new PositionByWeight(pos.Ticker, Math.Round(weight, 2)));
-            }
-
-            return positionsByWeight;
-        }
-
-        /// <summary>
-        /// Returns PositionsByWeight for mutual funds only
-        /// </summary>
-        /// <returns></returns>
-        public ObservableCollection<PositionByWeight> GetChartFundsOnly()
-        {
-            decimal totalValue = 0;
-            var positionsByWeight = new ObservableCollection<PositionByWeight>();
-
-            foreach (var pos in _portfolioPositions.Where(s => s.Security is MutualFund))
-            {
-                totalValue += pos.MarketValue;
-            }
-
-            foreach (var pos in _portfolioPositions.Where(s => s.Security is MutualFund))
-            {
-                var weight = (pos.MarketValue / totalValue) * 100;
-                positionsByWeight.Add(new PositionByWeight(pos.Ticker, Math.Round(weight, 2)));
-            }
-
-            return positionsByWeight;
-        }
-
-        /// <summary>
         /// When timer ticks, StockDataService uses YahooAPIService to update pricing 
         /// information for all securities in the list, then updates the security list
         /// in this class and sends out the PortfolioMessage
@@ -674,15 +601,7 @@ namespace Asset_Management_Platform.Utility
             CheckLimitOrdersForActive();
         }
 
-        private bool PositionsHaveValue()
-        {
-            foreach (var pos in _portfolioPositions)
-            {
-                if (pos.MarketValue > 0)
-                    return true;
-            }
-            return false;
-        }
+
 
         public bool IsLocalMode()
         {

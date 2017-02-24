@@ -39,6 +39,7 @@ namespace Asset_Management_Platform.ViewModel
                 SimpleIoc.Default.Register<IStockDataService, StockDataService>();
                 SimpleIoc.Default.Register<IPortfolioManagementService, PortfolioManagementService>();
                 SimpleIoc.Default.Register<IPortfolioDatabaseService, PortfolioDatabaseService>();
+                SimpleIoc.Default.Register<IChartService, ChartService>();
                 SimpleIoc.Default.Register<YahooAPIService>();
                 SimpleIoc.Default.Register<SecurityTableSeederDataService>();
                 SimpleIoc.Default.Register<MainViewModel>();

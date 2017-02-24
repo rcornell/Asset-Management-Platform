@@ -29,12 +29,6 @@ namespace Asset_Management_Platform.Utility
 
         List<LimitOrder> GetLimitOrders();
 
-        ObservableCollection<PositionByWeight> GetChartAllSecurities();
-
-        ObservableCollection<PositionByWeight> GetChartFundsOnly();
-
-        ObservableCollection<PositionByWeight> GetChartStocksOnly();
-
         void UpdateTimerInterval(TimeSpan timespan);
 
         void UpdatePortfolioPrices();

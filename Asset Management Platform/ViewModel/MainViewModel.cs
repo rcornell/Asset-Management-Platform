@@ -75,8 +75,7 @@ namespace Asset_Management_Platform
         private int _orderShareQuantity;
         private Position _selectedPosition;
         public decimal _totalValue;
-        public decimal _totalCostBasis;
-        private IPortfolioManagementService _portfolioManagementService;
+        public decimal _totalCostBasis;        
         private ObservableCollection<Position> _positions;
         private ObservableCollection<Taxlot> _taxlots;
         private bool _showStocksOnly;
@@ -91,6 +90,8 @@ namespace Asset_Management_Platform
         private List<Security> _requestedSecurityList;
         private readonly IStockDataService _stockDataService;
         private readonly IPortfolioDatabaseService _portfolioDatabaseService;
+        private readonly IPortfolioManagementService _portfolioManagementService;
+        private readonly IChartService _chartService;
         #endregion
 
         #region All Properties
@@ -563,6 +564,7 @@ namespace Asset_Management_Platform
             Messenger.Default.Register<LimitOrderMessage>(this, ProcessLimitOrderCreated);
             Messenger.Default.Register<StockDataResponseMessage>(this, HandleStockDataResponse);
             Messenger.Default.Register<PositionPricingMessage>(this, HandlePositionPricingMessage);
+            Messenger.Default.Register<ChartResponseMessage>(this, HandleChartResponseMessage);
 
             TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
             TradeTermStrings = new ObservableCollection<string>() { " ", "Market", "Limit", "Stop", "Stop Limit" };
@@ -570,9 +572,7 @@ namespace Asset_Management_Platform
             SecurityTypes = new ObservableCollection<Security> { new Stock(), new MutualFund() };
 
             Positions = new ObservableCollection<Position>();
-            Taxlots = new ObservableCollection<Taxlot>();
-
-                     
+            Taxlots = new ObservableCollection<Taxlot>();                     
 
             SelectedTradeType = TradeTypeStrings[0];
             SelectedTermType = TradeTermStrings[0];
@@ -592,13 +592,69 @@ namespace Asset_Management_Platform
             _canLoad = true;
             _canSave = true;
 
+            _chartService = SimpleIoc.Default.GetInstance<ChartService>();
             _stockDataService = SimpleIoc.Default.GetInstance<IStockDataService>();
             _portfolioDatabaseService = SimpleIoc.Default.GetInstance<IPortfolioDatabaseService>();
             _portfolioManagementService = SimpleIoc.Default.GetInstance<IPortfolioManagementService>();
             
+            
 
             //Notify other classes that startup is complete.
             Messenger.Default.Send<StartupCompleteMessage>(new StartupCompleteMessage(true));
+        }
+
+        private void HandleChartResponseMessage(ChartResponseMessage message)
+        {
+            AllocationChartPositions = message.ChartPositions;
+
+            if (message.ShowAll)
+            {
+                ClearHiddenList();
+                GetValueTotals();
+            }
+
+            if (message.ShowEquities)
+            {
+                ClearHiddenList();
+
+                _hiddenPositions = new List<Position>();
+                var trimmedList = new List<Position>(Positions);
+
+                foreach (var pos in Positions)
+                {
+                    if (pos.Security is MutualFund)
+                    {
+                        trimmedList.Remove(pos);
+                        _hiddenPositions.Add(pos);
+                    }
+                }
+
+                Positions = new ObservableCollection<Position>(trimmedList.OrderBy(t => t.Ticker));
+
+                GetValueTotals();
+            }
+
+            if (message.ShowMutualFunds)
+            {
+                ClearHiddenList();
+
+                _hiddenPositions = new List<Position>();
+                var trimmedList = new List<Position>(Positions);
+
+                foreach (var pos in Positions)
+                {
+                    if (pos.Security is Stock)
+                    {
+                        trimmedList.Remove(pos);
+                        _hiddenPositions.Add(pos);
+                    }
+                }
+
+                Positions = new ObservableCollection<Position>(trimmedList.OrderBy(t => t.Ticker));
+
+
+                GetValueTotals();
+            }
         }
 
         private void HandlePositionPricingMessage(PositionPricingMessage message)
@@ -608,6 +664,7 @@ namespace Asset_Management_Platform
                 var pricedSecurity = message.PricedSecurities.Find(s => s.Ticker == pos.Ticker);
                 pos.UpdateTaxlotSecurities(pricedSecurity);
             }
+            RaisePropertyChanged(() => Positions);
         }
 
         private void SetLocalMode(LocalModeMessage message)
@@ -631,7 +688,6 @@ namespace Asset_Management_Platform
             {
                 Positions = new ObservableCollection<Position>(message.Positions);
             }
-
         }
 
         private void GetValueTotals()
@@ -674,11 +730,7 @@ namespace Asset_Management_Platform
             _showAllPositions = true;
 
             ChartSubtitle = "All Positions";
-            AllocationChartPositions = _portfolioManagementService.GetChartAllSecurities();
-
-            ClearHiddenList();            
-
-            GetValueTotals();
+            Messenger.Default.Send<ChartRequestMessage>(new ChartRequestMessage(Positions.ToList(), true, false, false));            
         }
 
         private void ExecuteShowStocksOnly()
@@ -687,24 +739,7 @@ namespace Asset_Management_Platform
             _showFundsOnly = false;
             _showAllPositions = false;
             ChartSubtitle = "Stocks only";
-            AllocationChartPositions = _portfolioManagementService.GetChartStocksOnly();
-
-            ClearHiddenList();
-
-            _hiddenPositions = new List<Position>();
-            var trimmedList = new List<Position>(Positions);
-
-            foreach (var pos in Positions)
-            {
-                if (pos.Security is MutualFund) { 
-                    trimmedList.Remove(pos);
-                    _hiddenPositions.Add(pos);
-                }
-            }
-
-            Positions = new ObservableCollection<Position>(trimmedList.OrderBy(t => t.Ticker));
-
-            GetValueTotals();
+            Messenger.Default.Send<ChartRequestMessage>(new ChartRequestMessage(Positions.ToList(), false, true, false));            
         }
 
         private void ExecuteShowFundsOnly()
@@ -714,26 +749,7 @@ namespace Asset_Management_Platform
             _showAllPositions = false;
 
             ChartSubtitle = "Mutual Funds only";
-            AllocationChartPositions = _portfolioManagementService.GetChartFundsOnly();
-
-            ClearHiddenList();
-
-            _hiddenPositions = new List<Position>();
-            var trimmedList = new List<Position>(Positions);
-
-            foreach (var pos in Positions)
-            {
-                if (pos.Security is Stock)
-                {
-                    trimmedList.Remove(pos);
-                    _hiddenPositions.Add(pos);
-                }
-            }
-
-            Positions = new ObservableCollection<Position>(trimmedList.OrderBy(t => t.Ticker));
-
-
-            GetValueTotals();
+            Messenger.Default.Send<ChartRequestMessage>(new ChartRequestMessage(Positions.ToList(), false, false, true));            
         }
 
         private void ClearHiddenList()
@@ -762,7 +778,7 @@ namespace Asset_Management_Platform
 
             if (AllocationChartPositions == null && Positions != null)
             {
-                ExecuteShowAllSecurities();
+                Messenger.Default.Send(new ChartRequestMessage(Positions.ToList(), true, false, false));
             }
         }
 
