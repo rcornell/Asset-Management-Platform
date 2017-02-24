@@ -182,7 +182,6 @@ namespace Asset_Management_Platform.Utility
         /// <returns></returns>
         public async Task<List<Security>> GetMultipleSecurities(List<string> tickers)
         {
-            //string.Format("Percentage is {0:0.0%}", ratio)
             var securitiesToReturn = new List<Security>(); //Instantiate the list to return
 
             // Build the URL.
