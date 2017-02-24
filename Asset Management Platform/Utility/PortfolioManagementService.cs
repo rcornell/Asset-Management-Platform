@@ -71,7 +71,11 @@ namespace Asset_Management_Platform.Utility
 
         private void HandlePositionPricingMessage(PositionPricingMessage message)
         {
-            
+            foreach (var pos in _portfolioPositions)
+            {
+                var pricedSecurity = message.PricedSecurities.Find(s => s.Ticker == pos.Ticker);
+                pos.UpdateTaxlotSecurities(pricedSecurity);
+            }
         }
 
         private async void HandleStartupComplete(StartupCompleteMessage message)

@@ -603,7 +603,11 @@ namespace Asset_Management_Platform
 
         private void HandlePositionPricingMessage(PositionPricingMessage message)
         {
-
+            foreach (var pos in Positions)
+            {
+                var pricedSecurity = message.PricedSecurities.Find(s => s.Ticker == pos.Ticker);
+                pos.UpdateTaxlotSecurities(pricedSecurity);
+            }
         }
 
         private void SetLocalMode(LocalModeMessage message)
