@@ -557,11 +557,11 @@ namespace Asset_Management_Platform
 
         public MainViewModel()
         {
-            Messenger.Default.Register<LocalModeMessage>(this, SetLocalMode);
-            Messenger.Default.Register<TaxlotMessage>(this, CreateTaxlots);
-            Messenger.Default.Register<PositionMessage>(this, CreatePositions);
+            Messenger.Default.Register<LocalModeMessage>(this, HandleLocalModeMessage);
+            Messenger.Default.Register<TaxlotMessage>(this, HandleTaxlotMessage);
+            Messenger.Default.Register<PositionMessage>(this, HandlePositionsMessage);
             Messenger.Default.Register<TradeCompleteMessage>(this, HandleTradeCompleteMessage);
-            Messenger.Default.Register<LimitOrderMessage>(this, ProcessLimitOrderCreated);
+            Messenger.Default.Register<LimitOrderMessage>(this, HandleLimitOrderMessage);
             Messenger.Default.Register<StockDataResponseMessage>(this, HandleStockDataResponse);
             Messenger.Default.Register<PositionPricingMessage>(this, HandlePositionPricingMessage);
             Messenger.Default.Register<ChartResponseMessage>(this, HandleChartResponseMessage);
@@ -672,134 +672,27 @@ namespace Asset_Management_Platform
             }            
         }
 
-        private void SetLocalMode(LocalModeMessage message)
+        private void HandleLocalModeMessage(LocalModeMessage message)
         {
             _localMode = message.LocalMode;
         }
 
-        private void CreateTaxlots(TaxlotMessage message)
+        private void HandleTaxlotMessage(TaxlotMessage message)
         {
             Taxlots = new ObservableCollection<Taxlot>(message.Taxlots);
         }
 
-        private void ProcessLimitOrderCreated(LimitOrderMessage message)
+        private void HandleLimitOrderMessage(LimitOrderMessage message)
         {
             LimitOrderList = new ObservableCollection<LimitOrder>(message.LimitOrders);
         }
 
-        private void CreatePositions(PositionMessage message)
+        private void HandlePositionsMessage(PositionMessage message)
         {
             if (message.IsStartup)
             {
                 Positions = new ObservableCollection<Position>(message.Positions);
             }
-        }
-
-        private void GetValueTotals()
-        {
-            var totalValue = 0M;
-            var totalGainLoss = 0M;
-            var totalCostBasis = 0M;
-
-            foreach (var pos in Positions)
-            {
-                if (_showAllPositions)
-                {
-                    totalValue += pos.MarketValue;
-                    totalGainLoss += pos.GainLoss;
-                    totalCostBasis += pos.CostBasis;
-                }
-                else if (_showStocksOnly && pos.Security is Stock)
-                {
-                    totalValue += pos.MarketValue;
-                    totalGainLoss += pos.GainLoss;
-                    totalCostBasis += pos.CostBasis;
-                }
-                else if (_showFundsOnly && pos.Security is MutualFund)
-                {
-                    totalValue += pos.MarketValue;
-                    totalGainLoss += pos.GainLoss;
-                    totalCostBasis += pos.CostBasis;
-                }
-            }
-
-            TotalValue = totalValue;
-            TotalCostBasis = totalCostBasis;
-            TotalGainLoss = totalGainLoss;
-        }
-
-        private void ExecuteShowAllSecurities()
-        {
-            _showStocksOnly = false;
-            _showFundsOnly = false;
-            _showAllPositions = true;
-
-            ChartSubtitle = "All Positions";
-            ClearHiddenList();
-            Messenger.Default.Send<ChartRequestMessage>(new ChartRequestMessage(Positions.ToList(), true, false, false));            
-        }
-
-        private void ExecuteShowStocksOnly()
-        {
-            _showStocksOnly = true;
-            _showFundsOnly = false;
-            _showAllPositions = false;
-            ChartSubtitle = "Stocks only";
-            ClearHiddenList();
-            Messenger.Default.Send<ChartRequestMessage>(new ChartRequestMessage(Positions.ToList(), false, true, false));            
-        }
-
-        private void ExecuteShowFundsOnly()
-        {
-            _showStocksOnly = false;
-            _showFundsOnly = true;
-            _showAllPositions = false;
-
-            ChartSubtitle = "Mutual Funds only";
-            ClearHiddenList();
-
-            Messenger.Default.Send<ChartRequestMessage>(new ChartRequestMessage(Positions.ToList(), false, false, true));            
-        }
-
-        private void ClearHiddenList()
-        {
-            var listToSort = new List<Position>(Positions);
-
-            if (_hiddenPositions != null && _hiddenPositions.Count > 0)
-            {
-                foreach (var pos in _hiddenPositions)
-                {
-                    listToSort.Add(pos);
-                }
-                _hiddenPositions.Clear();
-            }
-
-            Positions = new ObservableCollection<Position>(listToSort.OrderBy(t => t.Ticker));
-        }
-
-        private void RefreshCollection(DatabaseMessage message)
-        {
-            if (message.PositionsSuccessful)
-            {
-                //Reimplement
-                GetValueTotals();
-            }
-
-            if (AllocationChartPositions == null && Positions != null)
-            {
-                Messenger.Default.Send(new ChartRequestMessage(Positions.ToList(), true, false, false));
-            }
-        }
-
-        private async Task ExecutePreviewOrder()
-        {
-            _previewOrderIsBusy = true;
-
-            //Send stock preview request
-            Messenger.Default.Send<StockDataRequestMessage>(
-                new StockDataRequestMessage(_orderTickerText, false, true, false));
-            
-            _previewOrderIsBusy = false;
         }
 
         private void HandleStockDataResponse(StockDataResponseMessage message)
@@ -814,7 +707,7 @@ namespace Asset_Management_Platform
             if (message.Security != null)
             {
                 _requestedSecurity = message.Security;
-            }        
+            }
             if (message.IsPreviewResponse)
             {
                 BuildPreviewSecurity(message);
@@ -850,6 +743,69 @@ namespace Asset_Management_Platform
             OrderTermsOK = false;
             ExecuteButtonEnabled = false;
         }
+
+        private void GetValueTotals()
+        {
+            var totalValue = 0M;
+            var totalGainLoss = 0M;
+            var totalCostBasis = 0M;
+
+            foreach (var pos in Positions)
+            {
+                if (_showAllPositions)
+                {
+                    totalValue += pos.MarketValue;
+                    totalGainLoss += pos.GainLoss;
+                    totalCostBasis += pos.CostBasis;
+                }
+                else if (_showStocksOnly && pos.Security is Stock)
+                {
+                    totalValue += pos.MarketValue;
+                    totalGainLoss += pos.GainLoss;
+                    totalCostBasis += pos.CostBasis;
+                }
+                else if (_showFundsOnly && pos.Security is MutualFund)
+                {
+                    totalValue += pos.MarketValue;
+                    totalGainLoss += pos.GainLoss;
+                    totalCostBasis += pos.CostBasis;
+                }
+            }
+
+            TotalValue = totalValue;
+            TotalCostBasis = totalCostBasis;
+            TotalGainLoss = totalGainLoss;
+        }
+       
+        private void ClearHiddenList()
+        {
+            var listToSort = new List<Position>(Positions);
+
+            if (_hiddenPositions != null && _hiddenPositions.Count > 0)
+            {
+                foreach (var pos in _hiddenPositions)
+                {
+                    listToSort.Add(pos);
+                }
+                _hiddenPositions.Clear();
+            }
+
+            Positions = new ObservableCollection<Position>(listToSort.OrderBy(t => t.Ticker));
+        }
+
+        private void RefreshCollection(DatabaseMessage message)
+        {
+            if (message.PositionsSuccessful)
+            {
+                //Reimplement
+                GetValueTotals();
+            }
+
+            if (AllocationChartPositions == null && Positions != null)
+            {
+                Messenger.Default.Send(new ChartRequestMessage(Positions.ToList(), true, false, false));
+            }
+        }       
 
         private void BuildPreviewSecurity(StockDataResponseMessage message)
         {
@@ -921,6 +877,50 @@ namespace Asset_Management_Platform
                 PreviewButtonText = "Preview Order";
                 return false;
             }            
+        }
+
+        private void ExecuteShowAllSecurities()
+        {
+            _showStocksOnly = false;
+            _showFundsOnly = false;
+            _showAllPositions = true;
+
+            ChartSubtitle = "All Positions";
+            ClearHiddenList();
+            Messenger.Default.Send<ChartRequestMessage>(new ChartRequestMessage(Positions.ToList(), true, false, false));
+        }
+
+        private void ExecuteShowStocksOnly()
+        {
+            _showStocksOnly = true;
+            _showFundsOnly = false;
+            _showAllPositions = false;
+            ChartSubtitle = "Stocks only";
+            ClearHiddenList();
+            Messenger.Default.Send<ChartRequestMessage>(new ChartRequestMessage(Positions.ToList(), false, true, false));
+        }
+
+        private void ExecuteShowFundsOnly()
+        {
+            _showStocksOnly = false;
+            _showFundsOnly = true;
+            _showAllPositions = false;
+
+            ChartSubtitle = "Mutual Funds only";
+            ClearHiddenList();
+
+            Messenger.Default.Send<ChartRequestMessage>(new ChartRequestMessage(Positions.ToList(), false, false, true));
+        }
+
+        private async Task ExecutePreviewOrder()
+        {
+            _previewOrderIsBusy = true;
+
+            //Send stock preview request
+            Messenger.Default.Send<StockDataRequestMessage>(
+                new StockDataRequestMessage(_orderTickerText, false, true, false));
+
+            _previewOrderIsBusy = false;
         }
 
         private async void ExecuteScreenerPreview(string screenerTicker)
