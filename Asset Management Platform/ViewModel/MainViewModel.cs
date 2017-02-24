@@ -591,6 +591,7 @@ namespace Asset_Management_Platform
             LimitOrderIsSelected = false;
             _canLoad = true;
             _canSave = true;
+            _hiddenPositions = new List<Position>();
 
             _chartService = SimpleIoc.Default.GetInstance<IChartService>();
             _stockDataService = SimpleIoc.Default.GetInstance<IStockDataService>();
@@ -601,7 +602,6 @@ namespace Asset_Management_Platform
 
             //Notify other classes that startup is complete.
             Messenger.Default.Send<StartupCompleteMessage>(new StartupCompleteMessage(true));
-            ExecuteShowAllSecurities();
         }
 
         private void HandleChartResponseMessage(ChartResponseMessage message)
@@ -653,7 +653,6 @@ namespace Asset_Management_Platform
 
                 Positions = new ObservableCollection<Position>(trimmedList.OrderBy(t => t.Ticker));
 
-
                 GetValueTotals();
             }
         }
@@ -666,6 +665,11 @@ namespace Asset_Management_Platform
                 pos.UpdateTaxlotSecurities(pricedSecurity);
             }
             RaisePropertyChanged(() => Positions);
+
+            if (message.IsStartup)
+            {
+                Messenger.Default.Send<ChartRequestMessage>(new ChartRequestMessage(Positions.ToList(), true, false, false));
+            }            
         }
 
         private void SetLocalMode(LocalModeMessage message)
@@ -731,6 +735,7 @@ namespace Asset_Management_Platform
             _showAllPositions = true;
 
             ChartSubtitle = "All Positions";
+            ClearHiddenList();
             Messenger.Default.Send<ChartRequestMessage>(new ChartRequestMessage(Positions.ToList(), true, false, false));            
         }
 
@@ -740,6 +745,7 @@ namespace Asset_Management_Platform
             _showFundsOnly = false;
             _showAllPositions = false;
             ChartSubtitle = "Stocks only";
+            ClearHiddenList();
             Messenger.Default.Send<ChartRequestMessage>(new ChartRequestMessage(Positions.ToList(), false, true, false));            
         }
 
@@ -750,6 +756,8 @@ namespace Asset_Management_Platform
             _showAllPositions = false;
 
             ChartSubtitle = "Mutual Funds only";
+            ClearHiddenList();
+
             Messenger.Default.Send<ChartRequestMessage>(new ChartRequestMessage(Positions.ToList(), false, false, true));            
         }
 

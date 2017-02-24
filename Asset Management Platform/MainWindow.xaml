@@ -473,8 +473,7 @@
                       RowHeaderWidth="0"
                       SelectionMode="Single"
                       ItemsSource="{Binding Positions,
-                                NotifyOnSourceUpdated=True, 
-                                UpdateSourceTrigger=PropertyChanged}"
+                                NotifyOnSourceUpdated=True                                }"
                       SelectedItem="{Binding SelectedPosition, Mode=TwoWay}"
                       RowStyle="{StaticResource RowStyle}"
                       CellStyle="{StaticResource CellStyle}"

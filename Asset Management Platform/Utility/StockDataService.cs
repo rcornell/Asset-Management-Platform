@@ -275,7 +275,7 @@ namespace Asset_Management_Platform.Utility
                     
                 //Return response. Message's boolean is True if this is a startup call of this method.
                 if (message.IsStartupRequest && positionsQuery)
-                    Messenger.Default.Send<PositionPricingMessage>(new PositionPricingMessage(resultList));
+                    Messenger.Default.Send<PositionPricingMessage>(new PositionPricingMessage(resultList, true));
                 else if(message.IsStartupRequest && tickersQuery)
                     Messenger.Default.Send<StockDataResponseMessage>(new StockDataResponseMessage(resultList, true));
                 else

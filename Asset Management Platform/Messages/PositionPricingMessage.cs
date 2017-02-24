@@ -9,10 +9,12 @@ namespace Asset_Management_Platform.Messages
     class PositionPricingMessage
     {
         public List<Security> PricedSecurities;
+        public bool IsStartup;
 
-        public PositionPricingMessage(List<Security> pricedSecurities)
+        public PositionPricingMessage(List<Security> pricedSecurities, bool isStartup)
         {
             PricedSecurities = pricedSecurities;
+            IsStartup = isStartup;
         }
     }
 }
