@@ -68,7 +68,7 @@ namespace Asset_Management_Platform
         private string _selectedTradeType;
         private string _selectedTermType;
         private string _orderTickerText;
-        private Security _previewSecurity;
+        private Security _tradeSecurity;
         private ObservableCollection<PositionByWeight> _allocationChartPositions;
         public decimal _totalGainLoss;
         private decimal _previewPrice;
@@ -435,16 +435,6 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => AllocationChartPositions);
             }
         }
-        public Security PreviewSecurity
-        {
-            get { return _previewSecurity; }
-            set
-            {
-                _previewSecurity = value;
-                RaisePropertyChanged(() => PreviewSecurity);
-            }
-
-        }
         public ObservableCollection<Taxlot> Taxlots
         {
             get
@@ -698,11 +688,11 @@ namespace Asset_Management_Platform
             if (message.IsStartupResponse)
                 return;
 
-            if (message.IsPreviewResponse)
+            if (message.IsPreviewResponse && message.Security != null)
             {
                 BuildPreviewSecurity(message);
             }
-            if (message.IsScreenerResponse)
+            if (message.IsScreenerResponse && message.Security != null)
             {
                 ScreenerSecurity = message.Security;
             }
@@ -799,23 +789,23 @@ namespace Asset_Management_Platform
 
         private void BuildPreviewSecurity(StockDataResponseMessage message)
         {
-            var returnedSecurity = message.Security;
-            var orderOk = CheckOrderTerms(returnedSecurity);
+            _tradeSecurity = message.Security;
+            var orderOk = CheckOrderTerms(_tradeSecurity);
             
             if (orderOk && message.Security is Stock)
             {
-                PreviewPrice = returnedSecurity.LastPrice;
-                PreviewDescription = returnedSecurity.Description;
-                PreviewVolume = ((Stock)returnedSecurity).Volume.ToString();
-                PreviewAsk = ((Stock)returnedSecurity).Ask.ToString();
-                PreviewAskSize = ((Stock)returnedSecurity).AskSize.ToString();
-                PreviewBid = ((Stock)returnedSecurity).Bid.ToString();
-                PreviewBidSize = ((Stock)returnedSecurity).BidSize.ToString();
+                PreviewPrice = _tradeSecurity.LastPrice;
+                PreviewDescription = _tradeSecurity.Description;
+                PreviewVolume = ((Stock)_tradeSecurity).Volume.ToString();
+                PreviewAsk = ((Stock)_tradeSecurity).Ask.ToString();
+                PreviewAskSize = ((Stock)_tradeSecurity).AskSize.ToString();
+                PreviewBid = ((Stock)_tradeSecurity).Bid.ToString();
+                PreviewBidSize = ((Stock)_tradeSecurity).BidSize.ToString();
             }
-            else if (orderOk && PreviewSecurity is MutualFund)
+            else if (orderOk && message.Security is MutualFund)
             {
-                PreviewPrice = returnedSecurity.LastPrice;
-                PreviewDescription = returnedSecurity.Description;
+                PreviewPrice = _tradeSecurity.LastPrice;
+                PreviewDescription = _tradeSecurity.Description;
                 PreviewVolume = "Mutual Fund: No Volume";
                 PreviewAsk = "-";
                 PreviewAskSize = "-";
@@ -921,7 +911,7 @@ namespace Asset_Management_Platform
 
         private void ExecuteExecuteOrder()
         {
-            var newTrade = new Trade(SelectedTradeType, _previewSecurity, _orderTickerText, _orderShareQuantity, _selectedTermType, _limitPrice, _selectedDurationType);
+            var newTrade = new Trade(SelectedTradeType, _tradeSecurity, _orderTickerText, _orderShareQuantity, _selectedTermType, _limitPrice, _selectedDurationType);
             Messenger.Default.Send<TradeMessage>(new TradeMessage(newTrade));
         }
 

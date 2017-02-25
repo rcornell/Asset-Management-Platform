@@ -48,12 +48,20 @@ namespace Asset_Management_Platform
             //Register for handling of LOCAL MODE taxlot creation
             Messenger.Default.Register<TaxlotMessage>(this, HandleTaxlotMessage);
 
+            Messenger.Default.Register<ShutdownMessage>(this, HandleShutDownMessage);
+
             _storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
 
             _portfolioOriginalState = new List<Position>();
             _myPositions = new List<Position>();
             _myTaxlots = new List<Taxlot>();
             _myLimitOrders = new List<LimitOrder>();
+        }
+
+        private void HandleShutDownMessage(ShutdownMessage message)
+        {
+            SavePortfolioToDatabase();
+            UploadLimitOrdersToDatabase();            
         }
 
         private async void HandleStartupComplete(StartupCompleteMessage message)
