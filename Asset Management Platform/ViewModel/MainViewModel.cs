@@ -809,21 +809,23 @@ namespace Asset_Management_Platform
 
         private void BuildPreviewSecurity(StockDataResponseMessage message)
         {
-            var orderOk = CheckOrderTerms();
-            if (orderOk && PreviewSecurity is Stock)
+            var returnedSecurity = message.Security;
+            var orderOk = CheckOrderTerms(returnedSecurity);
+            
+            if (orderOk && message.Security is Stock)
             {
-                PreviewPrice = PreviewSecurity.LastPrice;
-                PreviewDescription = PreviewSecurity.Description;
-                PreviewVolume = ((Stock)PreviewSecurity).Volume.ToString();
-                PreviewAsk = ((Stock)PreviewSecurity).Ask.ToString();
-                PreviewAskSize = ((Stock)PreviewSecurity).AskSize.ToString();
-                PreviewBid = ((Stock)PreviewSecurity).Bid.ToString();
-                PreviewBidSize = ((Stock)PreviewSecurity).BidSize.ToString();
+                PreviewPrice = returnedSecurity.LastPrice;
+                PreviewDescription = returnedSecurity.Description;
+                PreviewVolume = ((Stock)returnedSecurity).Volume.ToString();
+                PreviewAsk = ((Stock)returnedSecurity).Ask.ToString();
+                PreviewAskSize = ((Stock)returnedSecurity).AskSize.ToString();
+                PreviewBid = ((Stock)returnedSecurity).Bid.ToString();
+                PreviewBidSize = ((Stock)returnedSecurity).BidSize.ToString();
             }
             else if (orderOk && PreviewSecurity is MutualFund)
             {
-                PreviewPrice = PreviewSecurity.LastPrice;
-                PreviewDescription = PreviewSecurity.Description;
+                PreviewPrice = returnedSecurity.LastPrice;
+                PreviewDescription = returnedSecurity.Description;
                 PreviewVolume = "Mutual Fund: No Volume";
                 PreviewAsk = "-";
                 PreviewAskSize = "-";
@@ -841,29 +843,20 @@ namespace Asset_Management_Platform
             ExecuteButtonEnabled = true;
         }
 
-        private bool CheckOrderTerms()
+        private bool CheckOrderTerms(Security returnedSecurity)
         {
+            if (returnedSecurity == null)
+            {
+                var errorMessage = @"There is a problem with your trade. The security data request was not returned.";
+                Messenger.Default.Send(new TradeErrorMessage(_orderTickerText, _orderShareQuantity, errorMessage));
+                return false;
+            }
+
             //Check ticker, share, and secType to see if they are valid
             var tickerNotEmpty = !string.IsNullOrEmpty(_orderTickerText);
             var shareQuantityValid = (_orderShareQuantity > 0);
             var securityTypeValid = (_selectedSecurityType is Stock || _selectedSecurityType is MutualFund);
-
-            //Check to see that selected security type matches the ticker
-            bool secTypeMatch;
-
-            if (PreviewSecurity == null)
-            {
-                var errorMessage = @"There is a problem with your trade. The security data request was not returned.";
-                Messenger.Default.Send(new TradeErrorMessage(_orderTickerText,_orderShareQuantity, errorMessage));
-                return false;
-            }                
-
-            if (_selectedSecurityType is Stock && PreviewSecurity is Stock)
-                secTypeMatch = true;
-            else if (_selectedSecurityType is MutualFund && PreviewSecurity is MutualFund)
-                secTypeMatch = true;
-            else
-                secTypeMatch = false;
+            bool secTypeMatch = (_selectedSecurityType.SecurityType == returnedSecurity.SecurityType);
 
             if (tickerNotEmpty && shareQuantityValid && securityTypeValid && secTypeMatch)
             {
