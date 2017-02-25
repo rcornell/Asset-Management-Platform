@@ -272,7 +272,6 @@ namespace Asset_Management_Platform.Utility
         {
             //Search owned positions for a match with the trade's ticker
             var position = _portfolioPositions.Find(p => p.Ticker == trade.Ticker);
-            var securityType = position.GetSecurityType();
             var ticker = trade.Ticker;
             var shares = trade.Shares;
             
