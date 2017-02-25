@@ -221,9 +221,6 @@ namespace Asset_Management_Platform.Utility
 
         private void AddPosition(Trade trade)
         {
-            if (!_securityDatabaseList.Any(s => s.Ticker == trade.Ticker))
-                _securityDatabaseList.Add(trade.Security);
-
             //Check to confirm that shares of this security aren't already owned
             if (trade.Security is Stock && !_portfolioPositions.Any(s => s.Ticker == trade.Ticker))
             {
@@ -357,7 +354,7 @@ namespace Asset_Management_Platform.Utility
             var limit = trade.Limit;
             var orderDuration = trade.OrderDuration;
 
-            if (trade.Terms == "Limit" || trade.Terms == "Stop Limit" || trade.Terms == "Stop" || limit <= 0)
+            if (trade.Terms == "Limit" || trade.Terms == "Stop Limit" || trade.Terms == "Stop" && limit <= 0)
                 return false;
 
             if (security != null && !string.IsNullOrEmpty(ticker) && shares > 0
