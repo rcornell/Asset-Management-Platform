@@ -21,8 +21,6 @@ namespace Asset_Management_Platform.Utility
         private List<Taxlot> _portfolioTaxlots;
         private List<Position> _portfolioPositions;
         private List<Security> _portfolioSecurities;
-        private Security _requestedSecurity;
-        private List<Security> _requestedSecurityList;
 
         public List<LimitOrder> LimitOrderList //used to display in MainViewModel
         {
@@ -126,19 +124,6 @@ namespace Asset_Management_Platform.Utility
                         pos.UpdateTaxlotPrices(security.LastPrice);
                     }
                 }
-
-                return;
-            }
-
-            if (!message.IsStartupResponse && message.Security != null)
-            {
-                _requestedSecurity = message.Security;
-                return;
-            }
-
-            if (!message.IsStartupResponse && message.Securities != null)
-            {
-                _requestedSecurityList = message.Securities;
             }
         }
 
