@@ -221,35 +221,11 @@ namespace Asset_Management_Platform.Utility
 
         private void AddPosition(Trade trade)
         {
-            //Check to confirm that shares of this security aren't already owned
-            if (trade.Security is Stock && !_portfolioPositions.Any(s => s.Ticker == trade.Ticker))
-            {
-                //Create taxlot and position, then add to position list
-                var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security, trade.Security.LastPrice);
-                AddToPortfolioDatabase(taxlot);
-            }
-            //Ticker exists in portfolio and security is stock
-            else if (trade.Security is Stock && _portfolioPositions.Any(s => s.Ticker == trade.Ticker))
-            {
-                //Create new taxlot and add to existing position
-                var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security, trade.Security.LastPrice);
-                AddToPortfolioDatabase(taxlot);
-            }
-            //Ticker is not already owned and is a MutualFund
-            else if (trade.Security is MutualFund && !_portfolioPositions.Any(s => s.Ticker == trade.Ticker))
-            {
-                //Create new taxlot and add to existing position
-                var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security, trade.Security.LastPrice);
-                AddToPortfolioDatabase(taxlot);
-            }
-            else if (trade.Security is MutualFund && _portfolioPositions.Any(s => s.Ticker == trade.Ticker))
-            {
-                //Create new taxlot and add to existing position
-                var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security, trade.Security.LastPrice);
-                AddToPortfolioDatabase(taxlot);
-            }
+            //Create taxlot and position, then add to position list
+            var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security, trade.Security.LastPrice);
+            AddToPortfolioDatabase(taxlot);
             
-            //Sends updated List<Taxlot> and List<Position>
+            //Sends updated List<Taxlot> and List<Position> to MVM and PDS
             Messenger.Default.Send<TradeCompleteMessage>(new TradeCompleteMessage(_portfolioPositions, _portfolioTaxlots, true));
         }
 
