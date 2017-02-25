@@ -499,7 +499,7 @@ namespace Asset_Management_Platform
 
         public RelayCommand PreviewOrder
         {
-            get { return new RelayCommand(async () => await ExecutePreviewOrder(), CanPreview); }
+            get { return new RelayCommand(ExecutePreviewOrder); }
         }
 
         public RelayCommand ExecuteOrder
@@ -899,7 +899,7 @@ namespace Asset_Management_Platform
             Messenger.Default.Send<ChartRequestMessage>(new ChartRequestMessage(Positions.ToList(), false, false, true));
         }
 
-        private async Task ExecutePreviewOrder()
+        private void ExecutePreviewOrder()
         {
             _previewOrderIsBusy = true;
 
@@ -910,7 +910,7 @@ namespace Asset_Management_Platform
             _previewOrderIsBusy = false;
         }
 
-        private async void ExecuteScreenerPreview(string screenerTicker)
+        private void ExecuteScreenerPreview(string screenerTicker)
         {
             if (!string.IsNullOrEmpty(screenerTicker))
             {
