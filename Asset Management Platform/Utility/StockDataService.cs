@@ -236,7 +236,9 @@ namespace Asset_Management_Platform.Utility
                 using (var yahooAPI = new YahooAPIService())
                 {
                     var result = await yahooAPI.GetSingleSecurity(ticker, _securityDatabaseList);
-                    TryDatabaseInsert(result);
+
+                    if(!_localMode)
+                        TryDatabaseInsert(result);
 
                     var responseMessage = new StockDataResponseMessage(result, isPreview, isScreener);
                     Messenger.Default.Send<StockDataResponseMessage>(responseMessage);

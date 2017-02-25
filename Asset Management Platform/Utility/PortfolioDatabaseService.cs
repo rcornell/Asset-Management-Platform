@@ -67,6 +67,10 @@ namespace Asset_Management_Platform
             if (!message.IsComplete)
                 return;
 
+            if (_localMode)
+                return;
+
+
             await LoadLimitOrdersFromDatabase();
             await BuildDatabaseTaxlots();
             GetPositionsFromTaxlots();
