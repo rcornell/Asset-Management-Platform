@@ -86,8 +86,6 @@ namespace Asset_Management_Platform
         private bool _canSave;
         private bool _canLoad;
         private bool _localMode;
-        private Security _requestedSecurity;
-        private List<Security> _requestedSecurityList;
         private readonly IStockDataService _stockDataService;
         private readonly IPortfolioDatabaseService _portfolioDatabaseService;
         private readonly IPortfolioManagementService _portfolioManagementService;
@@ -700,14 +698,6 @@ namespace Asset_Management_Platform
             if (message.IsStartupResponse)
                 return;
 
-            if (message.Securities != null)
-            {
-                _requestedSecurityList = message.Securities;
-            }
-            if (message.Security != null)
-            {
-                _requestedSecurity = message.Security;
-            }
             if (message.IsPreviewResponse)
             {
                 BuildPreviewSecurity(message);
@@ -834,7 +824,11 @@ namespace Asset_Management_Platform
             }
             else
             {
-                SetAlertMessage(new TradeErrorMessage(_orderTickerText, _orderShareQuantity));
+                var alertMessage =
+                    string.Format(
+                        @"There is a problem with your order to buy {0} shares of {1}. Please check your order terms.", 
+                        _orderShareQuantity, _orderTickerText);
+                SetAlertMessage(alertMessage);
                 AlertBoxVisible = true;
                 OrderTermsOK = false;
             }
@@ -1037,8 +1031,8 @@ namespace Asset_Management_Platform
             }                
             else
             {
-                var errorMessage = @"Notification: Please select a limit order to delete.";
-                Messenger.Default.Send(new TradeErrorMessage("X", 0, errorMessage));                
+                var alertMessage = @"Notification: Please select a limit order to delete.";
+                SetAlertMessage(alertMessage);
             }
         }
 
@@ -1066,9 +1060,9 @@ namespace Asset_Management_Platform
             return _canSave;
         }
 
-        private void SetAlertMessage(TradeErrorMessage message)
+        private void SetAlertMessage(string alertMessage)
         {
-            AlertBoxMessage = message.Message;
+            AlertBoxMessage = alertMessage;
             AlertBoxVisible = true;
         }
 
