@@ -25,8 +25,6 @@ namespace Asset_Management_Platform.Utility
 
         void BackupDatabase();
 
-        void AddToPortfolioDatabase(Taxlot taxlotToAdd);
-
         void DeletePortfolio(List<Position> positions);
     }
 }

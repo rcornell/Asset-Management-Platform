@@ -23,7 +23,7 @@ namespace Asset_Management_Platform
     {
         private readonly string _storageString;
         private readonly List<Position> _portfolioOriginalState;
-        private readonly List<Position> _myPositions;
+        private  List<Position> _myPositions;
         private List<Taxlot> _myTaxlots; 
         private List<LimitOrder> _myLimitOrders;
         private bool _localMode; 
@@ -36,18 +36,16 @@ namespace Asset_Management_Platform
             //Register for StartupCompleteMessages
             Messenger.Default.Register<StartupCompleteMessage>(this, HandleStartupComplete);
 
-            //Register for handling of Buy orders
-            Messenger.Default.Register<TradeBuyMessage>(this, HandleBuy);
-
-            //Register for handling of Sell orders
-            Messenger.Default.Register<TradeSellMessage>(this, HandleSell);
-
             //Register for handling of updates to list of limit orders
             Messenger.Default.Register<LimitOrderMessage>(this, HandleLimitOrderList);
 
             //Register for handling of LOCAL MODE taxlot creation
             Messenger.Default.Register<TaxlotMessage>(this, HandleTaxlotMessage);
 
+            //Register for trade complete messages
+            Messenger.Default.Register<TradeCompleteMessage>(this, HandleTradeCompleteMessage);
+
+            //Register for shutdown methods.
             Messenger.Default.Register<ShutdownMessage>(this, HandleShutDownMessage);
 
             _storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
@@ -539,29 +537,6 @@ namespace Asset_Management_Platform
         }      
 
         /// <summary>
-        /// Adds a taxlot to an existing position in some security
-        /// </summary>
-        /// <param name="taxlotToAdd"></param>
-        public void AddToPortfolioDatabase(Taxlot taxlotToAdd)
-        {
-            //Add to taxlot list
-            _myTaxlots.Add(taxlotToAdd);
-
-            //If position with ticker exists, add the taxlot to position.
-            if (!_myPositions.Any(s => s.Ticker == taxlotToAdd.Ticker))
-            {
-                _myPositions.Add(new Position(taxlotToAdd, taxlotToAdd.SecurityType));
-            }
-            else
-            {
-                foreach (var pos in _myPositions.Where(s => s.Ticker == taxlotToAdd.Ticker))
-                {
-                    pos.Taxlots.Add(taxlotToAdd);
-                }
-            }            
-        }
-
-        /// <summary>
         /// Adds all tickers in the portfolio to the
         /// positions to be deleted from the database
         /// upon exit.
@@ -581,23 +556,10 @@ namespace Asset_Management_Platform
             _localMode = message.LocalMode;
         }
 
-        private void HandleBuy(TradeBuyMessage message)
+        private void HandleTradeCompleteMessage(TradeCompleteMessage message)
         {
-            AddToPortfolioDatabase(message.Taxlot);
-        }
-
-        private void HandleSell(TradeSellMessage message)
-        {
-            if (message.SellingPartialShares)
-            {
-                var position = _myPositions.Find(s => s.Ticker == message.Trade.Ticker);
-                position.SellShares(message.Trade.Shares);
-            }
-            if (message.SellingAllShares)
-            {               
-                _myPositions.RemoveAll(s => s.Ticker == message.Trade.Ticker);
-                _myTaxlots.RemoveAll(s => s.Ticker == message.Trade.Ticker);
-            }
+            _myPositions = message.Positions;
+            _myTaxlots = message.Taxlots;
         }
     }
 

@@ -226,27 +226,27 @@ namespace Asset_Management_Platform.Utility
             {
                 //Create taxlot and position, then add to position list
                 var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security, trade.Security.LastPrice);
-                Messenger.Default.Send<TradeBuyMessage>(new TradeBuyMessage(trade, taxlot));
+                AddToPortfolioDatabase(taxlot);
             }
             //Ticker exists in portfolio and security is stock
             else if (trade.Security is Stock && _portfolioPositions.Any(s => s.Ticker == trade.Ticker))
             {
                 //Create new taxlot and add to existing position
                 var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security, trade.Security.LastPrice);
-                Messenger.Default.Send<TradeBuyMessage>(new TradeBuyMessage(trade, taxlot));
+                AddToPortfolioDatabase(taxlot);
             }
             //Ticker is not already owned and is a MutualFund
             else if (trade.Security is MutualFund && !_portfolioPositions.Any(s => s.Ticker == trade.Ticker))
             {
                 //Create new taxlot and add to existing position
                 var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security, trade.Security.LastPrice);
-                Messenger.Default.Send<TradeBuyMessage>(new TradeBuyMessage(trade, taxlot));
+                AddToPortfolioDatabase(taxlot);
             }
             else if (trade.Security is MutualFund && _portfolioPositions.Any(s => s.Ticker == trade.Ticker))
             {
                 //Create new taxlot and add to existing position
                 var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security, trade.Security.LastPrice);
-                Messenger.Default.Send<TradeBuyMessage>(new TradeBuyMessage(trade, taxlot));
+                AddToPortfolioDatabase(taxlot);
             }
             
             //Sends updated List<Taxlot> and List<Position>
@@ -305,9 +305,6 @@ namespace Asset_Management_Platform.Utility
                 _portfolioSecurities.RemoveAll(s => s.Ticker == trade.Ticker);
                 _portfolioTaxlots.RemoveAll(s => s.Ticker == trade.Ticker);
                 _portfolioPositions.RemoveAll(s => s.Ticker == trade.Ticker);
-
-                //Send message to PortfolioDatabaseService
-                Messenger.Default.Send<TradeSellMessage>(new TradeSellMessage(trade, true, false));
             }            
             else if (shares > position.SharesOwned)
             {
@@ -319,14 +316,31 @@ namespace Asset_Management_Platform.Utility
             {
                 //User selling partial position
                 position.SellShares(shares);
-
-                //Send message to PortfolioDatabaseService
-                Messenger.Default.Send<TradeSellMessage>(new TradeSellMessage(trade, false, true));
             }
 
             //Sends updated List<Taxlot> and List<Position>
             Messenger.Default.Send<TradeCompleteMessage>(new TradeCompleteMessage(_portfolioPositions, _portfolioTaxlots, true));
         }
+
+        public void AddToPortfolioDatabase(Taxlot taxlotToAdd)
+        {
+            //Add to taxlot list
+            _portfolioTaxlots.Add(taxlotToAdd);
+
+            //If position with ticker exists, add the taxlot to position.
+            if (!_portfolioPositions.Any(s => s.Ticker == taxlotToAdd.Ticker))
+            {
+                _portfolioPositions.Add(new Position(taxlotToAdd, taxlotToAdd.SecurityType));
+            }
+            else
+            {
+                foreach (var pos in _portfolioPositions.Where(s => s.Ticker == taxlotToAdd.Ticker))
+                {
+                    pos.Taxlots.Add(taxlotToAdd);
+                }
+            }
+        }
+
 
         private void CreateLimitOrders(LimitOrderMessage message)
         {
