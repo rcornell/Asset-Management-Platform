@@ -17,40 +17,74 @@ namespace Asset_Management_Platform.Utility
     /// this application.
     /// </summary>
     public class StockDataService : IStockDataService
-    {
-        private readonly List<Security> _securityDatabaseList;
+    {        
         private readonly string _storageString;
         private readonly bool _localMode;
+        private List<Security> _securityDatabaseList;
+
         public StockDataService()
         {
+            Messenger.Default.Register<StockDataRequestMessage>(this, HandleStockDataRequest);
+            Messenger.Default.Register<StartupCompleteMessage>(this, HandleStartupComplete);
+
             _securityDatabaseList = new List<Security>();
             _storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
-            _localMode = _storageString == null ? true : false;
+            _localMode = _storageString == null ? true : false;            
+        }
 
-            if (!_localMode) { 
-                CheckDatabases();
+        private async void HandleStartupComplete(StartupCompleteMessage message)
+        {
+            if (!message.IsComplete)
+                return;
+
+            Messenger.Default.Send<LocalModeMessage>(new LocalModeMessage(_localMode));
+
+            if (!_localMode)
+            {
+                await CheckDatabases();
+            }
+
+            await LoadSecurityDatabase();
+        }
+
+        private async void HandleStockDataRequest(StockDataRequestMessage message)
+        {
+            if (message.Tickers != null || message.Positions != null) //Request for multiple securities
+                await GetSecurityInfo(message);
+            if (!string.IsNullOrEmpty(message.Ticker)) //ticker property is not null, request for one security
+            {
+                var isScreener = message.IsScreenerRequest;
+                var isPreview = message.IsTradePreviewRequest;
+                await GetSecurityInfo(message.Ticker, isScreener,  isPreview);                
             }
         }
 
         /// <summary>
-        /// Reads the SQL database and returns a List<Security>
+        /// Reads the SQL database and sends a message with the List<Security>
         /// of known securities
         /// </summary>
-        public List<Security> LoadSecurityDatabase()
+        private async Task LoadSecurityDatabase()
         {
-            if (_localMode)
-                return _securityDatabaseList;
+
+            if (_localMode) { 
+                Messenger.Default.Send(new SecurityDatabaseMessage(_securityDatabaseList));
+                return;
+            }
 
             using (var connection = new SqlConnection(_storageString))
             {
                 connection.Open();
-                var stocks = LoadStocksFromDB(connection);
-                var funds = LoadMutualFundsFromDB(connection);
+                var stocks = await LoadStocksFromDB(connection);
+                var funds = await LoadMutualFundsFromDB(connection);
 
                 _securityDatabaseList.AddRange(stocks);
                 _securityDatabaseList.AddRange(funds);
             }
-            return _securityDatabaseList;
+
+            _securityDatabaseList = GetMutualFundExtraData(_securityDatabaseList);
+            
+            //Listener is PortfolioManagementService
+            Messenger.Default.Send<SecurityDatabaseMessage>(new SecurityDatabaseMessage(_securityDatabaseList));
         }
 
         /// <summary>
@@ -94,8 +128,7 @@ namespace Asset_Management_Platform.Utility
                     insertString += securityInfo;
 
                     using (var command = new SqlCommand(insertString, connection))
-                    {
-                       
+                    {                       
                         connection.Open();
                         await command.ExecuteNonQueryAsync();
                     }                    
@@ -191,41 +224,64 @@ namespace Asset_Management_Platform.Utility
             }
         }
 
-        public List<Security> GetSecurityList()
-        {
-            return _securityDatabaseList;
-        }
-
         /// <summary>
         /// Get pricing and security info for a single ticker.
         /// </summary>
         /// <param name="ticker"></param>
         /// <returns></returns>
-        public async Task<Security> GetSecurityInfo(string ticker)
+        public async Task GetSecurityInfo(string ticker, bool isScreener, bool isPreview)
         {
             if (!string.IsNullOrEmpty(ticker))
             {
                 using (var yahooAPI = new YahooAPIService())
                 {
                     var result = await yahooAPI.GetSingleSecurity(ticker, _securityDatabaseList);
-                    TryDatabaseInsert(result);
-                    return result;
+
+                    if(!_localMode)
+                        TryDatabaseInsert(result);
+
+                    var responseMessage = new StockDataResponseMessage(result, isPreview, isScreener);
+                    Messenger.Default.Send<StockDataResponseMessage>(responseMessage);
                 }
             }
-            return new Stock("", "", "", 0, 0.00); //If you hit this, the ticker was null or empty
         }
 
-        public async Task<List<Security>> GetSecurityInfo(List<string> tickers)
+        /// <summary>
+        /// Method takes a request for multiple tickers or multiple positions
+        /// and sends a listed of updated data
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        public async Task GetSecurityInfo(StockDataRequestMessage message)
         {
-            var resultList = new List<Security>();
-            if (tickers != null && tickers.Count > 0)
-            {
-                using (var yahooAPI = new YahooAPIService())
-                {
-                    resultList = await yahooAPI.GetMultipleSecurities(tickers);
-                }
+            var tickersToQuery = new List<string>();
+
+            var positionsQuery = false;
+            var tickersQuery = false;
+
+            if (message.Tickers != null && message.Tickers.Count > 0)
+            { 
+                tickersToQuery = message.Tickers;
+                tickersQuery = true;
             }
-            return resultList;
+            else if (message.Positions != null && message.Positions.Count > 0)
+            {
+                tickersToQuery = message.Positions.Select(s => s.Ticker).Distinct().ToList();
+                positionsQuery = true;
+            }
+
+            using (var yahooAPI = new YahooAPIService())
+            {
+                var resultList = await yahooAPI.GetMultipleSecurities(tickersToQuery);
+                    
+                //Return response. Message's boolean is True if this is a startup call of this method.
+                if (message.IsStartupRequest && positionsQuery)
+                    Messenger.Default.Send<PositionPricingMessage>(new PositionPricingMessage(resultList, true));
+                else if(message.IsStartupRequest && tickersQuery)
+                    Messenger.Default.Send<StockDataResponseMessage>(new StockDataResponseMessage(resultList, true));
+                else
+                    Messenger.Default.Send<StockDataResponseMessage>(new StockDataResponseMessage(resultList, false));
+            }            
         }
 
         public List<Security> GetMutualFundExtraData(List<Security> rawSecurities)
@@ -290,7 +346,7 @@ namespace Asset_Management_Platform.Utility
             }
         }
 
-        private List<Security> LoadMutualFundsFromDB(SqlConnection connection)
+        private async Task<List<Security>> LoadMutualFundsFromDB(SqlConnection connection)
         {
             var securityList = new List<Security>();
             var commandText = @"SELECT * FROM MUTUALFUNDS";
@@ -306,7 +362,7 @@ namespace Asset_Management_Platform.Utility
                 string category = "";
                 string subCategory = "";
 
-                var reader = command.ExecuteReader();
+                var reader = await command.ExecuteReaderAsync();
                 while (reader.Read())
                 {
                     if (!reader.IsDBNull(0))
@@ -332,7 +388,7 @@ namespace Asset_Management_Platform.Utility
             return securityList;
         }
 
-        private List<Security> LoadStocksFromDB(SqlConnection connection)
+        private async Task<List<Security>> LoadStocksFromDB(SqlConnection connection)
         {
             var securityList = new List<Security>();
             var commandText = @"SELECT * FROM STOCKS";
@@ -345,7 +401,7 @@ namespace Asset_Management_Platform.Utility
                 decimal lastPrice = 0;
                 double yield = 0;
 
-                var reader = command.ExecuteReader();
+                var reader = await command.ExecuteReaderAsync();
                 while (reader.Read())
                 {
                     if (!reader.IsDBNull(0))

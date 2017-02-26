@@ -42,7 +42,7 @@ namespace Asset_Management_Platform
         private string _showLimitButtonText;
         private string _previewButtonText;
         private bool _orderTermsOK;
-        private Security _screenerStock;
+        private Security _screenerSecurity;
         private string _stockScreenerTicker;
         private bool _alertBoxVisible;
         private string _alertBoxMessage;
@@ -68,15 +68,14 @@ namespace Asset_Management_Platform
         private string _selectedTradeType;
         private string _selectedTermType;
         private string _orderTickerText;
-        private Security _previewSecurity;
+        private Security _tradeSecurity;
         private ObservableCollection<PositionByWeight> _allocationChartPositions;
         public decimal _totalGainLoss;
         private decimal _previewPrice;
         private int _orderShareQuantity;
         private Position _selectedPosition;
         public decimal _totalValue;
-        public decimal _totalCostBasis;
-        private IPortfolioManagementService _portfolioManagementService;
+        public decimal _totalCostBasis;        
         private ObservableCollection<Position> _positions;
         private ObservableCollection<Taxlot> _taxlots;
         private bool _showStocksOnly;
@@ -86,7 +85,11 @@ namespace Asset_Management_Platform
         private bool _previewOrderIsBusy;
         private bool _canSave;
         private bool _canLoad;
-        private readonly bool _localMode;
+        private bool _localMode;
+        private readonly IStockDataService _stockDataService;
+        private readonly IPortfolioDatabaseService _portfolioDatabaseService;
+        private readonly IPortfolioManagementService _portfolioManagementService;
+        private readonly IChartService _chartService;
         #endregion
 
         #region All Properties
@@ -126,11 +129,11 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => OrderTermsOK);
             }
         }
-        public Security ScreenerStock
+        public Security ScreenerSecurity
         {
-            get { return _screenerStock; }
-            set { _screenerStock = value;
-                RaisePropertyChanged(() => ScreenerStock);
+            get { return _screenerSecurity; }
+            set { _screenerSecurity = value;
+                RaisePropertyChanged(() => ScreenerSecurity);
             }
         }
         public string StockScreenerTicker
@@ -432,16 +435,6 @@ namespace Asset_Management_Platform
                 RaisePropertyChanged(() => AllocationChartPositions);
             }
         }
-        public Security PreviewSecurity
-        {
-            get { return _previewSecurity; }
-            set
-            {
-                _previewSecurity = value;
-                RaisePropertyChanged(() => PreviewSecurity);
-            }
-
-        }
         public ObservableCollection<Taxlot> Taxlots
         {
             get
@@ -496,7 +489,7 @@ namespace Asset_Management_Platform
 
         public RelayCommand PreviewOrder
         {
-            get { return new RelayCommand(async () => await ExecutePreviewOrder(), CanPreview); }
+            get { return new RelayCommand(ExecutePreviewOrder); }
         }
 
         public RelayCommand ExecuteOrder
@@ -550,9 +543,16 @@ namespace Asset_Management_Platform
         }
         #endregion
 
-        public MainViewModel(IPortfolioManagementService portfolioService)
+        public MainViewModel()
         {
-            _portfolioManagementService = portfolioService;
+            Messenger.Default.Register<LocalModeMessage>(this, HandleLocalModeMessage);
+            Messenger.Default.Register<TaxlotMessage>(this, HandleTaxlotMessage);
+            Messenger.Default.Register<PositionMessage>(this, HandlePositionsMessage);
+            Messenger.Default.Register<TradeCompleteMessage>(this, HandleTradeCompleteMessage);
+            Messenger.Default.Register<LimitOrderMessage>(this, HandleLimitOrderMessage);
+            Messenger.Default.Register<StockDataResponseMessage>(this, HandleStockDataResponse);
+            Messenger.Default.Register<PositionPricingMessage>(this, HandlePositionPricingMessage);
+            Messenger.Default.Register<ChartResponseMessage>(this, HandleChartResponseMessage);
 
             TradeTypeStrings = new ObservableCollection<string>() { " ", "Buy", "Sell" };
             TradeTermStrings = new ObservableCollection<string>() { " ", "Market", "Limit", "Stop", "Stop Limit" };
@@ -560,7 +560,7 @@ namespace Asset_Management_Platform
             SecurityTypes = new ObservableCollection<Security> { new Stock(), new MutualFund() };
 
             Positions = new ObservableCollection<Position>();
-            Taxlots = new ObservableCollection<Taxlot>();
+            Taxlots = new ObservableCollection<Taxlot>();                     
 
             SelectedTradeType = TradeTypeStrings[0];
             SelectedTermType = TradeTermStrings[0];
@@ -579,21 +579,150 @@ namespace Asset_Management_Platform
             LimitOrderIsSelected = false;
             _canLoad = true;
             _canSave = true;
-            if (_portfolioManagementService != null)
-            {
-                _localMode = _portfolioManagementService.IsLocalMode();
-            }
-            else
-            {
-                //Should be impossible to hit.
-                throw new NotImplementedException();
-            }
+            _hiddenPositions = new List<Position>();
 
-            GetLimitOrders();
+            _chartService = SimpleIoc.Default.GetInstance<IChartService>();
+            _stockDataService = SimpleIoc.Default.GetInstance<IStockDataService>();
+            _portfolioDatabaseService = SimpleIoc.Default.GetInstance<IPortfolioDatabaseService>();
+            _portfolioManagementService = SimpleIoc.Default.GetInstance<IPortfolioManagementService>();
+            
+            
 
-            //_portfolioManagementService.StartUpdates(); //TURNED OFF FOR TESTING
+            //Notify other classes that startup is complete.
+            Messenger.Default.Send<StartupCompleteMessage>(new StartupCompleteMessage(true));
         }
 
+        private void HandleChartResponseMessage(ChartResponseMessage message)
+        {
+            AllocationChartPositions = message.ChartPositions;
+
+            if (message.ShowAll)
+            {
+                ClearHiddenList();
+                GetValueTotals();
+            }
+
+            if (message.ShowEquities)
+            {
+                ClearHiddenList();
+
+                _hiddenPositions = new List<Position>();
+                var trimmedList = new List<Position>(Positions);
+
+                foreach (var pos in Positions)
+                {
+                    if (pos.Security is MutualFund)
+                    {
+                        trimmedList.Remove(pos);
+                        _hiddenPositions.Add(pos);
+                    }
+                }
+
+                Positions = new ObservableCollection<Position>(trimmedList.OrderBy(t => t.Ticker));
+
+                GetValueTotals();
+            }
+
+            if (message.ShowMutualFunds)
+            {
+                ClearHiddenList();
+
+                _hiddenPositions = new List<Position>();
+                var trimmedList = new List<Position>(Positions);
+
+                foreach (var pos in Positions)
+                {
+                    if (pos.Security is Stock)
+                    {
+                        trimmedList.Remove(pos);
+                        _hiddenPositions.Add(pos);
+                    }
+                }
+
+                Positions = new ObservableCollection<Position>(trimmedList.OrderBy(t => t.Ticker));
+
+                GetValueTotals();
+            }
+        }
+
+        private void HandlePositionPricingMessage(PositionPricingMessage message)
+        {
+            foreach (var pos in Positions)
+            {
+                var pricedSecurity = message.PricedSecurities.Find(s => s.Ticker == pos.Ticker);
+                pos.UpdateTaxlotSecurities(pricedSecurity);
+            }
+            RaisePropertyChanged(() => Positions);
+
+            if (message.IsStartup)
+            {
+                Messenger.Default.Send<ChartRequestMessage>(new ChartRequestMessage(Positions.ToList(), true, false, false));
+            }            
+        }
+
+        private void HandleLocalModeMessage(LocalModeMessage message)
+        {
+            _localMode = message.LocalMode;
+        }
+
+        private void HandleTaxlotMessage(TaxlotMessage message)
+        {
+            Taxlots = new ObservableCollection<Taxlot>(message.Taxlots);
+        }
+
+        private void HandleLimitOrderMessage(LimitOrderMessage message)
+        {
+            LimitOrderList = new ObservableCollection<LimitOrder>(message.LimitOrders);
+        }
+
+        private void HandlePositionsMessage(PositionMessage message)
+        {
+            if (message.IsStartup)
+            {
+                Positions = new ObservableCollection<Position>(message.Positions);
+            }
+        }
+
+        private void HandleStockDataResponse(StockDataResponseMessage message)
+        {
+            if (message.IsStartupResponse)
+                return;
+
+            if (message.IsPreviewResponse && message.Security != null)
+            {
+                BuildPreviewSecurity(message);
+            }
+            if (message.IsScreenerResponse && message.Security != null)
+            {
+                ScreenerSecurity = message.Security;
+            }
+        }
+
+        private void HandleTradeCompleteMessage(TradeCompleteMessage message)
+        {
+            Taxlots = new ObservableCollection<Taxlot>(message.Taxlots);
+            Positions = new ObservableCollection<Position>(message.Positions);
+
+            ExecuteShowAllSecurities();
+
+            OrderTickerText = "";
+            OrderShareQuantity = 0;
+            SelectedTradeType = TradeTypeStrings[0];
+            SelectedTermType = TradeTermStrings[0];
+            SelectedDurationType = TradeDurationStrings[0];
+            LimitPrice = 0;
+            PreviewPrice = 0;
+            PreviewBid = "";
+            PreviewAsk = "";
+            PreviewAskSize = "";
+            PreviewBidSize = "";
+            PreviewDescription = "";
+            PreviewVolume = "";
+            SelectedSecurityType = SecurityTypes[0];
+
+            OrderTermsOK = false;
+            ExecuteButtonEnabled = false;
+        }
 
         private void GetValueTotals()
         {
@@ -627,95 +756,7 @@ namespace Asset_Management_Platform
             TotalCostBasis = totalCostBasis;
             TotalGainLoss = totalGainLoss;
         }
-
-        private void GetPositions() //Don't put async here...
-        {
-            var positions = _portfolioManagementService.GetPositions();
-
-            if(positions != null)            
-                Positions = new ObservableCollection<Position>(positions);
-            
-        }
-
-        private void GetTaxlots()
-        {
-            var lots = _portfolioManagementService.GetTaxlots();
-
-            if (lots != null)
-            {
-                Taxlots = new ObservableCollection<Taxlot>(lots);
-            }
-        }
-
-        private void ExecuteShowAllSecurities()
-        {
-            _showStocksOnly = false;
-            _showFundsOnly = false;
-            _showAllPositions = true;
-
-            ChartSubtitle = "All Positions";
-            AllocationChartPositions = _portfolioManagementService.GetChartAllSecurities();
-
-            ClearHiddenList();            
-
-            GetValueTotals();
-        }
-
-        private void ExecuteShowStocksOnly()
-        {
-            _showStocksOnly = true;
-            _showFundsOnly = false;
-            _showAllPositions = false;
-            ChartSubtitle = "Stocks only";
-            AllocationChartPositions = _portfolioManagementService.GetChartStocksOnly();
-
-            ClearHiddenList();
-
-            _hiddenPositions = new List<Position>();
-            var trimmedList = new List<Position>(Positions);
-
-            foreach (var pos in Positions)
-            {
-                if (pos.Security is MutualFund) { 
-                    trimmedList.Remove(pos);
-                    _hiddenPositions.Add(pos);
-                }
-            }
-
-            Positions = new ObservableCollection<Position>(trimmedList.OrderBy(t => t.Ticker));
-
-            GetValueTotals();
-        }
-
-        private void ExecuteShowFundsOnly()
-        {
-            _showStocksOnly = false;
-            _showFundsOnly = true;
-            _showAllPositions = false;
-
-            ChartSubtitle = "Mutual Funds only";
-            AllocationChartPositions = _portfolioManagementService.GetChartFundsOnly();
-
-            ClearHiddenList();
-
-            _hiddenPositions = new List<Position>();
-            var trimmedList = new List<Position>(Positions);
-
-            foreach (var pos in Positions)
-            {
-                if (pos.Security is Stock)
-                {
-                    trimmedList.Remove(pos);
-                    _hiddenPositions.Add(pos);
-                }
-            }
-
-            Positions = new ObservableCollection<Position>(trimmedList.OrderBy(t => t.Ticker));
-
-
-            GetValueTotals();
-        }
-
+       
         private void ClearHiddenList()
         {
             var listToSort = new List<Position>(Positions);
@@ -736,84 +777,70 @@ namespace Asset_Management_Platform
         {
             if (message.PositionsSuccessful)
             {
-                GetPositions();
-                GetTaxlots();
+                //Reimplement
                 GetValueTotals();
             }
 
             if (AllocationChartPositions == null && Positions != null)
             {
-                ExecuteShowAllSecurities();
+                Messenger.Default.Send(new ChartRequestMessage(Positions.ToList(), true, false, false));
             }
-        }
+        }       
 
-        private async Task ExecutePreviewOrder()
+        private void BuildPreviewSecurity(StockDataResponseMessage message)
         {
-            _previewOrderIsBusy = true;
-
-            var orderOk = await CheckOrderTerms();
-            if (orderOk)
+            _tradeSecurity = message.Security;
+            var orderOk = CheckOrderTerms(_tradeSecurity);
+            
+            if (orderOk && message.Security is Stock)
             {
-                PreviewSecurity = await _portfolioManagementService.GetTradePreviewSecurity(_orderTickerText, SelectedSecurityType);
-
-                if (PreviewSecurity is Stock)
-                {
-                    PreviewPrice = PreviewSecurity.LastPrice;
-                    PreviewDescription = PreviewSecurity.Description;
-                    PreviewVolume = ((Stock)PreviewSecurity).Volume.ToString();
-                    PreviewAsk = ((Stock)PreviewSecurity).Ask.ToString();
-                    PreviewAskSize = ((Stock)PreviewSecurity).AskSize.ToString();
-                    PreviewBid = ((Stock)PreviewSecurity).Bid.ToString();
-                    PreviewBidSize = ((Stock)PreviewSecurity).BidSize.ToString();
-                }
-                else if (PreviewSecurity is MutualFund)
-                {
-                    PreviewPrice = PreviewSecurity.LastPrice;
-                    PreviewDescription = PreviewSecurity.Description;
-                    PreviewVolume = "Mutual Fund: No Volume";
-                    PreviewAsk = "-";
-                    PreviewAskSize = "-";
-                    PreviewBid = "-";
-                    PreviewBidSize = "-";
-                }
-
-                AlertBoxVisible = false;
-                ExecuteButtonEnabled = true;
+                PreviewPrice = _tradeSecurity.LastPrice;
+                PreviewDescription = _tradeSecurity.Description;
+                PreviewVolume = ((Stock)_tradeSecurity).Volume.ToString();
+                PreviewAsk = ((Stock)_tradeSecurity).Ask.ToString();
+                PreviewAskSize = ((Stock)_tradeSecurity).AskSize.ToString();
+                PreviewBid = ((Stock)_tradeSecurity).Bid.ToString();
+                PreviewBidSize = ((Stock)_tradeSecurity).BidSize.ToString();
+            }
+            else if (orderOk && message.Security is MutualFund)
+            {
+                PreviewPrice = _tradeSecurity.LastPrice;
+                PreviewDescription = _tradeSecurity.Description;
+                PreviewVolume = "Mutual Fund: No Volume";
+                PreviewAsk = "-";
+                PreviewAskSize = "-";
+                PreviewBid = "-";
+                PreviewBidSize = "-";
             }
             else
             {
-                SetAlertMessage(new TradeMessage(_orderTickerText, _orderShareQuantity));
+                var alertMessage =
+                    string.Format(
+                        @"There is a problem with your order to buy {0} shares of {1}. Please check your order terms.", 
+                        _orderShareQuantity, _orderTickerText);
+                SetAlertMessage(alertMessage);
                 AlertBoxVisible = true;
                 OrderTermsOK = false;
             }
-            _previewOrderIsBusy = false;
+
+            AlertBoxVisible = false;
+            ExecuteButtonEnabled = true;
         }
 
-        private async Task<bool> CheckOrderTerms()
+        private bool CheckOrderTerms(Security returnedSecurity)
         {
+            if (returnedSecurity == null)
+            {
+                var errorMessage = @"There is a problem with your trade. The security data request was not returned.";
+                Messenger.Default.Send(new TradeErrorMessage(_orderTickerText, _orderShareQuantity, errorMessage));
+                return false;
+            }
+
             //Check ticker, share, and secType to see if they are valid
             var tickerNotEmpty = !string.IsNullOrEmpty(_orderTickerText);
             var shareQuantityValid = (_orderShareQuantity > 0);
             var securityTypeValid = (_selectedSecurityType is Stock || _selectedSecurityType is MutualFund);
-
-            //Check to see that selected security type matches the ticker
-            bool secTypeMatch;
-            var tickerSecType = await _portfolioManagementService.GetSecurityType(_orderTickerText, _selectedTradeType);
-
-            if (tickerSecType == null)
-            {
-                var errorMessage = @"Your selected security type does not match the ticker's security type.";
-                Messenger.Default.Send(new TradeMessage(_orderTickerText,_orderShareQuantity, errorMessage));
-                return false;
-            }
-                
-
-            if (_selectedSecurityType is Stock && tickerSecType is Stock)
-                secTypeMatch = true;
-            else if (_selectedSecurityType is MutualFund && tickerSecType is MutualFund)
-                secTypeMatch = true;
-            else
-                secTypeMatch = false;
+            bool secTypeMatch = (_selectedSecurityType.SecurityType == returnedSecurity.SecurityType);
 
             if (tickerNotEmpty && shareQuantityValid && securityTypeValid && secTypeMatch)
             {
@@ -829,50 +856,63 @@ namespace Asset_Management_Platform
             }            
         }
 
-        private async void ExecuteScreenerPreview(string screenerTicker)
+        private void ExecuteShowAllSecurities()
+        {
+            _showStocksOnly = false;
+            _showFundsOnly = false;
+            _showAllPositions = true;
+
+            ChartSubtitle = "All Positions";
+            ClearHiddenList();
+            Messenger.Default.Send<ChartRequestMessage>(new ChartRequestMessage(Positions.ToList(), true, false, false));
+        }
+
+        private void ExecuteShowStocksOnly()
+        {
+            _showStocksOnly = true;
+            _showFundsOnly = false;
+            _showAllPositions = false;
+            ChartSubtitle = "Stocks only";
+            ClearHiddenList();
+            Messenger.Default.Send<ChartRequestMessage>(new ChartRequestMessage(Positions.ToList(), false, true, false));
+        }
+
+        private void ExecuteShowFundsOnly()
+        {
+            _showStocksOnly = false;
+            _showFundsOnly = true;
+            _showAllPositions = false;
+
+            ChartSubtitle = "Mutual Funds only";
+            ClearHiddenList();
+
+            Messenger.Default.Send<ChartRequestMessage>(new ChartRequestMessage(Positions.ToList(), false, false, true));
+        }
+
+        private void ExecutePreviewOrder()
+        {
+            _previewOrderIsBusy = true;
+
+            //Send stock preview request
+            Messenger.Default.Send<StockDataRequestMessage>(
+                new StockDataRequestMessage(_orderTickerText, false, true, false));
+
+            _previewOrderIsBusy = false;
+        }
+
+        private void ExecuteScreenerPreview(string screenerTicker)
         {
             if (!string.IsNullOrEmpty(screenerTicker))
             {
-                var resultSecurity = await _portfolioManagementService.GetTradePreviewSecurity(screenerTicker);
-                ScreenerStock = resultSecurity;
+                Messenger.Default.Send<StockDataRequestMessage>(new StockDataRequestMessage(screenerTicker, false, false,
+                    true));
             }
         }
 
         private void ExecuteExecuteOrder()
         {
-            var newTrade = new Trade(SelectedTradeType, _previewSecurity, _orderTickerText, _orderShareQuantity, _selectedTermType, _limitPrice, _selectedDurationType);
-            if (SelectedTradeType == "Buy")
-                _portfolioManagementService.Buy(newTrade);
-            else if (SelectedTradeType == "Sell")
-                _portfolioManagementService.Sell(newTrade);
-            GetPositions();
-            GetTaxlots();
-            GetLimitOrders();
-            ExecuteShowAllSecurities();
-
-            OrderTickerText = "";
-            OrderShareQuantity = 0;
-            SelectedTradeType = TradeTypeStrings[0];
-            SelectedTermType = TradeTermStrings[0];
-            SelectedDurationType = TradeDurationStrings[0];
-            LimitPrice = 0;
-            PreviewPrice = 0;
-            PreviewBid = "";
-            PreviewAsk = "";
-            PreviewAskSize = "";
-            PreviewBidSize = "";
-            PreviewDescription = "";
-            PreviewVolume = "";
-            SelectedSecurityType = SecurityTypes[0];
-
-            OrderTermsOK = false;           
-            ExecuteButtonEnabled = false;
-        }
-
-        private void GetLimitOrders()
-        {
-            var limitOrders = _portfolioManagementService.GetLimitOrders();
-            LimitOrderList = new ObservableCollection<LimitOrder>(limitOrders);
+            var newTrade = new Trade(SelectedTradeType, _tradeSecurity, _orderTickerText, _orderShareQuantity, _selectedTermType, _limitPrice, _selectedDurationType);
+            Messenger.Default.Send<TradeMessage>(new TradeMessage(newTrade));
         }
 
         private void PopulateSelectedSecurityTerms()
@@ -898,25 +938,25 @@ namespace Asset_Management_Platform
         private void ExecuteSetIntervalTenSeconds()
         {
             var span = new TimeSpan(0, 0, 10);
-            _portfolioManagementService.UpdateTimerInterval(span);
+            Messenger.Default.Send<TimerMessage>(new TimerMessage(span, false, false));
         }
 
         private void ExecuteSetIntervalThirtySeconds()
         {
             var span = new TimeSpan(0, 0, 30);
-            _portfolioManagementService.UpdateTimerInterval(span);
+            Messenger.Default.Send<TimerMessage>(new TimerMessage(span, false, false));
         }
 
         private void ExecuteSetIntervalSixtySeconds()
         {
             var span = new TimeSpan(0, 0, 60);
-            _portfolioManagementService.UpdateTimerInterval(span);
+            Messenger.Default.Send<TimerMessage>(new TimerMessage(span, false, false));
         }
 
         private void ExecuteSetIntervalFiveMinutes()
         {
             var span = new TimeSpan(0, 5, 0);
-            _portfolioManagementService.UpdateTimerInterval(span);
+            Messenger.Default.Send<TimerMessage>(new TimerMessage(span, false, false));
         }
 
         private void ExecuteToggleLimitDatagrid()
@@ -935,10 +975,7 @@ namespace Asset_Management_Platform
         }
 
         private void ExecuteDeletePortfolio()
-        {
-            _portfolioManagementService.DeletePortfolio();
-            GetPositions();
-            GetTaxlots();
+        {           
             ExecuteShowAllSecurities();
         }
 
@@ -955,16 +992,24 @@ namespace Asset_Management_Platform
             using (var portFileOps = new PortfolioFileOps())
             {
                 var sessionData = await portFileOps.TryLoadSession();
-                var taxlotsLoaded = await _portfolioManagementService.BuildPortfolioSecurities(sessionData.Taxlots);
-                LimitOrderList = new ObservableCollection<LimitOrder>(sessionData.LimitOrders);                
+                
+                //Send locally loaded List<Taxlot> to PortfolioDatabaseService to listen for List<Position>
+                //In this case, the message's "IsStartup" boolean is true because loading the Positions
+                //Is considered a startup process
+                Messenger.Default.Send<TaxlotMessage>(new TaxlotMessage(sessionData.Taxlots, true, true));
+
+                //Create the List<LimitOrder> from saved file
+                LimitOrderList = new ObservableCollection<LimitOrder>(sessionData.LimitOrders);
+
+                //Send list of LimitOrders to startup listeners
+                Messenger.Default.Send<LimitOrderMessage>(new LimitOrderMessage(sessionData.LimitOrders, true));
             }
         }
 
         private void ExecuteUpdatePrices()
         {
             _portfolioManagementService.TestLimitOrderMethods();
-            GetPositions();
-            GetTaxlots();
+            //Reimplement
         }
 
         private void ExecuteDeleteLimitOrder()
@@ -976,8 +1021,8 @@ namespace Asset_Management_Platform
             }                
             else
             {
-                var errorMessage = @"Notification: Please select a limit order to delete.";
-                Messenger.Default.Send(new TradeMessage("X", 0, errorMessage));                
+                var alertMessage = @"Notification: Please select a limit order to delete.";
+                SetAlertMessage(alertMessage);
             }
         }
 
@@ -986,7 +1031,7 @@ namespace Asset_Management_Platform
             if (_localMode)
                 await ExecuteSavePortfolio();
             else
-                _portfolioManagementService.UploadAllDatabases();
+                Messenger.Default.Send<ShutdownMessage>(new ShutdownMessage(true));
             System.Windows.Application.Current.Shutdown();
         }
 
@@ -1005,9 +1050,9 @@ namespace Asset_Management_Platform
             return _canSave;
         }
 
-        private void SetAlertMessage(TradeMessage message)
+        private void SetAlertMessage(string alertMessage)
         {
-            AlertBoxMessage = message.Message;
+            AlertBoxMessage = alertMessage;
             AlertBoxVisible = true;
         }
 

@@ -115,17 +115,39 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ChartService.cs" />
     <Compile Include="Chart\SecurityChart.cs" />
     <Compile Include="Converters\BoolToCollapsedConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\DecimalToStringConverter.cs" />
     <Compile Include="Exceptions\LimitOrderException.cs" />
     <Compile Include="Exceptions\TruncateException.cs" />
+    <Compile Include="IChartService.cs" />
+    <Compile Include="Messages\ChartRequestMessage.cs" />
+    <Compile Include="Messages\ChartResponseMessage.cs" />
     <Compile Include="Messages\FileErrorMessage.cs" />
     <Compile Include="LimitOrder.cs" />
     <Compile Include="LimitOrderDBResult.cs" />
+    <Compile Include="Messages\LimitOrderUpdateRequestMessage.cs" />
+    <Compile Include="Messages\LimitOrderMessage.cs" />
+    <Compile Include="Messages\LimitOrderUpdateResponseMessage.cs" />
+    <Compile Include="Messages\LocalModeMessage.cs" />
     <Compile Include="Messages\PortfolioSqlMessage.cs" />
+    <Compile Include="Messages\PositionMessage.cs" />
+    <Compile Include="Messages\PositionPricingMessage.cs" />
+    <Compile Include="Messages\SecurityDatabaseMessage.cs" />
+    <Compile Include="Messages\SecurityTypeRequestMessage.cs" />
+    <Compile Include="Messages\SecurityTypeResponseMessage.cs" />
+    <Compile Include="Messages\ShutdownMessage.cs" />
+    <Compile Include="Messages\StartupCompleteMessage.cs" />
+    <Compile Include="Messages\StockDataRequestMessage.cs" />
+    <Compile Include="Messages\StockDataResponseMessage.cs" />
+    <Compile Include="Messages\TaxlotMessage.cs" />
+    <Compile Include="Messages\TimerMessage.cs" />
+    <Compile Include="Messages\TradeCompleteMessage.cs" />
+    <Compile Include="Messages\TradeErrorMessage.cs" />
     <Compile Include="Messages\TradeMessage.cs" />
+    <Compile Include="Messages\TradePreviewMessage.cs" />
     <Compile Include="PositionByWeight.cs" />
     <Compile Include="SaveLoad\SessionData.cs" />
     <Compile Include="Taxlot.cs" />

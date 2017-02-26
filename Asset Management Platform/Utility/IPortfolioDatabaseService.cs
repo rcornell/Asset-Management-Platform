@@ -8,30 +8,22 @@ namespace Asset_Management_Platform.Utility
 {
     public interface IPortfolioDatabaseService
     {
-
-        Task<List<Taxlot>> BuildDatabaseTaxlots();
+        Task BuildDatabaseTaxlots();
 
         List<Position> GetPositionsFromTaxlots(List<Security> portfolioSecurities);
 
-        List<Position> GetPositionsFromTaxlots();
+        void GetPositionsFromTaxlots();
 
         List<Position> GetEmptyPositionsList();
 
         void SavePortfolioToDatabase();
 
-        void UploadLimitOrdersToDatabase(List<LimitOrder> limitOrders);
+        void UploadLimitOrdersToDatabase();
 
-        List<LimitOrder> LoadLimitOrdersFromDatabase();
+        Task LoadLimitOrdersFromDatabase();
 
         void BackupDatabase();
 
-        void AddToPortfolioDatabase(Taxlot taxlotToAdd);
-
         void DeletePortfolio(List<Position> positions);
-
-        List<Taxlot> BuildLocalTaxlots(List<Taxlot> taxlots);
-
-        bool IsLocalMode();
-
     }
 }

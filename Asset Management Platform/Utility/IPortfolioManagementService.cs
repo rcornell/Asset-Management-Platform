@@ -19,11 +19,9 @@ namespace Asset_Management_Platform.Utility
 
         void Sell(Trade trade);
 
-        Task<Security> GetTradePreviewSecurity(string ticker);
+        void GetTradePreviewSecurity(string ticker);
 
-        Task<Security> GetTradePreviewSecurity(string ticker, Security SelectedSecurityType);
-
-        Task<Security> GetSecurityType(string ticker, string tradeType);
+        Task GetSecurityType(string ticker, string tradeType);
 
         List<Position> GetPositions();
 
@@ -31,23 +29,16 @@ namespace Asset_Management_Platform.Utility
 
         List<LimitOrder> GetLimitOrders();
 
-        ObservableCollection<PositionByWeight> GetChartAllSecurities();
-
-        ObservableCollection<PositionByWeight> GetChartFundsOnly();
-
-        ObservableCollection<PositionByWeight> GetChartStocksOnly();
-
         void UpdateTimerInterval(TimeSpan timespan);
 
         void UpdatePortfolioPrices();
 
-        void UploadPortfolio();
-
         void DeletePortfolio();
-        void UploadAllDatabases();
         void TestLimitOrderMethods();
 
-        Task<bool> BuildPortfolioSecurities(IEnumerable<Taxlot> taxlots);
+        Task UpdatePortfolioSecuritiesStartup();
+
+        Task<bool> UpdatePortfolioSecuritiesStartupLocal();
 
         bool IsLocalMode();
     }

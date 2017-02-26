@@ -22,28 +22,84 @@ namespace Asset_Management_Platform
     public class PortfolioDatabaseService : IPortfolioDatabaseService
     {
         private readonly string _storageString;
-        private readonly bool _localMode;
         private readonly List<Position> _portfolioOriginalState;
-        private readonly List<Position> _myPositions; //This is THE main position list
-        private readonly List<Taxlot> _myTaxlots; //This is THE main taxlot list
-        private IStockDataService _stockDatabaseService;
+        private  List<Position> _myPositions;
+        private List<Taxlot> _myTaxlots; 
+        private List<LimitOrder> _myLimitOrders;
+        private bool _localMode; 
        
-        public PortfolioDatabaseService(IStockDataService stockDatabaseService)
-        {            
-            _stockDatabaseService = stockDatabaseService;
+        public PortfolioDatabaseService()
+        {
+            //Register for LocalMode notification
+            Messenger.Default.Register<LocalModeMessage>(this, SetLocalMode);
+
+            //Register for StartupCompleteMessages
+            Messenger.Default.Register<StartupCompleteMessage>(this, HandleStartupComplete);
+
+            //Register for handling of updates to list of limit orders
+            Messenger.Default.Register<LimitOrderMessage>(this, HandleLimitOrderList);
+
+            //Register for handling of LOCAL MODE taxlot creation
+            Messenger.Default.Register<TaxlotMessage>(this, HandleTaxlotMessage);
+
+            //Register for trade complete messages
+            Messenger.Default.Register<TradeCompleteMessage>(this, HandleTradeCompleteMessage);
+
+            //Register for shutdown methods.
+            Messenger.Default.Register<ShutdownMessage>(this, HandleShutDownMessage);
 
             _storageString = ConfigurationManager.AppSettings["StorageConnectionString"];
-            _localMode = _storageString == null ? true : false;
 
             _portfolioOriginalState = new List<Position>();
             _myPositions = new List<Position>();
             _myTaxlots = new List<Taxlot>();
+            _myLimitOrders = new List<LimitOrder>();
         }
 
-        public async Task<List<Taxlot>> BuildDatabaseTaxlots()
+        private void HandleShutDownMessage(ShutdownMessage message)
+        {
+            SavePortfolioToDatabase();
+            UploadLimitOrdersToDatabase();            
+        }
+
+        private async void HandleStartupComplete(StartupCompleteMessage message)
+        {
+            if (!message.IsComplete)
+                return;
+
+            if (_localMode)
+                return;
+
+
+            await LoadLimitOrdersFromDatabase();
+            await BuildDatabaseTaxlots();
+            GetPositionsFromTaxlots();
+        }
+
+        private void HandleLimitOrderList(LimitOrderMessage message)
+        {
+            //Only update the List<LimitOrder> field in this class
+            //If a LimitOrderMessage is sent during runtime
+            if (!message.IsStartup)
+            {
+                _myLimitOrders = message.LimitOrders;
+            }
+        }
+
+        private void HandleTaxlotMessage(TaxlotMessage message)
+        {
+            //Determine if this is being sent in LocalMode and at Startup
+            if (message.IsLocalMode && message.IsStartup)
+            {
+                _myTaxlots = message.Taxlots;
+                GetPositionsFromTaxlots();
+            }
+        }
+
+        public async Task BuildDatabaseTaxlots()
         {
             if (_localMode)
-                return _myTaxlots;
+                Messenger.Default.Send<TaxlotMessage>(new TaxlotMessage(_myTaxlots, true, true));
 
             using (var connection = new SqlConnection(_storageString))
             {
@@ -72,19 +128,7 @@ namespace Asset_Management_Platform
                     }
                 }
             }
-            return _myTaxlots;
-        }
-
-        public List<Taxlot> BuildLocalTaxlots(List<Taxlot> taxlots)
-        {
-            if (taxlots == null)
-                return new List<Taxlot>(); //Should not hit this
-
-            foreach (var lot in taxlots)
-            {
-                _myTaxlots.Add(new Taxlot(lot.Ticker, lot.Shares, lot.PurchasePrice, lot.DatePurchased, lot.SecurityType));
-            }
-            return _myTaxlots;
+            Messenger.Default.Send<TaxlotMessage>(new TaxlotMessage(_myTaxlots, true, false));
         }
 
         /// <summary>
@@ -129,7 +173,7 @@ namespace Asset_Management_Platform
         /// This method is called if in local mode.
         /// </summary>
         /// <returns></returns>
-        public List<Position> GetPositionsFromTaxlots()
+        public void GetPositionsFromTaxlots()
         {
             foreach (var lot in _myTaxlots)
             {
@@ -158,7 +202,8 @@ namespace Asset_Management_Platform
                 _portfolioOriginalState.Add(new Position(pos.Taxlots));
             }
 
-            return _myPositions;
+            //Return new List<Position> to all Startup listeners
+            Messenger.Default.Send<PositionMessage>(new PositionMessage(_myPositions, true));
         }
 
         /// <summary>
@@ -352,12 +397,12 @@ namespace Asset_Management_Platform
             }
         }
 
-        public void UploadLimitOrdersToDatabase(List<LimitOrder> limitOrders)
+        public void UploadLimitOrdersToDatabase()
         {
             var insertString = @"INSERT INTO dbo.MyLimitOrders (TradeType, Ticker, Shares, Limit, SecurityType, OrderDuration) VALUES ";
 
-            var final = limitOrders.Last();
-            foreach (var order in limitOrders)
+            var final = _myLimitOrders.Last();
+            foreach (var order in _myLimitOrders)
             {
                 insertString += string.Format(@"('{0}', '{1}', {2}, {3}, '{4}', '{5}')", order.TradeType, order.Ticker, order.Shares, order.Limit, order.SecurityType, order.OrderDuration);
                 if (order != final)
@@ -437,18 +482,17 @@ namespace Asset_Management_Platform
         /// Downloads and parses the list of limit orders from SQL table
         /// </summary>
         /// <returns></returns>
-        public List<LimitOrder> LoadLimitOrdersFromDatabase()
+        public async Task LoadLimitOrdersFromDatabase()
         {
-            var limitOrders = new List<LimitOrder>();
             var downloadString = @"SELECT * FROM dbo.MyLimitOrders;";
             var limitDBResults = new List<LimitOrderDbResult>();
 
             using (var connection = new SqlConnection(_storageString))
             {
+                connection.Open();
                 using (var command = new SqlCommand(downloadString, connection))
-                {
-                    connection.Open();
-                    var reader = command.ExecuteReader();
+                {                    
+                    var reader = await command.ExecuteReaderAsync();
 
                     if (reader != null && reader.HasRows)
                     {
@@ -489,35 +533,12 @@ namespace Asset_Management_Platform
 
                 var newTrade = new Trade(result.TradeType, newSecurity, result.Ticker, result.Shares, "Limit", result.Limit, result.OrderDuration);
                 var newLimitOrder = new LimitOrder(newTrade);
-                limitOrders.Add(newLimitOrder);
-            }
-
-            return limitOrders;
-        }      
-
-        /// <summary>
-        /// Adds a taxlot to an existing position in some security
-        /// </summary>
-        /// <param name="taxlotToAdd"></param>
-        public void AddToPortfolioDatabase(Taxlot taxlotToAdd)
-        {
-            //Add to taxlot list
-            _myTaxlots.Add(taxlotToAdd);
-
-            //If position with ticker exists, add the taxlot to position.
-            if (!_myPositions.Any(s => s.Ticker == taxlotToAdd.Ticker))
-            {
-                _myPositions.Add(new Position(taxlotToAdd, taxlotToAdd.SecurityType));
-            }
-            else
-            {
-                foreach (var pos in _myPositions.Where(s => s.Ticker == taxlotToAdd.Ticker))
-                {
-                    pos.Taxlots.Add(taxlotToAdd);
-                }
+                _myLimitOrders.Add(newLimitOrder);
             }
             
-        }
+            //Send List<LimitOrder> to all startup listeners
+            Messenger.Default.Send<LimitOrderMessage>(new LimitOrderMessage(_myLimitOrders, true));
+        }      
 
         /// <summary>
         /// Adds all tickers in the portfolio to the
@@ -534,9 +555,15 @@ namespace Asset_Management_Platform
             return _myPositions;
         }
 
-        public bool IsLocalMode()
+        private void SetLocalMode(LocalModeMessage message)
         {
-            return _localMode;
+            _localMode = message.LocalMode;
+        }
+
+        private void HandleTradeCompleteMessage(TradeCompleteMessage message)
+        {
+            _myPositions = message.Positions;
+            _myTaxlots = message.Taxlots;
         }
     }
 

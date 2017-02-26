@@ -6,29 +6,15 @@ using System.Threading.Tasks;
 
 namespace Asset_Management_Platform.Messages
 {
+
+    //This class is created in the ViewModel and Sent to PortfolioManagementService
     public class TradeMessage
     {
-        public string Message;
-        public string Ticker;
-        public decimal Shares;
+        public Trade Trade;
 
-        public TradeMessage()
+        public TradeMessage(Trade trade)
         {
-
-        }
-
-        public TradeMessage(string ticker, int shares)
-        {
-            Ticker = ticker;
-            Shares = shares;
-            Message = string.Format(@"There is a problem with your order to buy {0} shares of {1}. Please make sure the terms are correct and that your selected security type (Stock or Mutual Fund) is correct.", shares, ticker);
-        }
-
-        public TradeMessage(string ticker, int shares, string message)
-        {
-            Ticker = ticker;
-            Shares = shares;
-            Message = message;
+            Trade = trade;
         }
     }
 }

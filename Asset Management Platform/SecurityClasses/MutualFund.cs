@@ -77,7 +77,7 @@ namespace Asset_Management_Platform
 
         public MutualFund()
         {
-
+            SecurityType = "Mutual Fund";
         }
 
         public void UpdateData(YahooAPIResult updatedInfo)

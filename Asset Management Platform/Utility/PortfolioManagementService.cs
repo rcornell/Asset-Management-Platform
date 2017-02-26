@@ -14,11 +14,9 @@ namespace Asset_Management_Platform.Utility
 {
     public class PortfolioManagementService : IPortfolioManagementService
     {
-        private readonly IStockDataService _stockDataService;
-        private readonly IPortfolioDatabaseService _portfolioDatabaseService;
-        private readonly DispatcherTimer _timer;
-        private readonly List<Security> _securityDatabaseList;
-        private readonly bool _localMode;
+        private readonly DispatcherTimer _timer;        
+        private bool _localMode;
+        private List<Security> _securityDatabaseList;
         private List<LimitOrder> _limitOrderList;
         private List<Taxlot> _portfolioTaxlots;
         private List<Position> _portfolioPositions;
@@ -32,55 +30,129 @@ namespace Asset_Management_Platform.Utility
             }
         }
         
-        public PortfolioManagementService(IStockDataService stockDataService, IPortfolioDatabaseService portfolioDatabaseService)
+        public PortfolioManagementService()
         {
-            _stockDataService = stockDataService;
-            _portfolioDatabaseService = portfolioDatabaseService;
-            _localMode = _portfolioDatabaseService.IsLocalMode();                     
-                       
+            //Register for LocalMode notification
+            Messenger.Default.Register<LocalModeMessage>(this, SetLocalMode);
+
+            //Register for StartupCompleteMessage notification
+            Messenger.Default.Register<StartupCompleteMessage>(this, HandleStartupComplete);
+
+            //Register for IStockDataService creating its *database* of List<Security>
+            Messenger.Default.Register<SecurityDatabaseMessage>(this, LoadSecurityDatabase);
+
+            //Register for IPortfolioDatabaseService creating its List<Taxlot>
+            Messenger.Default.Register<TaxlotMessage>(this, CreateTaxlots);
+
+            Messenger.Default.Register<PositionMessage>(this, CreatePositions);
+
+            //Register for IStockDataService returning Security/Securities information
+            Messenger.Default.Register<StockDataResponseMessage>(this, HandleStockDataResponse);
+
+            //Register for List<LimitOrder> creation
+            Messenger.Default.Register<LimitOrderMessage>(this, CreateLimitOrders);
+
+            //Register for handling of timer settings from UI
+            Messenger.Default.Register<TimerMessage>(this, HandleTimerMessage);
+
+            //Register method to handle trades from View
+            Messenger.Default.Register<TradeMessage>(this, HandleTradeMessage);
+
+            Messenger.Default.Register<LimitOrderUpdateResponseMessage>(this, HandleLimitOrderUpdateResponse);
+
+            Messenger.Default.Register<PositionPricingMessage>(this, HandlePositionPricingMessage);
+
             _timer = new DispatcherTimer();
             _timer.Tick += _timer_Tick;
             _timer.Interval = new TimeSpan(0, 0, 10);
+        }
 
-            //Load known security info from SQL DB
-            _securityDatabaseList = _stockDataService.LoadSecurityDatabase();
+        private void HandlePositionPricingMessage(PositionPricingMessage message)
+        {
+            foreach (var pos in _portfolioPositions)
+            {
+                var pricedSecurity = message.PricedSecurities.Find(s => s.Ticker == pos.Ticker);
+                pos.UpdateTaxlotSecurities(pricedSecurity);
+            }
+        }
 
-            //Download limit orders from SQL DB
-            GetLimitOrderList();
+        private async void HandleStartupComplete(StartupCompleteMessage message)
+        {
+            if (!message.IsComplete)
+                return;
+            
+            //No code currently needed here            
+        }
 
-            //Create the core List<T>'s of taxlots, positions, and securities
-            BuildPortfolioSecurities();
+        private void LoadSecurityDatabase(SecurityDatabaseMessage message)
+        {
+            _securityDatabaseList = message.SecurityList;
+        }
+
+        private void SetLocalMode(LocalModeMessage message)
+        {
+            _localMode = message.LocalMode;
+        }
+
+        private void CreateTaxlots(TaxlotMessage message)
+        {
+            _portfolioTaxlots = message.Taxlots;
+        }
+
+        private void CreatePositions(PositionMessage message)
+        {
+            if (message.IsStartup)
+            {
+                _portfolioPositions = message.Positions;
+
+                //Positions have been downloaded. Update pricing.
+                Messenger.Default.Send<StockDataRequestMessage>(new StockDataRequestMessage(_portfolioPositions, true));
+            }
+        }
+
+        private void HandleStockDataResponse(StockDataResponseMessage message)
+        {
+            if (message.IsStartupResponse && message.Securities != null)
+            {
+                _portfolioSecurities = message.Securities;
+
+                if (_portfolioPositions != null && _portfolioTaxlots != null)
+                {
+                    foreach (var pos in _portfolioPositions)
+                    {
+                        var security = _portfolioSecurities.Find(s => s.Ticker == pos.Ticker);
+                        pos.UpdateTaxlotPrices(security.LastPrice);
+                    }
+                }
+            }
+        }
+
+        private void HandleTimerMessage(TimerMessage message)
+        {
+            _timer.Interval = message.Span;
+            if (_timer.IsEnabled && message.StopTimer)
+            {
+                _timer.Stop();
+            }
+            if (!_timer.IsEnabled && message.StartTimer)
+            {
+                _timer.Start();
+            }
         }
 
 
         /// <summary>
+        /// Called when NOT in local mode.
         /// Creates the list of taxlots, positions, and securities owned.
         /// </summary>
-        private async Task BuildPortfolioSecurities()
+        public async Task UpdatePortfolioSecuritiesStartup()
         {
-            //Calls PortfolioDatabaseService to create its List<Taxlot> then
-            //a reference to that field
-            _portfolioTaxlots = await _portfolioDatabaseService.BuildDatabaseTaxlots();
+            //If _portfolioTaxlots is not null, return all of its unique tickers
+            var tickers =  _portfolioTaxlots?.Select(s => s.Ticker).Distinct().ToList() ?? new List<string>();
+            Messenger.Default.Send<StockDataRequestMessage>(new StockDataRequestMessage(tickers, true));
 
-            //Get security data with market data API (currently YahooAPI)
-            var tickers = _portfolioTaxlots.Select(s => s.Ticker).Distinct().ToList();
-            var rawSecurities = await _stockDataService.GetSecurityInfo(tickers);
-
-            //Get MutualFund category data from Db. 
-            //Ideally a future API will provide this functionality.
-            _portfolioSecurities = _stockDataService.GetMutualFundExtraData(rawSecurities);
-
-            //If taxlots exist, build positions with updated pricing data.
-            _portfolioPositions = _portfolioDatabaseService.GetPositionsFromTaxlots(_portfolioSecurities);
 
             //Update all Positions' taxlot pricing
-            foreach (var pos in _portfolioPositions)
-            {
-                var security = _portfolioSecurities.Find(s => s.Ticker == pos.Ticker);
-                pos.UpdateTaxlotPrices(security.LastPrice);
-            }
-
-            Messenger.Default.Send(new DatabaseMessage("Complete", true, false));
         }
 
         /// <summary>
@@ -89,32 +161,25 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         /// <param name="taxlots"></param>
         /// <returns></returns>
-        public async Task<bool> BuildPortfolioSecurities(IEnumerable<Taxlot> taxlots)
+        public async Task<bool> UpdatePortfolioSecuritiesStartupLocal()
         {
-            //Convert the IEnumerable to a List<Taxlot>
-            var taxlotList = taxlots.ToList();
-
-            //Create the list of taxlots
-            _portfolioTaxlots = _portfolioDatabaseService.BuildLocalTaxlots(taxlotList);
-
-            //If taxlots exist, build positions
-            _portfolioPositions = _portfolioDatabaseService.GetPositionsFromTaxlots();
-
-            //Update prices for all positions
-            await _stockDataService.GetUpdatedPricing(_portfolioPositions);
-
-            //**No MutualFund extra data available in local mode**
+            //Request updated pricing for portfolio positions
+            Messenger.Default.Send<StockDataRequestMessage>(new StockDataRequestMessage(_portfolioPositions, false));
 
             Messenger.Default.Send(new DatabaseMessage("Success", true, false));
             return true;
         }
 
-        private void GetLimitOrderList()
+        private void HandleTradeMessage(TradeMessage message)
         {
-            if (_portfolioDatabaseService.IsLocalMode())
-                _limitOrderList = new List<LimitOrder>();
-            else
-                _limitOrderList = _portfolioDatabaseService.LoadLimitOrdersFromDatabase();
+            if (message.Trade.BuyOrSell == "Buy")
+            { 
+                Buy(message.Trade);
+            }
+            if (message.Trade.BuyOrSell == "Sell")
+            { 
+                Sell(message.Trade);
+            }
         }
 
         /// <summary>
@@ -156,64 +221,12 @@ namespace Asset_Management_Platform.Utility
 
         private void AddPosition(Trade trade)
         {
-            if (!_securityDatabaseList.Any(s => s.Ticker == trade.Ticker))
-                _securityDatabaseList.Add(trade.Security);
-
-            //Check to confirm that shares of this security aren't already owned
-            if (trade.Security is Stock && !_portfolioPositions.Any(s => s.Ticker == trade.Ticker))
-            {
-                //Create taxlot and position, then add to position list
-                var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security, trade.Security.LastPrice);
-                _portfolioDatabaseService.AddToPortfolioDatabase(taxlot);
-            }
-            //Ticker exists in portfolio and security is stock
-            else if (trade.Security is Stock && _portfolioPositions.Any(s => s.Ticker == trade.Ticker))
-            {
-                //Create new taxlot and add to existing position
-                var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security, trade.Security.LastPrice);
-                _portfolioDatabaseService.AddToPortfolioDatabase(taxlot);
-            }
-            //Ticker is not already owned and is a MutualFund
-            else if (trade.Security is MutualFund && !_portfolioPositions.Any(s => s.Ticker == trade.Ticker))
-            {
-                //Create new taxlot and add to existing position
-                var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security, trade.Security.LastPrice);
-                _portfolioDatabaseService.AddToPortfolioDatabase(taxlot);
-            }
-            else if (trade.Security is MutualFund && _portfolioPositions.Any(s => s.Ticker == trade.Ticker))
-            {
-                //Create new taxlot and add to existing position
-                var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security, trade.Security.LastPrice);
-                _portfolioDatabaseService.AddToPortfolioDatabase(taxlot);
-            }
-        }
-
-        private void CreateLimitOrder(Trade trade)
-        {
-            var newLimitOrder = new LimitOrder(trade);
-
-            if (_limitOrderList == null)
-                _limitOrderList = new List<LimitOrder>();
-
-            _limitOrderList.Add(newLimitOrder);
-        }
-
-        private bool CheckOrderTerms(Trade trade)
-        {
-            var security = trade.Security;
-            var ticker = trade.Ticker;
-            var shares = trade.Shares;
-            var terms = trade.Terms;
-            var limit = trade.Limit;
-            var orderDuration = trade.OrderDuration;
-
-            if (trade.Terms == "Limit" || trade.Terms == "Stop Limit" || trade.Terms == "Stop" && limit <= 0)
-                return false;
-
-            if (security != null && !string.IsNullOrEmpty(ticker) && shares > 0 
-                && !string.IsNullOrEmpty(terms) && !string.IsNullOrEmpty(orderDuration))
-                return true;
-            return false;
+            //Create taxlot and position, then add to position list
+            var taxlot = new Taxlot(trade.Ticker, trade.Shares, trade.Security.LastPrice, DateTime.Now, trade.Security, trade.Security.LastPrice);
+            AddToPortfolioDatabase(taxlot);
+            
+            //Sends updated List<Taxlot> and List<Position> to MVM and PDS
+            Messenger.Default.Send<TradeCompleteMessage>(new TradeCompleteMessage(_portfolioPositions, _portfolioTaxlots, true));
         }
 
         /// <summary>
@@ -259,38 +272,84 @@ namespace Asset_Management_Platform.Utility
         {
             //Search owned positions for a match with the trade's ticker
             var position = _portfolioPositions.Find(p => p.Ticker == trade.Ticker);
-            var securityType = position.GetSecurityType();
             var ticker = trade.Ticker;
             var shares = trade.Shares;
             
             if (shares == position.SharesOwned)
             {
-                //User selling all shares, so find and remove the security from portfolio
-                var securityToRemove = _portfolioSecurities.Find(s => s.Ticker == ticker);
-                _portfolioSecurities.Remove(securityToRemove);
-
-                //Find and remove all taxlots
-                var originalTaxLots = new List<Taxlot>(_portfolioTaxlots);
-                var taxlotsToRemove = originalTaxLots.Where(t => t.Ticker == ticker);
-                foreach (var lot in taxlotsToRemove)
-                {
-                    _portfolioTaxlots.Remove(lot);
-                }
-
-                //Remove the position
-                _portfolioPositions.Remove(position);
+                _portfolioSecurities.RemoveAll(s => s.Ticker == trade.Ticker);
+                _portfolioTaxlots.RemoveAll(s => s.Ticker == trade.Ticker);
+                _portfolioPositions.RemoveAll(s => s.Ticker == trade.Ticker);
             }            
             else if (shares > position.SharesOwned)
             {
                 //User trying to sell too many shares
-                var message = new TradeMessage() { Shares = shares, Ticker = ticker, Message = "Order quantity exceeds shares owned!" };
-                Messenger.Default.Send(message);
+                var message = new TradeErrorMessage() { Shares = shares, Ticker = ticker, Message = "Order quantity exceeds shares owned!" };
+                Messenger.Default.Send<TradeErrorMessage>(message);
             }
             else 
             {
                 //User selling partial position
                 position.SellShares(shares);
             }
+
+            //Sends updated List<Taxlot> and List<Position>
+            Messenger.Default.Send<TradeCompleteMessage>(new TradeCompleteMessage(_portfolioPositions, _portfolioTaxlots, true));
+        }
+
+        public void AddToPortfolioDatabase(Taxlot taxlotToAdd)
+        {
+            //Add to taxlot list
+            _portfolioTaxlots.Add(taxlotToAdd);
+
+            //If position with ticker exists, add the taxlot to position.
+            if (!_portfolioPositions.Any(s => s.Ticker == taxlotToAdd.Ticker))
+            {
+                _portfolioPositions.Add(new Position(taxlotToAdd, taxlotToAdd.SecurityType));
+            }
+            else
+            {
+                foreach (var pos in _portfolioPositions.Where(s => s.Ticker == taxlotToAdd.Ticker))
+                {
+                    pos.Taxlots.Add(taxlotToAdd);
+                }
+            }
+        }
+
+
+        private void CreateLimitOrders(LimitOrderMessage message)
+        {
+            _limitOrderList = message.LimitOrders;
+        }
+        private void CreateLimitOrder(Trade trade)
+        {
+            var newLimitOrder = new LimitOrder(trade);
+
+            if (_limitOrderList == null)
+                _limitOrderList = new List<LimitOrder>();
+
+            _limitOrderList.Add(newLimitOrder);
+
+            //Send updated List<LimitOrder> to listeners in MainViewModel
+            Messenger.Default.Send<LimitOrderMessage>(new LimitOrderMessage(_limitOrderList, false));
+        }
+
+        private bool CheckOrderTerms(Trade trade)
+        {
+            var security = trade.Security;
+            var ticker = trade.Ticker;
+            var shares = trade.Shares;
+            var terms = trade.Terms;
+            var limit = trade.Limit;
+            var orderDuration = trade.OrderDuration;
+
+            if (trade.Terms == "Limit" || trade.Terms == "Stop Limit" || trade.Terms == "Stop" && limit <= 0)
+                return false;
+
+            if (security != null && !string.IsNullOrEmpty(ticker) && shares > 0
+                && !string.IsNullOrEmpty(terms) && !string.IsNullOrEmpty(orderDuration))
+                return true;
+            return false;
         }
 
         /// <summary>
@@ -337,10 +396,9 @@ namespace Asset_Management_Platform.Utility
         /// If last price is valid vs. the limit, proceed with trade.
         /// </summary>
         private void CheckLimitOrdersForActive()
-        {
+        {            
             var securitiesToCheck = new List<Security>();
-            var completedLimitOrders = new List<LimitOrder>();
-
+            
             foreach (var order in LimitOrderList)
             {
                 if(order.SecurityType is Stock)
@@ -349,13 +407,20 @@ namespace Asset_Management_Platform.Utility
                     securitiesToCheck.Add(new MutualFund("", order.Ticker, "", 0, 0));
             }
 
-            _stockDataService.GetUpdatedPricing(securitiesToCheck);
+            Messenger.Default.Send<LimitOrderUpdateRequestMessage>(new LimitOrderUpdateRequestMessage(
+                securitiesToCheck, false));
+        }
 
-            foreach (var sec in securitiesToCheck)
+        private void HandleLimitOrderUpdateResponse(LimitOrderUpdateResponseMessage message)
+        {
+            var orderWasExecuted = false;
+            var completedLimitOrders = new List<LimitOrder>();
+
+            foreach (var sec in message.SecuritiesToCheck)
             {
                 //Get all limit orders for the security being iterated
                 var matches = LimitOrderList.Where(s => s.Ticker == sec.Ticker);
-                
+
                 foreach (var match in matches)
                 {
                     var securityType = match.SecurityType;
@@ -367,13 +432,15 @@ namespace Asset_Management_Platform.Utility
                         var newTrade = new Trade(match.TradeType, securityToTrade, match.Ticker, match.Shares, "Limit", match.Limit, match.OrderDuration);
                         SellPosition(newTrade);
                         completedLimitOrders.Add(match);
+                        orderWasExecuted = true;
                     }
                     else if (isActive && match.TradeType == "Buy" && securityType is Stock)
                     {
                         var securityToTrade = new Stock("", sec.Ticker, sec.Description, sec.LastPrice, sec.Yield);
-                        var newTrade = new Trade(match.TradeType, securityToTrade, match.Ticker, match.Shares, "Limit", match.Limit, match.OrderDuration);                        
+                        var newTrade = new Trade(match.TradeType, securityToTrade, match.Ticker, match.Shares, "Limit", match.Limit, match.OrderDuration);
                         AddPosition(newTrade);
                         completedLimitOrders.Add(match);
+                        orderWasExecuted = true;
                     }
                     else if (isActive && match.TradeType == "Sell" && securityType is MutualFund)
                     {
@@ -381,6 +448,7 @@ namespace Asset_Management_Platform.Utility
                         var newTrade = new Trade(match.TradeType, securityToTrade, match.Ticker, match.Shares, "Limit", match.Limit, match.OrderDuration);
                         SellPosition(newTrade);
                         completedLimitOrders.Add(match);
+                        orderWasExecuted = true;
                     }
                     else if (isActive && match.TradeType == "Buy" && securityType is MutualFund)
                     {
@@ -388,6 +456,7 @@ namespace Asset_Management_Platform.Utility
                         var newTrade = new Trade(match.TradeType, securityToTrade, match.Ticker, match.Shares, "Limit", match.Limit, match.OrderDuration);
                         AddPosition(newTrade);
                         completedLimitOrders.Add(match);
+                        orderWasExecuted = true;
                     }
                 }
             }
@@ -396,6 +465,11 @@ namespace Asset_Management_Platform.Utility
             {
                 LimitOrderList.Remove(order);
             }
+
+            if (orderWasExecuted)
+            {
+                Messenger.Default.Send<LimitOrderMessage>(new LimitOrderMessage(_limitOrderList, false));
+            }
         }
 
         /// <summary>
@@ -403,108 +477,9 @@ namespace Asset_Management_Platform.Utility
         /// </summary>
         /// <param name="ticker"></param>
         /// <returns></returns>
-        public async Task<Security> GetTradePreviewSecurity(string ticker)
+        public void GetTradePreviewSecurity(string ticker)
         {
-            var securityToReturn = await _stockDataService.GetSecurityInfo(ticker);
-            if (securityToReturn is Stock)
-                return (Stock)securityToReturn;
-            if (securityToReturn is MutualFund)
-                return (MutualFund)securityToReturn;
-
-            //Should not hit this.
-            return new Stock("", "XXX", "Unknown Stock", 0, 0.00);
-        }
-
-        /// <summary>
-        /// Will be called through the order entry system, where a security type
-        /// must be selected to proceed
-        /// </summary>
-        /// <param name="ticker"></param>
-        /// <param name="securityType"></param>
-        /// <returns></returns>
-        public async Task<Security> GetTradePreviewSecurity(string ticker, Security securityType)
-        {
-            var securityToReturn = await _stockDataService.GetSecurityInfo(ticker);
-            if (securityToReturn is Stock)
-                return (Stock)securityToReturn;
-            if (securityToReturn is MutualFund)
-                return (MutualFund)securityToReturn;
-
-            //Should not hit this.
-            return new Stock("", "XXX", "Unknown Stock", 0, 0.00);
-        }
-
-        /// <summary>
-        /// Returns PositionsByWeight for all securities
-        /// </summary>
-        /// <returns></returns>
-        public ObservableCollection<PositionByWeight> GetChartAllSecurities()
-        {
-            if (_portfolioPositions == null || !PositionsHaveValue())
-                return new ObservableCollection<PositionByWeight>();
-
-            decimal totalValue = 0;
-            var positionsByWeight = new ObservableCollection<PositionByWeight>();
-
-            foreach (var pos in _portfolioPositions)
-            {
-                //make this tolerate divide by zero
-                totalValue += pos.MarketValue;
-            }
-
-            foreach (var pos in _portfolioPositions)
-            {
-                var weight = (pos.MarketValue / totalValue) * 100;
-                positionsByWeight.Add(new PositionByWeight(pos.Ticker, Math.Round(weight, 2)));
-            }
-
-            return positionsByWeight;
-        }
-
-        /// <summary>
-        /// Returns PositionsByWeight for stocks only
-        /// </summary>
-        /// <returns></returns>
-        public ObservableCollection<PositionByWeight> GetChartStocksOnly()
-        {
-            decimal totalValue = 0;
-            var positionsByWeight = new ObservableCollection<PositionByWeight>();
-
-            foreach (var pos in _portfolioPositions.Where(s => s.Security is Stock))
-            {
-                totalValue += pos.MarketValue;
-            }
-
-            foreach (var pos in _portfolioPositions.Where(s => s.Security is Stock))
-            {
-                var weight = (pos.MarketValue / totalValue) * 100;
-                positionsByWeight.Add(new PositionByWeight(pos.Ticker, Math.Round(weight, 2)));
-            }
-
-            return positionsByWeight;
-        }
-
-        /// <summary>
-        /// Returns PositionsByWeight for mutual funds only
-        /// </summary>
-        /// <returns></returns>
-        public ObservableCollection<PositionByWeight> GetChartFundsOnly()
-        {
-            decimal totalValue = 0;
-            var positionsByWeight = new ObservableCollection<PositionByWeight>();
-
-            foreach (var pos in _portfolioPositions.Where(s => s.Security is MutualFund))
-            {
-                totalValue += pos.MarketValue;
-            }
-
-            foreach (var pos in _portfolioPositions.Where(s => s.Security is MutualFund))
-            {
-                var weight = (pos.MarketValue / totalValue) * 100;
-                positionsByWeight.Add(new PositionByWeight(pos.Ticker, Math.Round(weight, 2)));
-            }
-
-            return positionsByWeight;
+            Messenger.Default.Send<StockDataRequestMessage>(new StockDataRequestMessage(ticker, false, true, false));
         }
 
         /// <summary>
@@ -533,8 +508,8 @@ namespace Asset_Management_Platform.Utility
 
         public void UpdatePortfolioPrices()
         {
-            //Update securities' pricing data
-            _stockDataService.GetUpdatedPricing(_portfolioSecurities);
+            //Update Positions' pricing data
+            Messenger.Default.Send<StockDataRequestMessage>(new StockDataRequestMessage(_portfolioPositions,false));
         }
 
         /// <summary>
@@ -576,47 +551,16 @@ namespace Asset_Management_Platform.Utility
         /// <param name="ticker"></param>
         /// <param name="tradeType"></param>
         /// <returns></returns>
-        public async Task<Security> GetSecurityType(string ticker, string tradeType)
+        public async Task GetSecurityType(string ticker, string tradeType)
         {
-            Security secType;
-
-            if (tradeType == "Sell")
-                secType = _portfolioPositions.Find(s => s.Ticker == ticker).GetSecurityType();
-            else
-            {
-                secType = await _stockDataService.GetSecurityInfo(ticker);
-            }
-
-            return secType;
-        }
-
-        public void UploadAllDatabases()
-        {
-            UploadSecurityDatabase();
-            UploadPortfolio();
-            UploadLimitOrdersToDatabase();
-        }
-
-        private void UploadSecurityDatabase()
-        {
-            _stockDataService.UploadSecuritiesToDatabase();
-        }
-
-        public void UploadPortfolio()
-        {
-            _portfolioDatabaseService.SavePortfolioToDatabase();
-        }
-
-        public void UploadLimitOrdersToDatabase()
-        {
-            _portfolioDatabaseService.UploadLimitOrdersToDatabase(LimitOrderList);
-        }
+            Messenger.Default.Send(new SecurityTypeRequestMessage(ticker));
+        }       
 
         public void DeletePortfolio()
         {
             _portfolioSecurities.Clear();
             _portfolioTaxlots.Clear();
-            _portfolioDatabaseService.DeletePortfolio(_portfolioPositions);
+            //Delete portfolio message
         }
 
         /// <summary>
@@ -628,15 +572,7 @@ namespace Asset_Management_Platform.Utility
             CheckLimitOrdersForActive();
         }
 
-        private bool PositionsHaveValue()
-        {
-            foreach (var pos in _portfolioPositions)
-            {
-                if (pos.MarketValue > 0)
-                    return true;
-            }
-            return false;
-        }
+
 
         public bool IsLocalMode()
         {

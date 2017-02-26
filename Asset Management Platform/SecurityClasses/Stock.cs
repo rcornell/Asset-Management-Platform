@@ -116,7 +116,7 @@ namespace Asset_Management_Platform.SecurityClasses
 
         public Stock()
         {
-
+            SecurityType = "Stock";
         }
 
         public void UpdateData(YahooAPIResult updatedInfo)

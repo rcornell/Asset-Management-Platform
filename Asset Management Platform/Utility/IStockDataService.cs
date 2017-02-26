@@ -3,26 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Asset_Management_Platform.Messages;
 
 namespace Asset_Management_Platform.Utility
 {
     public interface IStockDataService
     {
-        List<Security> LoadSecurityDatabase();
-
         void TryDatabaseInsert(Security securitiesToInsert);
 
         void UploadSecuritiesToDatabase();
 
-        List<Security> GetSecurityList();
+        Task GetSecurityInfo(string ticker, bool isScreener, bool isPreview);
 
-        Task<Security> GetSecurityInfo(string ticker);
+        Task GetSecurityInfo(StockDataRequestMessage message);
 
         Task GetUpdatedPricing(List<Security> securities);
 
         Task GetUpdatedPricing(List<Position> positions);
-
-        Task<List<Security>> GetSecurityInfo(List<string> tickers);
 
         List<Security> GetMutualFundExtraData(List<Security> rawSecurities);
     }

@@ -134,7 +134,6 @@ namespace Asset_Management_Platform.Utility
             if (!securityDBList.Any(s => s.Ticker == tickerToLookUp))
             {
                 Security newSecurity = CreateNewSecurity(yahooResult);
-                securityDBList.Add(newSecurity);
                 return newSecurity;
             }
 
@@ -150,7 +149,7 @@ namespace Asset_Management_Platform.Utility
             //and its info should be updated.
             if (securityBeingUpdated != null && resultSecurity is Stock)
             {
-                //Fix properties is they came back as NA
+                //Fix properties if they came back as NA
                 if (yahooResult.PeRatioIsNA) yahooResult.PeRatio = 0;
                 if (yahooResult.YieldIsNA) yahooResult.Yield = 0;
                 if (yahooResult.LastPriceIsNA) yahooResult.LastPrice = 0;
@@ -182,7 +181,6 @@ namespace Asset_Management_Platform.Utility
         /// <returns></returns>
         public async Task<List<Security>> GetMultipleSecurities(List<string> tickers)
         {
-            //string.Format("Percentage is {0:0.0%}", ratio)
             var securitiesToReturn = new List<Security>(); //Instantiate the list to return
 
             // Build the URL.
